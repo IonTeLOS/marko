@@ -161,7 +161,22 @@
             flex-grow: 1;
             overflow: hidden;
         }
-        .link-item img, .link-item .material-icons {
+        .link-item img {
+    width: 40px; /* Decrease the width of the favicon */
+    height: 40px; /* Decrease the height of the favicon */
+    margin-right: 10px; /* Add less margin to the right */
+    border-radius: 50%;
+    object-fit: contain; /* Ensure the favicon fits within the circle */
+}
+
+.link-item .note-icon {
+    width: 40px; /* Decrease the width of the note icon */
+    height: 40px; /* Decrease the height of the note icon */
+    margin-right: 10px; /* Add less margin to the right */
+    border-radius: 50%;
+    object-fit: contain; /* Ensure the icon fits within the circle */
+}
+        .link-item .material-icons {
             width: 50px;
             height: 50px;
             margin-right: 15px;
@@ -330,6 +345,11 @@
 <body>
 
 <h1>Marko</h1>
+<div id="add-link-btn" class="material-button" style="background-color: #18488e; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 36px; position: fixed; top: 40px; left: 40px;" onclick="showForm()">
+  <i class="material-icons">add_link</i>
+</div>
+
+</div>
 <button id="install-button" class="material-button" style="display: none;">Install Marko</button>
 <div class="local-message" id="local-message">
         Marko is running locally. <code>file://</code> URLs are also supported.
@@ -343,19 +363,14 @@
     <input type="file" id="new-link-icon" accept="image/*">
     <button class="add" onclick="addLink()"><i class="material-icons
      md-36">add_circle</i></button>
-
     <button class="cancel" onclick="cancelAddLink()"><i class="material-icons">cancel</i></button>
-    <button id="add-link-button" class="fab-button" onclick="showForm()">
-    <i class="material-icons">add</i>
-</button>
-    <button class="add-note" onclick="showNoteForm()"><i class="material-icons md-36">note_add</i> Add Note</button>
 </div>
 
 <div class="offline-banner" id="offline-banner">Offline Mode</div>
-<div class="dark-mode-switch">
-    <input type="checkbox" id="dark-mode-toggle" onclick="toggleDarkMode()">
-    <label for="dark-mode-toggle">Toggle Mode</label>
-    <span class="slider round"></span>
+
+<div id="add-note-btn" class="material-button" style="background-color: 9ABDDC; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 36px; position: fixed; top: 140px; left: 40px;" onclick="showNoteForm()">
+  <i class="material-icons">note_add</i>
+</div>
 
 <!-- Navigation Drawer -->
     <div class="nav-drawer" id="nav-drawer">
@@ -369,7 +384,10 @@
     <button class="nav-drawer-toggle" onclick="toggleNavDrawer()">
         <i class="material-icons">menu</i>
     </button>
-    
+    </div>
+    <button class="fab-button" onclick="toggleDarkMode()">
+        <i class="material-icons">brightness_4</i>
+    </button>
 <script>
     let links = [];
     const linkIcon = 'https://fonts.gstatic.com/s/i/materialicons/open_in_new/v15/24px.svg';
@@ -410,93 +428,83 @@
     }
 
     function addLink() {
-        const urlInput = document.getElementById('new-link-url');
-        const nameInput = document.getElementById('new-link-name');
-        const iconFile = document.getElementById('new-link-icon').files[0];
+    const urlInput = document.getElementById('new-link-url');
+    const nameInput = document.getElementById('new-link-name');
+    const iconFile = document.getElementById('new-link-icon').files[0];
 
-        let url = urlInput.value.trim();
-        let name = nameInput.value.trim();
+    let url = urlInput.value.trim();
+    let name = nameInput.value.trim();
 
-        // Check if the URL contains a protocol
-        const protocolPattern = /^[a-zA-Z]+:/;
-        const isCustomProtocol = protocolPattern.test(url);
+    // Check if the URL contains a protocol
+    const protocolPattern = /^[a-zA-Z]+:/;
+    const isCustomProtocol = protocolPattern.test(url);
 
-        if (!isCustomProtocol && !url.startsWith('https://')) {
-            // Check for email links
-            if (url.includes('@')) {
-                url = "mailto:" + url;
-            } else if (/^[0-9+\s]+$/.test(url)) { // Check for tel links
-                url = "tel:" + url;
-            } else if (url.startsWith('file:')) {
+    if (!isCustomProtocol && !url.startsWith('https://')) {
+        // Check for email links
+        if (url.includes('@')) {
+            url = "mailto:" + url;
+        } else if (/^[0-9+\s]+$/.test(url)) { // Check for tel links
+            url = "tel:" + url;
+        } else if (url.startsWith('file:')) {
             // Handle local file links
             // Assuming the file exists, bypass security to access local storage
-                const filename = url.substring(7); // Remove "file://" from the URL
-                url = 'file://' + filename;
-            } else {
-                url = "https://" + url;
-            }
-        }
-
-        // If name is empty or only spaces, use URL as the title
-        if (!name) {
-            // Remove protocol handler from the URL
-            const urlWithoutProtocol = url.replace(/^[a-zA-Z]+:\/\//, '');
-            name = urlWithoutProtocol;
-        }
-
-        let iconUrl;
-        let iconColor;
-        if (iconFile) {
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                iconUrl = e.target.result;
-                iconColor = getRandomColor();
-                links.push({ url, name, iconUrl, iconColor });
-                urlInput.value = '';
-                nameInput.value = '';
-                document.getElementById('new-link-icon').value = '';
-                hideForm();
-                renderLinks();
-                saveLinks();
-            };
-            reader.readAsDataURL(iconFile);
+            const filename = url.substring(7); // Remove "file://" from the URL
+            url = 'file://' + filename;
         } else {
-            if (isCustomProtocol) {
-                if (url.startsWith('mailto:')) {
-                    iconUrl = mailIcon;
-                } else if (url.startsWith('tel:')) {
-                    iconUrl = phoneIcon;
-                } else if (url.startsWith('file://')) {
-                    iconUrl = fileIcon;
-                } else {
-                    iconUrl = linkIcon;
-                }
-            } else {
-                const hostname = new URL(url).hostname;
-                if (/^.{4}[+0-9]+$/.test(url)) {
-                iconUrl = 'https://fonts.gstatic.com/s/i/materialicons/call/v15/24px.svg';
-               } 
-        // Check if URL contains "@", indicating an email
-                else if (url.includes('@')) {
-                iconUrl = 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
-                } else {
-                    iconUrl = linkIcon;
-                }
-                const existingLink = links.find(link => link.url === url);
-                if (existingLink) {
-                    iconColor = existingLink.iconColor;
-                } else {
-                    iconColor = getRandomColor();
-                }
-            }
+            url = "https://" + url;
+        }
+    }
+
+    // If name is empty or only spaces, use URL as the title
+    if (!name) {
+        // Remove protocol handler from the URL
+        const urlWithoutProtocol = url.replace(/^[a-zA-Z]+:\/\//, '');
+        name = urlWithoutProtocol;
+    }
+
+    let iconUrl;
+    let iconColor;
+    if (iconFile) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            iconUrl = e.target.result;
+            iconColor = getRandomColor();
             links.push({ url, name, iconUrl, iconColor });
             urlInput.value = '';
             nameInput.value = '';
+            document.getElementById('new-link-icon').value = '';
             hideForm();
+            renderLinks();
+            saveLinks();
+        };
+        reader.readAsDataURL(iconFile);
+    } else {
+        if (isCustomProtocol) {
+            if (url.startsWith('mailto:')) {
+                iconUrl = mailIcon;
+            } else if (url.startsWith('tel:')) {
+                iconUrl = phoneIcon;
+            } else if (url.startsWith('file://')) {
+                iconUrl = fileIcon;
+            } else {
+                iconUrl = linkIcon;
+            }
+        } else {
+            const hostname = new URL(url).hostname;
+            iconUrl = getIconUrl(url, hostname);
+            iconColor = getRandomColor();
+            links.push({ url, name, iconUrl, iconColor });
             renderLinks();
             saveLinks();
         }
     }
+
+    // Clear the form inputs and hide the form
+    urlInput.value = '';
+    nameInput.value = '';
+    hideForm();
+}
+
 
     function deleteLink(index) {
         links.splice(index, 1);
@@ -596,13 +604,7 @@ function renderLinks() {
     });
 
     function toggleDarkMode() {
-            const darkModeToggle = document.getElementById('dark-mode-toggle');
-            const body = document.body;
-            if (darkModeToggle.checked) {
-                body.classList.add('dark-mode');
-            } else {
-                body.classList.remove('dark-mode');
-            }
+            document.body.classList.toggle('dark-mode');
         }
     function toggleNavDrawer() {
             const navDrawer = document.getElementById('nav-drawer');
@@ -617,6 +619,20 @@ function renderLinks() {
         }
     }
 
+    function getIconUrl(url, hostname) {
+            if (url.startsWith('mailto:')) {
+                return 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
+            } else if (url.startsWith('tel:')) {
+                return 'https://fonts.gstatic.com/s/i/materialicons/call/v15/24px.svg';
+            } else if (url.startsWith('file://')) {
+                return 'https://fonts.gstatic.com/s/i/materialicons/insert_drive_file/v15/24px.svg';
+            } else if (hostname) {
+                return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+            } else {
+                return 'https://fonts.gstatic.com/s/i/materialicons/link/v15/24px.svg';
+            }
+        }
+        
     function getRandomColor() {
         const letters = '0123456789ABCDEF';
         let color = '#';
@@ -696,4 +712,3 @@ function showInstallPrompt() {
 </script>
 </body>
 </html>
-
