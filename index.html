@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marko</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M0 0h24v24H0z'/%3E%3Cpath fill='%2300bcd4' d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM15 3v2h2.59L8.7 13.89l1.41 1.41L19 6.41V9h2V3h-6z'/%3E%3C/svg%3E" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#0288d1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/manifest.json">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .local-message {
+            background-color: #ffeb3b;
+            color: #000;
+            padding: 10px;
+            margin-bottom: 20px;
+            display: none;
+            border: 1px solid #000;
+        }
+        .material-button {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: #1976D2; /* Material blue color */
+            color: white;
+            padding: 10px;
+            text-align: center;
+            z-index: 999; /* Ensure it's on top of other content */
+        }
+                /* Navigation Drawer Styles */
+        .nav-drawer {
+            position: fixed;
+            top: -250px;
+            left: 0;
+            width: 100%;
+            height: 250px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+            transition: top 0.3s ease;
+        }
+
+        .nav-drawer.open {
+            top: 0;
+        }
+
+        .nav-drawer-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            height: 100%;
+        }
+
+        .nav-drawer-content a {
+            text-decoration: none;
+            color: #333;
+        }
+
+        .nav-drawer-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            z-index: 1002;
+        }
+
+        .nav-drawer-toggle .material-icons {
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        body.dark-mode .nav-drawer {
+            background-color: #444;
+        }
+
+        body.dark-mode .nav-drawer-content a {
+            color: #fff;
+        }
+
+        body.dark-mode .nav-drawer-toggle .material-icons {
+            color: #fff;
+        }
+        .note-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            flex-grow: 1;
+            color: grey;
+            font-weight: bold;
+            font-style: italic;
+            padding-left: 10px; /* Add left padding */
+
+        }
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .note-icon .material-icons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            font-size: 42px;
+            color: #fff;
+        }
+        h1 {
+            margin: 20px 0;
+            font-weight: 500;
+        }
+        .link-container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+        .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .link-item:hover {
+            background-color: #f1f1f1;
+        }
+        .link-item a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .link-item img {
+    width: 40px; /* Decrease the width of the favicon */
+    height: 40px; /* Decrease the height of the favicon */
+    margin-right: 10px; /* Add less margin to the right */
+    border-radius: 50%;
+    object-fit: contain; /* Ensure the favicon fits within the circle */
+}
+
+.link-item .note-icon {
+    width: 40px; /* Decrease the width of the note icon */
+    height: 40px; /* Decrease the height of the note icon */
+    margin-right: 10px; /* Add less margin to the right */
+    border-radius: 50%;
+    object-fit: contain; /* Ensure the icon fits within the circle */
+}
+        .link-item .material-icons {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            border-radius: 50%;
+        }
+        .link-item span.link-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            flex-grow: 1;
+        }
+        .link-item button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-left: 5px;
+        }
+        .link-item button i {
+            font-size: 24px;
+            color: #d32f2f;
+        }
+        /* Floating Action Button (FAB) Styles */
+.fab-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #1976D2; /* Material blue color */
+    color: white;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fab-button i {
+    font-size: 24px;
+}
+
+        .install-button button {
+        	position: fixed;
+        	top: 0;
+        	left: 0;
+        	width: 100%;
+        	background-color: #2196F3;
+        	color: white;
+        	padding: 15px;
+        	text-align: center;
+        	font-size: 16px;
+        	border: none;
+        	cursor: pointer;
+        	z-index: 1000;
+        	transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26), 0 2px 10px 0 rgba(0, 0, 0, 0.16);
+        }
+        #new-link-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 600px;
+            padding: 0 10px;
+        }
+        #new-link-form input[type="url"],
+        #new-link-form input[type="text"],
+        #new-link-form input[type="file"],
+        #new-link-form button.add,
+        #new-link-form button.cancel {
+            display: none;
+            width: calc(100% - 20px);
+            padding: 15px;
+            margin: 5px 0;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        #new-link-form button.show-form {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background-color: #0288d1;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: calc(100% - 20px);
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        #new-link-form button.add {
+            background-color: #4caf50;
+            color: white;
+        }
+        #new-link-form button.cancel {
+            background-color: #d32f2f;
+            color: white;
+        }
+        .material-icons.md-36 {
+            font-size: 36px;
+        }
+        .offline-banner {
+            display: none;
+            width: 100%;
+            padding: 10px;
+            background-color: #d32f2f;
+            color: white;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+        }
+        .dark-mode-switch {
+            position: fixed;
+            bottom: 50px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            z-index: 1000; /* Ensure the switch appears above the offline banner */
+        }
+        .dark-mode-switch label {
+            margin-left: 10px;
+            font-size: 16px;
+        }
+        .dark-mode-switch input[type="checkbox"] {
+            display: none;
+        }
+        .dark-mode-switch .slider {
+            position: relative;
+            width: 60px;
+            height: 34px;
+        }
+        .dark-mode-switch .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+        .dark-mode-switch input:checked + .slider:before {
+            transform: translateX(26px);
+            background-color: #0288d1;
+        }
+        .dark-mode-switch .slider.round {
+            border-radius: 34px;
+        }
+        .dark-mode-switch .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Marko</h1>
+<div id="add-link-btn" class="material-button" style="background-color: #18488e; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 36px; position: fixed; top: 40px; left: 40px;" onclick="showForm()">
+  <i class="material-icons">add_link</i>
+</div>
+
+</div>
+<button id="install-button" class="material-button" style="display: none;">Install Marko</button>
+<div class="local-message" id="local-message">
+        Marko is running locally. <code>file://</code> URLs are also supported.
+    </div>
+
+<div id="link-container" class="link-container"></div>
+
+<div id="new-link-form">
+    <input type="url" id="new-link-url" placeholder="Enter link URL" required>
+    <input type="text" id="new-link-name" placeholder="Enter link name" required>
+    <input type="file" id="new-link-icon" accept="image/*">
+    <button class="add" onclick="addLink()"><i class="material-icons
+     md-36">add_circle</i></button>
+    <button class="cancel" onclick="cancelAddLink()"><i class="material-icons">cancel</i></button>
+</div>
+
+<div class="offline-banner" id="offline-banner">Offline Mode</div>
+
+<div id="add-note-btn" class="material-button" style="background-color: 9ABDDC; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 36px; position: fixed; top: 140px; left: 40px;" onclick="showNoteForm()">
+  <i class="material-icons">note_add</i>
+</div>
+
+<!-- Navigation Drawer -->
+    <div class="nav-drawer" id="nav-drawer">
+        <div class="nav-drawer-content">
+            <a href="https://example.com/about" target="_blank">About</a>
+</div>
+        </div>
+    </div>
+
+    <!-- Hamburger Icon -->
+    <button class="nav-drawer-toggle" onclick="toggleNavDrawer()">
+        <i class="material-icons">menu</i>
+    </button>
+    </div>
+    <button class="fab-button" onclick="toggleDarkMode()">
+        <i class="material-icons">brightness_4</i>
+    </button>
+<script>
+    let links = [];
+    const linkIcon = 'https://fonts.gstatic.com/s/i/materialicons/open_in_new/v15/24px.svg';
+    const mailIcon = 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
+    const phoneIcon = 'https://fonts.gstatic.com/s/i/materialicons/call/v15/24px.svg';
+    const fileIcon = 'https://fonts.gstatic.com/s/i/materialicons/insert_drive_file/v15/24px.svg';
+    const noteIcon = 'https://fonts.gstatic.com/s/i/materialicons/note/v15/24px.svg';
+
+    document.addEventListener("DOMContentLoaded", () => {
+        detectSystemTheme();
+        checkConnection();
+        loadLinks();
+    });
+
+    function checkConnection() {
+        const offlineBanner = document.getElementById('offline-banner');
+        if (!navigator.onLine) {
+            offlineBanner.style.display = 'block';
+        }
+        window.addEventListener('online', () => {
+            offlineBanner.style.display = 'none';
+        });
+        window.addEventListener('offline', () => {
+            offlineBanner.style.display = 'block';
+        });
+    }
+
+    function loadLinks() {
+        const savedLinks = localStorage.getItem('links');
+        if (savedLinks) {
+            links = JSON.parse(savedLinks);
+            renderLinks();
+        }
+    }
+
+    function saveLinks() {
+        localStorage.setItem('links', JSON.stringify(links));
+    }
+
+    function addLink() {
+    const urlInput = document.getElementById('new-link-url');
+    const nameInput = document.getElementById('new-link-name');
+    const iconFile = document.getElementById('new-link-icon').files[0];
+
+    let url = urlInput.value.trim();
+    let name = nameInput.value.trim();
+
+    // Check if the URL contains a protocol
+    const protocolPattern = /^[a-zA-Z]+:/;
+    const isCustomProtocol = protocolPattern.test(url);
+
+    if (!isCustomProtocol && !url.startsWith('https://')) {
+        // Check for email links
+        if (url.includes('@')) {
+            url = "mailto:" + url;
+        } else if (/^[0-9+\s]+$/.test(url)) { // Check for tel links
+            url = "tel:" + url;
+        } else if (url.startsWith('file:')) {
+            // Handle local file links
+            // Assuming the file exists, bypass security to access local storage
+            const filename = url.substring(7); // Remove "file://" from the URL
+            url = 'file://' + filename;
+        } else {
+            url = "https://" + url;
+        }
+    }
+
+    // If name is empty or only spaces, use URL as the title
+    if (!name) {
+        // Remove protocol handler from the URL
+        const urlWithoutProtocol = url.replace(/^[a-zA-Z]+:\/\//, '');
+        name = urlWithoutProtocol;
+    }
+
+    let iconUrl;
+    let iconColor;
+    if (iconFile) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            iconUrl = e.target.result;
+            iconColor = getRandomColor();
+            links.push({ url, name, iconUrl, iconColor });
+            urlInput.value = '';
+            nameInput.value = '';
+            document.getElementById('new-link-icon').value = '';
+            hideForm();
+            renderLinks();
+            saveLinks();
+        };
+        reader.readAsDataURL(iconFile);
+    } else {
+        if (isCustomProtocol) {
+            if (url.startsWith('mailto:')) {
+                iconUrl = mailIcon;
+            } else if (url.startsWith('tel:')) {
+                iconUrl = phoneIcon;
+            } else if (url.startsWith('file://')) {
+                iconUrl = fileIcon;
+            } else {
+                iconUrl = linkIcon;
+            }
+        } else {
+            const hostname = new URL(url).hostname;
+            iconUrl = getIconUrl(url, hostname);
+            iconColor = getRandomColor();
+            links.push({ url, name, iconUrl, iconColor });
+            renderLinks();
+            saveLinks();
+        }
+    }
+
+    // Clear the form inputs and hide the form
+    urlInput.value = '';
+    nameInput.value = '';
+    hideForm();
+}
+
+
+    function deleteLink(index) {
+        links.splice(index, 1);
+        renderLinks();
+        saveLinks();
+    }
+function renderLinks() {
+            const linkContainer = document.getElementById('link-container');
+            linkContainer.innerHTML = '';
+            links.forEach((link, index) => {
+                const linkItem = document.createElement('div');
+                linkItem.className = 'link-item';
+                linkItem.id = `link-item-${index}`;
+
+                let displayName = link.name ? link.name.replace(/^https?:\/\//, '').replace(/^mailto:/, '').replace(/^tel:/, '').replace(/^file:\/\//, '') : link.text;
+
+                if (link.url) {
+                    linkItem.innerHTML = `
+                        <a href="${link.url}" target="_blank">
+                            <img src="${link.iconUrl}" alt="Icon" style="background-color: ${link.iconColor}">
+                            <span class="link-text">${displayName}</span>
+                        </a>
+                        <button class="delete" onclick="deleteLink(${index})"><i class="material-icons" style="color: #d32f2f;">delete</i></button>
+                    `;
+                } else {
+                    const truncatedText = link.text.length > 160 ? link.text.substring(0, 160) + '...' : link.text;
+
+            linkItem.innerHTML = `
+                <a href="#" onclick="copyAndShare('${link.text}'); return false;">
+                    <div class="note-icon" style="background-color: ${link.iconColor}">
+                        <i class="material-icons">note</i>
+                    </div>
+                    <span class="link-text note-text">${truncatedText}</span>
+                </a>
+                <button class="delete" onclick="deleteLink(${index})"><i class="material-icons" style="color: #d32f2f;">delete</i></button>
+            `;
+                }
+                linkContainer.appendChild(linkItem);
+            });
+        }
+        function showNoteForm() {
+            const noteText = prompt("Enter your note:");
+            if (noteText) {
+                const iconUrl = noteIcon;
+                const iconColor = getRandomColor();
+                links.push({ text: noteText, iconUrl, iconColor });
+                renderLinks();
+                saveLinks();
+            }
+        }
+
+        function copyAndShare(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Note copied to clipboard!");
+                if (navigator.share) {
+                    navigator.share({
+                        text: text,
+                    });
+                }
+            });
+        }
+
+
+    function showForm() {
+        document.getElementById('new-link-url').style.display = 'inline-block';
+        document.getElementById('new-link-name').style.display = 'inline-block';
+        document.getElementById('new-link-icon').style.display = 'inline-block';
+        document.querySelector('.add').style.display = 'inline-block';
+        document.querySelector('.cancel').style.display = 'inline-block';
+        document.querySelector('.show-form').style.display = 'none';
+    }
+
+    function hideForm() {
+        document.getElementById('new-link-url').style.display = 'none';
+        document.getElementById('new-link-name').style.display = 'none';
+        document.getElementById('new-link-icon').style.display = 'none';
+        document.querySelector('.add').style.display = 'none';
+        document.querySelector('.cancel').style.display = 'none';
+        document.querySelector('.show-form').style.display = 'inline-block';
+    }
+
+    function cancelAddLink() {
+        document.getElementById('new-link-url').value = '';
+        document.getElementById('new-link-name').value = '';
+        document.getElementById('new-link-icon').value = '';
+        hideForm();
+    }
+
+    // Listen for Enter key press to add link
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Enter") {
+            const addBtn = document.querySelector('.add');
+            if (addBtn.style.display === 'inline-block') {
+                addLink();
+            }
+        }
+    });
+
+    function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+    function toggleNavDrawer() {
+            const navDrawer = document.getElementById('nav-drawer');
+            navDrawer.classList.toggle('open');
+        }
+    function detectSystemTheme() {
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (systemDarkMode) {
+            darkModeToggle.checked = true;
+            toggleDarkMode();
+        }
+    }
+
+    function getIconUrl(url, hostname) {
+            if (url.startsWith('mailto:')) {
+                return 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
+            } else if (url.startsWith('tel:')) {
+                return 'https://fonts.gstatic.com/s/i/materialicons/call/v15/24px.svg';
+            } else if (url.startsWith('file://')) {
+                return 'https://fonts.gstatic.com/s/i/materialicons/insert_drive_file/v15/24px.svg';
+            } else if (hostname) {
+                return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+            } else {
+                return 'https://fonts.gstatic.com/s/i/materialicons/link/v15/24px.svg';
+            }
+        }
+        
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+    
+    let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  // Prevent Chrome 76 and later from automatically showing the prompt
+  event.preventDefault();
+  // Stash the event so it can be triggered later.
+  deferredPrompt = event;
+  // Update UI notify the user they can install the PWA
+  showInstallPrompt();
+});
+
+
+function addNote() {
+        const noteInput = document.getElementById('new-note-text');
+        const noteText = noteInput.value.trim();
+
+        if (noteText) {
+            const iconUrl = noteIcon;
+            const iconColor = getRandomColor();
+
+            links.push({ text: noteText, iconUrl, iconColor });
+            noteInput.value = '';
+            renderLinks();
+            saveLinks();
+        }
+    }
+   
+        
+function showInstallPrompt() {
+  // Show your install prompt UI here, for example, a button
+  const installButton = document.getElementById('install-button');
+  installButton.style.display = 'block';
+
+  installButton.addEventListener('click', () => {
+    // Show the install prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+        // Hide the install button
+        installButton.style.display = 'none';
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+      // Clear the deferredPrompt variable, as it can only be used once
+      deferredPrompt = null;
+    });
+  });
+}
+
+</script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
+</script>
+<script>
+  if (window.location.protocol === 'file:') {
+    document.getElementById('local-message').style.display = 'block';
+}
+</script>
+</body>
+</html>
+
