@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Protected Page</title>
+    <style>
+        body {
+            display: none; /* Hide the content by default */
+            font-family: Arial, sans-serif;
+        }
+        #protectedContent {
+            display: none; /* Hide the protected content by default */
+        }
+    </style>
+</head>
+<body>
+    <div id="protectedContent"></div>
+
+    <script>
+        (function() {
+            // Password parameter
+            var password = 'ok';
+            // Base64 encoded content
+            var encodedContent = 'PGgxPlByb3RlY3RlZCBDb250ZW50PC9oMT48cD5UaGlzIGNvbnRlbnQgaXMgcHJvdGVjdGVkIGFuZCBjYW4gb25seSBiZSB2aWV3ZWQgd2l0aCB0aGUgY29ycmVjdCBVUkwgcGFyYW1ldGVyLjwvcD4=';
+            
+            // Check if the URL hash matches the password
+            if (window.location.hash === '#' + password) {
+                // Decode the Base64 content
+                var decodedContent = atob(encodedContent);
+                // Insert the decoded content into the protectedContent div
+                document.getElementById('protectedContent').innerHTML = decodedContent;
+                // Show the body and protected content
+                document.body.style.display = 'block';
+                document.getElementById('protectedContent').style.display = 'block';
+            } else {
+                // Optionally, you can redirect or show a message if the password is incorrect
+                document.body.innerHTML = '<h1>Access Denied</h1><p>You do not have permission to view this page.</p>';
+                document.body.style.display = 'block'; // Show the message
+            }
+        })();
+    </script>
+</body>
+</html>
