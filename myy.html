@@ -1,0 +1,3226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marko</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M0 0h24v24H0z'/%3E%3Cpath fill='%2300bcd4' d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM15 3v2h2.59L8.7 13.89l1.41 1.41L19 6.41V9h2V3h-6z'/%3E%3C/svg%3E" type="image/svg+xml">    
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <meta name="theme-color" content="#0288d1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/manifest.json">    
+<script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+  <style>
+    body {
+      font-family: Roboto, sans-serif;
+      margin: 20px;
+      display: flex; 
+      min-height: 100vh; 
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      background-color: #fff; /* Default background */
+      color: #333; /* Default text color */
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    }
+main { flex: 1 0 auto; }
+.bookmarks-container 
+.top-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px; /* Add some spacing between bookmarks */
+      padding: 16px; /* Add padding for better spacing */
+    }
+
+    .top-bookmark {
+      background-color: #f5f5f5;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      margin-bottom: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-radius: 4px;
+    }
+
+    .top-bookmark .icon-wrapper,
+    .bookmark .icon-wrapper {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .top-bookmark .icon-container,
+    .bookmark .icon-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px; /* Standard width */
+      height: 56px; /* Standard height */
+      border-radius: 50%;
+      transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+      margin-right: 16px;
+      background-color: #fff; /* Light background */
+    }
+
+    .top-bookmark .icon-container:hover,
+    .bookmark:hover .icon-container {
+      background-color: #f0f0f0; /* Light hover effect */
+      transform: scale(1.1); /* Enlarge container on hover */
+    }
+
+    .bookmark {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      position: relative;
+      margin-bottom: 8px;
+    
+    }
+
+    .bookmark:hover {
+      background-color: #f5f5f5; /* Lighten background on hover */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Increase shadow on hover */
+    }
+
+    .bookmark.active {
+      background-color: #f0f0f0; /* Lighter background for active bookmark */
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Increase shadow for active state */
+    }
+
+    .bookmark:last-child {
+      border-bottom: none;
+    }
+
+    .bookmark .bookmark-title {
+      font-weight: bold;
+      text-align: left;
+      flex: 1;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .bookmark:hover .bookmark-title,
+    .bookmark .icon-wrapper:hover .bookmark-title {
+      transform: scale(1.02); /* Slightly enlarge title on hover */
+    }
+
+    .bookmark-icon {
+      font-size: 36px; /* Increase icon size */
+      color: #888; /* Material Design muted color */
+      transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    .bookmark:hover .bookmark-icon {
+      color: #333; /* Darken icon color on hover */
+    }
+
+    .bookmark.active .icon-container {
+      background-color: #1976d2; /* Material Design primary blue for active state */
+      box-shadow: 0 2px 4px rgba(25, 118, 210, 0.4); /* Add shadow to active icon */
+    }
+
+    .bookmark.active .bookmark-icon {
+      color: #fff; /* White icon for active state */
+    }
+
+    /* Custom colors for specific icons */
+    .bookmark[data-link="show-content"]:hover .icon-container {
+      background-color: rgba(13, 71, 161, 0.1); /* Light blue for info icon */
+    }
+
+    .bookmark[data-link="show-content"]:hover .bookmark-icon {
+      color: #0d47a1; /* Darker blue for info icon */
+    }
+
+    .bookmark[data-link^="https://"]:hover .icon-container {
+      background-color: rgba(46, 125, 50, 0.1); /* Light green for external link */
+    }
+
+    .bookmark[data-link^="https://"]:hover .bookmark-icon {
+      color: #2e7d32; /* Green for external link icon */
+    }
+
+    .delete-icon {
+      color: #f44336; /* Material Design error color */
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%); /* Center icon vertically */
+      opacity: 0; /* Initially hide the delete icon */
+      transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Add transitions */
+      font-size: 24px; /* Slightly smaller than main icons */
+    }
+
+    .bookmark:hover .delete-icon,
+    .bookmark.long-press .delete-icon {
+      opacity: 1; /* Show delete icon on hover or long press */
+      transform: translateY(-50%) scale(1.1); /* Scale up while maintaining vertical center */
+    }
+
+    .delete-icon:hover {
+      color: #d32f2f; /* Darker red on hover */
+      cursor: pointer; /* Change cursor to indicate clickability */
+      transform: translateY(-50%) scale(1.2); /* Scale up more on direct hover */
+    }
+
+    .content {
+      display: none; /* Initially hide content divs */
+      padding: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+
+    .menu-bookmarks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #ddd;
+    }
+
+    .menu-bookmarks .bookmark {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-bookmarks .bookmark:hover {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Specific Icons for Menu Items */
+    .bookmark[data-action="info"] .icon-container {
+      background-color: rgba(33, 150, 243, 0.1);
+    }
+
+    .bookmark[data-action="add-link"] .icon-container {
+      background-color: rgba(76, 175, 80, 0.1);
+    }
+
+    .bookmark[data-action="generate"] .icon-container {
+      background-color: rgba(255, 152, 0, 0.1);
+    }
+
+    .bookmark[data-action="toggle-mode"] .icon-container {
+      background-color: rgba(156, 39, 176, 0.1);
+    }
+
+    .bookmark[data-action="info"]:hover .bookmark-icon {
+      color: #2196f3;
+    }
+
+    .bookmark[data-action="add-link"]:hover .bookmark-icon {
+      color: #4caf50;
+    }
+
+    .bookmark[data-action="generate"]:hover .bookmark-icon {
+      color: #ff9800;
+    }
+
+    .bookmark[data-action="toggle-mode"]:hover .bookmark-icon {
+      color: #9c27b0;
+    }
+
+    /* Light and Dark Mode */
+    body.light-mode {
+      background-color: #E8DACC;
+      color: #ebe8e2;
+    }
+
+
+    body.dark-mode .bookmark, body.dark-mode .menu-bookmarks .bookmark {
+      background-color: #1e1e1e;
+      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    }
+
+    body.dark-mode .top-bookmark {
+      background-color: #333;
+    }
+
+    body.dark-mode .top-bookmark .icon-container, 
+    body.dark-mode .bookmark .icon-container {
+      background-color: #424242; /* Dark background in dark mode */
+    }
+
+    body.dark-mode .top-bookmark .icon-container:hover,
+    body.dark-mode .menu-bookmarks .bookmark:hover .icon-container {
+      background-color: #444; /* Slight hover effect in dark mode */
+    }
+
+    body.dark-mode .mode-indicator::after {
+      content: '🌚';
+    }
+
+    body.light-mode .top-bookmark .icon-container,
+    body.light-mode .menu-bookmarks .bookmark .icon-container {
+      background-color: #fff; /* Light background in light mode */
+    }
+
+    body.light-mode .top-bookmark .icon-container:hover,
+    body.light-mode .menu-bookmarks .bookmark:hover .icon-container {
+      background-color: #f0f0f0; /* Light hover effect */
+    }
+
+    body.light-mode .mode-indicator::after {
+      content: '🌞';
+    }
+
+    .mode-indicator::after {
+      font-size: 0.7em;
+      vertical-align: top;
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+      display: none;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      padding: 8px 0;
+      position: absolute;
+      right: 10px;
+      z-index: 1000;
+    }
+
+    .menu-item {
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* Color Modes */
+    .mode-indicator::after {
+      content: '🌞'; /* Default to light mode indicator */
+    }
+
+    /* System Default (initial state) */
+    @media (prefers-color-scheme: dark) {
+      body { background-color: #121212; color: #e0e0e0; }
+      .bookmark, .dropdown-menu { background-color: #1e1e1e; box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); }
+      .top-bookmark { background-color: #333; }
+      .top-bookmark .icon-container, .menu-item:hover { background-color: #424242; }
+      .mode-indicator::after { content: '🌚'; }
+    }
+
+/* Light Mode */
+body.light-mode { 
+  background-color: #fdf6e3; /* Solarized Base3 */
+  color: #657b83; /* Solarized Base00 */
+}
+body.light-mode .bookmark { 
+  background-color: #eee8d5; /* Solarized Base2 */
+}
+body.light-mode .top-bookmark { 
+  background-color: #eee8d5; /* Solarized Base2 */
+}
+body.light-mode .mode-indicator::after { 
+  content: '🌞'; 
+}
+body.light-mode .bookmark-icon, 
+body.light-mode .top-bookmark .bookmark-icon { 
+  color: #586e75; /* Solarized Base01 */
+}
+
+/* Dark Mode */
+body.dark-mode { 
+  background-color: #002b36; /* Solarized Base03 */
+  color: #839496; /* Solarized Base0 */
+}
+body.dark-mode .bookmark, 
+body.dark-mode .dropdown-menu { 
+  background-color: #073642; /* Solarized Base02 */
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); 
+}
+body.dark-mode .top-bookmark { 
+  background-color: #073642; /* Solarized Base02 */
+}
+body.dark-mode .top-bookmark .icon-container, 
+body.dark-mode .menu-item:hover { 
+  background-color: #586e75; /* Solarized Base01 */
+}
+body.dark-mode .mode-indicator::after { 
+  content: '🌚'; 
+}
+body.dark-mode .bookmark-icon, 
+body.dark-mode .top-bookmark .bookmark-icon { 
+  color: #93a1a1; /* Solarized Base1 */
+}      
+
+input {
+  padding-right: 30px; /* Space for the clear button */
+  font-size: 16px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #999;
+  padding: 0;
+  line-height: 1;
+}
+
+.clear-btn:hover {
+  color: #333;
+}
+
+
+.clear-btn:hover {
+  color: #333;
+}
+
+#icon-select { 
+  cursor: pointer; 
+  background: none; 
+  border: none; 
+  padding: 0; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 56px; 
+  height: 56px; 
+  transition: background-color 0.3s; 
+}
+
+#icon-select:hover, #icon-select:focus { 
+  background-color: rgba(0, 0, 0, 0.1); 
+}
+        #search { 
+  flex-grow: 1; 
+  height: 56px; 
+  font-size: 16px; 
+  border: none; 
+  outline: none; 
+  margin-left: 10px; 
+  padding: 0 15px; 
+  width: 90%;
+  box-sizing: border-box;
+
+}
+
+#icon-name { 
+  margin: 0 15px 0 0; 
+  font-size: 1rem; 
+}
+
+#color-select { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 56px; 
+  height: 56px; 
+  font-size: 12px; 
+  font-weight: bold; 
+  color: white; 
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); 
+  cursor: pointer; 
+}
+
+.card-panel { 
+  position: relative; 
+  z-index: 1; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: stretch; 
+  padding: 0; 
+}
+
+#icon-select .material-icons-outlined { font-size: 32px; }
+#icon-dropdown {
+  display: none;
+  position: fixed; /* Change from absolute to fixed */
+  z-index: 1000;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 8px 17px 2px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh; /* Set max height to 80% of viewport height */
+  overflow-y: auto;
+  padding: 10px;
+}
+
+#icon-selection-container {
+  position: relative;
+  padding-bottom: 80px; /* Space for the buttons */
+  overflow: hidden;
+}
+
+#icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 10px;
+}
+
+.icon { text-align: center; cursor: pointer; padding: 10px; border-radius: 4px; transition: background-color 0.3s; }
+.icon:hover { background-color: #f0f0f0; }
+.material-icons-outlined { font-size: 24px; }
+
+
+#color-select { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; font-size: 12px; font-weight: bold; color: white; text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); cursor: pointer; }
+        @media only screen and (min-width: 601px) {
+            .container { width: 85%; }
+        }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+.buttons-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 1001;
+}
+
+.button-container button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #18488e;
+  color: white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  overflow: hidden;
+  position: relative;
+  border: none;
+  cursor: pointer;
+}
+
+.button-container button i {
+  font-size: 36px;
+}
+
+.button-container button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s;
+}
+
+.button-container button:active::before {
+  transform: translate(-50%, -50%) scale(1);
+  transition: 0s;
+}
+    .input-field {
+      margin-bottom: 20px;
+      position: relative;
+  
+    }
+
+    .input-field input[type="url"],
+    .input-field input[type="text"],
+    .input-field input[type="tel"],
+    .input-field select,
+    .input-field textarea {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .icon-source-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .icon-source-selector select {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: white;
+      appearance: auto;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .button-container button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #18488e;
+      color: white;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      overflow: hidden;
+      position: relative;
+      border: none;
+      cursor: pointer;
+    }
+
+    .button-container button i {
+      font-size: 36px;
+    }
+
+    .button-container button::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200%;
+      height: 200%;
+      background-color: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.4s;
+    }
+
+    .button-container button:active::before {
+      transform: translate(-50%, -50%) scale(1);
+      transition: 0s;
+    }
+    .error {
+      color: red;
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+  .main-image {
+    max-width: 60%;
+    height: auto;
+    display: table;
+    margin: 0 auto;
+    display: none;
+}
+.bookmark-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.bookmark-button .btn {
+  display: flex;
+  align-items: center;
+  background-color: #18488e; /* Customize as needed */
+  color: white;
+  padding: 20px 40px; /* Significantly increase padding for a larger button */
+  border-radius: 10px; /* Adjust border radius as needed */
+  text-transform: none;
+  font-size: 24px; /* Increase font size */
+  transition: background-color 0.3s ease;
+}
+
+.bookmark-button .btn:hover {
+  background-color: #123366; /* Customize hover color as needed */
+}
+
+.bookmark-button .btn i.material-icons {
+  margin-right: 12px; /* Increase margin for better spacing */
+  font-size: 32px; /* Increase icon size */
+}
+.link-container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+        .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .link-item:hover {
+            background-color: #f1f1f1;
+        }
+        .link-item a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .link-item img {
+    width: 40px; /* Decrease the width of the favicon */
+    height: 40px; /* Decrease the height of the favicon */
+    margin-right: 10px; /* Add less margin to the right */
+    border-radius: 50%;
+    object-fit: contain; /* Ensure the favicon fits within the circle */
+}
+
+.link-item .note-icon {
+    width: 40px; /* Decrease the width of the note icon */
+    height: 40px; /* Decrease the height of the note icon */
+    margin-right: 10px; /* Add less margin to the right */
+    border-radius: 50%;
+    object-fit: contain; /* Ensure the icon fits within the circle */
+}
+        .link-item .material-icons {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            border-radius: 50%;
+        }
+        .link-item span.link-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            flex-grow: 1;
+        }
+        .link-item button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-left: 5px;
+        }
+        .link-item button i {
+            font-size: 24px;
+            color: #d32f2f;
+        }
+     .offline-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffcc00; /* Adjust color as needed */
+    color: #333; /* Adjust text color as needed */
+    text-align: center;
+    padding: 10px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Ensure it appears above other elements */
+    transition: transform 0.3s ease-in-out;
+    transform: translateY(100%); /* Initially hidden */
+}
+
+/* Show the banner */
+.offline-banner.show {
+    transform: translateY(0);
+}
+
+        .dark-mode-switch {
+            position: fixed;
+            bottom: 50px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            z-index: 1000; /* Ensure the switch appears above the offline banner */
+         iframe {
+            aspect-ratio: 16/9;
+            width: 100%;}   
+        }
+  </style>
+</head>
+<body>
+<!-- Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Google Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+<script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+<script>
+let linkTypeSelect;
+let iconSourceSelect;
+
+document.addEventListener('DOMContentLoaded', function() {
+    linkTypeSelect = document.getElementById('link-type');
+    iconSourceSelect = document.getElementById('icon-source');
+    
+    iconSelectionContainer = document.getElementById('icon-selection-container');
+    cardPanel = document.querySelector('.card-panel');
+    const additionalFields = document.getElementById('additional-fields');
+    const iconSourceContainer = document.getElementById('icon-source-container');
+    const noteField = document.getElementById('note-field');
+    const introField = document.getElementById('intro-field');
+    const urlField = document.getElementById('url-field');
+    const phoneNumberField = document.getElementById('phone-number-field');
+    const easyMDE = new EasyMDE({
+    element: document.getElementById('intro-content'),
+    autoDownloadFontAwesome: true,
+    scrollbarStyle: null,
+    promptURLs: true,
+    toolbar: [
+      "bold", "italic", "heading", "|",
+      "unordered-list", "table", "horizontal-rule", "|",
+      "link", "image", "preview"
+    ],
+    placeholder: "Write your post here... (max 1000 characters)",
+    maxLength: 1000
+   
+
+
+    
+  });
+  var urlInput = document.getElementById('new-link-url');
+  var uclearBtn = document.getElementById('u-clear-btn');
+  var wclearBtn = document.getElementById('w-clear-btn');
+  var textInput = document.getElementById('new-link-name');
+  var phoneInput = document.getElementById('phone-number');
+  var tclearBtn = document.getElementById('t-clear-btn');
+  var pclearBtn = document.getElementById('p-clear-btn');
+  var winInput = document.getElementById('window-url');
+    
+  
+    urlInput.addEventListener('input', function() {
+    uclearBtn.style.display = this.value ? 'block' : 'none';
+  });
+  
+    winInput.addEventListener('input', function() {
+    wclearBtn.style.display = this.value ? 'block' : 'none';
+  });
+  
+    textInput.addEventListener('input', function() {
+    tclearBtn.style.display = this.value ? 'block' : 'none';
+  });
+  
+    phoneInput.addEventListener('input', function() {
+    pclearBtn.style.display = this.value ? 'block' : 'none';
+  });
+
+  tclearBtn.addEventListener('click', function() {
+    textInput.value = '';
+    this.style.display = 'none';
+    textInput.focus();
+  });
+  
+  wclearBtn.addEventListener('click', function() {
+    winInput.value = '';
+    this.style.display = 'none';
+    winInput.focus();
+  });
+  
+    pclearBtn.addEventListener('click', function() {
+    phoneInput.value = '';
+    this.style.display = 'none';
+    phoneInput.focus();
+  });
+  
+    uclearBtn.addEventListener('click', function() {
+    urlInput.value = '';
+    this.style.display = 'none';
+    urlInput.focus();
+  });
+
+    
+  
+    function handleLinkTypeChange() {
+        const linkType = linkTypeSelect.value;
+        console.log(`Link type changed to: ${linkType}`);  // Debug log
+        clearForm();
+        showFields(linkType);
+    }
+
+    function handleIconSourceChange() {
+        const iconSource = iconSourceSelect.value;
+        console.log(`Icon source changed to: ${iconSource}`);  // Debug log
+        document.getElementById('new-icon-url').style.display = 'none';
+        document.getElementById('new-link-icon').style.display = 'none';
+        if (iconSource === 'link') {
+            document.getElementById('new-icon-url').style.display = 'block';
+        } else if (iconSource === 'selection') {
+            document.getElementById('new-link-icon').style.display = 'block';
+        }
+    }
+    
+    document.addEventListener('click', function(event) {
+    if (!iconDropdown.contains(event.target)) {
+        // Hide the dropdown (e.g., set display to 'none')
+        iconDropdown.style.display = 'none';
+    }
+});
+
+    document.addEventListener('click', function(event) {
+    if (iconSelect.contains(event.target)) {
+        iconDropdown.style.display = 'block';
+    }
+});
+    
+    if (!iconSourceSelect) {
+      console.error('Element with ID "icon-source" not found');
+      return;
+    }
+
+    if (!iconSelectionContainer) {
+      console.error('Element with ID "icon-selection-container" not found');
+      return;
+    }
+
+    if (!cardPanel) {
+      console.error('Element with class "card-panel" not found');
+      return;
+    }
+
+    function showIconSelectionPanel() {
+      iconSelectionContainer.style.display = 'block';
+      cardPanel.style.display = 'block';
+      
+      // Apply the same styling as new-link-name input
+      cardPanel.style.fontSize = '16px';
+      cardPanel.style.padding = '8px';
+      cardPanel.style.border = '1px solid #ccc';
+      cardPanel.style.borderRadius = '4px';
+      cardPanel.style.outline = 'none';
+      cardPanel.style.maxWidth = '500px';
+      cardPanel.style.margin = '0 auto';
+      cardPanel.style.backgroundColor = 'white';
+      cardPanel.style.boxShadow = 'none';
+    }
+
+    function hideIconSelectionPanel() {
+      iconSelectionContainer.style.display = 'none';
+      cardPanel.style.display = 'none';
+    }
+
+    // Modify the handleIconSourceChange function
+    function handleIconSourceChange() {
+      const iconSource = iconSourceSelect.value;
+      console.log(`Icon source changed to: ${iconSource}`);  // Debug log
+      
+      const newIconUrl = document.getElementById('new-icon-url');
+      const newLinkIcon = document.getElementById('new-link-icon');
+      
+      if (!newIconUrl || !newLinkIcon) {
+        console.error('Elements "new-icon-url" or "new-link-icon" not found');
+        return;
+      }
+      
+      newIconUrl.style.display = 'none';
+      newLinkIcon.style.display = 'none';
+      hideIconSelectionPanel(); // Hide by default
+
+      if (iconSource === 'link') {
+        newIconUrl.style.display = 'block';
+      } else if (iconSource === 'selection') {
+        newLinkIcon.style.display = 'block';
+        showIconSelectionPanel(); // Show when "Select an icon" is chosen
+      }
+    }
+
+    // Add event listener to iconSourceSelect
+    iconSourceSelect.addEventListener('change', handleIconSourceChange);
+
+    console.log('Event listener added to iconSourceSelect');
+  
+
+
+    function hideAllFields() {
+        additionalFields.style.display = 'none';
+        iconSourceContainer.style.display = 'none';
+        noteField.style.display = 'none';
+        introField.style.display = 'none';
+        urlField.style.display = 'none';
+        phoneNumberField.style.display = 'none';
+    }
+
+    function showFields(linkType) {
+        hideAllFields();
+        switch (linkType) {
+            case "website":
+            case "email":
+            case "other":
+            case "location":
+                additionalFields.style.display = 'block';
+                iconSourceContainer.style.display = 'block';
+                document.getElementById('new-link-url').style.display = 'block';
+                break;
+            case "phone":
+            case "whatsapp":
+            case "viber":
+                additionalFields.style.display = 'block';
+                phoneNumberField.style.display = 'block';
+                iconSourceContainer.style.display = 'block';
+                document.getElementById('new-link-url').style.display = 'none';
+                break;
+            case "note":
+                noteField.style.display = 'block';
+                additionalFields.style.display = 'block';
+                document.getElementById('new-link-url').style.display = 'none';
+              break;
+            case "intro":
+                introField.style.display = 'block';
+                additionalFields.style.display = 'block';
+                document.getElementById('new-link-url').style.display = 'none';
+              break;
+            case "window":
+            case "pdf":
+            case "payment":
+                urlField.style.display = 'block';
+                additionalFields.style.display = 'block';
+                document.getElementById('new-link-url').style.display = 'none';
+                break;
+            default:
+                break;
+        }
+    }
+
+    function getTextValue(elementId, maxLength) {
+        const value = document.getElementById(elementId).value.trim();
+        return value.substring(0, maxLength);
+    }
+    
+
+function isMobileDevice() {
+  return 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 0 ||
+         window.matchMedia('(max-width: 768px)').matches;
+}
+
+if (isMobileDevice()) {
+  alert("mobile");
+} else {
+  alert("desktop");
+}    
+    
+function getRandomColor() {
+  const iconSource = iconSourceSelect.value;
+  if (iconSource === 'selection') {
+            const displayedText = colorSelect.textContent;
+            console.log("Displayed text:", displayedText);
+            const color = displayedText;
+            return color;            
+        }
+  // Generate random RGB values
+  const r = Math.floor(Math.random() * 256);
+  const g = Math.floor(Math.random() * 256);
+  const b = Math.floor(Math.random() * 256);
+  // Convert RGB to hexadecimal format
+  const color = '#' + r.toString(16) + g.toString(16) + b.toString(16);
+  return color;
+}
+
+function getIconData() {
+  const linkType = linkTypeSelect.value;
+  const iconSource = iconSourceSelect.value;
+  switch (iconSource) {
+    case 'default':
+      // Return default icon URLs based on link type
+      switch (linkType) {
+        case 'website':
+        case 'other':
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg';
+        case 'email':
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg';
+        case 'phone':
+        case 'whatsapp':
+        case 'viber':
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/call/default/48px.svg';
+        case 'location':
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/location_on/default/48px.svg';
+        case 'file':
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/folder/default/48px.svg';
+        case 'window':
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/web_asset/default/48px.svg';
+        case 'pdf':
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/picture_as_pdf/default/48px.svg';
+        case 'note':
+        case 'intro':
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/note/default/48px.svg';
+        default:
+          // Generate a random color and apply it to the material icon
+          const randomColor = getRandomColor();
+          return `<span class="material-icons md-random" style="color: ${randomColor}">random_icon</span>`;
+      }
+    case 'favicon':
+      let url = document.getElementById('new-link-url').value.trim();
+      if (linkType === "location") {
+         return "https://maps.google.com";         
+      }
+      if (linkType === "phone" || linkType === "whatsapp" || linkType === "viber" ) {
+         return "https://contacts.google.com";         
+      }
+      if (!/^https?:\/\//.test(url)) {
+        url = 'https://' + url;
+      } 
+      const hostname = new URL(url).hostname;
+      return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+    case 'link':
+      return document.getElementById('new-icon-url').value.trim();
+    case 'selection':
+      selectedOne = document.getElementById('search').value.trim()
+      if (selectedOne === "") {
+      return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg';
+      }
+      else {
+      return "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/" + selectedOne + "/default/48px.svg";
+      }
+      
+    default:
+      return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg';
+  }
+}
+    function stripProtocolFromUrl(url) {
+  // Array of prefixes to strip
+  const prefixes = [
+    'https://', 'http://',  // Web protocols
+    'mailto:',             // Email
+    'tel:', 'viber://chat?number=', 'whatsapp://send?phone=',  // Phone-related
+    'file://',            // Local file
+  ];
+
+  // Use a regular expression to match and remove any of the prefixes
+  const prefixPattern = new RegExp('^(' + prefixes.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'i');
+  let strippedUrl = url.replace(prefixPattern, '');
+
+  // Further cleanup for specific types
+  if (url.startsWith('mailto:')) {
+    return strippedUrl;  // Email is good as is after removing 'mailto:'
+  } else if (url.startsWith('tel:') || url.startsWith('viber://') || url.startsWith('whatsapp://')) {
+    return strippedUrl.replace(/[?=]/g, '');  // Remove any query parameters
+  } else {
+    try {
+      const { hostname, pathname } = new URL(url);
+      return (hostname + pathname).replace(/\/$/, '');
+    } catch (e) {
+      return strippedUrl;
+    }
+  }
+}
+
+function formatUrl(url, allowCustomProtocol = false) {
+  // Check if URL is empty
+  if (!url) return '';
+
+  // Remove leading/trailing spaces
+  url = url.trim();
+
+  // Remove spaces
+  url = url.replace(/\s+/g, '');
+
+  // Lowercase the entire URL
+  url = url.toLowerCase();
+
+  // Split URL into parts (protocol, domain, path)
+    const urlParts = url.split(/[:.]/);
+
+
+  // Check if the first part is a protocol (optional)
+  let protocol = '';
+  if (urlParts[0].match(/^(http|https|ftp)$/)) {
+    protocol = urlParts.shift() + ':'; // Extract and remove protocol
+  }
+
+  // Remove leading dot from domain (if present)
+  urlParts[0] = urlParts[0].replace(/^\./, '');
+
+  // Join the formatted parts back into a URL
+  url = protocol + urlParts.join('.');
+
+  // If custom protocols are not allowed, enforce https://
+  if (!allowCustomProtocol && !protocol) {
+    url = 'https://' + url;
+  }
+
+  return url;
+}
+
+function validatePdf(url, allowCustomProtocol = false) {
+  // Validate URL format using the previous function
+  if (!formatUrl(url, allowCustomProtocol)) {
+    return false;
+  }
+
+  // Check if URL ends with ".pdf" (case-insensitive)
+  return url.toLowerCase().endsWith('.pdf');
+}
+   function replaceSlash(targetStr){
+    var index=targetStr.indexOf("\\");
+    while(index >= 0){
+        targetStr=targetStr.replace("\\","");
+        index=targetStr.indexOf("\\");
+    }
+    return targetStr;
+}
+    function validateEmail(email) {
+  // Check for blank email
+  if (!email || email.trim() === "") {
+    errorMessage = "Please enter a valid email address";
+    return false;
+  }
+
+  // Check for valid email format
+  var re = /\S+@\S+\.\S+/;
+  return re.test(email);
+}
+    function validatePhone(phone) {
+  // Check for blank phone number
+  if (!phone || phone.trim() === "") {
+    errorMessage = "Please enter a phone number";
+    return false;
+  }
+
+  // Regular expression for phone number format (allows + sign and numbers)
+  const re = /^\+?[0-9]+$/;
+  return re.test(phone);
+}
+
+
+function validateUrl(url) {
+            var urlregex = new RegExp(
+            "^(http|https|ftp)\://([a-zA-Z0-9\.\-]+(\:[a-zA-Z0-9\.&amp;%\$\-]+)*@)*((25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])|localhost|([a-zA-Z0-9\-]+\.)*[a-zA-Z0-9\-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(\:[0-9]+)*(/($|[a-zA-Z0-9\.\,\?\'\\\+&amp;%\$#\=~_\-]+))*$");
+            return urlregex.test(url);
+        }
+
+function validatePUrl(url) {
+
+  // PayPal.me link pattern: paypal.me/username
+   const paypalRegex = /^(?:https?:\/\/)?paypal\.me\/(?:[a-zA-Z0-9._-]{1,50}|\{[a-zA-Z0-9._-]{1,50}\})$/i;
+
+  const regex = new RegExp(/^(?:bitcoin:)?(bc1|[13])[a-km-zA-HJ-NP-Z1-9]{25,34}$/i);
+  
+
+  if (paypalRegex.test(url)) {
+    return true; 
+  }
+  if (regex.test(url) == true) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+function validateLoc(locUrl) {
+  // Check for empty or blank string
+  if (!locUrl || locUrl.trim() === "") {
+    errorMessage = "Please enter a location";
+    alert(errorMessage);
+    return; // Exit the function early
+  }
+
+  // Regular expressions for different location formats
+  const urlRegex = /^(?:https?:\/\/)?(?:www\.)?(?:maps\.|openstreetmap\.)(?:\w+\/?)+.*$/i; // Case-insensitive
+
+
+  const geoRegex = /^geo:[-+]?\d+\.\d+,\s*[-+]?\d+\.\d+$/;
+
+  // Check for URL starting with maps, https://maps, https://openstreetmap, or openstreetmap
+  if (urlRegex.test(locUrl)) {
+    return locUrl; // Valid URL, no need for alert
+  }
+
+  // Check for geo: followed by valid coordinates
+  if (geoRegex.test(locUrl)) {
+    return locUrl; // Valid geo:, no need for alert
+  }
+
+  // All checks failed, display alert for invalid format
+  errorMessage = "Invalid location format. Only links starting with 'geo:', 'maps.', or 'openstreetmap.' are allowed.";
+  alert(errorMessage);
+}
+
+
+function transformGeo(locUrl) {
+  // Check for empty or blank string
+  if (!locUrl || locUrl.trim() === "") {
+    return locUrl; // Indicate no transformation possible
+  }
+  // Replace a single space between digits with a comma
+  const cleanLocUrl = locUrl.replace(/(\d)( )(\d)/, "$1,$3"); // Capture digits, space, digits, replace with $1,$3
+  if (locUrl.indexOf(',') !== -1) {
+    // Comma exists, just remove the space
+    newCleanLocUrl = locUrl.replace(/\s(?=\d)/g, "");
+  } else {
+    // No comma, replace a single space between digits with a comma
+    newCleanLocUrl = locUrl.replace(/(\d)( )(\d)(?!,)/, "$1,$3");
+  }
+
+
+
+  // Split coordinates using either comma (,) or slash (/) as delimiter
+  const coordinates = newCleanLocUrl.split(/[,/]/);
+
+  // Check for valid coordinate format (length 2)
+  if (coordinates.length !== 2) {
+    return locUrl; // Invalid format if not two parts
+  }
+
+  // Validate each coordinate using a simplified regex
+  const coordRegex = /^-?\d+\.?\d*$/; // Allows optional decimal
+  if (!coordRegex.test(coordinates[0]) || !coordRegex.test(coordinates[1])) {
+    return locUrl; // Invalid format if coordinates are not numbers with optional decimal
+  }
+
+  // Valid coordinates, return geo: URL
+  return `geo:${coordinates.join(',')}`;
+}
+
+    function formatPhoneNumber(phone) {
+  if (!phone) return '';
+  
+  // Remove any non-digit characters except '+'
+  phone = phone.replace(/[^\d+]/g, '');
+  
+  // If the number starts with '00', replace it with '+'
+  if (phone.startsWith('00')) {
+    phone = '+' + phone.substring(2);
+  } 
+  // Otherwise, if it doesn't start with '+', add '+'
+  else if (!phone.startsWith('+')) {
+    phone = '+' + phone;
+  }
+  
+  // Remove any 'tel:' prefix if the user added it
+  phone = phone.replace(/^tel:/, '');
+  
+  return phone;
+}
+// Function to extract video ID from YouTube link
+    function getYouTubeId(link) {
+      var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+      var match = link.match(regExp);
+      return (match && match[7].length == 11) ? match[7] : "a0jg5stzlfe";
+      // TODO change the a0jg5stzlfe default yt id if null or undefined
+    }
+    function showError(type, message) {
+        const errorElement = type === 'note' || type === 'intro' ? 'note-error' : 'name-error';
+        document.getElementById(errorElement).textContent = message;
+    }
+
+    function clearError(type) {
+        const errorElement = type === 'note' || type === 'intro' ? 'note-error' : 'name-error';
+        document.getElementById(errorElement).textContent = '';
+    }
+
+    function displayCreatedBookmark(linkData) {
+        var finalData = JSON.stringify(linkData, null, 2).replace(/\\/g, "");
+        document.getElementById('created-bookmark').textContent = finalData;
+        //document.getElementById('created-bookmark').textContent = JSON.stringify(linkData, null, 2); // previous version. new one escapes backlashes to render properly the html from Post
+    }
+
+function saveBookmark(linkData) {
+    // Validate linkData before saving
+    if (!linkData[1] || !linkData[2] || !linkData[3]) {
+        console.error('Invalid bookmark data:', linkData);
+        return;
+    }
+
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    bookmarks.push(linkData);
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    console.log('Bookmarks saved:', bookmarks);  // Debug log
+
+    links = bookmarks;
+    renderLinks();
+}
+
+
+
+    
+    window.cancelAddLink = function() {
+     clearForm();
+     hideAdd();
+     renderLinks();
+   };
+
+    function clearForm() {
+        document.getElementById('new-link-url').value = '';
+        document.getElementById('new-link-name').value = '';
+        document.getElementById('phone-number').value = '';
+        document.getElementById('note-content').value = '';
+        document.getElementById('window-url').value = '';
+        document.getElementById('icon-source').value = 'default';
+        document.getElementById('new-icon-url').value = '';
+        document.getElementById('new-link-icon').value = '';
+        easyMDE.value('');
+        hideAllFields();
+        clearError();
+    }
+
+    window.addLink = function() {
+        const linkType = linkTypeSelect.value;
+        console.log(`Adding link of type: ${linkType}`);  // Debug log
+        let linkData = [];
+        let errorMessage = "";
+        let name;
+
+        switch (linkType) {
+            case "website":
+                const url = formatUrl(document.getElementById('new-link-url').value.trim());
+                const isValidUrl = validateUrl(url);
+                if (!isValidUrl) {
+                  // Display error message
+                  alert("Please enter a URL");
+                  break;
+                }
+                name = getTextValue('new-link-name', 30) || stripProtocolFromUrl(url);
+                linkData = [linkType, url, name, getIconData(), getRandomColor()];
+                break;
+            case "email":
+                const email = document.getElementById('new-link-url').value.trim();
+                const isValidEmail = validateEmail(email);
+
+                if (!isValidEmail) {
+                  // Display error message
+                  alert("Please enter an email address");
+                  break;
+                }
+                name = getTextValue('new-link-name', 30) || stripProtocolFromUrl(email);
+                linkData = [linkType, `mailto:${email}`, name, getIconData(), getRandomColor()];
+                break;
+            case "phone":
+                const phone = formatPhoneNumber(document.getElementById('phone-number').value.trim());
+                const isValidPhone = validatePhone(phone);
+
+                if (!isValidPhone) {
+                  // Display error message
+                  alert("Please enter a phone number");
+                  break;
+                }              
+                name = getTextValue('new-link-name', 30) || phone;  // Use raw number as name
+                linkData = [linkType, `tel:${phone}`, name, getIconData(), getRandomColor()];
+                break;
+            case "whatsapp":
+                const waNumber = formatPhoneNumber(document.getElementById('phone-number').value.trim());
+                const isValidWA = validatePhone(waNumber);
+
+                if (!isValidWA) {
+                  // Display error message
+                  alert("Please enter a phone number");
+                  break;
+                }         
+                name = getTextValue('new-link-name', 30) || waNumber;  // Use raw number as name
+                wasNumber = waNumber.replace(/^\+/, '');  // Remove '+' for WhatsApp
+                linkData = [linkType, `https://wa.me/${wasNumber}`, name, getIconData(), getRandomColor()];
+                break;
+            case "viber":
+                const viberNumber = formatPhoneNumber(document.getElementById('phone-number').value.trim());
+                const isValidVi = validatePhone(viberNumber);
+
+                if (!isValidVi) {
+                  // Display error message
+                  alert("Please enter a phone number");
+                  break;
+                }            
+                name = getTextValue('new-link-name', 30) || viberNumber;  // Use raw number as name
+                viberrNumber = viberNumber.replace(/^\+/, '');  // Remove '+' for Viber
+                linkData = [linkType, `viber://chat?number=${viberrNumber}`, name, getIconData(), getRandomColor()];
+                break;
+            case "note":
+                const noteContent = document.getElementById('note-content').value.trim();
+                if (
+  // Check for blank note
+  (!noteContent || noteContent.trim() === "") ||
+
+  // Check for note length exceeding 300 characters (optional)
+  (noteContent.length > 300) ||
+
+  // Check for at least one non-space character
+  !/\S/.test(noteContent)
+) {
+  // Set error message if any validation fails
+  alert("Please enter a note");  // Adjust based on specific validation failures
+  // ... (optional: handle specific error messages based on the failing condition)
+}
+                name = getTextValue('new-link-name', 30) || "Note"; 
+                linkData = [linkType, noteContent, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/short_text/default/48px.svg", getRandomColor()];
+                break;
+        case "intro":
+           const introContent = easyMDE.value().trim();
+           if (introContent.length > 1000) {
+           alert("Intro content exceeds 1000 characters") 
+           break;
+           }
+           if (introContent.length < 2) {
+           alert("Intro content is too short") 
+           break;
+           }
+           showdown.setFlavor('github');
+           var converter = new showdown.Converter();
+           converter.setOption('backslashEscapesHTMLTags', 'true');
+              text      = introContent,
+              html      = converter.makeHtml(text);
+           name = getTextValue('new-link-name', 30) || "Post";
+           linkData = [linkType, html, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/article/default/48px.svg", getRandomColor()];
+           break;
+            case "window":
+                const winUrl = formatUrl(document.getElementById('window-url').value.trim());
+                const isValidIUrl = validateUrl(winUrl);
+                if (!isValidIUrl) {
+                  // Display error message
+                  alert("Please enter a URL");
+                  break;
+                  }
+                if ((winUrl.includes("youtu.be")) ||  (winUrl.includes("youtube.com"))) {
+                   ytId = getYouTubeId(winUrl);
+                   name = getTextValue('new-link-name', 30) || "YouTube screen";
+                   linkData = ["YouTube", ytId, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/youtube/default/48px.svg", getRandomColor()];
+                   break;
+                }
+                else {
+                   windowUrl = winUrl;
+                   name = getTextValue('new-link-name', 30) || "iFrame";
+                   linkData = [linkType, windowUrl, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/youtube_activity/default/48px.svg", getRandomColor()];
+                   break;
+                }
+            case "pdf":
+                const pdfUrl = formatUrl(document.getElementById('window-url').value.trim());
+                const isValidPdf = validatePdf(pdfUrl);
+                if (!isValidPdf) {
+                  // Display error message
+                  alert("Please enter a URL to a .pdf");
+                  break;
+                }           
+                name = getTextValue('new-link-name', 30) || "pdf";
+                linkData = [linkType, pdfUrl, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/picture_as_pdf/default/48px.svg", getRandomColor()];
+                break;
+            case "payment":
+                const payUrl = document.getElementById('window-url').value.trim();
+                const isValidPUrl = validatePUrl(payUrl);
+                if (!isValidPUrl) {
+                  // Display error message
+                  alert("Please enter a paypal or bitcoin address");
+                  break;
+                }
+                if (payUrl.startsWith("paypal.me")) {
+                  pUrl = "https://" + payUrl;
+                }  
+                else if (payUrl.startsWith("https://paypal.me")) {
+                  pUrl = payUrl;
+                }  
+                else if (payUrl.startsWith("bitcoin:")) {
+                  pUrl = payUrl;
+                }  
+                else {
+                  pUrl = "bitcoin:" + payUrl;
+                }
+                name = getTextValue('new-link-name', 30) || "Paylink";
+                linkData = [linkType, pUrl, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/attach_money/default/48px.svg", getRandomColor()];
+                break;    
+            case "location":
+                const locUrl = transformGeo(document.getElementById('new-link-url').value.trim());
+                const isValidLoc = validateLoc(locUrl);
+                if (!isValidLoc) {
+                  // Display error message
+                  alert("Please enter a location link");
+                  break;
+                }
+                name = getTextValue('new-link-name', 30) || "Location";
+                linkData = [linkType, locUrl, name, getIconData(), getRandomColor()];
+                break;
+            case "other":
+                const otherUrl = formatUrl(document.getElementById('new-link-url').value.trim(), true);
+                if (!otherUrl) alert("Please enter a URL");
+                linkData = [linkType, otherUrl, getTextValue('new-link-name', 30), getIconData(), getRandomColor()];
+                break;
+            default:
+                alert("start by selecting a bookmark type")
+                break;
+        }
+
+        if (errorMessage) {
+            showError(linkType, errorMessage);
+            return [];
+        } else {
+            clearError(linkType);
+            displayCreatedBookmark(linkData);
+            saveBookmark(linkData);
+            return linkData;
+        }
+    };
+
+    linkTypeSelect.addEventListener('change', handleLinkTypeChange);
+    iconSourceSelect.addEventListener('change', handleIconSourceChange);
+    document.getElementById('new-link-url').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter' || event.keyCode === 13) {
+    event.preventDefault(); // Prevent form submission or newline
+    window.addLink();
+  }
+  });
+  document.getElementById('new-link-name').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter' || event.keyCode === 13) {
+    event.preventDefault(); // Prevent form submission or newline
+    window.addLink();
+  }
+});
+document.getElementById('phone-number').addEventListener('keydown', function(event) {
+  if (event.key === 'Enter' || event.keyCode === 13) {
+    event.preventDefault(); // Prevent form submission or newline
+    window.addLink();
+  }
+  });
+});
+</script>
+    
+    
+    <script>
+    let links = [];
+    const linkIcon = 'https://fonts.gstatic.com/s/i/materialicons/open_in_new/v15/24px.svg';
+    const mailIcon = 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
+    const phoneIcon = 'https://fonts.gstatic.com/s/i/materialicons/call/v15/24px.svg';
+    const fileIcon = 'https://fonts.gstatic.com/s/i/materialicons/insert_drive_file/v15/24px.svg';
+    const noteIcon = 'https://fonts.gstatic.com/s/i/materialicons/note/v15/24px.svg';
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const savedLinks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    console.log('Saved Links:', savedLinks);  // Debug log
+    links = savedLinks;  // Initialize links array
+    renderLinks();  // Render the bookmarks
+        detectSystemTheme();
+        checkConnection();
+        //loadLinks();
+    });
+
+    function checkConnection() {
+        const offlineBanner = document.getElementById('offline-banner');
+        if (!navigator.onLine) {
+            document.getElementById('offline-banner').classList.add('show');
+        }
+        window.addEventListener('online', () => {
+            document.getElementById('offline-banner').classList.remove('show');
+        });
+        window.addEventListener('offline', () => {
+            document.getElementById('offline-banner').classList.add('show');
+        });
+    }
+
+function loadLinks() {
+    const savedLinks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+            console.log('Saved Links:', savedLinks);  // Debug log
+            links = savedLinks;
+            renderLinks();
+    
+}
+
+function addLink() {
+    const urlInput = document.getElementById('new-link-url');
+    const nameInput = document.getElementById('new-link-name');
+    const iconFile = document.getElementById('new-link-icon').files[0];
+
+    let url = urlInput.value.trim();
+    let name = nameInput.value.trim();
+
+    // Check if the URL contains a protocol
+    const protocolPattern = /^[a-zA-Z]+:/;
+    const isCustomProtocol = protocolPattern.test(url);
+
+    if (!isCustomProtocol && !url.startsWith('https://')) {
+        // Check for email links
+        if (url.includes('@')) {
+            url = "mailto:" + url;
+        } else if (/^[0-9+\s]+$/.test(url)) { // Check for tel links
+            url = "tel:" + url;
+        } else if (url.startsWith('file:')) {
+            // Handle local file links
+            // Assuming the file exists, bypass security to access local storage
+            const filename = url.substring(7); // Remove "file://" from the URL
+            url = 'file://' + filename;
+        } else {
+            url = "https://" + url;
+        }
+    }
+
+    // If name is empty or only spaces, use URL as the title
+    if (!name) {
+        // Remove protocol handler from the URL
+        const urlWithoutProtocol = url.replace(/^[a-zA-Z]+:\/\//, '');
+        name = urlWithoutProtocol;
+    }
+
+    let iconUrl;
+    let iconColor;
+        if (isCustomProtocol) {
+            // If it's a custom protocol, determine iconUrl based on the protocol
+            if (url.startsWith('mailto:')) {
+                iconUrl = mailIcon;
+            } else if (url.startsWith('tel:')) {
+                iconUrl = phoneIcon;
+            } else if (url.startsWith('file://')) {
+                iconUrl = fileIcon;
+            } else {
+                iconUrl = linkIcon;
+            }
+        } else {
+            // If it's not a custom protocol, fetch favicon
+            const hostname = new URL(url).hostname;
+            iconUrl = getIconUrl(url, hostname);
+            iconColor = getRandomColor();
+            // Push the new link with iconUrl to links array
+            links.push({ url, name, iconUrl, iconColor });
+            // Render links to UI
+            renderLinks();
+           
+        }
+
+    console.log(links);
+    // Clear the form inputs and hide the form
+    urlInput.value = '';
+    nameInput.value = '';
+    hideForm();
+    saveLinks();
+}
+
+
+    function downloadPage() {
+        const linkContainer = document.querySelector('.bookmarks-container');
+        const linksHTML = linkContainer.innerHTML;
+        const newName = prompt('Enter the name of your page:');
+
+const currentState = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${newName}</title>
+          <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M0 0h24v24H0z'/%3E%3Cpath fill='%2300bcd4' d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM15 3v2h2.59L8.7 13.89l1.41 1.41L19 6.41V9h2V3h-6z'/%3E%3C/svg%3E" type="image/svg+xml">    
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <style>
+    body {
+      font-family: Roboto, sans-serif;
+      margin: 20px;
+      display: flex; 
+      min-height: 100vh; 
+      flex-direction: column;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      background-color: #fff; /* Default background */
+      color: #333; /* Default text color */
+      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    }
+main { flex: 1 0 auto; }
+.bookmarks-container 
+.top-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px; /* Add some spacing between bookmarks */
+      padding: 16px; /* Add padding for better spacing */
+    }
+
+    .top-bookmark {
+      background-color: #f5f5f5;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      margin-bottom: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      border-radius: 4px;
+    }
+
+    .top-bookmark .icon-wrapper,
+    .bookmark .icon-wrapper {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .top-bookmark .icon-container,
+    .bookmark .icon-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px; /* Standard width */
+      height: 56px; /* Standard height */
+      border-radius: 50%;
+      transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+      margin-right: 16px;
+      background-color: #fff; /* Light background */
+    }
+
+    .top-bookmark .icon-container:hover,
+    .bookmark:hover .icon-container {
+      background-color: #f0f0f0; /* Light hover effect */
+      transform: scale(1.1); /* Enlarge container on hover */
+    }
+
+    .bookmark {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background-color: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+      position: relative;
+      margin-bottom: 8px;
+    
+    }
+
+    .bookmark:hover {
+      background-color: #f5f5f5; /* Lighten background on hover */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Increase shadow on hover */
+    }
+
+    .bookmark.active {
+      background-color: #f0f0f0; /* Lighter background for active bookmark */
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* Increase shadow for active state */
+    }
+
+    .bookmark:last-child {
+      border-bottom: none;
+    }
+
+    .bookmark .bookmark-title {
+      font-weight: bold;
+      text-align: left;
+      flex: 1;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .bookmark:hover .bookmark-title,
+    .bookmark .icon-wrapper:hover .bookmark-title {
+      transform: scale(1.02); /* Slightly enlarge title on hover */
+    }
+
+    .bookmark-icon {
+      font-size: 36px; /* Increase icon size */
+      color: #888; /* Material Design muted color */
+      transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    .bookmark:hover .bookmark-icon {
+      color: #333; /* Darken icon color on hover */
+    }
+
+    .bookmark.active .icon-container {
+      background-color: #1976d2; /* Material Design primary blue for active state */
+      box-shadow: 0 2px 4px rgba(25, 118, 210, 0.4); /* Add shadow to active icon */
+    }
+
+    .bookmark.active .bookmark-icon {
+      color: #fff; /* White icon for active state */
+    }
+
+    /* Custom colors for specific icons */
+    .bookmark[data-link="show-content"]:hover .icon-container {
+      background-color: rgba(13, 71, 161, 0.1); /* Light blue for info icon */
+    }
+
+    .bookmark[data-link="show-content"]:hover .bookmark-icon {
+      color: #0d47a1; /* Darker blue for info icon */
+    }
+
+    .bookmark[data-link^="https://"]:hover .icon-container {
+      background-color: rgba(46, 125, 50, 0.1); /* Light green for external link */
+    }
+
+    .bookmark[data-link^="https://"]:hover .bookmark-icon {
+      color: #2e7d32; /* Green for external link icon */
+    }
+
+    .delete-icon {
+      color: #f44336; /* Material Design error color */
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%); /* Center icon vertically */
+      opacity: 0; /* Initially hide the delete icon */
+      transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Add transitions */
+      font-size: 24px; /* Slightly smaller than main icons */
+    }
+
+    .bookmark:hover .delete-icon,
+    .bookmark.long-press .delete-icon {
+      opacity: 1; /* Show delete icon on hover or long press */
+      transform: translateY(-50%) scale(1.1); /* Scale up while maintaining vertical center */
+    }
+
+    .delete-icon:hover {
+      color: #d32f2f; /* Darker red on hover */
+      cursor: pointer; /* Change cursor to indicate clickability */
+      transform: translateY(-50%) scale(1.2); /* Scale up more on direct hover */
+    }
+
+    .content {
+      display: none; /* Initially hide content divs */
+      padding: 16px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-top: 8px;
+    }
+
+    .menu-bookmarks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #ddd;
+    }
+
+    .menu-bookmarks .bookmark {
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-bookmarks .bookmark:hover {
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Specific Icons for Menu Items */
+    .bookmark[data-action="info"] .icon-container {
+      background-color: rgba(33, 150, 243, 0.1);
+    }
+
+    .bookmark[data-action="add-link"] .icon-container {
+      background-color: rgba(76, 175, 80, 0.1);
+    }
+
+    .bookmark[data-action="generate"] .icon-container {
+      background-color: rgba(255, 152, 0, 0.1);
+    }
+
+    .bookmark[data-action="toggle-mode"] .icon-container {
+      background-color: rgba(156, 39, 176, 0.1);
+    }
+
+    .bookmark[data-action="info"]:hover .bookmark-icon {
+      color: #2196f3;
+    }
+
+    .bookmark[data-action="add-link"]:hover .bookmark-icon {
+      color: #4caf50;
+    }
+
+    .bookmark[data-action="generate"]:hover .bookmark-icon {
+      color: #ff9800;
+    }
+
+    .bookmark[data-action="toggle-mode"]:hover .bookmark-icon {
+      color: #9c27b0;
+    }
+
+    /* Light and Dark Mode */
+    body.light-mode {
+      background-color: #E8DACC;
+      color: #ebe8e2;
+    }
+
+
+    body.dark-mode .bookmark, body.dark-mode .menu-bookmarks .bookmark {
+      background-color: #1e1e1e;
+      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    }
+
+    body.dark-mode .top-bookmark {
+      background-color: #333;
+    }
+
+    body.dark-mode .top-bookmark .icon-container, 
+    body.dark-mode .bookmark .icon-container {
+      background-color: #424242; /* Dark background in dark mode */
+    }
+
+    body.dark-mode .top-bookmark .icon-container:hover,
+    body.dark-mode .menu-bookmarks .bookmark:hover .icon-container {
+      background-color: #444; /* Slight hover effect in dark mode */
+    }
+
+    body.dark-mode .mode-indicator::after {
+      content: '🌚';
+    }
+
+    body.light-mode .top-bookmark .icon-container,
+    body.light-mode .menu-bookmarks .bookmark .icon-container {
+      background-color: #fff; /* Light background in light mode */
+    }
+
+    body.light-mode .top-bookmark .icon-container:hover,
+    body.light-mode .menu-bookmarks .bookmark:hover .icon-container {
+      background-color: #f0f0f0; /* Light hover effect */
+    }
+
+    body.light-mode .mode-indicator::after {
+      content: '🌞';
+    }
+
+    .mode-indicator::after {
+      font-size: 0.7em;
+      vertical-align: top;
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+      display: none;
+      background-color: #fff;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      padding: 8px 0;
+      position: absolute;
+      right: 10px;
+      z-index: 1000;
+    }
+
+    .menu-item {
+      padding: 8px 16px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .menu-item:hover {
+      background-color: #f5f5f5;
+    }
+
+    /* Color Modes */
+    .mode-indicator::after {
+      content: '🌞'; /* Default to light mode indicator */
+    }
+
+    /* System Default (initial state) */
+    @media (prefers-color-scheme: dark) {
+      body { background-color: #121212; color: #e0e0e0; }
+      .bookmark, .dropdown-menu { background-color: #1e1e1e; box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); }
+      .top-bookmark { background-color: #333; }
+      .top-bookmark .icon-container, .menu-item:hover { background-color: #424242; }
+      .mode-indicator::after { content: '🌚'; }
+    }
+
+/* Light Mode */
+body.light-mode { 
+  background-color: #fdf6e3; /* Solarized Base3 */
+  color: #657b83; /* Solarized Base00 */
+}
+body.light-mode .bookmark { 
+  background-color: #eee8d5; /* Solarized Base2 */
+}
+body.light-mode .top-bookmark { 
+  background-color: #eee8d5; /* Solarized Base2 */
+}
+body.light-mode .mode-indicator::after { 
+  content: '🌞'; 
+}
+body.light-mode .bookmark-icon, 
+body.light-mode .top-bookmark .bookmark-icon { 
+  color: #586e75; /* Solarized Base01 */
+}
+
+/* Dark Mode */
+body.dark-mode { 
+  background-color: #002b36; /* Solarized Base03 */
+  color: #839496; /* Solarized Base0 */
+}
+body.dark-mode .bookmark, 
+body.dark-mode .dropdown-menu { 
+  background-color: #073642; /* Solarized Base02 */
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); 
+}
+body.dark-mode .top-bookmark { 
+  background-color: #073642; /* Solarized Base02 */
+}
+body.dark-mode .top-bookmark .icon-container, 
+body.dark-mode .menu-item:hover { 
+  background-color: #586e75; /* Solarized Base01 */
+}
+body.dark-mode .mode-indicator::after { 
+  content: '🌚'; 
+}
+body.dark-mode .bookmark-icon, 
+body.dark-mode .top-bookmark .bookmark-icon { 
+  color: #93a1a1; /* Solarized Base1 */
+}      
+
+input {
+  padding-right: 30px; /* Space for the clear button */
+  font-size: 16px;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #999;
+  padding: 0;
+  line-height: 1;
+}
+
+.clear-btn:hover {
+  color: #333;
+}
+
+
+.clear-btn:hover {
+  color: #333;
+}
+
+#icon-select { 
+  cursor: pointer; 
+  background: none; 
+  border: none; 
+  padding: 0; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 56px; 
+  height: 56px; 
+  transition: background-color 0.3s; 
+}
+
+#icon-select:hover, #icon-select:focus { 
+  background-color: rgba(0, 0, 0, 0.1); 
+}
+        #search { 
+  flex-grow: 1; 
+  height: 56px; 
+  font-size: 16px; 
+  border: none; 
+  outline: none; 
+  margin-left: 10px; 
+  padding: 0 15px; 
+  width: 90%;
+  box-sizing: border-box;
+
+}
+
+#icon-name { 
+  margin: 0 15px 0 0; 
+  font-size: 1rem; 
+}
+
+#color-select { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 56px; 
+  height: 56px; 
+  font-size: 12px; 
+  font-weight: bold; 
+  color: white; 
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); 
+  cursor: pointer; 
+}
+
+.card-panel { 
+  position: relative; 
+  z-index: 1; 
+  display: flex; 
+  flex-direction: column; 
+  align-items: stretch; 
+  padding: 0; 
+}
+
+#icon-select .material-icons-outlined { font-size: 32px; }
+#icon-dropdown {
+  display: none;
+  position: fixed; /* Change from absolute to fixed */
+  z-index: 1000;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 8px 17px 2px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh; /* Set max height to 80% of viewport height */
+  overflow-y: auto;
+  padding: 10px;
+}
+
+#icon-selection-container {
+  position: relative;
+  padding-bottom: 80px; /* Space for the buttons */
+  overflow: hidden;
+}
+
+#icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 10px;
+}
+
+.icon { text-align: center; cursor: pointer; padding: 10px; border-radius: 4px; transition: background-color 0.3s; }
+.icon:hover { background-color: #f0f0f0; }
+.material-icons-outlined { font-size: 24px; }
+
+
+#color-select { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; font-size: 12px; font-weight: bold; color: white; text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); cursor: pointer; }
+        @media only screen and (min-width: 601px) {
+            .container { width: 85%; }
+        }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+.buttons-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 20px;
+  z-index: 1001;
+}
+
+.button-container button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #18488e;
+  color: white;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 24px;
+  overflow: hidden;
+  position: relative;
+  border: none;
+  cursor: pointer;
+}
+
+.button-container button i {
+  font-size: 36px;
+}
+
+.button-container button::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200%;
+  height: 200%;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s;
+}
+
+.button-container button:active::before {
+  transform: translate(-50%, -50%) scale(1);
+  transition: 0s;
+}
+    .input-field {
+      margin-bottom: 20px;
+      position: relative;
+  
+    }
+
+    .input-field input[type="url"],
+    .input-field input[type="text"],
+    .input-field input[type="tel"],
+    .input-field select,
+    .input-field textarea {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    .icon-source-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .icon-source-selector select {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: white;
+      appearance: auto;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .button-container button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #18488e;
+      color: white;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      overflow: hidden;
+      position: relative;
+      border: none;
+      cursor: pointer;
+    }
+
+    .button-container button i {
+      font-size: 36px;
+    }
+
+    .button-container button::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200%;
+      height: 200%;
+      background-color: rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      transition: transform 0.4s;
+    }
+
+    .button-container button:active::before {
+      transform: translate(-50%, -50%) scale(1);
+      transition: 0s;
+    }
+    .error {
+      color: red;
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+  .main-image {
+    max-width: 60%;
+    height: auto;
+    display: table;
+    margin: 0 auto;
+    display: none;
+}
+.bookmark-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.bookmark-button .btn {
+  display: flex;
+  align-items: center;
+  background-color: #18488e; /* Customize as needed */
+  color: white;
+  padding: 20px 40px; /* Significantly increase padding for a larger button */
+  border-radius: 10px; /* Adjust border radius as needed */
+  text-transform: none;
+  font-size: 24px; /* Increase font size */
+  transition: background-color 0.3s ease;
+}
+
+.bookmark-button .btn:hover {
+  background-color: #123366; /* Customize hover color as needed */
+}
+
+.bookmark-button .btn i.material-icons {
+  margin-right: 12px; /* Increase margin for better spacing */
+  font-size: 32px; /* Increase icon size */
+}
+.link-container {
+            width: 100%;
+            max-width: 600px;
+            margin-top: 20px;
+            padding: 0 10px;
+        }
+        .link-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 10px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        .link-item:hover {
+            background-color: #f1f1f1;
+        }
+        .link-item a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #333;
+            flex-grow: 1;
+            overflow: hidden;
+        }
+        .link-item img {
+    width: 40px; /* Decrease the width of the favicon */
+    height: 40px; /* Decrease the height of the favicon */
+    margin-right: 10px; /* Add less margin to the right */
+    border-radius: 50%;
+    object-fit: contain; /* Ensure the favicon fits within the circle */
+}
+
+.link-item .note-icon {
+    width: 40px; /* Decrease the width of the note icon */
+    height: 40px; /* Decrease the height of the note icon */
+    margin-right: 10px; /* Add less margin to the right */
+    border-radius: 50%;
+    object-fit: contain; /* Ensure the icon fits within the circle */
+}
+        .link-item .material-icons {
+            width: 50px;
+            height: 50px;
+            margin-right: 15px;
+            border-radius: 50%;
+        }
+        .link-item span.link-text {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 500;
+            flex-grow: 1;
+        }
+        .link-item button {
+            border: none;
+            background: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            margin-left: 5px;
+        }
+        .link-item button i {
+            font-size: 24px;
+            color: #d32f2f;
+        }
+     .offline-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ffcc00; /* Adjust color as needed */
+    color: #333; /* Adjust text color as needed */
+    text-align: center;
+    padding: 10px;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Ensure it appears above other elements */
+    transition: transform 0.3s ease-in-out;
+    transform: translateY(100%); /* Initially hidden */
+}
+
+/* Show the banner */
+.offline-banner.show {
+    transform: translateY(0);
+}
+
+        .dark-mode-switch {
+            position: fixed;
+            bottom: 50px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            z-index: 1000; /* Ensure the switch appears above the offline banner */
+         iframe {
+            aspect-ratio: 16/9;
+            width: 100%;}   
+        }
+  </style>
+</head>
+<body>
+    <div><h1>${newName}</h1></div>
+        <div class="bookmarks-container">${linksHTML}</div>
+    <script>
+        function openLink(url) {
+            window.open(url, '_blank');
+        }
+        // Additional scripts can be added here
+    <\/script>
+</body>
+</html>`;
+
+
+        const blob = new Blob([currentState], { type: 'text/html' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'page.html';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+   // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
+
+    function deleteLink(index) {
+            links.splice(index, 1);
+            localStorage.setItem('bookmarks', JSON.stringify(links));
+            removeBookmark(index);
+            saveLinks();
+        }
+
+function renderLinks() {
+            const linkContainer = document.querySelector('.bookmarks-container');
+            // linkContainer.innerHTML = ''; // Clear the container
+
+            const defaultIconUrl = 'https://example.com/default-icon.png';  // Replace with an actual default icon URL
+
+            links.forEach((link, index) => {
+                const iconUrl = link[3] || defaultIconUrl;  // Use default icon if iconurl is undefined
+
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
+
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" onclick="openLink('${link[1]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container">
+                <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                linkContainer.appendChild(bookmarkElement);
+                hideAdd();
+
+            });
+        }
+        
+        
+        function openLink(url) {
+    window.open(url, '_blank');
+}
+
+        // Function to remove the bookmark element from DOM
+function removeBookmark(index) {
+            // Handle delete icon click with haptic feedback
+          const bookmarkToDelete = document.getElementById(`bookmark-${index}`);
+    
+    if (bookmarkToDelete) {
+        if (confirm('Are you sure you want to delete this bookmark?')) {
+        bookmarkToDelete.remove();
+        }
+    }
+     else {
+        console.error(`Element with ID bookmark-${index} not found.`);
+    }
+          
+      }
+
+        function showNoteForm() {
+            const noteText = prompt("Enter your note:");
+            if (noteText) {
+                const iconUrl = noteIcon;
+                const iconColor = getRandomColor();
+                links.push({ text: noteText, iconUrl, iconColor });
+                renderLinks();
+                saveLinks();
+            }
+        }
+
+        function copyAndShare(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Note copied to clipboard!");
+                if (navigator.share) {
+                    navigator.share({
+                        text: text,
+                    });
+                }
+            });
+        }
+
+
+    function showForm() {
+        document.getElementById('new-link-url').style.display = 'inline-block';
+        document.getElementById('new-link-name').style.display = 'inline-block';
+        document.getElementById('new-link-icon').style.display = 'inline-block';
+        document.querySelector('.add').style.display = 'inline-block';
+        document.querySelector('.cancel').style.display = 'inline-block';
+    }
+
+    function hideForm() {
+        document.getElementById('new-link-url').style.display = 'none';
+        document.getElementById('new-link-name').style.display = 'none';
+        document.getElementById('new-link-icon').style.display = 'none';
+        document.querySelector('.add').style.display = 'none';
+        document.querySelector('.cancel').style.display = 'none';
+    }
+
+    function cancelAddLink() {
+        document.getElementById('new-link-url').value = '';
+        document.getElementById('new-link-name').value = '';
+        document.getElementById('new-link-icon').value = '';
+        hideForm();
+        hideAdd();
+    }
+
+    // Listen for Enter key press to add link
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Enter") {
+            const addBtn = document.querySelector('.add');
+            if (addBtn.style.display === 'inline-block') {
+                addLink();
+            }
+        }
+    });
+
+    function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+    function toggleNavDrawer() {
+            const navDrawer = document.getElementById('nav-drawer');
+            navDrawer.classList.toggle('open');
+        }
+    function detectSystemTheme() {
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const systemDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (systemDarkMode) {
+            toggleDarkMode();
+        }
+    }
+
+    function getIconUrl(url, hostname) {
+            if (url.startsWith('mailto:')) {
+                return 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
+            } else if (url.startsWith('tel:')) {
+                return 'https://fonts.gstatic.com/s/i/materialicons/call/v15/24px.svg';
+            } else if (url.startsWith('file://')) {
+                return 'https://fonts.gstatic.com/s/i/materialicons/insert_drive_file/v15/24px.svg';
+            } else if (hostname) {
+                return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+            } else {
+                return 'https://fonts.gstatic.com/s/i/materialicons/open_in_new/v15/24px.svg';
+            }
+        }
+        
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+    
+    let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (event) => {
+  // Prevent Chrome 76 and later from automatically showing the prompt
+  event.preventDefault();
+  // Stash the event so it can be triggered later.
+  deferredPrompt = event;
+  // Update UI notify the user they can install the PWA
+  showInstallPrompt();
+});
+
+
+function addNote() {
+        const noteInput = document.getElementById('new-note-text');
+        const noteText = noteInput.value.trim();
+
+        if (noteText) {
+            const iconUrl = noteIcon;
+            const iconColor = getRandomColor();
+
+            links.push({ text: noteText, iconUrl, iconColor });
+            noteInput.value = '';
+            renderLinks();
+            saveLinks();
+        }
+    }
+   
+        
+function showInstallPrompt() {
+  // Show your install prompt UI here, for example, a button
+  const installButton = document.getElementById('install-button');
+  installButton.style.display = 'block';
+
+  installButton.addEventListener('click', () => {
+    // Show the install prompt
+    deferredPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    deferredPrompt.userChoice.then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the install prompt');
+        // Hide the install button
+        installButton.style.display = 'none';
+      } else {
+        console.log('User dismissed the install prompt');
+      }
+      // Clear the deferredPrompt variable, as it can only be used once
+      deferredPrompt = null;
+    });
+  });
+}
+
+function saveLinks() {
+    localStorage.setItem('links', JSON.stringify(links));
+}
+
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
+</script>
+
+    
+    
+<body>
+  <div class="offline-banner" id="offline-banner">Offline Mode</div>
+
+  <div class="top-container">
+    <!-- Top Bookmark -->
+    <div id="marko" class="bookmark top-bookmark">
+      <div class="icon-wrapper">
+        <div class="icon-container add-link-icon">
+          <span class="material-icons">add_link</span>
+        </div>
+        <span id="bookmark-title" class="bookmark-title">Marko</span>
+      </div>
+      <div class="icon-container menu-icon">
+        <span class="material-icons">menu</span>
+      </div>
+      </div>
+    </div>
+    <!-- Marko's Menu -->
+    <div id="marko-menu" class="menu-bookmarks" style="display: none;">
+      <div class="bookmark menu-item" data-action="info">
+        <div class="icon-container">
+          <span class="material-icons bookmark-icon">info</span>
+        </div>
+        <span class="bookmark-title">Info</span>
+      </div>
+      
+      <div class="bookmark menu-item" data-action="add-link">
+        <div class="icon-container">
+          <span class="material-icons bookmark-icon">add_circle</span>
+        </div>
+        <span class="bookmark-title">Add bookmark</span>
+      </div>
+      
+      <div class="bookmark menu-item" data-action="generate">
+        <div class="icon-container">
+          <span class="material-icons bookmark-icon">auto_awesome</span>
+        </div>
+        <span class="bookmark-title">Create</span>
+      </div>
+      
+      <div class="bookmark menu-item" data-action="toggle-mode">
+        <div class="icon-container">
+          <span class="material-icons bookmark-icon mode-icon">dark_mode</span>
+        </div>
+        <span class="bookmark-title">Toggle Appearance</span>
+      </div>
+        <div class="bookmark menu-item" data-action="share">
+        <div class="icon-container">
+          <span class="material-icons bookmark-icon mode-icon">share</span>
+        </div>
+        <span class="bookmark-title">Share</span>
+      </div>
+    </div>      
+
+    <div class="bookmarks-container">
+
+    <!-- Regular bookmarks -->
+    <div class="bookmark menu-item" data-link="https://example.com">
+      <div class="icon-wrapper">
+        <div class="icon-container">
+          <span class="material-icons bookmark-icon">link</span>
+        </div>
+        <span class="bookmark-title">Example Link</span>
+      </div>
+      <span class="material-icons delete-icon">delete</span>
+    </div>
+
+    <div class="bookmark menu-item" data-link="show-content">
+      <div class="icon-wrapper">
+        <div class="icon-container">
+          <span class="material-icons bookmark-icon">info</span>
+        </div>
+        <span class="bookmark-title">Show Content</span>
+      </div>
+      <span class="material-icons delete-icon">delete</span>
+    </div>
+
+    <div class="content">
+      <p>This is the hidden content that can be shown or hidden.</p>
+    </div>
+  </div>   
+      
+<div class="container">
+  <div id="new-link-form" style="display: none;">
+    <div class="input-field">
+      <select id="link-type">
+        <option value="" disabled selected>select bookmark type</option>
+        <option value="website">Link to a website or social profile</option>
+        <option value="email">Email</option>
+        <option value="phone">Phone</option>
+        <option value="whatsapp">WhatsApp Chat</option>
+        <option value="viber">Viber Chat</option>
+        <option value="note">Note</option>
+        <option value="intro">Post</option>
+        <option value="window">Window (embed a webpage)</option>
+        <option value="pdf">PDF document</option>
+        <option value="location">Location</option>
+        <option value="payment">Paylink</option>
+        <option value="other">other (any custom url protocol)</option>
+      </select>
+    </div>
+
+    <div id="additional-fields" style="display: none;">
+      <div class="input-field">
+  <input type="url" id="new-link-url" placeholder="Enter bookmark target (url or email)">
+  <button id="u-clear-btn" class="clear-btn" style="display:none;">✕</button>
+</div>
+      <div class="input-field">
+        <input type="text" id="new-link-name" placeholder="Enter bookmark title (max 30 characters)" maxlength="30">
+        <button id="t-clear-btn" class="clear-btn" style="display:none;">✕</button>
+        <span class="error" id="name-error"></span>
+      </div>
+      <div class="input-field icon-source-selector" id="icon-source-container" style="display: none;">
+        <select id="icon-source">
+          <option value="default">Use default Material Icon (in random color)</option>
+          <option value="favicon">Use website favicon</option>
+          <option value="link">Add icon URL</option>
+          <option value="selection">Select an icon</option>
+        </select>
+        <input type="text" id="new-icon-url" placeholder="Add icon URL" style="display: none;">
+        
+      </div>
+    </div>
+    <div id="note-field" class="input-field" style="display: none;">
+  <textarea id="note-content" style="height: 300px; width: 100%;" placeholder="Enter note content (max 300 characters)" maxlength="300"></textarea>
+  <span class="error" id="note-error"></span>
+</div>
+    <div id="intro-field" class="input-field" style="height:300px; overflow-y:scroll; border:1px solid #c0c0c0; display:none;">
+    <textarea id="intro-content" style="height:100%" placeholder="Enter note content (max 300 characters)" maxlength="300"></textarea>
+<span class="error" id="note-error"></span>
+    </div>
+<script>
+const easyMDE = new EasyMDE({element: document.getElementById('intro-content')});
+
+</script>
+
+<script>
+    const bookmarks = document.querySelectorAll('.bookmark');
+    let currentActiveBookmark = null;
+
+    bookmarks.forEach(bookmark => {
+      const iconWrapper = bookmark.querySelector('.icon-wrapper') || bookmark;
+      const deleteIcon = bookmark.querySelector('.delete-icon');
+
+      iconWrapper.addEventListener('click', (event) => {
+        const dataLink = bookmark.dataset.link;
+        const action = bookmark.dataset.action;
+        const content = document.querySelector('.content');
+
+        // Handle menu item actions
+        if (action) {
+          switch (action) {
+            case 'info':
+              window.open('https://github.com/IonTeLOS/marko', '_blank');
+              markoMenu.style.display = 'none';
+              break;
+            case 'add-link':
+              openAdd();
+              markoMenu.style.display = 'none';
+              break;
+            case 'generate':
+              downloadPage();
+              markoMenu.style.display = 'none';
+              break;
+            case 'toggle-mode':
+              toggleMode();
+              markoMenu.style.display = 'none';
+              break;
+            case 'share':
+              sharePage;
+              markoMenu.style.display = 'none';
+              break;      
+          }
+          return; // Exit early to avoid toggle logic
+        }
+
+        // Handle content toggle or link opening
+        if (dataLink === 'show-content') {
+          // Toggle content visibility
+          if (content.style.display === 'block') {
+            content.style.display = 'none';
+            bookmark.classList.remove('active');
+            currentActiveBookmark = null;
+          } else {
+            content.style.display = 'block';
+            bookmark.classList.add('active');
+            currentActiveBookmark = bookmark;
+          }
+        } else if (bookmark.id !== 'marko') {
+          // For any other non-Marko bookmark, hide content and remove active state
+          content.style.display = 'none';
+          if (currentActiveBookmark) {
+            currentActiveBookmark.classList.remove('active');
+          }
+          currentActiveBookmark = null;
+
+          // Open the external link in a new tab
+          if (dataLink) window.open(dataLink, '_blank');
+        }
+      });
+
+      // Handle delete icon click with haptic feedback
+      if (deleteIcon) {
+        deleteIcon.addEventListener('click', (event) => {
+          event.stopPropagation(); // Prevent triggering the bookmark's click event
+          
+          // Trigger haptic feedback on supported devices
+          if ("vibrate" in navigator) {
+            navigator.vibrate(50); // Short 50ms vibration
+          }
+          
+          if (confirm('Are you sure you want to delete this bookmark?')) {
+            bookmark.remove();
+            if (bookmark.dataset.link === 'show-content') {
+              const contentToDelete = document.querySelector('.content');
+              if (contentToDelete) contentToDelete.remove();
+            }
+            if (currentActiveBookmark === bookmark) {
+              currentActiveBookmark = null;
+            }
+          }
+        });
+      }
+    });
+
+    // Marko's menu functionality
+    const markoMenu = document.getElementById('marko-menu');
+    const menuIcon = document.querySelector('.menu-icon');
+
+    menuIcon.addEventListener('click', (event) => {
+      event.stopPropagation(); // Prevent triggering Marko's main click event
+      markoMenu.style.display = markoMenu.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    const addIcon = document.querySelector('.add-link-icon');
+
+    // Add click event listener to the add-link-icon element
+    addIcon.addEventListener('click', openAdd);
+    // Update mode icon
+    function updateModeIcon() {
+      const body = document.body;
+      const modeIcon = document.querySelector('.mode-icon');
+      
+      if (body.classList.contains('dark-mode')) {
+        modeIcon.textContent = 'dark_mode';
+      } else if (body.classList.contains('light-mode')) {
+        modeIcon.textContent = 'light_mode';
+      } else {
+        modeIcon.textContent = 'auto_awesome'; // System default
+      }
+    }
+
+ function sharePage() {
+  if (navigator.share) {
+    navigator.share({
+      title: document.title,
+      url: window.location.href
+    })
+    .then(() => console.log('Shared successfully'))
+    .catch((error) => console.error('Error in sharing:', error));
+  } else {
+    // Fallback for browsers that do not support Web Share API
+    alert("Web Share API is not supported in this browser.");
+  }
+}
+    // Function stubs (replace with actual implementations)
+    function openAdd() {
+    document.getElementById('new-link-form').style.display = 'block';
+    const linkContainer = document.querySelector('.bookmarks-container');
+    linkContainer.innerHTML = ''; // Clear the container    
+    }
+    
+    function hideAdd() {
+    document.getElementById('new-link-form').style.display = 'none';
+    }
+
+    function generate() {
+      
+      const newName = prompt('Enter the new name for the bookmark:');
+  if (newName) {
+  document.getElementById('bookmark-title').innerText = "";
+    document.getElementById('bookmark-title').innerText = newName;
+  }
+    }
+
+    function toggleMode() {
+      const body = document.body;
+      if (body.classList.contains('dark-mode')) {
+        body.classList.remove('dark-mode');
+        body.classList.add('light-mode');
+      } else if (body.classList.contains('light-mode')) {
+        body.classList.remove('light-mode');
+      } else {
+        body.classList.add('dark-mode');
+      }
+      updateModeIcon();
+    }
+
+    // Initialize mode based on system preference
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.body.classList.add('dark-mode');
+    }
+    updateModeIcon();
+
+    // Add long-press detection for mobile devices (same as before)
+    let longPressTimer;
+    const longPressDuration = 500; // 500 milliseconds
+
+    bookmarks.forEach(bookmark => {
+      bookmark.addEventListener('touchstart', () => { /* ... */ });
+      bookmark.addEventListener('touchend', () => { /* ... */ });
+      bookmark.addEventListener('touchmove', () => { /* ... */ });
+      bookmark.addEventListener('touchcancel', () => { /* ... */ });
+    });
+  </script>      
+      
+    <div id="url-field" class="input-field" style="display: none;">
+      <input type="url" id="window-url" placeholder="Enter target URL">
+      <button id="w-clear-btn" class="clear-btn" style="display:none;">✕</button>
+      <span class="error" id="url-error"></span>
+    </div>
+
+    <div id="phone-number-field" class="input-field" style="display: none;">
+      <input type="tel" id="phone-number" placeholder="Add number with country code">
+      <button id="p-clear-btn" class="clear-btn" style="display:none;">✕</button>
+      <span class="error" id="phone-error"></span>
+    </div>
+
+    
+   
+        <div id="icon-selection-container" class="container" style="display: none;">
+  <div class="row">
+    <div class="col s12">
+      <div class="card-panel" style="display: none;">
+        <div class="input-container">
+          <div id="new-link-icon" tabindex="0">
+  <span id="icon-select" class="material-icons-outlined z-depth-1">search</span>
+</div>
+          <input 
+            type="text" 
+            id="search" 
+            placeholder="Search icons..." 
+            autocomplete="off" 
+            autocorrect="off" 
+            autocapitalize="off" 
+            spellcheck="false"
+          >
+          <span id="icon-name">search</span>
+          <div id="color-select" tabindex="0">#000000</div>
+        </div>
+        <div id="icon-dropdown">
+          <div id="icon-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    <div class="button-container">
+      <button class="add" onclick="addLink()">
+        <i class="material-icons">add_circle</i>
+      </button>
+      <button class="cancel" onclick="cancelAddLink()">
+        <i class="material-icons">cancel</i>
+      </button>
+    </div>    
+    <pre id="created-bookmark"></pre>
+  </div>
+
+
+</div>
+<script>
+        const icons = [
+            '3d_rotation','ac_unit','access_alarm','access_alarms','access_time','accessibility','accessible','account_balance','account_balance_wallet','account_box','account_circle','adb','add','add_a_photo','add_alarm','add_alert','add_box','add_circle','add_circle_outline','add_location','add_shopping_cart','add_to_photos','add_to_queue','adjust','airline_seat_flat','airline_seat_flat_angled','airline_seat_individual_suite','airline_seat_legroom_extra','airline_seat_legroom_normal','airline_seat_legroom_reduced','airline_seat_recline_extra','airline_seat_recline_normal','airplanemode_active','airplanemode_inactive','airplay','airport_shuttle','alarm','alarm_add','alarm_off','alarm_on','album','all_inclusive','all_out','android','announcement','apps','archive','arrow_back','arrow_downward','arrow_drop_down','arrow_drop_down_circle','arrow_drop_up','arrow_forward','arrow_upward','art_track','aspect_ratio','assessment','assignment','assignment_ind','assignment_late','assignment_return','assignment_returned','assignment_turned_in','assistant','assistant_photo','attach_file','attach_money','attachment','audiotrack','autorenew','av_timer','backspace','backup','battery_alert','battery_charging_full','battery_full','battery_std','battery_unknown','beach_access','beenhere','block','bluetooth','bluetooth_audio','bluetooth_connected','bluetooth_disabled','bluetooth_searching','blur_circular','blur_linear','blur_off','blur_on','book','bookmark','bookmark_border','border_all','border_bottom','border_clear','border_color','border_horizontal','border_inner','border_left','border_outer','border_right','border_style','border_top','border_vertical','branding_watermark','brightness_1','brightness_2','brightness_3','brightness_4','brightness_5','brightness_6','brightness_7','brightness_auto','brightness_high','brightness_low','brightness_medium','broken_image','brush','bubble_chart','bug_report','build','burst_mode','business','business_center','cached','cake','call','call_end','call_made','call_merge','call_missed','call_missed_outgoing','call_received','call_split','call_to_action','camera','camera_alt','camera_enhance','camera_front','camera_rear','camera_roll','cancel','card_giftcard','card_membership','card_travel','casino','cast','cast_connected','center_focus_strong','center_focus_weak','change_history','chat','chat_bubble','chat_bubble_outline','check','check_box','check_box_outline_blank','check_circle','chevron_left','chevron_right','child_care','child_friendly','chrome_reader_mode','class','clear','clear_all','close','closed_caption','cloud','cloud_circle','cloud_done','cloud_download','cloud_off','cloud_queue','cloud_upload','code','collections','collections_bookmark','color_lens','colorize','comment','compare','compare_arrows','computer','confirmation_number','contact_mail','contact_phone','contacts','content_copy','content_cut','content_paste','control_point','control_point_duplicate','copyright','create','create_new_folder','credit_card','crop','crop_16_9','crop_3_2','crop_5_4','crop_7_5','crop_din','crop_free','crop_landscape','crop_original','crop_portrait','crop_rotate','crop_square','dashboard','data_usage','date_range','dehaze','delete','delete_forever','delete_sweep','description','desktop_mac','desktop_windows','details','developer_board','developer_mode','device_hub','devices','devices_other','dialer_sip','dialpad','directions','directions_bike','directions_boat','directions_bus','directions_car','directions_railway','directions_run','directions_subway','directions_transit','directions_walk','disc_full','dns','do_not_disturb','do_not_disturb_alt','do_not_disturb_off','do_not_disturb_on','dock','domain','done','done_all','donut_large','donut_small','drafts','drag_handle','drive_eta','dvr','edit','edit_location','eject','email','enhanced_encryption','equalizer','error','error_outline','euro_symbol','ev_station','event','event_available','event_busy','event_note','event_seat','exit_to_app','expand_less','expand_more','explicit','explore','exposure','exposure_neg_1','exposure_neg_2','exposure_plus_1','exposure_plus_2','exposure_zero','extension','face','fast_forward','fast_rewind','favorite','favorite_border','featured_play_list','featured_video','feedback','fiber_dvr','fiber_manual_record','fiber_new','fiber_pin','fiber_smart_record','file_download','file_upload','filter','filter_1','filter_2','filter_3','filter_4','filter_5','filter_6','filter_7','filter_8','filter_9','filter_9_plus','filter_b_and_w','filter_center_focus','filter_drama','filter_frames','filter_hdr','filter_list','filter_none','filter_tilt_shift','filter_vintage','find_in_page','find_replace','fingerprint','first_page','fitness_center','flag','flare','flash_auto','flash_off','flash_on','flight','flight_land','flight_takeoff','flip','flip_to_back','flip_to_front','folder','folder_open','folder_shared','folder_special','font_download','format_align_center','format_align_justify','format_align_left','format_align_right','format_bold','format_clear','format_color_fill','format_color_reset','format_color_text','format_indent_decrease','format_indent_increase','format_italic','format_line_spacing','format_list_bulleted','format_list_numbered','format_paint','format_quote','format_shapes','format_size','format_strikethrough','format_textdirection_l_to_r','format_textdirection_r_to_l','format_underlined','forum','forward','forward_10','forward_30','forward_5','free_breakfast','fullscreen','fullscreen_exit','functions','g_translate','gamepad','games','gavel','gesture','get_app','gif','golf_course','gps_fixed','gps_not_fixed','gps_off','grade','gradient','grain','graphic_eq','grid_off','grid_on','group','group_add','group_work','hd','hdr_off','hdr_on','hdr_strong','hdr_weak','headset','headset_mic','healing','hearing','help','help_outline','high_quality','highlight','highlight_off','history','home','hot_tub','hotel','hourglass_empty','hourglass_full','http','https','image','image_aspect_ratio','import_contacts','import_export','important_devices','inbox','indeterminate_check_box','info','info_outline','input','insert_chart','insert_comment','insert_drive_file','insert_emoticon','insert_invitation','insert_link','insert_photo','invert_colors','invert_colors_off','iso','keyboard','keyboard_arrow_down','keyboard_arrow_left','keyboard_arrow_right','keyboard_arrow_up','keyboard_backspace','keyboard_capslock','keyboard_hide','keyboard_return','keyboard_tab','keyboard_voice','kitchen','label','label_outline','landscape','language','laptop','laptop_chromebook','laptop_mac','laptop_windows','last_page','launch','layers','layers_clear','leak_add','leak_remove','lens','library_add','library_books','library_music','lightbulb_outline','line_style','line_weight','linear_scale','link','linked_camera','list','live_help','live_tv','local_activity','local_airport','local_atm','local_bar','local_cafe','local_car_wash','local_convenience_store','local_dining','local_drink','local_florist','local_gas_station','local_grocery_store','local_hospital','local_hotel','local_laundry_service','local_library','local_mall','local_movies','local_offer','local_parking','local_pharmacy','local_phone','local_pizza','local_play','local_post_office','local_printshop','local_see','local_shipping','local_taxi','location_city','location_disabled','location_off','location_on','location_searching','lock','lock_open','lock_outline','looks','looks_3','looks_4','looks_5','looks_6','looks_one','looks_two','loop','loupe','low_priority','loyalty','mail','mail_outline','map','markunread','markunread_mailbox','memory','menu','merge_type','message','mic','mic_none','mic_off','mms','mode_comment','mode_edit','monetization_on','money_off','monochrome_photos','mood','mood_bad','more','more_horiz','more_vert','motorcycle','mouse','move_to_inbox','movie','movie_creation','movie_filter','multiline_chart','music_note','music_video','my_location','nature','nature_people','navigate_before','navigate_next','navigation','near_me','network_cell','network_check','network_locked','network_wifi','new_releases','next_week','nfc','no_encryption','no_sim','not_interested','note','note_add','notifications','notifications_active','notifications_none','notifications_off','notifications_paused','offline_pin','ondemand_video','opacity','open_in_browser','open_in_new','open_with','pages','pageview','palette','pan_tool','panorama','panorama_fish_eye','panorama_horizontal','panorama_vertical','panorama_wide_angle','party_mode','pause','pause_circle_filled','pause_circle_outline','payment','people','people_outline','perm_camera_mic','perm_contact_calendar','perm_data_setting','perm_device_information','perm_identity','perm_media','perm_phone_msg','perm_scan_wifi','person','person_add','person_outline','person_pin','person_pin_circle','personal_video','pets','phone','phone_android','phone_bluetooth_speaker','phone_forwarded','phone_in_talk','phone_iphone','phone_locked','phone_missed','phone_paused','phonelink','phonelink_erase','phonelink_lock','phonelink_off','phonelink_ring','phonelink_setup','photo','photo_album','photo_camera','photo_filter','photo_library','photo_size_select_actual','photo_size_select_large','photo_size_select_small','picture_as_pdf','picture_in_picture','picture_in_picture_alt','pie_chart','pie_chart_outlined','pin_drop','place','play_arrow','play_circle_filled','play_circle_outline','play_for_work','playlist_add','playlist_add_check','playlist_play','plus_one','poll','polymer','pool','portable_wifi_off','portrait','power','power_input','power_settings_new','pregnant_woman','present_to_all','print','priority_high','public','publish','query_builder','question_answer','queue','queue_music','queue_play_next','radio','radio_button_checked','radio_button_unchecked','rate_review','receipt','recent_actors','record_voice_over','redeem','redo','refresh','remove','remove_circle','remove_circle_outline','remove_from_queue','remove_red_eye','remove_shopping_cart','reorder','repeat','repeat_one','replay','replay_10','replay_30','replay_5','reply','reply_all','report','report_problem','restaurant','restaurant_menu','restore','restore_page','ring_volume','room','room_service','rotate_90_degrees_ccw','rotate_left','rotate_right','rounded_corner','router','rowing','rss_feed','rv_hookup','satellite','save','scanner','schedule','school','screen_lock_landscape','screen_lock_portrait','screen_lock_rotation','screen_rotation','screen_share','sd_card','sd_storage','search','security','select_all','send','sentiment_dissatisfied','sentiment_neutral','sentiment_satisfied','sentiment_very_dissatisfied','sentiment_very_satisfied','settings','settings_applications','settings_backup_restore','settings_bluetooth','settings_brightness','settings_cell','settings_ethernet','settings_input_antenna','settings_input_component','settings_input_composite','settings_input_hdmi','settings_input_svideo','settings_overscan','settings_phone','settings_power','settings_remote','settings_system_daydream','settings_voice','share','shop','shop_two','shopping_basket','shopping_cart','short_text','show_chart','shuffle','signal_cellular_4_bar','signal_cellular_connected_no_internet_4_bar','signal_cellular_no_sim','signal_cellular_null','signal_cellular_off','signal_wifi_4_bar','signal_wifi_4_bar_lock','signal_wifi_off','sim_card','sim_card_alert','skip_next','skip_previous','slideshow','slow_motion_video','smartphone','smoke_free','smoking_rooms','sms','sms_failed','snooze','sort','sort_by_alpha','spa','space_bar','speaker','speaker_group','speaker_notes','speaker_notes_off','speaker_phone','spellcheck','star','star_border','star_half','stars','stay_current_landscape','stay_current_portrait','stay_primary_landscape','stay_primary_portrait','stop','stop_screen_share','storage','store','store_mall_directory','straighten','streetview','strikethrough_s','style','subdirectory_arrow_left','subdirectory_arrow_right','subject','subscriptions','subtitles','subway','supervisor_account','surround_sound','swap_calls','swap_horiz','swap_vert','swap_vertical_circle','switch_camera','switch_video','sync','sync_disabled','sync_problem','system_update','system_update_alt','tab','tab_unselected','tablet','tablet_android','tablet_mac','tag_faces','tap_and_play','terrain','text_fields','text_format','textsms','texture','theaters','thumb_down','thumb_up','thumbs_up_down','time_to_leave','timelapse','timeline','timer','timer_10','timer_3','timer_off','title','toc','today','toll','tonality','touch_app','toys','track_changes','traffic','train','tram','transfer_within_a_station','transform','translate','trending_down','trending_flat','trending_up','tune','turned_in','turned_in_not','tv','unarchive','undo','unfold_less','unfold_more','update','usb','verified_user','vertical_align_bottom','vertical_align_center','vertical_align_top','vibration','video_call','video_label','video_library','videocam','videocam_off','videogame_asset','view_agenda','view_array','view_carousel','view_column','view_comfy','view_compact','view_day','view_headline','view_list','view_module','view_quilt','view_stream','view_week','vignette','visibility','visibility_off','voice_chat','voicemail','volume_down','volume_mute','volume_off','volume_up','vpn_key','vpn_lock','wallpaper','warning','watch','watch_later','wb_auto','wb_cloudy','wb_incandescent','wb_iridescent','wb_sunny','wc','web','web_asset','weekend','whatshot','widgets','wifi','wifi_lock','wifi_tethering','work','wrap_text','youtube_searched_for','zoom_in','zoom_out','zoom_out_map'
+        ];
+
+        const iconSelect = document.getElementById('new-link-icon');
+        const iconSpan = iconSelect.querySelector('.material-icons-outlined');
+        const iconName = document.getElementById('icon-name');
+        const iconDropdown = document.getElementById('icon-dropdown');
+        const iconGrid = document.getElementById('icon-grid');
+        const searchInput = document.getElementById('search');
+        const colorSelect = document.getElementById('color-select');
+
+        function setSelectedIcon(icon) {
+            const selectedColor = colorSelect.dataset.color;
+            iconSpan.textContent = icon;
+            iconSpan.style.color = selectedColor;
+            iconName.textContent = icon;
+            hideDropdown();
+        }
+
+        function showDropdown() {
+            iconDropdown.style.display = 'block';
+        }
+
+        function hideDropdown() {
+            iconDropdown.style.display = 'none';
+        }
+
+        function filterIcons(query) {
+            const normalizedQuery = query.toLowerCase();
+            const iconDivs = iconGrid.getElementsByClassName('icon');
+            for (let div of iconDivs) {
+                const iconName = div.textContent.toLowerCase();
+                div.style.display = iconName.includes(normalizedQuery) ? 'block' : 'none';
+            }
+        }
+
+        function updateColorDisplay(color) {
+            colorSelect.style.backgroundColor = color;
+            colorSelect.textContent = color.toUpperCase();
+            colorSelect.style.color = isColorDark(color) ? 'white' : 'black';
+            colorSelect.dataset.color = color;
+            iconSpan.style.color = color;
+        }
+
+        function isColorDark(color) {
+            const r = parseInt(color.substr(1, 2), 16);
+            const g = parseInt(color.substr(3, 2), 16);
+            const b = parseInt(color.substr(5, 2), 16);
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            return brightness < 128;
+        }
+        
+
+        icons.forEach(icon => {
+            const div = document.createElement('div');
+            div.className = 'icon waves-effect';
+            div.innerHTML = `<span class="material-icons-outlined">${icon}</span>`;
+            div.onclick = () => {
+                setSelectedIcon(icon);
+                searchInput.value = icon;
+                filterIcons(icon);
+            };
+            iconGrid.appendChild(div);
+        });
+
+        // Filter icons as user types
+        searchInput.addEventListener('input', function() {
+            filterIcons(this.value);
+        });
+
+        // Handle color selection
+        colorSelect.onclick = function() {
+            const input = document.createElement('input');
+            input.type = 'color';
+            input.value = this.dataset.color || '#000000';
+            input.onchange = function() { updateColorDisplay(this.value); };
+            input.click();
+        };
+        
+        // Add this instead
+searchInput.addEventListener('input', function() {
+  const query = this.value.trim();
+  if (query) {
+    showDropdown();
+    filterIcons(query);
+  } else {
+    hideDropdown();
+  }
+});
+
+        // Initialize with default color
+        updateColorDisplay('#000000');
+
+        // Add keyboard accessibility
+        iconSelect.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                showDropdown();
+                searchInput.focus();
+            }
+        });
+
+        colorSelect.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    </script>
+
+</body>
+</html>
