@@ -2891,7 +2891,8 @@ function openLink(url) {
 function changeURL(url) {
             // Get the base URL including the file name
             const cleanUrl = window.location.href.split('?')[0];
-            history.replaceState(null, '', cleanUrl);            
+            history.replaceState(null, '', cleanUrl);
+            const friendName = url.substring(0, str.lastIndexOf('+'));
             history.pushState({}, '', cleanUrl + "/" + url);
         }
 
@@ -2916,7 +2917,7 @@ function changeURL(url) {
                     let uuid = generateUUID();
 
                     // Create the local storage key with the UUID
-                    let storageKey = "friends/" + `${uncompressed}` + "-" + uuid;
+                    let storageKey = "friends/" + `${uncompressed}` + "+" + uuid;
                     localStorage.setItem(storageKey, friendString);
                     console.log("Friend " + `${uncompressed}` + " saved:", friendString);  // Debug log
                     document.getElementById('created-bookmark').textContent = friendString;
