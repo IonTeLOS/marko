@@ -3198,11 +3198,31 @@ function showInstallPrompt() {
     });
   });
 }
+        
+   
+function redirectifNeeded() {
+            try {
+            const basePath = '/marko/newfile';
+            const currentPath = window.location.pathname;
 
+            // Check if the current path is not the base path
+            if (currentPath !== basePath) {
+                // Redirect to the base path
+                window.location.replace(basePath);
+            }
+            }
+            catch {
+                        console.log('running locally');
+
+            }
+        }
+        
+window.onload = redirectIfNeeded;
+        
 function saveLinks() {
     localStorage.setItem('links', JSON.stringify(links));
 }
-  window.onload = loadArrayFromURL();
+  window.onload = loadArrayFromURL;
 </script>
 
 <script>
