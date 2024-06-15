@@ -3168,7 +3168,15 @@ function addNote() {
         }
     }
    
-        
+       function redirectIfNeeded() {
+            const currentPath = window.location.pathname;
+
+            // Check if the current path is not the root path "/"
+            if (currentPath !== '/') {
+                // Redirect to the base URL (hostname)
+                window.location.replace(window.location.origin);
+            }
+        }
 function showInstallPrompt() {
   // Show your install prompt UI here, for example, a button
   const installButton = document.getElementById('install-button');
@@ -3200,6 +3208,8 @@ function saveLinks() {
 
 <script>
   window.onload = loadArrayFromURL;
+  window.onload = redirectIfNeeded;
+
     
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
