@@ -3168,12 +3168,12 @@ function addNote() {
         }
     }
    
-function redirectIfNeeded() {
-            const basePath = window.location.origin + '/marko/newfile';
+        function redirectToBasePath() {
+            const basePath = '/marko/newfile';
             const currentPath = window.location.pathname;
 
             // Check if the current path is not the base path
-            if (!currentPath.startsWith(basePath)) {
+            if (currentPath !== basePath) {
                 // Redirect to the base path
                 window.location.replace(basePath);
             }
