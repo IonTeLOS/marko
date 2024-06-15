@@ -3200,7 +3200,7 @@ function showInstallPrompt() {
 }
         
    
-function redirectIfNeeded() {
+function redirectifNeeded() {
             try {
             const basePath = '/marko/newfile';
             const currentPath = window.location.pathname;
@@ -3218,7 +3218,20 @@ function redirectIfNeeded() {
         }
         
 window.onload = redirectIfNeeded;
-        
+
+function redirectToHomepage(event) {
+            // Redirect to the homepage
+                if (window.opener == null) {
+
+            window.location.href = '/'; // Adjust this to your homepage URL if it's different
+        }
+}
+
+        // Add an event listener for the popstate event
+        window.addEventListener('popstate', redirectToHomepage);
+
+        // Optionally push an initial state to history to ensure popstate works correctly
+        window.history.pushState({}, '');        
 function saveLinks() {
     localStorage.setItem('links', JSON.stringify(links));
 }
