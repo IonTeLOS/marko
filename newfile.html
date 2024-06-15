@@ -2986,11 +2986,44 @@ function renderLinks() {
             });
         }
         
+        function renderFriend(friend) {
+            const linkContainer = document.querySelector('.bookmarks-container');
+            linkContainer.innerHTML = ''; // Clear the container
+
+            const defaultIconUrl = 'https://example.com/default-icon.png';  // Replace with an actual default icon URL
+            const savedFriendLinks = JSON.parse(localStorage.getItem(`${url}`)) || [];
+            console.log('Saved Friend Links:', savedFriendLinks);  // Debug log
+            links = savedFriendLinks;
+            links.forEach((link, index) => {
+                const iconUrl = link[3] || defaultIconUrl;  // Use default icon if iconurl is undefined
+
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
+                
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" onclick="openLink('${link[1]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                linkContainer.appendChild(bookmarkElement);
+            });
+        }
+        
         
         function openLink(url) {
             if (url.startsWith("friends/")) {
                console.log("friend!!");
                changeURL(url);
+               renderFriend(url);
             }
             else {
                 console.log("no friend here..");
