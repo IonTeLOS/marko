@@ -3172,9 +3172,9 @@ function addNote() {
             const currentPath = window.location.pathname;
 
             // Check if the current path is not the root path "/"
-            if (currentPath !== '/') {
+            if (currentPath !== '/marko/newfile') {
                 // Redirect to the base URL (hostname)
-                window.location.replace(window.location.origin);
+                window.location.replace(window.location.origin + "/marko/newfile");
             }
         }
 function showInstallPrompt() {
