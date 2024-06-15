@@ -3172,12 +3172,15 @@ function addNote() {
             const basePath = '/marko/newfile';
             const currentPath = window.location.pathname;
 
-            // Check if the current path is not the base path
-            if (currentPath !== basePath) {
+            // Check if the current path starts with the base path followed by '/'
+            if (currentPath.startsWith(basePath + '/') && currentPath !== basePath) {
+                // Extract the part after the base path
+                const newPath = currentPath.substring(basePath.length);
                 // Redirect to the base path
-                window.location.replace(basePath);
+                window.location.replace(basePath + newPath);
             }
         }
+      
 function showInstallPrompt() {
   // Show your install prompt UI here, for example, a button
   const installButton = document.getElementById('install-button');
