@@ -3168,13 +3168,14 @@ function addNote() {
         }
     }
    
-       function redirectIfNeeded() {
+      function redirectIfNeeded() {
+            const targetPath = '/marko/newfile';
             const currentPath = window.location.pathname;
 
-            // Check if the current path is not the root path "/"
-            if (currentPath !== '/marko/newfile') {
-                // Redirect to the base URL (hostname)
-                window.location.replace(window.location.origin + "/marko/newfile");
+            // Check if the current path is not the target path
+            if (currentPath !== targetPath) {
+                // Redirect to the target path
+                window.location.replace(window.location.origin + targetPath);
             }
         }
 function showInstallPrompt() {
