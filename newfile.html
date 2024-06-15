@@ -3173,11 +3173,11 @@ function addNote() {
             const currentPath = window.location.pathname;
 
             // Check if the current path starts with the base path followed by '/'
-            if (currentPath.startsWith(basePath + '/') && currentPath !== basePath) {
-                // Extract the part after the base path
+            if (currentPath.startsWith(basePath) && currentPath !== basePath) {
+                // Get the path after the base path
                 const newPath = currentPath.substring(basePath.length);
                 // Redirect to the base path
-                window.location.replace(basePath + newPath);
+                window.location.replace(basePath);
             }
         }
       
