@@ -2991,7 +2991,7 @@ function renderLinks() {
             linkContainer.innerHTML = ''; // Clear the container
 
             const defaultIconUrl = 'https://example.com/default-icon.png';  // Replace with an actual default icon URL
-            const savedFriendLinks = JSON.parse(localStorage.getItem(`${url}`)) || [];
+            const savedFriendLinks = JSON.parse(localStorage.getItem(`${friend}`)) || [];
             console.log('Saved Friend Links:', savedFriendLinks);  // Debug log
             links = savedFriendLinks;
             links.forEach((link, index) => {
