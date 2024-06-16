@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Viewer</title>
+  <!-- Include Adobe Acrobat Viewer SDK -->
+  <script src="https://acrobatservices.adobe.com/view-sdk/viewer.js"></script>
+</head>
+<body>
+  <h1>PDF Viewer</h1>
+  
+  <!-- Input field to paste PDF URL -->
+  <label for="pdf-url">Paste PDF URL:</label>
+  <input type="text" id="pdf-url" placeholder="Enter PDF URL">
+  
+  <!-- Button to view PDF -->
+  <button onclick="viewPDF()">View PDF</button>
+
+  <script type="text/javascript">
+    function viewPDF() {
+      var pdfUrl = document.getElementById('pdf-url').value.trim();
+
+      if (pdfUrl === "") {
+        alert("Please enter a PDF URL.");
+        return;
+      }
+
+      // Wait for DOMContentLoaded event before initializing AdobeDC View
+      document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("adobe_dc_view_sdk.ready", function(){ 
+          var adobeDCView = new AdobeDC.View({clientId: "f0b67b61ecc04ab98f1fff720590cca2"});
+          adobeDCView.previewFile({
+            content: { location: { url: pdfUrl } },
+            metaData: { fileName: "Document.pdf" } // You can change the file name if needed
+          }, { embedMode: "LIGHT_BOX", defaultViewMode: "FIT_WIDTH", exitPDFViewerType: "RETURN" });
+        });
+      });
+    }
+  </script>
+</body>
+</html>
