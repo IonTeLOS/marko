@@ -1612,7 +1612,7 @@ function transformGeo(locUrl) {
         //document.getElementById('created-bookmark').textContent = JSON.stringify(linkData, null, 2); // previous version. new one escapes backlashes to render properly the html from Post
     }
 
-    
+
 function saveBookmark(linkData) {
     // Validate linkData before saving
     if (!linkData[1] || !linkData[2] || !linkData[3]) {
@@ -1626,7 +1626,7 @@ function saveBookmark(linkData) {
     console.log('Bookmarks saved:', bookmarks);  // Debug log
 
     links = bookmarks;
-    renderLinks();
+    passCheck();
 }
 
 
@@ -1635,8 +1635,8 @@ function saveBookmark(linkData) {
     window.cancelAddLink = function() {
      clearForm();
      hideAdd();
-     renderLinks();
-   };
+     location.reload();
+    };
 
     function clearForm() {
         document.getElementById('new-link-url').value = '';
@@ -1838,7 +1838,7 @@ function saveBookmark(linkData) {
             return [];
         } else {
             clearError(linkType);
-            displayCreatedBookmark(linkData);
+            //displayCreatedBookmark(linkData);
             saveBookmark(linkData);
 if ( document.getElementById('new-link-url') !== null && document.getElementById('new-link-url').value.trim() !== "") {
   alertUrl = document.getElementById('new-link-url').value.trim();
@@ -1851,6 +1851,7 @@ if ( document.getElementById('new-link-url') !== null && document.getElementById
 }           
             if (alertUrl !== null) {
                 alert("Success! You just added a bookmark for " + alertUrl);
+                location.reload();
             } 
             return linkData;
         }
@@ -1881,6 +1882,50 @@ document.getElementById('phone-number').addEventListener('keydown', function(eve
     
     
     <script>
+        
+    function passCheck() {
+            const storedPassword = localStorage.getItem('password');
+            console.log("pass=" + storedPassword);
+            if (!storedPassword) {
+                renderLinks();
+                return;
+            }
+
+            const enteredPassword = prompt('Enter password:');
+            if (enteredPassword === null) {
+                alert('You have to enter pass to continue');
+                return;
+            }
+
+            if (enteredPassword === storedPassword) {
+               renderLinks();
+            } else {
+                return;
+            }
+        }
+        
+        function passCheckDownload() {
+            const storedPassword = localStorage.getItem('password');
+            console.log("pass=" + storedPassword);
+            if (!storedPassword) {
+                localStorage.setItem('loggedIn', "true");
+                renderLinks();
+                return;
+            }
+
+            const enteredPassword = prompt('Enter password:');
+            if (enteredPassword === null) {
+                alert('You have to enter pass to continue');
+                return;
+            }
+
+            if (enteredPassword === storedPassword) {
+               renderLinks();
+               localStorage.setItem('loggedIn', "true");
+            } else {
+                return;
+            }
+        }    
     let links = [];
     const linkIcon = 'https://fonts.gstatic.com/s/i/materialicons/open_in_new/v15/24px.svg';
     const mailIcon = 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
@@ -1892,7 +1937,7 @@ document.getElementById('phone-number').addEventListener('keydown', function(eve
         const savedLinks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     console.log('Saved Links:', savedLinks);  // Debug log
     links = savedLinks;  // Initialize links array
-    renderLinks();  // Render the bookmarks
+    passCheck();  // Render the bookmarks
         detectSystemTheme();
         checkConnection();
         //loadLinks();
@@ -1915,7 +1960,7 @@ function loadLinks() {
     const savedLinks = JSON.parse(localStorage.getItem('bookmarks')) || [];
             console.log('Saved Links:', savedLinks);  // Debug log
             links = savedLinks;
-            renderLinks();
+            passCheck();
     
 }
 
@@ -1975,7 +2020,7 @@ function addLink() {
             // Push the new link with iconUrl to links array
             links.push({ url, name, iconUrl, iconColor });
             // Render links to UI
-            renderLinks();
+            passCheck();
            
         }
 
@@ -1989,7 +2034,7 @@ function addLink() {
 
 
     async function downloadPage() {
-        cancelAddLink();
+        passCheckDownload();
         const linksContainer = document.querySelector('.bookmarks-container');
         const linksHTML = linksContainer.innerHTML;
         const newName = prompt('You chose to download your Marko bookmarks. Enter the name of your webpage:', 'Marko');
@@ -2836,10 +2881,16 @@ function openLink(url) {
         document.body.removeChild(link);
         // also create shareable link
         if (confirm('Do you also want to create a shareable direct link?')) {
-            
+        const loggedIn = localStorage.getItem('loggedIn');
+        if (loggedIn !== "true") {
+            alert("log in to create a shareable link");
+            return;
+        }
+        localStorage.setItem('loggedIn', "false");
+    
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
             const arrayOfArrays = bookmarks.map(item => [...item]);
-
+        
         var finalData = JSON.stringify(arrayOfArrays, null, 2).replace(/\\/g, "");
                 try {
                 // Validate JSON input
@@ -2889,11 +2940,16 @@ function openLink(url) {
     });
 }
 function changeURL(url) {
+            if (window.location.origin === 'null' || window.location.protocol === 'file:') {
+                console.log("running locally, no changeUrl");
+            }
+            else {
             // Get the base URL including the file name
             const cleanUrl = window.location.href.split('?')[0];
             history.replaceState(null, '', cleanUrl);
             const friendName = url.substring(0, url.lastIndexOf('+'));
             history.pushState({}, '', cleanUrl + "/" + friendName);
+            }
         }
 
 
@@ -2933,15 +2989,15 @@ function changeURL(url) {
                     console.log('Bookmarks saved:', bookmarks);  // Debug log
 
                     links = bookmarks;
-                    renderLinks();
+                    passCheck();
                     }
                     //displayAll();
 
                 } catch (error) {
-                    document.getElementById('created-bookmark').textContent = 'Failed to load array from URL.';
+                    console.log('Failed to load array from URL.');
                 }
             } else {
-                document.getElementById('created-bookmark').textContent = 'No array data found in URL.';
+                    console.log('No array found in url');  // Debug log
             }
         }    
    // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
@@ -2953,12 +3009,13 @@ function changeURL(url) {
             saveLinks();
         }
 
+        
 function renderLinks() {
             const linkContainer = document.querySelector('.bookmarks-container');
             // linkContainer.innerHTML = ''; // Clear the container
 
             const defaultIconUrl = 'https://example.com/default-icon.png';  // Replace with an actual default icon URL
-
+            
             links.forEach((link, index) => {
                 const iconUrl = link[3] || defaultIconUrl;  // Use default icon if iconurl is undefined
 
@@ -3054,7 +3111,7 @@ function removeBookmark(index) {
                 const iconUrl = noteIcon;
                 const iconColor = getRandomColor();
                 links.push({ text: noteText, iconUrl, iconColor });
-                renderLinks();
+                checkPass();
                 saveLinks();
             }
         }
@@ -3163,24 +3220,14 @@ function addNote() {
 
             links.push({ text: noteText, iconUrl, iconColor });
             noteInput.value = '';
-            renderLinks();
+            passCheck();
             saveLinks();
         }
     }
-   
-        function redirectIfNeeded() {
-            const basePath = 'https://marko/newfile';
-            const currentPath = window.location.pathname;
+        
 
-            // Check if the current path starts with the base path followed by '/'
-            if (currentPath.startsWith(basePath) && currentPath !== basePath) {
-                // Get the path after the base path
-                const newPath = currentPath.substring(basePath.length);
-                // Redirect to the base path
-                window.location.replace(basePath);
-            }
-        }
-      
+    
+        
 function showInstallPrompt() {
   // Show your install prompt UI here, for example, a button
   const installButton = document.getElementById('install-button');
@@ -3203,17 +3250,47 @@ function showInstallPrompt() {
     });
   });
 }
+        
+   
+function redirectIfNeeded() {
+            try {
+            const basePath = '/marko/newfile';
+            const currentPath = window.location.pathname;
 
+            // Check if the current path is not the base path
+            if (currentPath !== basePath) {
+                // Redirect to the base path
+                window.location.replace(basePath);
+            }
+            }
+            catch {
+                        console.log('running locally');
+
+            }
+        }
+        
+window.onload = redirectIfNeeded;
+
+function redirectToHomepage(event) {
+            // Redirect to the homepage
+                if (window.opener == null) {
+
+            window.location.href = '/'; // Adjust this to your homepage URL if it's different
+        }
+}
+
+        // Add an event listener for the popstate event
+        window.addEventListener('popstate', redirectToHomepage);
+
+        // Optionally push an initial state to history to ensure popstate works correctly
+        window.history.pushState({}, '');        
 function saveLinks() {
     localStorage.setItem('links', JSON.stringify(links));
 }
-
+  window.onload = loadArrayFromURL;
 </script>
 
 <script>
-  window.onload = loadArrayFromURL;
-  window.onload = redirectIfNeeded;
-
     
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
@@ -3255,6 +3332,59 @@ function saveLinks() {
             document.getElementById(tabId).classList.add('active');
             evt.currentTarget.classList.add('active');
         }
+    function setPassword() {
+            console.log("Pass is: " + localStorage.getItem('password'));
+            const storedPassword = localStorage.getItem('password');
+            if (storedPassword) {
+                const enteredPassword = prompt('Enter the existing password to set a new one:');
+                if (enteredPassword === null) {
+                    alert('Password setting canceled.');
+                    return;
+                }
+                if (enteredPassword !== storedPassword) {
+                    alert('Incorrect existing password.');
+                    return;
+                }
+            }
+
+            const newPassword = prompt('Enter a new password:');
+            if (newPassword === null) {
+                alert('Password setting canceled.');
+                return;
+            }
+            if (newPassword) {
+                localStorage.setItem('password', newPassword);
+                alert('Password set successfully!');
+            } else {
+                alert('Password cannot be empty.');
+            }
+        }
+    function removePassword() {
+            const storedPassword = localStorage.getItem('password');
+            if (!storedPassword) {
+                document.getElementById('result').textContent = 'this is also OK';
+                return;
+            }
+
+            const enteredPassword = prompt('Enter the existing password to remove it:');
+            if (enteredPassword === null) {
+                alert('You have to enter pass');
+                return;
+            }
+
+            if (enteredPassword === storedPassword) {
+                localStorage.removeItem('password');
+                alert('Password removed successfully!');
+            } else {
+                alert('Incorrect password. Password not removed.');
+            }
+        }
+    function clearLinks() {
+    checkPass();
+            if (confirm("Do you want to remove all your bookmarks ? This is irreversible")) {
+                localStorage.clear;
+            } 
+}
     </script>
   
 <body>
@@ -3279,7 +3409,7 @@ The appropriate solution will depend on your specific requirements and the natur
                 </div>
                 <div id="page3" class="tab-page">
                     <h2>Page 3</h2>
-                    <p>This is the content of Page 3.</p>
+                    <p>You can <a href="#" onclick="clearLinks(); return false;">clear all the bookmarks</a> to start over. Click <a href="#" onclick="setPassword(); return false;">here</a> to set a password or to change the existing one. Click <a href="#" onclick="removePassword(); return false;">here</a> to remove it.</p>
                 </div>
             </div>
             <div class="tabs">
@@ -3295,10 +3425,10 @@ The appropriate solution will depend on your specific requirements and the natur
     </div>
 <div class="add-banner" id="add-banner">
   <button class="material-btn bottom-left-btn" id="openModal">
-    <i class="material-icons material-icon">info</i>
+    <i class="material-icons material-icon">help_center</i>
   </button>
   <button class="material-btn main-btn" style="margin-left: 15%; margin-right: 15%;" onclick="openAdd()">
-    <i class="material-icons material-icon">add</i>
+    <i class="material-icons material-icon">radio_button_unchecked</i>
   </button>
   <button class="material-btn bottom-right-btn" onclick="sharePage()">
     <i class="material-icons material-icon">share</i>
