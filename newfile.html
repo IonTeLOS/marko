@@ -1886,7 +1886,8 @@ document.getElementById('phone-number').addEventListener('keydown', function(eve
     function passCheck() {
             const storedPassword = localStorage.getItem('password');
             console.log("pass=" + storedPassword);
-            if (!storedPassword) {
+            const loggedIn = sessionStorage.getItem('loggedIn');
+            if (!storedPassword || loggedIn == "true") {
                 renderLinks();
                 return;
             }
@@ -1898,34 +1899,14 @@ document.getElementById('phone-number').addEventListener('keydown', function(eve
             }
 
             if (enteredPassword === storedPassword) {
+               sessionStorage.setItem('loggedIn', "true");
                renderLinks();
             } else {
                 return;
             }
         }
         
-        function passCheckExtra() {
-            const storedPassword = localStorage.getItem('password');
-            console.log("pass=" + storedPassword);
-            if (!storedPassword) {
-                localStorage.setItem('loggedIn', "true");
-                dontRenderFriends();
-                return;
-            }
-
-            const enteredPassword = prompt('Enter password:');
-            if (enteredPassword === null) {
-                alert('You have to enter pass to continue');
-                return;
-            }
-
-            if (enteredPassword === storedPassword) {
-               renderLinks();
-               localStorage.setItem('loggedIn', "true");
-            } else {
-                return;
-            }
-        }    
+        
     let links = [];
     const linkIcon = 'https://fonts.gstatic.com/s/i/materialicons/open_in_new/v15/24px.svg';
     const mailIcon = 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
@@ -2036,7 +2017,7 @@ function addLink() {
     async function downloadPage() {
         const linkContainer = document.querySelector('.bookmarks-container');
         linkContainer.innerHTML = ''; 
-        passCheckExtra();
+        passCheck();
         const linksContainer = document.querySelector('.bookmarks-container');
         const linksHTML = linksContainer.innerHTML;
         const newName = prompt('You chose to download your Marko bookmarks. Enter the name of your webpage:', 'Marko');
@@ -2901,7 +2882,13 @@ function openLink(url) {
         // Function to handle click on share icon
         function handleShareClick() {
             const param = 'friendname=${title}&friendlink=${window.location.origin}${window.location.pathname}';
-
+            if (param.includes("file://") || param.includes("content://")) {
+                    confirm('Upload this file on a server so that it can accessed by your users?');
+                    if (confirm) {
+                    openLink("https://tiiny.host");
+                    }
+                    return;
+            }
             openLink("https://teloslinux.org/marko/newfile?" + param);
         }
 
@@ -2935,12 +2922,11 @@ function openLink(url) {
         document.body.removeChild(link);
         // also create shareable link
         if (confirm('Do you also want to create a shareable direct link?')) {
-        const loggedIn = localStorage.getItem('loggedIn');
+        const loggedIn = sessionStorage.getItem('loggedIn');
         if (loggedIn !== "true") {
             alert("log in to create a shareable link");
             return;
         }
-        localStorage.setItem('loggedIn', "false");
     
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
         // exclude bookmarks of friends
@@ -3482,13 +3468,12 @@ function saveLinks() {
             }
         }
     function clearLinks() {
-        passCheckExtra();
-        const loggedIn = localStorage.getItem('loggedIn');
+        passCheck();
+        const loggedIn = sessionStorage.getItem('loggedIn');
         if (loggedIn !== "true") {
             alert("Login to clear bookmarks. This action will also reset your password.");
             return;
         } else {
-            localStorage.setItem('loggedIn', "false");
             if (confirm("Do you want to remove all your bookmarks ? This is irreversible !")) {
                 localStorage.clear();
                 location.reload();
