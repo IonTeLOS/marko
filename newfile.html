@@ -2856,6 +2856,8 @@ input:focus {
     </div>
         <div class="bookmarks-container">${linksHTML}</div>
     <script>      
+            // Call the function on page load
+        window.onload = checkIfLocalAndConfirm;
          function sharePage() {
   if (navigator.share) {
     navigator.share({
@@ -2906,6 +2908,18 @@ function openLink(url) {
         // Add event listeners to icons
         document.getElementById('home-icon').addEventListener('click', handleHomeClick);
         document.getElementById('share-icon').addEventListener('click', handleShareClick);
+        
+        function checkIfLocalAndConfirm() {
+            if (window.location.protocol === 'file:') {
+                // Show confirmation dialog
+                var userConfirmed = confirm('Do you want to create your own site? Upload current file ${title}.html on tiiny host and you are done!');
+                if (userConfirmed) {
+                    // Open the link if the user confirms
+                    window.location.href = 'https://tiiny.host';
+                }
+            }
+        }
+
 
     <\/script>
 </body>
