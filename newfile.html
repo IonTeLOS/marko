@@ -2910,7 +2910,7 @@ function openLink(url) {
         document.getElementById('share-icon').addEventListener('click', handleShareClick);
         
         function checkIfLocalAndConfirm() {
-            if (window.location.protocol === 'file:') {
+            if (window.location.protocol === 'file:' || window.location.protocol === 'content:') {
                 // Show confirmation dialog
                 var userConfirmed = confirm('Do you want to create your own site? Upload current file ${title}.html on tiiny host and you are done!');
                 if (userConfirmed) {
