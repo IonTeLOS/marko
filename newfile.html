@@ -2898,11 +2898,10 @@ function openLink(url) {
 
         // Function to handle click on share icon
         function handleShareClick() {
-            const name = '${title}';
-            const param = 'friendname="${name}"&friendlink="${window.location.origin}${window.location.pathname}"';
+            const title = '${title}';
+            const param = 'title=${title}&friendlink=${window.location.origin}${window.location.pathname}';
 
             openLink("https://teloslinux.org/marko/newfile?" + param);
-            // Add your share icon click functionality here            // Add your share icon click functionality here
         }
 
         // Add event listeners to icons
@@ -3001,9 +3000,24 @@ function changeURL(url) {
     function loadArrayFromURL() {
             const params = new URLSearchParams(window.location.search);
             const compressed = params.get('data');
+            const purelink = params.get('friendlink');
             const uncompressed = params.get('title');
-            console.log(uncompressed);  // Debug log
 
+            if (purelink) {
+                    if (confirm("Do you want to add " + `${uncompressed}` + " as friend?")) {
+                       linkData = ["friend", params.get('friendlink'), uncompressed, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
+                       let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+
+                       bookmarks.push(linkData);
+                       localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                       document.getElementById('created-bookmark').textContent = JSON.stringify(bookmarks);
+
+                       console.log('Bookmarks saved:', bookmarks);  // Debug log
+
+                       links = bookmarks;
+                       passCheck();
+            }
+            }
 
             if (compressed) {
                 try {
