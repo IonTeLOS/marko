@@ -1,44 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Viewer</title>
-  <!-- Include Adobe Acrobat Viewer SDK -->
-  <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adobe PDF Embed API Lightbox</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            width: 300px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
-  <h1>PDF Viewer</h1>
-  
-  <!-- Input field to paste PDF URL -->
-  <label for="pdf-url">Paste PDF URL:</label>
-  <input type="text" id="pdf-url" placeholder="Enter PDF URL">
-  
-  <!-- Button to view PDF -->
-  <button onclick="viewPDF()">View PDF</button>
+    <input type="text" id="pdfUrl" placeholder="Enter PDF URL">
+    <button id="openPDF">Open PDF</button>
 
-  <script type="text/javascript">
-    function viewPDF() {
-      var pdfUrl = document.getElementById('pdf-url').value.trim();
+    <!-- Placeholder div for Adobe PDF Embed API -->
+    <div id="adobe-dc-view"></div>
 
-      if (pdfUrl === "") {
-        alert("Please enter a PDF URL.");
-        return;
-      }
+    <!-- Adobe PDF Embed API script -->
+    <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
 
-      // Wait for AdobeDC View SDK to be ready
-      document.addEventListener("adobe_dc_view_sdk.ready", function() {
-        var adobeDCView = new AdobeDC.View({ clientId: "<YOUR_CLIENT_ID>", divId: "adobe-dc-view" });
-        adobeDCView.previewFile({
-          content: { location: { url: pdfUrl } },
-          metaData: { fileName: "Document.pdf" } // You can change the file name if needed
-        }, { embedMode: "LIGHT_BOX", defaultViewMode: "FIT_WIDTH", exitOnClose: true });
-      });
-    }
-  </script>
+    <script>
+        function showPDFLightbox(pdfUrl) {
+            const adobeDCView = new AdobeDC.View({
+                clientId: "f0b67b61ecc04ab98f1fff720590cca2",
+                divId: "adobe-dc-view",
+            });
 
-  <!-- Container for AdobeDC View -->
-  <div id="adobe-dc-view"></div>
+            const pdfContainer = document.getElementById("adobe-dc-view");
+            pdfContainer.style.position = "fixed";
+            pdfContainer.style.top = "0";
+            pdfContainer.style.left = "0";
+            pdfContainer.style.width = "100%";
+            pdfContainer.style.height = "100%";
+            pdfContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+            pdfContainer.style.zIndex = "9999";
+            pdfContainer.style.display = "flex";
+            pdfContainer.style.justifyContent = "center";
+            pdfContainer.style.alignItems = "center";
 
+            adobeDCView.previewFile({
+                content: {
+                    location: {
+                        url: pdfUrl,
+                    },
+                },
+                metaData: {
+                    fileName: "Document.pdf",
+                },
+            }, {
+                embedMode: "SIZED_CONTAINER",
+                defaultViewMode: "FIT_WIDTH",
+            });
+
+            pdfContainer.addEventListener("click", (event) => {
+                if (event.target === pdfContainer) {
+                    pdfContainer.style.display = "none";
+                }
+            });
+        }
+
+        const pdfUrlInput = document.getElementById("pdfUrl");
+        const openPDFButton = document.getElementById("openPDF");
+
+        openPDFButton.addEventListener("click", () => {
+            const pdfUrl = pdfUrlInput.value.trim();
+            if (pdfUrl) {
+                showPDFLightbox(pdfUrl);
+            } else {
+                alert("Please enter a valid PDF URL");
+            }
+        });
+    </script>
 </body>
 </html>
