@@ -1904,12 +1904,12 @@ document.getElementById('phone-number').addEventListener('keydown', function(eve
             }
         }
         
-        function passCheckDownload() {
+        function passCheckExtra() {
             const storedPassword = localStorage.getItem('password');
             console.log("pass=" + storedPassword);
             if (!storedPassword) {
                 localStorage.setItem('loggedIn', "true");
-                renderLinks();
+                dontRenderFriends();
                 return;
             }
 
@@ -2034,7 +2034,9 @@ function addLink() {
 
 
     async function downloadPage() {
-        passCheckDownload();
+        const linkContainer = document.querySelector('.bookmarks-container');
+        linkContainer.innerHTML = ''; 
+        passCheckExtra();
         const linksContainer = document.querySelector('.bookmarks-container');
         const linksHTML = linksContainer.innerHTML;
         const newName = prompt('You chose to download your Marko bookmarks. Enter the name of your webpage:', 'Marko');
@@ -2823,14 +2825,37 @@ input:focus {
 .material-btn .material-icon {
   font-size: 48px; /* Change the icon size to 48x48 */
 }
+.top-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 50px;
+            background-color: #f0f0f0;
+        }
+
+        .material-icons {
+            cursor: pointer;
+            font-size: 42px; /* Increase icon size */
+
+        }
+        #banner-title {
+            font-family: 'Roboto', sans-serif; /* Set font to Roboto */
+            font-size: 24px; /* Set the desired font size */
+            }
       
   </style>
 </head>
 <body>
-
+    <div class="top-banner" id="top-banner">
+        <!-- First icon -->
+        <span class="material-icons" id="home-icon">home</span>
+        <!-- Title -->
+        <span id="banner-title">${title}</span>
+        <!-- Second icon -->
+        <span class="material-icons" id="share-icon">share</span>
+    </div>
         <div class="bookmarks-container">${linksHTML}</div>
-    <script>
-        
+    <script>      
          function sharePage() {
   if (navigator.share) {
     navigator.share({
@@ -2866,6 +2891,23 @@ function confirmNav() {
 function openLink(url) {
   window.open(url, '_blank');
 }
+// Function to handle click on home icon
+        function handleHomeClick() {
+            openLink("https://teloslinux.org/marko/newfile");
+        }
+
+        // Function to handle click on share icon
+        function handleShareClick() {
+            const name = '${title}';
+            const param = 'friendname="${name}"&friendlink="${window.location.origin}${window.location.pathname}"';
+
+            openLink("https://teloslinux.org/marko/newfile?" + param);
+            // Add your share icon click functionality here            // Add your share icon click functionality here
+        }
+
+        // Add event listeners to icons
+        document.getElementById('home-icon').addEventListener('click', handleHomeClick);
+        document.getElementById('share-icon').addEventListener('click', handleShareClick);
 
     <\/script>
 </body>
@@ -2889,7 +2931,10 @@ function openLink(url) {
         localStorage.setItem('loggedIn', "false");
     
         let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-            const arrayOfArrays = bookmarks.map(item => [...item]);
+        // exclude bookmarks of friends
+        bookmarks = bookmarks.filter(bookmark => bookmark[0] !== "friend");
+    
+        const arrayOfArrays = bookmarks.map(item => [...item]);
         
         var finalData = JSON.stringify(arrayOfArrays, null, 2).replace(/\\/g, "");
                 try {
@@ -2979,7 +3024,7 @@ function changeURL(url) {
                     document.getElementById('created-bookmark').textContent = friendString;
                     const friendUrl = `${storageKey}`;
 
-                    linkData = ["website", friendUrl, `${uncompressed}`, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
+                    linkData = ["friend", friendUrl, `${uncompressed}`, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
                     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
                     bookmarks.push(linkData);
@@ -3008,14 +3053,12 @@ function changeURL(url) {
             removeBookmark(index);
             saveLinks();
         }
-
         
 function renderLinks() {
             const linkContainer = document.querySelector('.bookmarks-container');
             // linkContainer.innerHTML = ''; // Clear the container
 
             const defaultIconUrl = 'https://example.com/default-icon.png';  // Replace with an actual default icon URL
-            
             links.forEach((link, index) => {
                 const iconUrl = link[3] || defaultIconUrl;  // Use default icon if iconurl is undefined
 
@@ -3037,8 +3080,40 @@ function renderLinks() {
     </div>
 `;
                     linkContainer.appendChild(bookmarkElement);
-                hideAdd();
+                hideAdd();                
+
+            });
+        }
+        
+        function dontRenderFriends() {
+            const linkContainer = document.querySelector('.bookmarks-container');
+            // linkContainer.innerHTML = ''; // Clear the container
+
+            const defaultIconUrl = 'https://example.com/default-icon.png';  // Replace with an actual default icon URL
+            links.forEach((link, index) => {
+                if (link[0] !== "friend") {
+                const iconUrl = link[3] || defaultIconUrl;  // Use default icon if iconurl is undefined
+
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
                 
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" onclick="openLink('${link[1]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                    linkContainer.appendChild(bookmarkElement);
+                hideAdd();
+            }
                 
 
             });
@@ -3380,10 +3455,18 @@ function saveLinks() {
             }
         }
     function clearLinks() {
-    checkPass();
-            if (confirm("Do you want to remove all your bookmarks ? This is irreversible")) {
-                localStorage.clear;
-            } 
+        passCheckExtra();
+        const loggedIn = localStorage.getItem('loggedIn');
+        if (loggedIn !== "true") {
+            alert("Login to clear bookmarks. This action will also reset your password.");
+            return;
+        } else {
+            localStorage.setItem('loggedIn', "false");
+            if (confirm("Do you want to remove all your bookmarks ? This is irreversible !")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
 }
     </script>
   
@@ -3528,7 +3611,7 @@ const easyMDE = new EasyMDE({element: document.getElementById('intro-content')})
               openAdd();
               markoMenu.style.display = 'none';
               break;
-            case 'generate':
+            case 'generate':     
               downloadPage();
               markoMenu.style.display = 'none';
               break;
@@ -3699,6 +3782,8 @@ const easyMDE = new EasyMDE({element: document.getElementById('intro-content')})
 
     <div class="bookmarks-container">
 <div>
+    <div class="friends-container">
+         </div>
     <!-- Regular bookmarks -->
     <div class="bookmark menu-item" data-link="https://example.com">
       <div class="icon-wrapper">
