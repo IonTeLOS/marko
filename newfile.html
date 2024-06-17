@@ -10,12 +10,60 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
+    <script src="https://unpkg.com/react-youtube/dist/react-youtube.js"></script>
     <meta name="theme-color" content="#0288d1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="/manifest.json">    
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>    
+    <!-- Adobe PDF Embed API script -->
+    <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+
+    <script>
+        function showPdf(pdfUrl, title) {
+            const adobeDCView = new AdobeDC.View({
+                clientId: "f0b67b61ecc04ab98f1fff720590cca2",
+                divId: "adobe-dc-view",
+            });
+
+            const pdfContainer = document.getElementById("adobe-dc-view");
+            pdfContainer.style.position = "fixed";
+            pdfContainer.style.top = "0";
+            pdfContainer.style.left = "0";
+            pdfContainer.style.width = "100%";
+            pdfContainer.style.height = "100%";
+            pdfContainer.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+            pdfContainer.style.zIndex = "9999";
+            pdfContainer.style.display = "flex";
+            pdfContainer.style.justifyContent = "center";
+            pdfContainer.style.alignItems = "center";
+
+            adobeDCView.previewFile({
+                content: {
+                    location: {
+                        url: pdfUrl,
+                    },
+                },
+                metaData: {
+                    fileName: title,
+                },
+            }, {
+                embedMode: "LIGHT_BOX",
+                defaultViewMode: "FIT_WIDTH",
+            });
+
+            pdfContainer.addEventListener("click", (event) => {
+                if (event.target === pdfContainer) {
+                    pdfContainer.style.display = "none";
+                }
+            });
+        }
+
+
+               // const corsProxyUrl = "https://proxy.cors.sh/";
+
+    </script>
 <script>
   function detectTheme() {
     const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -65,11 +113,14 @@ body {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
+  max-width: 100%;
+  overflow-x: hidden;
+  height:auto!important;    
   margin: 0;
-      gap: 6px; /* Add some spacing between bookmarks */
-      padding: 0;
-      padding-top: 16px;
-      padding-bottom: 80px;  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  gap: 6px; /* Add some spacing between bookmarks */
+  padding: 0;
+  padding-top: 16px;
+  padding-bottom: 80px;  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
 body.light-mode {
@@ -727,8 +778,7 @@ input:focus {
         #new-link-url,
         #new-link-name, 
         #phone-number, 
-        #window-url, 
-        #new-icon-url {
+        #window-url {
             font-size: 2em; /* Increase font size */
             padding: 10px; /* Increase padding for better touch target */
             border: 1px solid #ccc; /* Add a border */
@@ -1001,6 +1051,101 @@ input:focus {
         width: 95%;
     }
 }
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .lightbox.active {
+      display: flex;
+    }
+    .lightbox-content {
+      position: relative;
+      width: 90%;
+      height: 90%;
+      max-width: 100%;
+      max-height: 100%;
+      background-color: white;
+      border-radius: 10px;
+    }
+    .lightbox-content .content-container {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      position: relative;
+    }
+    /* Option 1: Iframe with absolute positioning */
+    .lightbox-content iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      position: absolute;
+      overflow: hidden;  /* Option 1: Hide scrollbars visually */
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 10px; /* Rounded corners for iframe */
+    }
+ /* Closing Button (outside lightbox) */
+    .close-btn {
+      position: fixed; /* Make the element absolutely positioned */
+      bottom: 5px; /* Position the element at the bottom */
+      left: 50%; /* Position the element horizontally at 50% */
+      transform: translateX(-50%); /* Center the element horizontally */
+      background-color: #3f51b5; /* Material Blue */
+      color: white;
+      border: none;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 1001; /* Ensure button is on top of lightbox */
+      font-size: 24px; /* Adjust font size for desired icon size */
+      border-radius: 50%;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2); /* Material shadow effect */
+    }
+    .close-btn:hover {
+      background-color: #384890
+      }  
+      #player-container {
+      width: 100%;
+      max-width: 640px;
+      aspect-ratio: 16 / 9;
+      margin-top: 20px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    #player {
+      width: 100%;
+      height: 100%;
+    }
+    @media (max-width: 768px) {
+      #player-container {
+        width: 95%;
+      }
+    }
+    @media (orientation: landscape) and (max-width: 900px) {
+      #player-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        margin: 0;
+        z-index: 9999;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1124,11 +1269,8 @@ document.addEventListener('DOMContentLoaded', function() {
     function handleIconSourceChange() {
         const iconSource = iconSourceSelect.value;
         console.log(`Icon source changed to: ${iconSource}`);  // Debug log
-        document.getElementById('new-icon-url').style.display = 'none';
         document.getElementById('new-link-icon').style.display = 'none';
-        if (iconSource === 'link') {
-            document.getElementById('new-icon-url').style.display = 'block';
-        } else if (iconSource === 'selection') {
+        if (iconSource === 'selection') {
             document.getElementById('new-link-icon').style.display = 'block';
         }
     }
@@ -1187,21 +1329,17 @@ document.addEventListener('DOMContentLoaded', function() {
       const iconSource = iconSourceSelect.value;
       console.log(`Icon source changed to: ${iconSource}`);  // Debug log
       
-      const newIconUrl = document.getElementById('new-icon-url');
       const newLinkIcon = document.getElementById('new-link-icon');
       
-      if (!newIconUrl || !newLinkIcon) {
-        console.error('Elements "new-icon-url" or "new-link-icon" not found');
+      if (!newLinkIcon) {
+        console.error('Element new-link-icon not found');
         return;
       }
       
-      newIconUrl.style.display = 'none';
       newLinkIcon.style.display = 'none';
       hideIconSelectionPanel(); // Hide by default
 
-      if (iconSource === 'link') {
-        newIconUrl.style.display = 'block';
-      } else if (iconSource === 'selection') {
+      if (iconSource === 'selection') {
         newLinkIcon.style.display = 'block';
         showIconSelectionPanel(); // Show when "Select an icon" is chosen
       }
@@ -1343,8 +1481,6 @@ function getIconData() {
       } 
       const hostname = new URL(url).hostname;
       return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
-    case 'link':
-      return document.getElementById('new-icon-url').value.trim();
     case 'selection':
       selectedOne = document.getElementById('search').value.trim()
       if (selectedOne === "") {
@@ -1581,6 +1717,7 @@ function transformGeo(locUrl) {
       return (match && match[7].length == 11) ? match[7] : "a0jg5stzlfe";
       // TODO change the a0jg5stzlfe default yt id if null or undefined
     }
+    
     function showError(type, message) {
         const errorElement = type === 'note' || type === 'intro' ? 'note-error' : 'name-error';
         document.getElementById(errorElement).textContent = message;
@@ -1645,7 +1782,6 @@ function saveBookmark(linkData) {
         document.getElementById('note-content').value = '';
         document.getElementById('window-url').value = '';
         document.getElementById('icon-source').value = 'default';
-        document.getElementById('new-icon-url').value = '';
         document.getElementById('new-link-icon').value = '';
         easyMDE.value('');
         hideAllFields();
@@ -1723,20 +1859,20 @@ function saveBookmark(linkData) {
                 break;
             case "note":
                 const noteContent = document.getElementById('note-content').value.trim();
-                if (
-  // Check for blank note
-  (!noteContent || noteContent.trim() === "") ||
 
-  // Check for note length exceeding 300 characters (optional)
-  (noteContent.length > 300) ||
-
-  // Check for at least one non-space character
-  !/\S/.test(noteContent)
-) {
-  // Set error message if any validation fails
-  alert("Please enter a note");  // Adjust based on specific validation failures
-  // ... (optional: handle specific error messages based on the failing condition)
+if (!noteContent || !/\S/.test(noteContent)) {
+  alert("Please enter a valid note. Ensure it's not empty, and contains max. 500 characters.");
+} else if (noteContent.length > 500) {
+  if (confirm("Your note exceeds 500 characters. Do you want to keep only the first 500 characters?")) {
+    // Keep only the first 500 characters
+    document.getElementById('note-content').value = noteContent.substring(0, 500);
+    alert("Note has been trimmed to the first 500 characters.");
+  } else {
+    // User chose not to trim the note
+    alert("Your note exceeds the 500-character limit. Please adjust it if necessary.");
+  }
 }
+
                 name = getTextValue('new-link-name', 30) || "Note"; 
                 linkData = [linkType, noteContent, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/short_text/default/48px.svg", getRandomColor()];
                 break;
@@ -1766,10 +1902,10 @@ function saveBookmark(linkData) {
                   alert("Please enter a URL");
                   break;
                   }
-                if ((winUrl.includes("youtu.be")) ||  (winUrl.includes("youtube.com"))) {
-                   ytId = getYouTubeId(winUrl);
+                if ((winUrl.includes("youtu.be")) || (winUrl.includes("youtube.com"))) {
+                   const ytId = getYouTubeId(winUrl);
                    name = getTextValue('new-link-name', 30) || "YouTube screen";
-                   linkData = ["YouTube", ytId, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/youtube/default/48px.svg", getRandomColor()];
+                   linkData = ["YouTube", `${ytId}`, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/youtube_activity/default/48px.svg", getRandomColor()];
                    break;
                 }
                 else {
@@ -1846,13 +1982,17 @@ if ( document.getElementById('new-link-url') !== null && document.getElementById
   alertUrl = document.getElementById('phone-number').value.trim();
 } else if (document.getElementById('window-url') !== null && document.getElementById('window-url').value.trim() !== "") {
   alertUrl = document.getElementById('window-url').value.trim();
+} else if (document.getElementById('note-content') !== null && document.getElementById('note-content').value.trim() !== "") {
+  alertUrl = document.getElementById('new-link-name').value.trim();
 } else {
   alertUrl = null; // None of the values are valid
 }           
             if (alertUrl !== null) {
                 alert("Success! You just added a bookmark for " + alertUrl);
                 location.reload();
-            } 
+            } else {
+                location.reload();
+            }
             return linkData;
         }
     };
@@ -2012,9 +2152,31 @@ function addLink() {
     hideForm();
     saveLinks();
 }
+function shareOrCopyText(title, text) {
+  if (navigator.share) {
+    navigator.share({
+      title: title,
+      text: text
+    })
+    .then(() => {
+      console.log('Successfully shared');
+    })
+    .catch((error) => {
+      console.error('Error sharing:', error);
+    });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(text)
+      .then(() => {
+        alert('Web Share API is not available. The text has been copied to the clipboard.');
+      })
+      .catch((error) => {
+        console.error('Error copying to clipboard:', error);
+        alert('Failed to copy text to clipboard.');
+      });
+  } 
+}
 
-
-    async function downloadPage() {
+async function downloadPage() {
         const linkContainer = document.querySelector('.bookmarks-container');
         linkContainer.innerHTML = ''; 
         passCheck();
@@ -2054,7 +2216,8 @@ body {
   margin: 0;
   padding: 0;
   max-width: 100%;
-  overflow-x: hidden;    
+  overflow-x: hidden;
+  height:auto!important;    
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }
 
@@ -2910,7 +3073,7 @@ function openLink(url) {
 
     <\/script>
 </body>
-</html>`;
+<\/html>`;
 
 
         const blob = new Blob([currentState], { type: 'text/html' });
@@ -3071,10 +3234,107 @@ function renderLinks() {
             const linkContainer = document.querySelector('.bookmarks-container');
             // linkContainer.innerHTML = ''; // Clear the container
 
-            const defaultIconUrl = 'https://example.com/default-icon.png';  // Replace with an actual default icon URL
-            links.forEach((link, index) => {
-                const iconUrl = link[3] || defaultIconUrl;  // Use default icon if iconurl is undefined
+            const defaultIconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg';  // Replace with an actual default icon URL
 
+                links.forEach((link, index) => {
+                if (link[0] === "YouTube") {
+                //const iconUrl = link[3] || defaultIconUrl; 
+
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" onclick="playYt('${link[1]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                    linkContainer.appendChild(bookmarkElement);
+                hideAdd();   
+                    
+                }           
+                else if (link[0] === "window") {
+                //const iconUrl = link[3] || defaultIconUrl; 
+
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" onclick="showWindow('${link[1]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                    linkContainer.appendChild(bookmarkElement);
+                hideAdd();   
+                    
+                }        
+                else if (link[0] === "note") {
+    
+                const iconUrl = link[3] || defaultIconUrl; 
+
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
+                
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" onclick="shareOrCopyText('${link[2]}', '${link[1]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                    linkContainer.appendChild(bookmarkElement);
+                hideAdd();   
+                                }
+                else if (link[0] === "pdf") {
+                    const iconUrl = link[3] || defaultIconUrl; 
+
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
+                const proxy = 'https://proxy.cors.sh/';
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" onclick="showPdf('${proxy}${link[1]}', '${link[2]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                    linkContainer.appendChild(bookmarkElement);
+                hideAdd();   
+                    
+                }     
+                else {
+    
+                const iconUrl = link[3] || defaultIconUrl; 
+    
                 const bookmarkElement = document.createElement('div');
                 bookmarkElement.className = 'bookmark';
                 bookmarkElement.dataset.index = index; // Store the index as a data attribute
@@ -3093,9 +3353,12 @@ function renderLinks() {
     </div>
 `;
                     linkContainer.appendChild(bookmarkElement);
-                hideAdd();                
+                hideAdd();   
+                            
+                }
 
             });
+                
         }
         
         function dontRenderFriends() {
@@ -3391,6 +3654,20 @@ function saveLinks() {
   }
 </script>
 <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+      const bookmark = document.querySelector('.bookmark.menu-item[data-link="show-content"]');
+      const content = bookmark.querySelector('.content');
+
+      bookmark.addEventListener('click', () => {
+        if (content.style.display === 'block') {
+          content.style.display = 'none';
+          bookmark.classList.remove('active');
+        } else {
+          content.style.display = 'block';
+          bookmark.classList.add('active');
+        }
+      });
+    });
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('openModal').onclick = function() {
                 document.getElementById('myModal').style.display = 'flex';
@@ -3480,9 +3757,73 @@ function saveLinks() {
             }
         }
 }
+  function showWindow(link) {
+    if (!link) {
+      alert("Please enter a valid link.");
+      return;
+    }
+
+    //const isYouTubeLink = link.includes("youtube.com") || link.includes("youtu.be");
+    const lightboxContainer = document.getElementById("lightbox");
+    const lightboxIframe = document.getElementById("lightbox-iframe");
+
+    
+    lightboxIframe.src = link;
+    
+    lightboxContainer.classList.add("active");
+  }
+
+  function closeLightbox() {
+    const lightboxContainer = document.getElementById("lightbox");
+    lightboxContainer.classList.remove("active");
+    document.getElementById("lightbox-iframe").src = "";
+  }
+
     </script>
-  
+    <script src="https://cdn.plyr.io/3.6.8/plyr.js"></script>
+
+  <script>
+    
+     function playYt(url) {
+  const lightboxIframe = document.getElementById('lightbox-iframe');
+       const lightboxContainer = document.getElementById("lightbox");
+
+   // lightboxIframe.src = link;
+    
+    lightboxContainer.classList.add("active");         
+    const iframe = document.getElementById('lightbox-iframe');
+  if (!url.startsWith("http")) {
+          iframe.src = "https://youtube.com/embed/" + url; // Set the source of the iframe
+  } else {
+          iframe.src = url; // Set the source of the iframe
+
+  }
+
+  // Initialize Plyr
+  const player = new Plyr(iframe);
+
+  // Play the video
+  player.play();
+}
+
+ 
+      
+      
+  </script>
 <body>
+    <!-- Lightbox with iframe and YouTube player -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-content">
+      <button class="close-btn" onclick="closeLightbox()">
+        <i class="material-icons">close</i>
+      </button>
+      <div id="content-container">
+<iframe id="lightbox-iframe" src="" allowfullscreen allow="autoplay"></iframe>
+      </div>
+    </div>
+  </div>
+    <!-- Placeholder div for Adobe PDF Embed API -->
+    <div id="adobe-dc-view"></div>
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
@@ -3567,15 +3908,13 @@ The appropriate solution will depend on your specific requirements and the natur
         <select id="icon-source">
           <option value="default">Use default Material Icon (in random color)</option>
           <option value="favicon">Use website favicon</option>
-          <option value="link">Add icon URL</option>
           <option value="selection">Select an icon</option>
         </select>
-        <input type="text" id="new-icon-url" placeholder="Add icon URL" style="display: none;">
         
       </div>
     </div>
     <div id="note-field" class="input-field" style="display: none;">
-  <textarea id="note-content" style="height: 300px; width: 100%;" placeholder="Enter note content (max 300 characters)" maxlength="300"></textarea>
+  <textarea id="note-content" style="height: 300px; width: 100%;" placeholder="Enter note content (max 500 characters)"></textarea>
   <span class="error" id="note-error"></span>
 </div>
     <div id="intro-field" class="input-field" style="height:300px; overflow-y:scroll; border:1px solid #c0c0c0; display:none;">
@@ -3639,19 +3978,9 @@ const easyMDE = new EasyMDE({element: document.getElementById('intro-content')})
           return; // Exit early to avoid toggle logic
         }
 
-        // Handle content toggle or link opening
-        if (dataLink === 'show-content') {
-          // Toggle content visibility
-          if (content.style.display === 'block') {
-            content.style.display = 'none';
-            bookmark.classList.remove('active');
-            currentActiveBookmark = null;
-          } else {
-            content.style.display = 'block';
-            bookmark.classList.add('active');
-            currentActiveBookmark = bookmark;
-          }
-        } else if (bookmark.id !== 'marko') {
+        
+          // Handle content toggle or link opening
+        if (bookmark.id !== 'marko') {
           // For any other non-Marko bookmark, hide content and remove active state
           content.style.display = 'none';
           if (currentActiveBookmark) {
@@ -3794,8 +4123,6 @@ const easyMDE = new EasyMDE({element: document.getElementById('intro-content')})
 
     <div class="bookmarks-container">
 <div>
-    <div class="friends-container">
-         </div>
     <!-- Regular bookmarks -->
     <div class="bookmark menu-item" data-link="https://example.com">
       <div class="icon-wrapper">
@@ -3815,7 +4142,7 @@ const easyMDE = new EasyMDE({element: document.getElementById('intro-content')})
         <span class="bookmark-title">Show Content</span>
       </div>
       <span class="material-icons delete-icon">delete</span>
-    </div>
+                </div>
 
     <div class="content">
       <p>This is the hidden content that can be shown or hidden.</p>
