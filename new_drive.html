@@ -42,7 +42,7 @@
 </style>
 </head>
 <body>
-    <h1>SessionStorage and Google Drive Example</h1>
+    <h1>Storage and Google Drive sync</h1>
 <button onclick="saveArrayToSession()">Save Array in SessionStorage</button>
 <button onclick="retrieveArrayFromSession()">Retrieve Array from SessionStorage</button>
 <button id="syncToDrive" class="g-button" onclick="saveToGoogleDrive()">
@@ -86,7 +86,7 @@
             scope: SCOPES,
             callback: (tokenResponse) => {
                 if (tokenResponse && tokenResponse.access_token) {
-                    sessionStorage.setItem('accessToken', tokenResponse.access_token);
+                    localStorage.setItem('accessToken', tokenResponse.access_token);
                     alert('Authorization successful.');
                 }
             },
@@ -99,12 +99,12 @@ function authorize() {
             if (resp.error !== undefined) {
                 reject(resp);
             } else {
-                sessionStorage.setItem('accessToken', resp.access_token);
+                localStorage.setItem('accessToken', resp.access_token);
                 resolve(resp);
             }
         };
-        if (sessionStorage.getItem('accessToken')) {
-            resolve({access_token: sessionStorage.getItem('accessToken')});
+        if (localStorage.getItem('accessToken')) {
+            resolve({access_token: localStorage.getItem('accessToken')});
         } else {
             tokenClient.requestAccessToken({prompt: 'consent'});
         }
@@ -151,17 +151,17 @@ function saveToGoogleDrive() {
         return;
     }
     const ensureAuthorization = () => {
-        if (!sessionStorage.getItem('accessToken')) {
+        if (!localStorage.getItem('accessToken')) {
             alert('You need to authorize first. Initiating authorization...');
             return authorize();
         } else {
-            return Promise.resolve({access_token: sessionStorage.getItem('accessToken')});
+            return Promise.resolve({access_token: localStorage.getItem('accessToken')});
         }
     };
 
     const saveNewFile = () => {
         return new Promise((resolve, reject) => {
-            const accessToken = sessionStorage.getItem('accessToken');
+            const accessToken = localStorage.getItem('accessToken');
             if (!accessToken) {
                 reject(new Error('No access token available. Please authorize first.'));
                 return;
@@ -200,7 +200,7 @@ function saveToGoogleDrive() {
     };
 
     ensureAuthorization()
-        .then(() => searchAndDeleteFiles(sessionStorage.getItem('accessToken')))
+        .then(() => searchAndDeleteFiles(localStorage.getItem('accessToken')))
         .then(() => {
             console.log('Previous files deleted successfully');
             return saveNewFile();
@@ -246,12 +246,12 @@ function getFromGoogleDrive() {
         return;
     }
     const ensureAuthorization = () => {
-        if (!sessionStorage.getItem('accessToken')) {
+        if (!localStorage.getItem('accessToken')) {
             alert('You need to authorize first. Initiating authorization...');
             stopSpinning(syncFromButton, syncFromIcon);
             return authorize();
         } else {
-            return Promise.resolve({access_token: sessionStorage.getItem('accessToken')});
+            return Promise.resolve({access_token: localStorage.getItem('accessToken')});
         }
     };
 
@@ -264,7 +264,7 @@ function getFromGoogleDrive() {
 
     ensureAuthorization()
         .then(() => {
-            const accessToken = sessionStorage.getItem('accessToken');
+            const accessToken = localStorage.getItem('accessToken');
             // First, search for a file named "bookmarksMarko.txt"
             return fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27bookmarksMarko.txt%27', {
                 method: 'GET',
@@ -287,7 +287,7 @@ function getFromGoogleDrive() {
         })
         .then(fileId => {
             // Now that we have a fileId (either from search or storage), retrieve the file
-            const accessToken = sessionStorage.getItem('accessToken');
+            const accessToken = localStorage.getItem('accessToken');
             return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
                 method: 'GET',
                 headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
