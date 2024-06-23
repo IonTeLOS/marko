@@ -135,7 +135,7 @@ function saveToGoogleDrive() {
         alert("Connect to the Internet to procceed"); 
         return;
     }
-    const storedPassword = localStorage.getItem('password');
+ /* const storedPassword = localStorage.getItem('password');
     const loggedIn = sessionStorage.getItem('loggedIn');
             if (loggedIn === "true") {
                 console.log("user is logged in, continuing..")
@@ -150,7 +150,8 @@ function saveToGoogleDrive() {
             } else {
                 alert('Something went wrong..aborting');
                 return;
-            }
+            } 
+            */
     // Disable the button and start spinning
     const syncToButton = document.getElementById('syncToDrive');
     const syncToIcon = document.getElementById('syncToIcon');
@@ -246,6 +247,7 @@ function getFromGoogleDrive() {
         alert("Connect to the Internet to procceed"); 
         return;
     }
+    /*
     const storedPassword = localStorage.getItem('password');
     const loggedIn = sessionStorage.getItem('loggedIn');
             if (loggedIn === "true") {
@@ -262,6 +264,7 @@ function getFromGoogleDrive() {
                 alert('Something went wrong..aborting');
                 return;
             }
+    */        
     // Disable the button and start spinning
     const syncFromButton = document.getElementById('syncFromDrive');
     const syncFromIcon = document.getElementById('syncFromIcon');
