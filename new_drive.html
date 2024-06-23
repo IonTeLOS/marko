@@ -77,54 +77,37 @@
 
     let tokenClient;
 
-    function initializeGoogleIdentity() {
-        tokenClient = google.accounts.oauth2.init({
+function initializeGoogleIdentity() {
+        tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: CLIENT_ID,
             scope: SCOPES,
-        });
-
-        tokenClient.then((response) => {
-            tokenClient = response;
-            tokenClient.callback = (tokenResponse) => {
+            callback: (tokenResponse) => {
                 if (tokenResponse && tokenResponse.access_token) {
-                    localStorage.setItem('accessToken', tokenResponse.access_token);
+                    sessionStorage.setItem('accessToken', tokenResponse.access_token);
                     alert('Authorization successful.');
                 }
-            };
-        }).catch((error) => {
-            console.error('Error initializing Google Identity:', error);
-            alert('Failed to initialize Google Identity. Please check console for details.');
+            },
         });
     }
 
-    function authorize() {
-        return new Promise((resolve, reject) => {
-            if (!tokenClient) {
-                reject(new Error('Google Identity not initialized.'));
-                return;
+function authorize() {
+    return new Promise((resolve, reject) => {
+        tokenClient.callback = (resp) => {
+            if (resp.error !== undefined) {
+                reject(resp);
+            } else {
+                sessionStorage.setItem('accessToken', resp.access_token);
+                resolve(resp);
             }
-
-            tokenClient.then((response) => {
-                tokenClient = response;
-                tokenClient.callback = (resp) => {
-                    if (resp.error !== undefined) {
-                        reject(resp);
-                    } else {
-                        localStorage.setItem('accessToken', resp.access_token);
-                        resolve(resp);
-                    }
-                };
-                if (localStorage.getItem('accessToken')) {
-                    resolve({access_token: localStorage.getItem('accessToken')});
-                } else {
-                    tokenClient.requestToken({prompt: 'consent'});
-                }
-            }).catch((error) => {
-                reject(error);
-            });
-        });
-    }
-
+        };
+        if (sessionStorage.getItem('accessToken')) {
+            resolve({access_token: sessionStorage.getItem('accessToken')});
+        } else {
+            tokenClient.requestAccessToken({prompt: 'consent'});
+        }
+    });
+}
+    
 function searchAndDeleteFiles(accessToken) {
     return fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27bookmarksMarko.txt%27', {
         method: 'GET',
