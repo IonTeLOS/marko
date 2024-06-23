@@ -4093,22 +4093,7 @@ function saveToGoogleDrive() {
         alert("Connect to the Internet to procceed"); 
         return;
     }
- const storedPassword = localStorage.getItem('password');
-    const loggedIn = sessionStorage.getItem('loggedIn');
-            if (loggedIn === "true") {
-                console.log("user is logged in, continuing..")
-            }
-    const enteredPassword = prompt('Enter password:');
-            if (enteredPassword === null) {
-                alert('You have to enter app password to continue');
-                return;
-            }
-            if (enteredPassword === storedPassword) {
-                console.log("user logged in, continuing..")
-            } else {
-                alert('Something went wrong..aborting');
-                return;
-            } 
+    passCheck();
     // Disable the button and start spinning
     const syncToButton = document.getElementById('syncToDrive');
     const syncToIcon = document.getElementById('syncToIcon');
@@ -4198,22 +4183,7 @@ function getFromGoogleDrive() {
         alert("Connect to the Internet to procceed"); 
         return;
     }
-    const storedPassword = localStorage.getItem('password');
-    const loggedIn = sessionStorage.getItem('loggedIn');
-            if (loggedIn === "true") {
-                console.log("user is logged in, continuing..")
-            }
-    const enteredPassword = prompt('Enter password:');
-            if (enteredPassword === null) {
-                alert('You have to enter app password to continue');
-                return;
-            }
-            if (enteredPassword === storedPassword) {
-                console.log("user logged in, continuing..")
-            } else {
-                alert('Something went wrong..aborting');
-                return;
-            }     
+    checkPass();
     // Disable the button and start spinning
     const syncFromButton = document.getElementById('syncFromDrive');
     const syncFromIcon = document.getElementById('syncFromIcon');
