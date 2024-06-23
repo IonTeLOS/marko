@@ -4277,7 +4277,7 @@ function getFromGoogleDrive() {
         })
         .then(response => response.text())
         .then(data => {
-            localStorage.setItem('bookmarks', JSON.stringify(data)); // DANGEROUS !! TODO test before implementing..
+            localStorage.setItem('bookmarks', data); // DANGEROUS !! TODO test before implementing..
             let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
             links = bookmarks;
             passCheck();
