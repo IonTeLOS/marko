@@ -4278,9 +4278,9 @@ function getFromGoogleDrive() {
         .then(response => response.text())
         .then(data => {
             let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-            // localStorage.setItem('bookmarks', JSON.stringify(data)); // DANGEROUS !! TODO test before implementing..
-            // links = bookmarks;
-            // passCheck();
+            localStorage.setItem('bookmarks', JSON.stringify(data)); // DANGEROUS !! TODO test before implementing..
+            links = bookmarks;
+            passCheck();
             document.getElementById('output').innerText = 'Retrieved from Drive: ' + data;
             displayLocalStorageData();
             stopSpinning(syncFromButton, syncFromIcon);
@@ -4327,7 +4327,7 @@ function openDonate() {
     
 // test function TODO >> remove
 function hasPaid() {
-        const url = 'https://teloslinux.org/marko/new_drive?donate=true';
+        const url = 'https://teloslinux.org/marko/newfile?donate=true';
         window.location.href = url;
 }
     
