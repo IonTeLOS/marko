@@ -10,11 +10,17 @@
     <h1>SessionStorage and Google Drive Example</h1>
     <button onclick="saveArrayToSession()">Save Array in SessionStorage</button>
     <button onclick="retrieveArrayFromSession()">Retrieve Array from SessionStorage</button>
+    <button onclick="authorize()">Authorize</button>
     <button onclick="saveToGoogleDrive()">Save on Google Drive</button>
     <button onclick="getFromGoogleDrive()">Get from Google Drive</button>
     <p id="output"></p>
 
     <script>
+        const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com'; // Replace with your actual Client ID
+        const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E'; // Replace with your actual API Key
+        const REDIRECT_URI = 'http://teloslinux.org/marko/new_drive';
+        const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
         function saveArrayToSession() {
             const array = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100));
             sessionStorage.setItem('randomArray', JSON.stringify(array));
@@ -26,20 +32,48 @@
             document.getElementById('output').innerText = 'SessionStorage Array: ' + array;
         }
 
-        function saveToGoogleDrive() {
-            const authInstance = gapi.auth2.getAuthInstance();
-            if (!authInstance.isSignedIn.get()) {
-                authInstance.signIn().then(() => {
-                    saveFile();
-                }).catch((error) => {
-                    alert('Failed to sign in: ' + error.error);
-                });
-            } else {
-                saveFile();
+        function authorize() {
+            const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?response_type=code&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&scope=${SCOPES}`;
+            window.location.href = authUrl;
+        }
+
+        function handleAuthResponse() {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            if (code) {
+                fetch('https://oauth2.googleapis.com/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        code: code,
+                        client_id: CLIENT_ID,
+                        client_secret: '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', // Replace with your actual Client Secret
+                        redirect_uri: REDIRECT_URI,
+                        grant_type: 'authorization_code'
+                    })
+                }).then(response => response.json())
+                  .then(data => {
+                      if (data.error) {
+                          throw new Error(data.error);
+                      }
+                      sessionStorage.setItem('accessToken', data.access_token);
+                      window.history.pushState({}, document.title, window.location.pathname);
+                      alert('Authorization successful.');
+                  }).catch(error => {
+                      alert('Error exchanging authorization code for token: ' + error.message);
+                  });
             }
         }
 
-        function saveFile() {
+        function saveToGoogleDrive() {
+            const accessToken = sessionStorage.getItem('accessToken');
+            if (!accessToken) {
+                alert('You need to authorize first.');
+                return;
+            }
+
             const array = sessionStorage.getItem('randomArray');
             const fileContent = array;
             const file = new Blob([fileContent], { type: 'text/plain' });
@@ -48,7 +82,6 @@
                 'mimeType': 'text/plain'
             };
 
-            const accessToken = gapi.auth.getToken().access_token;
             const form = new FormData();
             form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
             form.append('file', file);
@@ -59,21 +92,29 @@
                 body: form
             }).then((res) => res.json()).then((val) => {
                 console.log(val);
-                localStorage.setItem('fileId', val.id);
+                if (val.error) {
+                    throw new Error(val.error.message);
+                }
+                sessionStorage.setItem('fileId', val.id);
                 alert('File saved to Google Drive with ID: ' + val.id);
             }).catch((error) => {
-                alert('Error saving file: ' + error);
+                alert('Error saving file: ' + error.message);
             });
         }
 
         function getFromGoogleDrive() {
-            const fileId = localStorage.getItem('fileId');
+            const accessToken = sessionStorage.getItem('accessToken');
+            if (!accessToken) {
+                alert('You need to authorize first.');
+                return;
+            }
+
+            const fileId = sessionStorage.getItem('fileId');
             if (!fileId) {
                 alert('No file ID found. Save a file to Google Drive first.');
                 return;
             }
-            const accessToken = gapi.auth.getToken().access_token;
-            
+
             fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
                 method: 'GET',
                 headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
@@ -81,7 +122,7 @@
                 localStorage.setItem('retrievedArray', data);
                 document.getElementById('output').innerText = 'Retrieved from Drive: ' + data;
             }).catch((error) => {
-                alert('Error retrieving file: ' + error);
+                alert('Error retrieving file: ' + error.message);
             });
         }
 
@@ -91,18 +132,22 @@
 
         function initClient() {
             gapi.client.init({
-                apiKey: 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E', // Replace with my actual API key
-                clientId: '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com', // Replace with my actual client ID
+                apiKey: API_KEY,
+                clientId: CLIENT_ID,
                 discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-                scope: 'https://www.googleapis.com/auth/drive.file'
+                scope: SCOPES
             }).then(() => {
                 gapi.auth2.getAuthInstance();
             }).catch((error) => {
-                alert('Error initializing Google API client: ' + error);
+                console.error('Error initializing Google API client:', error);
+                alert('Error initializing Google API client: ' + JSON.stringify(error));
             });
         }
 
-        loadClient();
+        window.onload = () => {
+            loadClient();
+            handleAuthResponse();
+        };
     </script>
 </body>
 </html>
