@@ -332,11 +332,13 @@ function getFromGoogleDrive() {
         });
 }
     
-function loadParamP() {
+function loadDonationParams() {
     const params = new URLSearchParams(window.location.search);
     const donation = params.get('donate');
-    if (donation === "yes") {
-         localStorage.setItem("donated", "true");
+    if (donation === "true") {
+        localStorage.setItem("donated", "true");
+    } else if (donation === "false") {
+        console.log("please donate..");
     }
 }
     
@@ -346,7 +348,8 @@ function openDonate() {
     const hasDonated = localStorage.getItem("donated");
     console.log("hasDonated: " + firstRun);
     if (firstRun === "false" && hasDonated !== "true") {
-        window.open('https://www.sandbox.paypal.com/donate/?hosted_button_id=9U3RDMXSDKD6N');
+            const url = 'https://www.sandbox.paypal.com/donate/?hosted_button_id=9U3RDMXSDKD6N';
+            window.location.href = url;    
     } else {
         localStorage.setItem("firstRun", "false");
         }
@@ -357,7 +360,7 @@ function stopSpinning(button, icon) {
     icon.classList.remove('spinning');
 }
     window.onload = initializeGoogleIdentity;
-    window.onload = loadParamP;
+    window.onload = loadDonationParams;
 
 </script>
 </body>
