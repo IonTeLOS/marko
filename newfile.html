@@ -4037,8 +4037,10 @@ function openLink(url) {
     const SCOPES = 'https://www.googleapis.com/auth/drive.file';
     
     let tokenClient;
+const CLIENT_ID = 'YOUR_CLIENT_ID_HERE';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
-    function initializeGoogleIdentity() {
+function initializeGoogleIdentity() {
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
@@ -4062,94 +4064,44 @@ function authorize() {
                     resolve(resp);
                 }
             };
-            tokenClient.requestAccessToken({prompt: 'consent'});
+            tokenClient.requestAccessToken({prompt: ''});
         } else {
             reject(new Error('Token client not initialized'));
         }
     });
 }
-    
-function searchAndDeleteFiles(accessToken) {
-    return fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27bookmarksMarko.txt%27', {
-        method: 'GET',
-        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.files && data.files.length > 0) {
-            const deletePromises = data.files.map(file => 
-                fetch(`https://www.googleapis.com/drive/v3/files/${file.id}`, {
-                    method: 'DELETE',
-                    headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
-                })
-            );
-            return Promise.all(deletePromises);
+
+function ensureAuthorization() {
+    return new Promise((resolve, reject) => {
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            console.log('No access token found. Initiating authorization...');
+            authorize().then(resolve).catch(reject);
+        } else {
+            resolve(accessToken);
         }
     });
 }
 
 function saveToGoogleDrive() {
-    // Check if the user is online, abort if not
-    const isOnline = () => navigator.onLine;
-    if (!isOnline()) {
-        alert("Connect to the Internet to procceed"); 
+    if (!navigator.onLine) {
+        alert("Connect to the Internet to proceed");
         return;
     }
-    // passCheck(); // TODO uncomment
-    // Disable the button and start spinning
+
     const syncToButton = document.getElementById('syncToDrive');
     const syncToIcon = document.getElementById('syncToIcon');
     syncToButton.disabled = true;
-    syncToIcon.classList.add('spinning');     
-    
-    const confirmUpload = confirm("Are you sure you want to save your bookmarks to Google Drive?");
+    syncToIcon.classList.add('spinning');
 
-    // If user cancels, exit the function
-    if (!confirmUpload) {
+    if (!confirm("Are you sure you want to save your bookmarks to Google Drive?")) {
         stopSpinning(syncToButton, syncToIcon);
         return;
     }
-    const ensureAuthorization = () => {
-    return new Promise((resolve, reject) => {
-        if (!localStorage.getItem('accessToken')) {
-            console.log('No access token found. Initiating authorization...');
-            authorize()
-                .then(resolve)
-                .catch(reject);
-        } else {
-            // Verify the existing token
-            fetch('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + localStorage.getItem('accessToken'))
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Token verification failed');
-                    }
-                    return response.json();
-                })
-                .then(() => {
-                    console.log('Existing token is valid');
-                    resolve({access_token: localStorage.getItem('accessToken')});
-                })
-                .catch(error => {
-                    console.log('Token verification failed:', error);
-                    console.log('Re-authorizing...');
-                    localStorage.removeItem('accessToken');
-                    authorize()
-                        .then(resolve)
-                        .catch(reject);
-                });
-        }
-    });
-};
 
-    const saveNewFile = () => {
-        return new Promise((resolve, reject) => {
-            const accessToken = localStorage.getItem('accessToken');
-            if (!accessToken) {
-                reject(new Error('No access token available. Please authorize first.'));
-                return;
-            }
-            const array = localStorage.getItem('bookmarks');
-            const fileContent = array;
+    ensureAuthorization()
+        .then(accessToken => {
+            const fileContent = localStorage.getItem('bookmarks');
             const file = new Blob([fileContent], { type: 'text/plain' });
             const metadata = {
                 'name': 'bookmarksMarko.txt',
@@ -4158,88 +4110,49 @@ function saveToGoogleDrive() {
             const form = new FormData();
             form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
             form.append('file', file);
-            fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+
+            return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
                 method: 'POST',
                 headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
                 body: form
-            })
-            .then((res) => res.json())
-            .then((val) => {
-                console.log(val);
-                if (val.error) {
-                    throw new Error(val.error.message);
-                }
-                sessionStorage.setItem('fileId', val.id);
-                alert('File saved to Google Drive as bookmarksMarko.txt with ID: ' + val.id);
-                resolve(val);
-                stopSpinning(syncToButton, syncToIcon);
-            })
-            .catch((error) => {
-                stopSpinning(syncToButton, syncToIcon);
-                reject(error);
             });
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Failed to upload file');
+            }
+            return response.json();
+        })
+        .then(() => {
+            alert('Bookmarks saved to Google Drive as bookmarksMarko.txt');
+            stopSpinning(syncToButton, syncToIcon);
+            openDonate();
+        })
+        .catch(error => {
+            console.error('Error in saveToGoogleDrive:', error);
+            alert('An error occurred: ' + error.message);
+            stopSpinning(syncToButton, syncToIcon);
         });
-    };
-
-ensureAuthorization()
-    .then(() => searchAndDeleteFiles(localStorage.getItem('accessToken')))
-    .then(() => {
-        console.log('Previous files deleted successfully');
-        return saveNewFile();
-    })
-    .then(() => {
-        console.log('New file saved successfully');
-        openDonate();
-    })
-    .catch(error => {
-        console.error('Error in saveToGoogleDrive:', error);
-        alert('An error occurred: ' + error.message);
-    });
-    location.reload();
 }
-    
+
 function getFromGoogleDrive() {
-    // Check if the user is online, abort if not
-    const isOnline = () => navigator.onLine;
-    if (!isOnline()) {
-        alert("Connect to the Internet to procceed"); 
+    if (!navigator.onLine) {
+        alert("Connect to the Internet to proceed");
         return;
     }
-    passCheck();
-    // Disable the button and start spinning
+
     const syncFromButton = document.getElementById('syncFromDrive');
     const syncFromIcon = document.getElementById('syncFromIcon');
     syncFromButton.disabled = true;
-    syncFromIcon.classList.add('spinning');    
-    
-    const confirmDownload = confirm("Are you sure you want to sync your bookmarks from Google Drive? This will overwrite any existing local Marko bookmarks.");
+    syncFromIcon.classList.add('spinning');
 
-    // If user cancels, exit the function
-    if (!confirmDownload) {
+    if (!confirm("Are you sure you want to sync your bookmarks from Google Drive? This will overwrite any existing local Marko bookmarks.")) {
         stopSpinning(syncFromButton, syncFromIcon);
         return;
     }
-    const ensureAuthorization = () => {
-        if (!localStorage.getItem('accessToken')) {
-            alert('You need to authorize first. Initiating authorization...');
-            stopSpinning(syncFromButton, syncFromIcon);
-            return authorize();
-        } else {
-            return Promise.resolve({access_token: localStorage.getItem('accessToken')});
-        }
-    };
-
-        const displayLocalStorageData = () => {
-        const localData = localStorage.getItem('bookmarks');
-        if (localData && localData.trim() !== '') {
-            document.getElementById('output').innerHTML += '<br>Local storage data: ' + localData;
-        }
-    };
 
     ensureAuthorization()
-        .then(() => {
-            const accessToken = localStorage.getItem('accessToken');
-            // First, search for a file named "bookmarksMarko.txt"
+        .then(accessToken => {
             return fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27bookmarksMarko.txt%27', {
                 method: 'GET',
                 headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
@@ -4248,33 +4161,18 @@ function getFromGoogleDrive() {
         .then(response => response.json())
         .then(data => {
             if (data.files && data.files.length > 0) {
-                // File found, use the first matching file
-                return data.files[0].id;
+                return fetch(`https://www.googleapis.com/drive/v3/files/${data.files[0].id}?alt=media`, {
+                    method: 'GET',
+                    headers: new Headers({ 'Authorization': 'Bearer ' + localStorage.getItem('accessToken') })
+                });
             } else {
-                // No file found, fall back to stored fileId
-                const storedFileId = sessionStorage.getItem('fileId');
-                if (!storedFileId) {
-                    throw new Error('No file found with name "bookmarksMarko.txt" and no stored file ID.');
-                }
-                return storedFileId;
+                throw new Error('No bookmarksMarko.txt file found in Google Drive');
             }
-        })
-        .then(fileId => {
-            // Now that we have a fileId (either from search or storage), retrieve the file
-            const accessToken = localStorage.getItem('accessToken');
-            return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-                method: 'GET',
-                headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
-            });
         })
         .then(response => response.text())
         .then(data => {
-            localStorage.setItem('bookmarks', data); // DANGEROUS !! TODO test before implementing..
-            let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-            links = bookmarks;
-            passCheck();
-            // document.getElementById('output').innerText = 'Retrieved from Drive: ' + data; // for debug purposes 
-            // displayLocalStorageData(); // for debug purposes
+            localStorage.setItem('bookmarks', data);
+            links = JSON.parse(data) || [];
             stopSpinning(syncFromButton, syncFromIcon);
             location.reload();
             alert("Your Markos are now in sync. Enjoy!");
@@ -4283,6 +4181,11 @@ function getFromGoogleDrive() {
             alert('Error retrieving file: ' + error.message);
             stopSpinning(syncFromButton, syncFromIcon);
         });
+}
+
+function stopSpinning(button, icon) {
+    button.disabled = false;
+    icon.classList.remove('spinning');
 }
     
 function loadDonationParams() {
@@ -4324,11 +4227,6 @@ function openDonate() {
 function hasPaid() {
         const url = 'https://teloslinux.org/marko/newfile?donate=true';
         window.location.href = url;
-}
-    
-function stopSpinning(button, icon) {
-    button.disabled = false;
-    icon.classList.remove('spinning');
 }
 
 window.onload = function() {
