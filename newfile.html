@@ -4251,9 +4251,11 @@ function getFromGoogleDrive() {
             let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
             links = bookmarks;
             passCheck();
-            document.getElementById('output').innerText = 'Retrieved from Drive: ' + data;
-            displayLocalStorageData();
+            // document.getElementById('output').innerText = 'Retrieved from Drive: ' + data; // for debug purposes 
+            // displayLocalStorageData(); // for debug purposes
             stopSpinning(syncFromButton, syncFromIcon);
+            location.reload();
+            alert("Your Markos are now in sync. Enjoy!");
         })
         .catch(error => {
             alert('Error retrieving file: ' + error.message);
