@@ -57,10 +57,8 @@
 
 <form id="ppDonate" action="https://www.sandbox.paypal.com/donate" method="post" target="_top">
 <input type="hidden" name="hosted_button_id" value="9U3RDMXSDKD6N" />
-<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-<img alt="" border="0" src="https://www.sandbox.paypal.com/en_GR/i/scr/pixel.gif" width="1" height="1" />
-</form>
-
+<button class="g-button" name="submit" title="PayPal - The safer, easier way to pay online!">
+<span class="material-icons">attach_money</span> Donate </button></form>
 
 <script>
     const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
@@ -137,6 +135,22 @@ function saveToGoogleDrive() {
         alert("Connect to the Internet to procceed"); 
         return;
     }
+    const storedPassword = localStorage.getItem('password');
+    const loggedIn = sessionStorage.getItem('loggedIn');
+            if (loggedIn === "true") {
+                console.log("user is logged in, continuing..")
+            }
+    const enteredPassword = prompt('Enter password:');
+            if (enteredPassword === null) {
+                alert('You have to enter app password to continue');
+                return;
+            }
+            if (enteredPassword === storedPassword) {
+                console.log("user logged in, continuing..")
+            } else {
+                alert('Something went wrong..aborting');
+                return;
+            }
     // Disable the button and start spinning
     const syncToButton = document.getElementById('syncToDrive');
     const syncToIcon = document.getElementById('syncToIcon');
@@ -232,6 +246,22 @@ function getFromGoogleDrive() {
         alert("Connect to the Internet to procceed"); 
         return;
     }
+    const storedPassword = localStorage.getItem('password');
+    const loggedIn = sessionStorage.getItem('loggedIn');
+            if (loggedIn === "true") {
+                console.log("user is logged in, continuing..")
+            }
+    const enteredPassword = prompt('Enter password:');
+            if (enteredPassword === null) {
+                alert('You have to enter app password to continue');
+                return;
+            }
+            if (enteredPassword === storedPassword) {
+                console.log("user logged in, continuing..")
+            } else {
+                alert('Something went wrong..aborting');
+                return;
+            }
     // Disable the button and start spinning
     const syncFromButton = document.getElementById('syncFromDrive');
     const syncFromIcon = document.getElementById('syncFromIcon');
@@ -256,7 +286,7 @@ function getFromGoogleDrive() {
     };
 
         const displayLocalStorageData = () => {
-        const localData = localStorage.getItem('retrievedArray');
+        const localData = localStorage.getItem('bookmarks');
         if (localData && localData.trim() !== '') {
             document.getElementById('output').innerHTML += '<br>Local storage data: ' + localData;
         }
@@ -295,8 +325,7 @@ function getFromGoogleDrive() {
         })
         .then(response => response.text())
         .then(data => {
-            localStorage.clear();
-            localStorage.setItem('retrievedArray', data);
+            localStorage.setItem('bookmarks', data);
             document.getElementById('output').innerText = 'Retrieved from Drive: ' + data;
             displayLocalStorageData();
             stopSpinning(syncFromButton, syncFromIcon);
