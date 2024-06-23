@@ -340,13 +340,15 @@ function getFromGoogleDrive() {
 }
     
 function loadDonationParams() {
-        const params = new URLSearchParams(window.location.search);
-        const donation = params.get('donate');
+        const queryString = window.location.search;
+        console.log(queryString);
+        const urlParams = new URLSearchParams(queryString);
+        const donation = urlParams.get('donate');
         if (donation === "true") {
             localStorage.setItem("donated", "true");
-            console.log("thank you!");
+            console.log("thank you for your donation!");
         } else if (donation === "false") {
-            console.log("please donate..");
+            console.log("keep this app going with your donations..");
         }
 }
     
