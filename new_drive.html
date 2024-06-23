@@ -123,6 +123,13 @@ function searchAndDeleteFiles(accessToken) {
 
 function saveToGoogleDrive() {
     document.getElementById('syncToDrive').disabled = true;
+    const confirmUpload = confirm("Are you sure you want to save your bookmarks to Google Drive?");
+
+    // If user cancels, exit the function
+    if (!confirmUpload) {
+        document.getElementById('syncToDrive').disabled = false;
+        return;
+    }
     const ensureAuthorization = () => {
         if (!sessionStorage.getItem('accessToken')) {
             alert('You need to authorize first. Initiating authorization...');
@@ -161,7 +168,7 @@ function saveToGoogleDrive() {
                     throw new Error(val.error.message);
                 }
                 sessionStorage.setItem('fileId', val.id);
-                alert('File saved to Google Drive with ID: ' + val.id);
+                alert('File saved to Google Drive as bookmarksMarko.txt with ID: ' + val.id);
                 resolve(val);
                 document.getElementById('syncToDrive').disabled = false;
             })
@@ -200,6 +207,13 @@ function saveToGoogleDrive() {
     
 function getFromGoogleDrive() {
     document.getElementById('syncFromDrive').disabled = true;
+    const confirmDownload = confirm("Are you sure you want to sync your bookmarks from Google Drive? This will overwrite any existing local Marko bookmarks.");
+
+    // If user cancels, exit the function
+    if (!confirmDownload) {
+        document.getElementById('syncFromDrive').disabled = false;
+        return;
+    }
     const ensureAuthorization = () => {
         if (!sessionStorage.getItem('accessToken')) {
             alert('You need to authorize first. Initiating authorization...');
@@ -249,6 +263,7 @@ function getFromGoogleDrive() {
         })
         .then(response => response.text())
         .then(data => {
+            localStorage.clear();
             localStorage.setItem('retrievedArray', data);
             document.getElementById('output').innerText = 'Retrieved from Drive: ' + data;
             displayLocalStorageData();
