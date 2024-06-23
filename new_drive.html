@@ -221,16 +221,7 @@ function saveToGoogleDrive() {
         })
         .then(() => {
             console.log('New file saved successfully');
-            const firstRun = localStorage.getItem("firstRun");
-            console.log("isFirstRun: " + firstRun);
-            const hasDonated = localStorage.getItem("donation");
-            console.log("hasDonated: " + firstRun);
-            if ((firstRun === "false") && (hasDonated !== "true")) {
-                openDonate();
-                localStorage.setItem("firstRun", "false");
-            } else {
-                console.warn('PayPal donate form not found');
-            }
+            openDonate();
         })
         .catch(error => {
             console.error('Error:', error);
@@ -342,9 +333,16 @@ function getFromGoogleDrive() {
 }
 
 function openDonate() {
-            
-            window.open('https://www.sandbox.paypal.com/donate/?hosted_button_id=9U3RDMXSDKD6N', '_blank');
-        }    
+    const firstRun = localStorage.getItem("firstRun");
+    console.log("isFirstRun: " + firstRun);
+    const hasDonated = localStorage.getItem("donation");
+    console.log("hasDonated: " + firstRun);
+    if (firstRun === "false" && hasDonated !== "true") {
+        window.open('https://www.sandbox.paypal.com/donate/?hosted_button_id=9U3RDMXSDKD6N', '_blank');
+    } else {
+        localStorage.setItem("firstRun", "false");
+        }
+    }    
 
 function stopSpinning(button, icon) {
     button.disabled = false;
