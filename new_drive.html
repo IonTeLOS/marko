@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-signin-client_id" content="371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com">
     <title>SessionStorage and Google Drive</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
 .g-button {
@@ -90,8 +88,6 @@
             },
         });
     }
-
-    window.onload = initializeGoogleIdentity;
 
     function authorize() {
         return new Promise((resolve, reject) => {
@@ -366,7 +362,8 @@ function stopSpinning(button, icon) {
     button.disabled = false;
     icon.classList.remove('spinning');
 }
-    window.onload = loadDonationParams;
+    //window.onload = loadDonationParams;
+    window.onload = initializeGoogleIdentity;
 
 </script>
 </body>
