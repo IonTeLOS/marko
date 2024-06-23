@@ -2517,7 +2517,7 @@ function removeBookmark(index) {
                 const iconUrl = noteIcon;
                 const iconColor = getRandomColor();
                 links.push({ text: noteText, iconUrl, iconColor });
-                checkPass();
+                passCheck();
                 saveLinks();
             }
         }
@@ -4183,7 +4183,7 @@ function getFromGoogleDrive() {
         alert("Connect to the Internet to procceed"); 
         return;
     }
-    checkPass();
+    passCheck();
     // Disable the button and start spinning
     const syncFromButton = document.getElementById('syncFromDrive');
     const syncFromIcon = document.getElementById('syncFromIcon');
