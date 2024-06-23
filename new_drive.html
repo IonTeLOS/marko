@@ -83,7 +83,7 @@ function initializeGoogleIdentity() {
             scope: SCOPES,
             callback: (tokenResponse) => {
                 if (tokenResponse && tokenResponse.access_token) {
-                    sessionStorage.setItem('accessToken', tokenResponse.access_token);
+                    localStorage.setItem('accessToken', tokenResponse.access_token);
                     alert('Authorization successful.');
                 }
             },
@@ -96,12 +96,12 @@ function authorize() {
             if (resp.error !== undefined) {
                 reject(resp);
             } else {
-                sessionStorage.setItem('accessToken', resp.access_token);
+                localStorage.setItem('accessToken', resp.access_token);
                 resolve(resp);
             }
         };
-        if (sessionStorage.getItem('accessToken')) {
-            resolve({access_token: sessionStorage.getItem('accessToken')});
+        if (localStorage.getItem('accessToken')) {
+            resolve({access_token: localStorage.getItem('accessToken')});
         } else {
             tokenClient.requestAccessToken({prompt: 'consent'});
         }
