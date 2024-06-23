@@ -50,13 +50,23 @@
         tokenClient.requestAccessToken();
     }
 
-    function saveToGoogleDrive() {
-        const accessToken = sessionStorage.getItem('accessToken');
-        if (!accessToken) {
-            alert('You need to authorize first.');
-            return;
-        }
+function deleteFile(fileId, accessToken) {
+    return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+        method: 'DELETE',
+        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
+    });
+}
 
+function saveToGoogleDrive() {
+    const accessToken = sessionStorage.getItem('accessToken');
+    if (!accessToken) {
+        alert('You need to authorize first.');
+        return;
+    }
+
+    const existingFileId = sessionStorage.getItem('fileId');
+
+    const saveNewFile = () => {
         const array = sessionStorage.getItem('randomArray');
         const fileContent = array;
         const file = new Blob([fileContent], { type: 'text/plain' });
@@ -83,7 +93,26 @@
         }).catch((error) => {
             alert('Error saving file: ' + error.message);
         });
+    };
+
+    if (existingFileId) {
+        deleteFile(existingFileId, accessToken)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to delete existing file');
+                }
+                console.log('Previous file deleted successfully');
+                saveNewFile();
+            })
+            .catch(error => {
+                console.error('Error deleting file:', error);
+                // If deletion fails, we still proceed to save the new file
+                saveNewFile();
+            });
+    } else {
+        saveNewFile();
     }
+}
 
     function getFromGoogleDrive() {
         const accessToken = sessionStorage.getItem('accessToken');
