@@ -30,6 +30,15 @@
 .google-button .material-icons {
     margin-right: 10px;
 }
+    
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .spinning {
+        animation: spin 1s linear infinite;
+    }    
 </style>
 </head>
 <body>
@@ -37,11 +46,11 @@
 <button onclick="saveArrayToSession()">Save Array in SessionStorage</button>
 <button onclick="retrieveArrayFromSession()">Retrieve Array from SessionStorage</button>
 <button id="syncToDrive" class="google-button" onclick="saveToGoogleDrive()">
-    <span class="material-icons">cloud_upload</span>
+    <span id="syncToIcon" class="material-icons">backup</span>
     Sync TO Drive
 </button>
 <button id="syncFromDrive" class="google-button" onclick="getFromGoogleDrive()">
-    <span class="material-icons">cloud_download</span>
+    <span id="syncFromIcon" class="material-icons">sync</span>
     Sync FROM Drive
 </button>
     <p id="output"></p>
@@ -122,12 +131,17 @@ function searchAndDeleteFiles(accessToken) {
 }
 
 function saveToGoogleDrive() {
-    document.getElementById('syncToDrive').disabled = true;
+    // Disable the button and start spinning
+    const syncToButton = document.getElementById('syncToDrive');
+    const syncToIcon = document.getElementById('syncToIcon');
+    syncToButton.disabled = true;
+    syncToIcon.classList.add('spinning');     
+    
     const confirmUpload = confirm("Are you sure you want to save your bookmarks to Google Drive?");
 
     // If user cancels, exit the function
     if (!confirmUpload) {
-        document.getElementById('syncToDrive').disabled = false;
+        stopSpinning(syncToButton, syncToIcon);
         return;
     }
     const ensureAuthorization = () => {
@@ -170,10 +184,10 @@ function saveToGoogleDrive() {
                 sessionStorage.setItem('fileId', val.id);
                 alert('File saved to Google Drive as bookmarksMarko.txt with ID: ' + val.id);
                 resolve(val);
-                document.getElementById('syncToDrive').disabled = false;
+                stopSpinning(syncToButton, syncToIcon);
             })
             .catch((error) => {
-                document.getElementById('syncToDrive').disabled = false;
+                stopSpinning(syncToButton, syncToIcon);
                 reject(error);
             });
         });
@@ -206,17 +220,23 @@ function saveToGoogleDrive() {
 }
     
 function getFromGoogleDrive() {
-    document.getElementById('syncFromDrive').disabled = true;
+    // Disable the button and start spinning
+    const syncFromButton = document.getElementById('syncFromDrive');
+    const syncFromIcon = document.getElementById('syncFromIcon');
+    syncFromButton.disabled = true;
+    syncFromIcon.classList.add('spinning');    
+    
     const confirmDownload = confirm("Are you sure you want to sync your bookmarks from Google Drive? This will overwrite any existing local Marko bookmarks.");
 
     // If user cancels, exit the function
     if (!confirmDownload) {
-        document.getElementById('syncFromDrive').disabled = false;
+        stopSpinning(syncFromButton, syncFromIcon);
         return;
     }
     const ensureAuthorization = () => {
         if (!sessionStorage.getItem('accessToken')) {
             alert('You need to authorize first. Initiating authorization...');
+            stopSpinning(syncFromButton, syncFromIcon);
             return authorize();
         } else {
             return Promise.resolve({access_token: sessionStorage.getItem('accessToken')});
@@ -267,14 +287,18 @@ function getFromGoogleDrive() {
             localStorage.setItem('retrievedArray', data);
             document.getElementById('output').innerText = 'Retrieved from Drive: ' + data;
             displayLocalStorageData();
-            document.getElementById('syncFromDrive').disabled = false;
+            stopSpinning(syncFromButton, syncFromIcon);
         })
         .catch(error => {
             alert('Error retrieving file: ' + error.message);
-            document.getElementById('syncFromDrive').disabled = false;
+            stopSpinning(syncFromButton, syncFromIcon);
         });
 }
 
+function stopSpinning(button, icon) {
+    button.disabled = false;
+    icon.classList.remove('spinning');
+}
     window.onload = initializeGoogleIdentity;
 </script>
 </body>
