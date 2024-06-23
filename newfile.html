@@ -14,7 +14,6 @@
     <meta name="theme-color" content="#0288d1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="/manifest.json">    
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>    
@@ -26,7 +25,9 @@
     <!-- Materialize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script>
-    
+     // <link rel="manifest" href="/manifest.json">    // TODO place this above
+
+    /* // commented out until it is properly in production TODO >> uncomment
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
@@ -36,6 +37,7 @@
       });
     });
   }
+  */
 </script>
 <style>
 body {
