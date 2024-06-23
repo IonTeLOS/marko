@@ -108,7 +108,6 @@ function saveToGoogleDrive() {
                 reject(new Error('No access token available. Please authorize first.'));
                 return;
             }
-
             const array = sessionStorage.getItem('randomArray');
             const fileContent = array;
             const file = new Blob([fileContent], { type: 'text/plain' });
@@ -116,11 +115,9 @@ function saveToGoogleDrive() {
                 'name': 'randomArray.txt',
                 'mimeType': 'text/plain'
             };
-
             const form = new FormData();
             form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
             form.append('file', file);
-
             fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
                 method: 'POST',
                 headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
@@ -134,12 +131,9 @@ function saveToGoogleDrive() {
                 }
                 sessionStorage.setItem('fileId', val.id);
                 alert('File saved to Google Drive with ID: ' + val.id);
-                // Simulate click on PayPal donate form
-                document.getElementById('paypalDonateForm').submit();
                 resolve(val);
             })
             .catch((error) => {
-                alert('Error saving file: ' + error.message);
                 reject(error);
             });
         });
@@ -153,6 +147,13 @@ function saveToGoogleDrive() {
         })
         .then(() => {
             console.log('New file saved successfully');
+            // Simulate click on PayPal donate form only after successful save
+            const paypalForm = document.getElementById('paypalDonateForm');
+            if (paypalForm) {
+                paypalForm.submit();
+            } else {
+                console.warn('PayPal donate form not found');
+            }
         })
         .catch(error => {
             console.error('Error:', error);
