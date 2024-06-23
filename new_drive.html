@@ -223,7 +223,7 @@ function saveToGoogleDrive() {
             console.log('New file saved successfully');
             const firstRun = localStorage.getItem("firstRun");
             const hasDonated = localStorage.getItem("donation");
-            if (firstRun === false && hasDonated !== true) {
+            if (firstRun === "false" && hasDonated !== "true") {
                 openDonate();
                 localStorage.setItem("firstRun", "false");
             } else {
