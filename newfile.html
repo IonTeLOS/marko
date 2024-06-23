@@ -4053,9 +4053,7 @@ function openLink(url) {
 
 function authorize() {
     return new Promise((resolve, reject) => {
-        if (localStorage.getItem('accessToken')) {
-            resolve({access_token: localStorage.getItem('accessToken')});
-        } else {
+        if (tokenClient) {
             tokenClient.callback = (resp) => {
                 if (resp.error !== undefined) {
                     reject(resp);
@@ -4065,6 +4063,8 @@ function authorize() {
                 }
             };
             tokenClient.requestAccessToken({prompt: 'consent'});
+        } else {
+            reject(new Error('Token client not initialized'));
         }
     });
 }
@@ -4110,13 +4110,36 @@ function saveToGoogleDrive() {
         return;
     }
     const ensureAuthorization = () => {
+    return new Promise((resolve, reject) => {
         if (!localStorage.getItem('accessToken')) {
-            alert('You need to authorize first. Initiating authorization...');
-            return authorize();
+            console.log('No access token found. Initiating authorization...');
+            authorize()
+                .then(resolve)
+                .catch(reject);
         } else {
-            return Promise.resolve({access_token: localStorage.getItem('accessToken')});
+            // Verify the existing token
+            fetch('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' + localStorage.getItem('accessToken'))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Token verification failed');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    console.log('Existing token is valid');
+                    resolve({access_token: localStorage.getItem('accessToken')});
+                })
+                .catch(error => {
+                    console.log('Token verification failed:', error);
+                    console.log('Re-authorizing...');
+                    localStorage.removeItem('accessToken');
+                    authorize()
+                        .then(resolve)
+                        .catch(reject);
+                });
         }
-    };
+    });
+};
 
     const saveNewFile = () => {
         return new Promise((resolve, reject) => {
@@ -4158,25 +4181,21 @@ function saveToGoogleDrive() {
         });
     };
 
-    ensureAuthorization()
-        .then(() => searchAndDeleteFiles(localStorage.getItem('accessToken')))
-        .then(() => {
-            console.log('Previous files deleted successfully');
-            return saveNewFile();
-        })
-        .then(() => {
-            console.log('New file saved successfully');
-            openDonate();
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            if (error.message.includes('Authorization required')) {
-                alert('Authorization failed. Please try again.');
-            } else {
-                alert('An error occurred: ' + error.message);
-            }
-        });
-      location.reload();
+ensureAuthorization()
+    .then(() => searchAndDeleteFiles(localStorage.getItem('accessToken')))
+    .then(() => {
+        console.log('Previous files deleted successfully');
+        return saveNewFile();
+    })
+    .then(() => {
+        console.log('New file saved successfully');
+        openDonate();
+    })
+    .catch(error => {
+        console.error('Error in saveToGoogleDrive:', error);
+        alert('An error occurred: ' + error.message);
+    });
+    location.reload();
 }
     
 function getFromGoogleDrive() {
