@@ -11,7 +11,6 @@
     <h1>SessionStorage and Google Drive Example</h1>
 <button onclick="saveArrayToSession()">Save Array in SessionStorage</button>
 <button onclick="retrieveArrayFromSession()">Retrieve Array from SessionStorage</button>
-<button onclick="authorize()">Authorize</button>
 <button onclick="saveToGoogleDrive()">Save on Google Drive</button>
 <button onclick="getFromGoogleDrive()">Get from Google Drive</button>
     <p id="output"></p>
@@ -175,6 +174,13 @@ function getFromGoogleDrive() {
         }
     };
 
+        const displayLocalStorageData = () => {
+        const localData = localStorage.getItem('retrievedArray');
+        if (localData && localData.trim() !== '') {
+            document.getElementById('output').innerHTML += '<br>Local storage data: ' + localData;
+        }
+    };
+
     ensureAuthorization()
         .then(() => {
             const accessToken = sessionStorage.getItem('accessToken');
@@ -210,6 +216,7 @@ function getFromGoogleDrive() {
         .then(data => {
             localStorage.setItem('retrievedArray', data);
             document.getElementById('output').innerText = 'Retrieved from Drive: ' + data;
+            displayLocalStorageData();
         })
         .catch(error => {
             alert('Error retrieving file: ' + error.message);
