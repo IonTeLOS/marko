@@ -101,18 +101,69 @@ function saveToGoogleDrive() {
         }
     };
 
+    const saveNewFile = () => {
+        return new Promise((resolve, reject) => {
+            const accessToken = sessionStorage.getItem('accessToken');
+            if (!accessToken) {
+                reject(new Error('No access token available. Please authorize first.'));
+                return;
+            }
+
+            const array = sessionStorage.getItem('randomArray');
+            const fileContent = array;
+            const file = new Blob([fileContent], { type: 'text/plain' });
+            const metadata = {
+                'name': 'randomArray.txt',
+                'mimeType': 'text/plain'
+            };
+
+            const form = new FormData();
+            form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+            form.append('file', file);
+
+            fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+                method: 'POST',
+                headers: new Headers({ 'Authorization': 'Bearer ' + accessToken }),
+                body: form
+            })
+            .then((res) => res.json())
+            .then((val) => {
+                console.log(val);
+                if (val.error) {
+                    throw new Error(val.error.message);
+                }
+                sessionStorage.setItem('fileId', val.id);
+                alert('File saved to Google Drive with ID: ' + val.id);
+                // Simulate click on PayPal donate form
+                document.getElementById('paypalDonateForm').submit();
+                resolve(val);
+            })
+            .catch((error) => {
+                alert('Error saving file: ' + error.message);
+                reject(error);
+            });
+        });
+    };
+
     ensureAuthorization()
         .then(() => searchAndDeleteFiles(sessionStorage.getItem('accessToken')))
         .then(() => {
             console.log('Previous files deleted successfully');
             return saveNewFile();
         })
+        .then(() => {
+            console.log('New file saved successfully');
+        })
         .catch(error => {
             console.error('Error:', error);
-            alert('An error occurred: ' + error.message);
+            if (error.message.includes('Authorization required')) {
+                alert('Authorization failed. Please try again.');
+            } else {
+                alert('An error occurred: ' + error.message);
+            }
         });
 }
-
+    
 function getFromGoogleDrive() {
     const ensureAuthorization = () => {
         if (!sessionStorage.getItem('accessToken')) {
