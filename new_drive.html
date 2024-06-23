@@ -352,7 +352,7 @@ function loadDonationParams() {
                 console.log("Thank you for your donation!");
                 break;
             case 'false':
-                console.log("Keep this app going with your donations...");
+                console.log("Keep Marko app going with your donations...");
                 break;
             default:
                 console.log("Invalid donation parameter");
@@ -364,7 +364,7 @@ function openDonate() {
     const firstRun = localStorage.getItem("firstRun");
     console.log("isFirstRun: " + firstRun);
     const hasDonated = localStorage.getItem("donated");
-    console.log("hasDonated: " + firstRun);
+    console.log("hasDonated: " + hasDonated);
     if (firstRun === "false" && hasDonated !== "true") {
             const url = 'https://www.sandbox.paypal.com/donate/?hosted_button_id=9U3RDMXSDKD6N';
             window.location.href = url;    
