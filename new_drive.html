@@ -55,7 +55,7 @@
 </button>
     <p id="output"></p>
 
-<button id="ppDonate" class="google-button" onclick="openDonate()">
+<button id="ppDonate" class="g-button" onclick="openDonate()">
         <span class="material-icons">attach_money</span>
         Donate with PayPal</button>
 
@@ -221,10 +221,11 @@ function saveToGoogleDrive() {
         })
         .then(() => {
             console.log('New file saved successfully');
-            // Simulate click on PayPal donate form only after successful save
-            const paypalForm = document.getElementById('ppDonate');
-            if (paypalForm) {
-                paypalForm.submit();
+            const firstRun = localStorage.getItem("firstRun");
+            const hasDonated = localStorage.getItem("donation");
+            if (firstRun === false && hasDonated !== true) {
+                openDonate();
+                localStorage.setItem("firstRun", "false");
             } else {
                 console.warn('PayPal donate form not found');
             }
