@@ -148,7 +148,7 @@ function saveToGoogleDrive() {
         .then(() => {
             console.log('New file saved successfully');
             // Simulate click on PayPal donate form only after successful save
-            const paypalForm = document.getElementById('paypalDonateForm');
+            const paypalForm = document.getElementById('ppDonate');
             if (paypalForm) {
                 paypalForm.submit();
             } else {
