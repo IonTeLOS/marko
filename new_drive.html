@@ -131,6 +131,12 @@ function searchAndDeleteFiles(accessToken) {
 }
 
 function saveToGoogleDrive() {
+    // Check if the user is online, abort if not
+    const isOnline = () => navigator.onLine;
+    if (!isOnline()) {
+        alert("Connect to the Internet to procceed"); 
+        return;
+    }
     // Disable the button and start spinning
     const syncToButton = document.getElementById('syncToDrive');
     const syncToIcon = document.getElementById('syncToIcon');
@@ -220,6 +226,12 @@ function saveToGoogleDrive() {
 }
     
 function getFromGoogleDrive() {
+    // Check if the user is online, abort if not
+    const isOnline = () => navigator.onLine;
+    if (!isOnline()) {
+        alert("Connect to the Internet to procceed"); 
+        return;
+    }
     // Disable the button and start spinning
     const syncFromButton = document.getElementById('syncFromDrive');
     const syncFromIcon = document.getElementById('syncFromIcon');
