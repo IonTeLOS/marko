@@ -340,16 +340,24 @@ function getFromGoogleDrive() {
 }
     
 function loadDonationParams() {
-        const queryString = window.location.search;
-        console.log(queryString);
-        const urlParams = new URLSearchParams(queryString);
-        const donation = urlParams.get('donate');
-        if (donation === "true") {
-            localStorage.setItem("donated", "true");
-            console.log("thank you for your donation!");
-        } else if (donation === "false") {
-            console.log("keep this app going with your donations..");
+    const queryString = window.location.search;
+    console.log(queryString);
+    const urlParams = new URLSearchParams(queryString);
+    const donation = urlParams.get('donate');
+    
+    if (donation !== null) {
+        switch(donation.toLowerCase()) {
+            case 'true':
+                localStorage.setItem("donated", "true");
+                console.log("Thank you for your donation!");
+                break;
+            case 'false':
+                console.log("Keep this app going with your donations...");
+                break;
+            default:
+                console.log("Invalid donation parameter");
         }
+    }
 }
     
 function openDonate() {
@@ -375,8 +383,11 @@ function stopSpinning(button, icon) {
     button.disabled = false;
     icon.classList.remove('spinning');
 }
-    window.onload = loadDonationParams;
-    window.onload = initializeGoogleIdentity;
+
+window.onload = function() {
+    loadDonationParams();
+    initializeGoogleIdentity();
+}; 
 
 </script>
 </body>
