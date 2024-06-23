@@ -103,7 +103,7 @@ function authorize() {
 }
 
 function searchAndDeleteFiles(accessToken) {
-    return fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27randomArray.txt%27', {
+    return fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27bookmarksMarko.txt%27', {
         method: 'GET',
         headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
     })
@@ -150,7 +150,7 @@ function saveToGoogleDrive() {
             const fileContent = array;
             const file = new Blob([fileContent], { type: 'text/plain' });
             const metadata = {
-                'name': 'randomArray.txt',
+                'name': 'bookmarksMarko.txt',
                 'mimeType': 'text/plain'
             };
             const form = new FormData();
@@ -233,8 +233,8 @@ function getFromGoogleDrive() {
     ensureAuthorization()
         .then(() => {
             const accessToken = sessionStorage.getItem('accessToken');
-            // First, search for a file named "randomArray.txt"
-            return fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27randomArray.txt%27', {
+            // First, search for a file named "bookmarksMarko.txt"
+            return fetch('https://www.googleapis.com/drive/v3/files?q=name%3D%27bookmarksMarko.txt%27', {
                 method: 'GET',
                 headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
             });
@@ -248,7 +248,7 @@ function getFromGoogleDrive() {
                 // No file found, fall back to stored fileId
                 const storedFileId = sessionStorage.getItem('fileId');
                 if (!storedFileId) {
-                    throw new Error('No file found with name "randomArray.txt" and no stored file ID.');
+                    throw new Error('No file found with name "bookmarksMarko.txt" and no stored file ID.');
                 }
                 return storedFileId;
             }
