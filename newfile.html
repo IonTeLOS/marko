@@ -4174,6 +4174,7 @@ function saveToGoogleDrive() {
                 alert('An error occurred: ' + error.message);
             }
         });
+      location.reload();
 }
     
 function getFromGoogleDrive() {
@@ -4277,6 +4278,7 @@ function loadDonationParams() {
                 break;
             case 'false':
                 console.log("Keep Marko app going with your donations...");
+                alert("Keep Marko app going with your donations...");
                 break;
             default:
                 console.log("Invalid donation parameter");
