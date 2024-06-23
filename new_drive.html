@@ -56,6 +56,10 @@
     <span class="material-icons">backspace</span>
     Clear LocalStorage
 </button>    
+<button id="home" class="g-button" onclick="hasPaid()">
+    <span class="material-icons">home</span>
+    Test
+</button> 
     <p id="output"></p>
 
 <button id="ppDonate" class="g-button" onclick="openDonate()">
@@ -361,7 +365,13 @@ function openDonate() {
         localStorage.setItem("firstRun", "false");
         }
     }    
-
+    
+// test function TODO >> remove
+function hasPaid() {
+            const url = 'https://teloslinux.org/marko/new_drive?donate=true';
+            window.location.href = url;
+}
+    
 function stopSpinning(button, icon) {
     button.disabled = false;
     icon.classList.remove('spinning');
