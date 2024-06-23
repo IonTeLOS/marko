@@ -64,7 +64,9 @@
     const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
     const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
     const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-
+    
+    let tokenClient;
+    
     function saveArrayToSession() {
         const array = Array.from({ length: 10 }, () => Math.floor(Math.random() * 100));
         sessionStorage.setItem('randomArray', JSON.stringify(array));
@@ -76,9 +78,7 @@
         document.getElementById('output').innerText = 'SessionStorage Array: ' + array;
     }
 
-    let tokenClient;
-
-function initializeGoogleIdentity() {
+    function initializeGoogleIdentity() {
         tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: CLIENT_ID,
             scope: SCOPES,
@@ -91,16 +91,18 @@ function initializeGoogleIdentity() {
         });
     }
 
-function authorize() {
-    return new Promise((resolve, reject) => {
-        tokenClient.callback = (resp) => {
-            if (resp.error !== undefined) {
-                reject(resp);
-            } else {
-                localStorage.setItem('accessToken', resp.access_token);
-                resolve(resp);
-            }
-        };
+    window.onload = initializeGoogleIdentity;
+
+    function authorize() {
+        return new Promise((resolve, reject) => {
+            tokenClient.callback = (resp) => {
+                if (resp.error !== undefined) {
+                    reject(resp);
+                } else {
+                    localStorage.setItem('accessToken', resp.access_token);
+                    resolve(resp);
+                }
+            };
         if (localStorage.getItem('accessToken')) {
             resolve({access_token: localStorage.getItem('accessToken')});
         } else {
@@ -364,7 +366,6 @@ function stopSpinning(button, icon) {
     button.disabled = false;
     icon.classList.remove('spinning');
 }
-    window.onload = initializeGoogleIdentity;
     window.onload = loadDonationParams;
 
 </script>
