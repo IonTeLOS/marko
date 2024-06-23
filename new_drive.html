@@ -55,10 +55,9 @@
 </button>
     <p id="output"></p>
 
-<form id="ppDonate" action="https://www.sandbox.paypal.com/donate" method="post" target="_top">
-<input type="hidden" name="hosted_button_id" value="9U3RDMXSDKD6N" />
-<button class="g-button" name="submit" title="PayPal - The safer, easier way to pay online!">
-<span class="material-icons">attach_money</span> Donate </button><img alt="" border="0" src="https://www.sandbox.paypal.com/en_GR/i/scr/pixel.gif" width="1" height="1"></form>
+<button id="ppDonate" class="google-button" onclick="openDonate()">
+        <span class="material-icons">attach_money</span>
+        Donate with PayPal</button>
 
 <script>
     const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
@@ -338,6 +337,11 @@ function getFromGoogleDrive() {
             stopSpinning(syncFromButton, syncFromIcon);
         });
 }
+
+function openDonate() {
+            
+            window.open('https://www.sandbox.paypal.com/donate/?hosted_button_id=9U3RDMXSDKD6N', '_blank');
+        }    
 
 function stopSpinning(button, icon) {
     button.disabled = false;
