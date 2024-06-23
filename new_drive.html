@@ -8,7 +8,7 @@
     <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
-.google-button {
+.g-button {
     display: inline-flex;
     align-items: center;
     background-color: #4285f4;
@@ -23,11 +23,11 @@
     transition: background-color 0.3s;
 }
 
-.google-button:hover {
+.g-button:hover {
     background-color: #3367d6;
 }
 
-.google-button .material-icons {
+.g-button .material-icons {
     margin-right: 10px;
 }
     
@@ -45,11 +45,11 @@
     <h1>SessionStorage and Google Drive Example</h1>
 <button onclick="saveArrayToSession()">Save Array in SessionStorage</button>
 <button onclick="retrieveArrayFromSession()">Retrieve Array from SessionStorage</button>
-<button id="syncToDrive" class="google-button" onclick="saveToGoogleDrive()">
+<button id="syncToDrive" class="g-button" onclick="saveToGoogleDrive()">
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
-<button id="syncFromDrive" class="google-button" onclick="getFromGoogleDrive()">
+<button id="syncFromDrive" class="g-button" onclick="getFromGoogleDrive()">
     <span id="syncFromIcon" class="material-icons">sync</span>
     Sync FROM Drive
 </button>
