@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SessionStorage and Google Drive</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
 </head>
 <body>
     <h1>SessionStorage and Google Drive Example</h1>
@@ -14,6 +15,13 @@
 <button onclick="saveToGoogleDrive()">Save on Google Drive</button>
 <button onclick="getFromGoogleDrive()">Get from Google Drive</button>
     <p id="output"></p>
+
+<form id="ppDonate" action="https://www.sandbox.paypal.com/donate" method="post" target="_top">
+<input type="hidden" name="hosted_button_id" value="9U3RDMXSDKD6N" />
+<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+<img alt="" border="0" src="https://www.sandbox.paypal.com/en_GR/i/scr/pixel.gif" width="1" height="1" />
+</form>
+
 
 <script>
     const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
@@ -100,6 +108,8 @@ function saveToGoogleDrive() {
             }
             sessionStorage.setItem('fileId', val.id);
             alert('File saved to Google Drive with ID: ' + val.id);
+            // open PayPal donate form
+            document.getElementById('ppDonate').submit();
         }).catch((error) => {
             alert('Error saving file: ' + error.message);
         });
