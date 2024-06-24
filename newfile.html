@@ -7,6 +7,7 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M0 0h24v24H0z'/%3E%3Cpath fill='%2300bcd4' d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM15 3v2h2.59L8.7 13.89l1.41 1.41L19 6.41V9h2V3h-6z'/%3E%3C/svg%3E" type="image/svg+xml">    
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
@@ -14,6 +15,7 @@
     <meta name="theme-color" content="#0288d1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="/manifest.json">    
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>    
@@ -25,9 +27,7 @@
     <!-- Materialize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script>
-     // <link rel="manifest" href="/manifest.json">    // TODO place this above
-
-    /* // commented out until it is properly in production TODO >> uncomment
+    
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
@@ -37,7 +37,6 @@
       });
     });
   }
-  */
 </script>
 <style>
 body {
@@ -176,8 +175,8 @@ body.dark-mode .top-bookmark .bookmark-icon {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 56px; /* Standard width */
-      height: 56px; /* Standard height */
+      width: 72px; /* Standard width */
+      height: 72px; /* Standard height */
       border-radius: 50%;
       transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
       margin-right: 16px;
@@ -222,22 +221,22 @@ body.dark-mode .top-bookmark .bookmark-icon {
 }
 
 .icon-container {
-            width: 66px; /* Adjust as needed */
-            height: 66px; /* Adjust as needed */
+            width: 72px; /* Adjust as needed */
+            height: 72px; /* Adjust as needed */
             position: relative;
             overflow: hidden;
         }
 .icon-container::before {
             content: '';
             position: absolute;
-            width: 56px; /* 66px (size of container) - 5px (border) * 2 */
-            height: 56px; /* Same calculation as width */
+            width: 62px; /* 72px (size of container) - 5px (border) * 2 */
+            height: 62px; /* Same calculation as width */
             border-radius: 50%; /* Makes the ring circular */
             border: 5px solid var(--ring-color, #2ecc71); /* Thickness and color of the ring */
             box-sizing: border-box; /* Ensures the border is included in the size */
         }  
 .bookmark-icon {
-  font-size: 32px;
+  font-size: 36px;
   object-fit: contain; /* Adjust to 'contain' if you prefer the image to be fully visible */
   display: block;    
   transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
@@ -906,7 +905,7 @@ input:focus {
             background-color: rgba(0, 0, 0, 0.4);
             justify-content: center;
             align-items: center;
-            overflow: hidden; /* Add this line */
+            overflow: hidden;
 
         }
 
@@ -1021,7 +1020,7 @@ input:focus {
       height: 100%;
       border: none;
       position: absolute;
-      overflow: hidden;  /* Option 1: Hide scrollbars visually */
+      overflow-x: hidden;
       top: 0;
       left: 0;
       right: 0;
@@ -1150,56 +1149,66 @@ input:focus {
     .spinning {
         animation: spin 1s linear infinite;
     }
+    .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+        }
   </style>    
 <script>
-  function detectTheme() {
+function detectTheme() {
     const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const theme = localStorage.getItem("theme");
-    // follow system theme unless user has chosen to override it, user choice is stored in local storage
-    if (isDarkMode && theme === "dark") {
-      document.body.classList.add('dark-mode');
-      console.log("Following system theme: Dark");            
-    } else if (!isDarkMode && theme === "dark") {
-      document.body.classList.add('dark-mode');
-      console.log("Following user choice: Dark");  
-    } else if (isDarkMode && theme === "light") {
-      document.body.classList.remove('dark-mode');
-      document.body.classList.add('light-mode');
-      console.log("Following user choice: Light");  
+
+    // Apply the theme based on user preference or system theme
+    if (theme) {
+        if (theme === "dark") {
+            document.body.classList.add('dark-mode');
+            document.body.classList.remove('light-mode');
+            console.log("Following user choice: Dark");
+        } else {
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+            console.log("Following user choice: Light");
+        }
     } else {
-      document.body.classList.remove('dark-mode');
-      document.body.classList.add('light-mode');
-      console.log("Following system theme: Light");    
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            document.body.classList.remove('light-mode');
+            console.log("Following system theme: Dark");
+        } else {
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+            console.log("Following system theme: Light");
+        }
     }
-  }
+}
+
+function toggleTheme() {
+    const currentTheme = localStorage.getItem("theme");
     
-   function toggleMode() {
-      // set as theme the opposite of system theme, user choice is stored in local storage
-      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (isDarkMode) {
-      localStorage.setItem("theme", "light");
-      } else {
-      localStorage.setItem("theme", "dark");
-      }
-      detectTheme();
+    if (currentTheme === "dark") {
+        localStorage.setItem("theme", "light");
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+        console.log("User selected: Light");
+    } else {
+        localStorage.setItem("theme", "dark");
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        console.log("User selected: Dark");
     }
-    
-    function followTheme () {
-      // follow system theme, user choice is stored in local storage    
-      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (isDarkMode) {
-      localStorage.setItem("theme", "dark");
-      } else {
-      localStorage.setItem("theme", "light");
-      }
-      detectTheme();
-    }
+}
     
   // Detect theme on page load and apply it, unless user has chosen differently
   document.addEventListener('DOMContentLoaded', detectTheme);
 
   // Listen for changes in the system theme and follow them
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', followTheme);
+ // window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', toggleTheme);
 
   function toggleButtonContainerVisibility() {
     const newLinkForm = document.getElementById('new-link-form');
@@ -1254,8 +1263,8 @@ document.addEventListener('DOMContentLoaded', function() {
       "unordered-list", "table", "horizontal-rule", "|",
       "link", "image", "preview"
     ],
-    placeholder: "Write your post here... (max 1000 characters)",
-    maxLength: 1000
+    placeholder: "Write your post here... (max 10000 characters)",
+    maxLength: 10000
   });
     
   var urlInput = document.getElementById('new-link-url');
@@ -1393,6 +1402,7 @@ document.addEventListener('DOMContentLoaded', function() {
             case "email":
             case "other":
             case "location":
+            case "download":    
                 additionalFields.style.display = 'block';
                 iconSourceContainer.style.display = 'block';
                 document.getElementById('new-link-url').style.display = 'block';
@@ -1445,23 +1455,44 @@ if (isMobileDevice()) {
   console.log("Marko seems to be running on desktop");
 }    
 
-// generic function to get a random color for the distinctive ring around the icon    
 function getRandomColor() {
-  const iconSource = iconSourceSelect.value;
-  if (iconSource === 'selection') {
-            const displayedText = colorSelect.textContent;
-            console.log("Displayed text:", displayedText);
-            const color = displayedText;
-            return color;            
-        }
-  // Generate random RGB values
-  const r = Math.floor(Math.random() * 256);
-  const g = Math.floor(Math.random() * 256);
-  const b = Math.floor(Math.random() * 256);
-  // Convert RGB to hexadecimal format
-  const color = '#' + r.toString(16) + g.toString(16) + b.toString(16);
-  return color;
+    const iconSource = iconSourceSelect.value;
+
+    if (iconSource === 'selection') {
+        const displayedText = colorSelect.textContent;
+        console.log("Displayed text:", displayedText);
+        const color = displayedText;
+        return color;            
+    }
+
+    // Function to check if a color is too close to white or black
+    const isColorTooCloseToWhiteOrBlack = (r, g, b) => {
+        // Calculate luminance using the formula for relative luminance (Y)
+        const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+        
+        // Colors close to white or black based on luminance threshold
+        return luminance > 0.85 || luminance < 0.15;
+    };
+
+    let color;
+    let r, g, b; // Declare r, g, b outside the loop to ensure they are accessible
+
+    do {
+        // Generate random RGB values
+        r = Math.floor(Math.random() * 256);
+        g = Math.floor(Math.random() * 256);
+        b = Math.floor(Math.random() * 256);
+
+        // Convert RGB to hexadecimal format
+        color = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        
+        // Ensure the generated color is not too close to white or black
+    } while (isColorTooCloseToWhiteOrBlack(r, g, b));
+
+    return color;
 }
+
+
 
 // main function to get an icon for the bookmark based on the 2 factors: link type and user choice for icon source
 function getIconData() {
@@ -1489,6 +1520,8 @@ function getIconData() {
         case 'note':
         case 'intro':
           return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/note/default/48px.svg';
+        case 'download':
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/download_2/default/48px.svg';            
         default:
           // Generate a random color and apply it to the material icon above, currently not implemented
           const randomColor = getRandomColor();
@@ -1498,10 +1531,16 @@ function getIconData() {
       let url = document.getElementById('new-link-url').value.trim();
       // exceptions: not getting favicons for bookmarks of the types location and phone/viber/whatsapp
       if (linkType === "location") {
-         return "https://maps.google.com";         
+         return "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/explore/default/48px.svg";         
       }
+      if (linkType === "download") {
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/download/default/48px.svg';            
+      } 
+      if (linkType === "other") {
+          return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/question_mark/default/48px.svg';            
+      }   
       if (linkType === "phone" || linkType === "whatsapp" || linkType === "viber" ) {
-         return "https://contacts.google.com";         
+         return "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/phone_enabled/default/48px.svg";         
       }
       // add https:// in the beginning if not already present      
       if (!/^https?:\/\//.test(url)) {
@@ -1563,15 +1602,9 @@ function formatUrl(url, allowCustomProtocol = false) {
   url = url.replace(/\s+/g, '');
 
   // Lowercase the entire URL unless it is YouTube related
-if (url.includes('youtu.be') || url.includes('youtube.com')) {
-    // Do not lowercase or alter the URL
-    // Extract the video ID as needed
-    console.log("YouTube link detected");
-} else {
-    url = url.toLowerCase();
+    url = toLowerCaseMainUrl(url);
 
     // Handle other cases or apply necessary transformations
-}
   // Split URL into parts (protocol, domain, path)
     const urlParts = url.split(/[:.]/);
 
@@ -1666,6 +1699,29 @@ function validatePUrl(url) {
     }
 }
 
+function toLowerCaseMainUrl(url) {
+    // Check if the URL starts with 'http://' or 'https://'
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        // Assume 'http://' as the default protocol if not provided
+        url = 'https://' + url;
+    }
+
+    // Use URL constructor to parse the URL
+    let parsedUrl = new URL(url);
+
+    // Extract the protocol and hostname, and convert them to lowercase
+    let protocol = parsedUrl.protocol.toLowerCase();
+    let hostname = parsedUrl.hostname.toLowerCase();
+
+    // Reconstruct the main URL with lowercase protocol and hostname
+    let mainUrl = `${protocol}//${hostname}`;
+
+    // Append the pathname, search, and hash to the main URL
+    let fullUrl = `${mainUrl}${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`;
+
+    return fullUrl;
+}
+    
 // for location addresses with maps. / openstreetmap are accepted, plus geo: links or raw coordinates
 function validateLoc(locUrl) {
   // Check for empty or blank string
@@ -1925,8 +1981,8 @@ if (!noteContent || !/\S/.test(noteContent)) {
                 break;
         case "intro":
            const introContent = easyMDE.value().trim();
-           if (introContent.length > 1000) {
-           alert("Intro content exceeds 1000 characters") 
+           if (introContent.length > 10000) {
+           alert("Intro content exceeds 10000 characters") 
            break;
            }
            if (introContent.length < 2) {
@@ -1939,7 +1995,7 @@ if (!noteContent || !/\S/.test(noteContent)) {
               text      = introContent,
               html      = converter.makeHtml(text);
            name = getTextValue('new-link-name', 30) || "Post";
-           linkData = [linkType, html, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/article/default/48px.svg", getRandomColor()];
+           linkData = [linkType, html, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/wysiwyg/default/48px.svg", getRandomColor()];
            break;
             case "window":
             case "pdf":    
@@ -1998,6 +2054,17 @@ if (!noteContent || !/\S/.test(noteContent)) {
                 name = getTextValue('new-link-name', 30) || "Location";
                 linkData = [linkType, locUrl, name, getIconData(), getRandomColor()];
                 break;
+            case "download":
+                const downUrl = formatUrl(document.getElementById('new-link-url').value.trim());
+                const isValidDUrl = validateUrl(downUrl);
+                if (!isValidDUrl) {
+                  // Display error message
+                  alert("Please enter a URL");
+                  break;
+                }
+                name = getTextValue('new-link-name', 30) || stripProtocolFromUrl(url);
+                linkData = [linkType, downUrl, name, getIconData(), getRandomColor()];
+                break;    
             case "other":
                 const otherUrl = formatUrl(document.getElementById('new-link-url').value.trim(), true);
                 if (!otherUrl) alert("Please enter a URL");
@@ -2181,8 +2248,41 @@ function addLink() {
     hideForm();
     saveLinks();
 }
-function shareOrCopyText(title, text) {
-  if (navigator.share) {
+    
+function clearFrame() {
+    document.getElementById("lightbox-iframe").srcdoc = "";
+}  
+    
+function showAndShare(title, text) {
+if (confirm("Do you want to share the note with your friends or other apps?")) {
+    shareNote(title, text);
+    return;
+}
+else {    
+      var iframe = document.getElementById('lightbox-iframe');
+iframe.srcdoc = `
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: lightgrey; text-align: center; font-family: 'Roboto', sans-serif;">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    </style>
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div style="font-weight: bold; font-size: 24px;">${title}</div>
+        <div style="font-weight: normal; font-size: 18px;">${text}</div>
+    </div>
+</div>`;
+// Display the lightbox
+document.getElementById('lightbox').style.display = 'flex';
+document.getElementById('add-banner').style.display = 'none';
+// Set a timeout to hide the lightbox after 20 seconds     
+setTimeout(function() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('add-banner').style.display = 'block';
+}, 20000);
+}
+}
+
+function shareNote(title, text) {
+    if (navigator.share) {
     navigator.share({
       title: title,
       text: text
@@ -2194,9 +2294,9 @@ function shareOrCopyText(title, text) {
       console.error('Error sharing:', error);
     });
   } else if (navigator.clipboard) {
-    navigator.clipboard.writeText(text)
+    navigator.clipboard.writeText(title + ": " + text)
       .then(() => {
-        alert('Web Share API is not available. The text has been copied to the clipboard.');
+        alert('Note text has been copied to the clipboard.');
       })
       .catch((error) => {
         console.error('Error copying to clipboard:', error);
@@ -2204,7 +2304,6 @@ function shareOrCopyText(title, text) {
       });
   } 
 }
-
 
     // create a random number, this is used to be added in the name of friends, so that possibly same names dont collide
     function generateUUID() {
@@ -2345,9 +2444,7 @@ function renderLinks() {
                 hideAdd();   
                     
                 }           
-                else if (link[0] === "window" || link[0] === "pdf") {
-                //const iconUrl = link[3] || defaultIconUrl; 
-
+                else if (link[0] === "window") {
                 const bookmarkElement = document.createElement('div');
                 bookmarkElement.className = 'bookmark';
                 bookmarkElement.dataset.index = index; // Store the index as a data attribute
@@ -2367,7 +2464,73 @@ function renderLinks() {
                     linkContainer.appendChild(bookmarkElement);
                 hideAdd();   
                     
-                }        
+                }    else if (link[0] === "pdf") {
+                const iconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/picture_as_pdf/default/48px.svg';
+                const proxied = "https://corsproxy.io/?" + link[1];
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" onclick="showPDFLightbox('${proxied}', '${link[2]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                    linkContainer.appendChild(bookmarkElement);
+                hideAdd();   
+                    
+                } 
+                else if (link[0] === "download") {
+                // const iconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/download/default/48px.svg';
+                // const proxied = "https://corsproxy.io/?" + link[1];
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" onclick="downloadFile('${link[1]}', '${link[2]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                    linkContainer.appendChild(bookmarkElement);
+                hideAdd();      
+                }    
+                else if (link[0] === "intro") {
+                const iconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/wysiwyg/default/48px.svg';
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+
+                bookmarkElement.id = `bookmark-${index}`;
+                bookmarkElement.innerHTML = `
+     <div class="bookmark-wrapper" onclick='showPost(${JSON.stringify(link[1])})'>
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                    linkContainer.appendChild(bookmarkElement);
+                hideAdd();   
+                    
+                }  
                 else if (link[0] === "note") {
     
                 const iconUrl = link[3] || defaultIconUrl; 
@@ -2379,7 +2542,7 @@ function renderLinks() {
                 bookmarkElement.id = `bookmark-${index}`;
                 
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="shareOrCopyText('${link[2]}', '${link[1]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" onclick="showAndShare('${link[2]}', '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2403,7 +2566,7 @@ function renderLinks() {
                 bookmarkElement.id = `bookmark-${index}`;
                 
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="openLink('${link[1]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" onclick="openLink('${link[1]}')">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2487,19 +2650,46 @@ function renderLinks() {
                 linkContainer.appendChild(bookmarkElement);
             });
         }
-        
+        function showPost(htmlContent) {
+            document.getElementById('add-banner').style.display = 'none';
+            var iframe = document.getElementById('lightbox-iframe');
+iframe.srcdoc = `
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: lightcyan; text-align: center; flex-direction: column; overflow-x: hidden; font-family: 'Roboto', sans-serif;">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+    ${htmlContent}
+</div>`;
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+
+    
         // function to open bookmark links in new tab. separate behavior for friends' links
         function openLink(url) {
             if (url.startsWith("friends/")) {
                console.log("friend!!");
                changeURL(url);
                renderFriend(url);
-            }
-            else {
+            } else {
                 window.open(url, '_blank');
             }
 }
 
+// Function to download a file after user confirmation
+function downloadFile(url, title) {
+    if (confirm(`Do you want to download ${title} - ${url}?`)) {
+        openLink(url);
+    }
+      }    
+    
 // Function to remove the bookmark element from DOM
 function removeBookmark(index) {
             // Handle delete icon click with haptic feedback
@@ -2682,20 +2872,45 @@ function saveLinks() {
         
         // open modal as pseudo menu with About, Privacy and Settings tab
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('openModal').onclick = function() {
-                document.getElementById('myModal').style.display = 'flex';
+            const openModalButton = document.getElementById('openModal');
+            const modal = document.getElementById('myModal');
+            const closeModalButton = document.getElementById('closeModal');
+            const modalOverlay = document.getElementById('modalOverlay');
+
+            function showModal() {
+                modal.style.display = 'block';
+                modalOverlay.style.display = 'block';
             }
 
-            document.getElementById('closeModal').onclick = function() {
-                document.getElementById('myModal').style.display = 'none';
+            function hideModal() {
+                modal.style.display = 'none';
+                modalOverlay.style.display = 'none';
             }
 
-            window.onclick = function(event) {
-                if (event.target == document.getElementById('myModal')) {
-                    document.getElementById('myModal').style.display = 'none';
-                }
+            if (openModalButton && modal && closeModalButton && modalOverlay) {
+                openModalButton.addEventListener('click', function() {
+                    if (modal.style.display === 'block') {
+                        hideModal();
+                    } else {
+                        showModal();
+                    }
+                });
+
+                closeModalButton.addEventListener('click', function() {
+                    hideModal();
+                });
+
+                window.addEventListener('click', function(event) {
+                    if (event.target === modalOverlay) {
+                        hideModal();
+                    }
+                });
+            } else {
+                console.error('One or more elements not found');
             }
         });
+
+
 
         function openTab(evt, tabId) {
             // Get all elements with class="tab-page" and hide them
@@ -2799,21 +3014,10 @@ function openLight(link) {
     //const isYouTubeLink = link.includes("youtube.com") || link.includes("youtu.be");
     const lightboxContainer = document.getElementById("lightbox");
     const lightboxIframe = document.getElementById("lightbox-iframe");
-
-    
+    lightboxContainer.style.display = 'flex';
     lightboxIframe.src = link;
     document.getElementById('add-banner').style.display = 'none';
-
-    lightboxContainer.classList.add("active");
   }
-
-  function closeLightbox() {
-    const lightboxContainer = document.getElementById("lightbox");
-    lightboxContainer.classList.remove("active");
-    document.getElementById("lightbox-iframe").src = "";
-    document.getElementById('add-banner').style.display = 'block';  
-  }
-    
     
 // load a YouTube link in the iFrame
 function loadVideo(link) {
@@ -2897,24 +3101,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
         
 document.addEventListener('DOMContentLoaded', () => {
-    const closeBtn = document.getElementById("close-yt");
+    const closeBtn = document.getElementById("close-btn");
 
-    function closeLightbox() {
-        const ytlightboxContainer = document.getElementById("youtube-lightbox");
-        const playerContainer = document.getElementById("player");
-        if (ytlightboxContainer) {
-            ytlightboxContainer.classList.remove("active");
-            ytlightboxContainer.style.display = 'none'; // Optional: Hide the lightbox
-            playerContainer.innerHTML = ''; // Clear the iframe
-            document.getElementById('add-banner').style.display = 'block';
-
-        } else {
-            console.error("YouTube lightbox container not found");
-        }
+    function closeMainLightbox() {
+    location.reload();
+    // TODO dont reload page, find a way to clear srcdoc 
+    // const lightboxContainer = document.getElementById("lightbox");
+    // document.getElementById("lightbox-iframe").src = "";
+    // lightboxContainer.style.display = 'none';
+    // document.getElementById('add-banner').style.display = 'block';  
     }
 
     if (closeBtn) {
-        closeBtn.addEventListener('click', closeLightbox);
+        closeBtn.addEventListener('click', closeMainLightbox);
     } else {
         console.error("Close button not found");
     }
@@ -2949,7 +3148,7 @@ document.addEventListener('DOMContentLoaded', () => {
               markoMenu.style.display = 'none';
               break;
             case 'toggle-mode':
-              toggleMode();
+              toggleTheme();
               markoMenu.style.display = 'none';
               break;
             case 'share':
@@ -3010,7 +3209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
-    alert("Web Share API is not supported in this browser.");
+    alert("Link has been copied to your clipboard.");
   }
 }
     
@@ -3907,7 +4106,7 @@ input:focus {
   }
 }
 
-       function toggleMode() {
+       function toggleTheme() {
       const body = document.body;
       if (body.classList.contains('dark-mode')) {
         body.classList.remove('dark-mode');
@@ -4023,7 +4222,7 @@ function openLink(url) {
                         console.error('Error sharing:', shareError);
                     }
                 } else {
-                    alert('Web Share API not supported in this browser.');
+                    alert('Share link has been copied to clipboard.');
                 }
             } catch (error) {
                 alert(`Invalid JSON array. Please enter a valid array. Error: ${error.message}`);
@@ -4031,6 +4230,46 @@ function openLink(url) {
         }
     }
 </script>
+        <script>
+        function showPDFLightbox(pdfUrl, title) {
+            const adobeDCView = new AdobeDC.View({
+                clientId: "f0b67b61ecc04ab98f1fff720590cca2",
+                divId: "adobe-dc-view",
+            });
+
+            const pdfContainer = document.getElementById("adobe-dc-view");
+            pdfContainer.style.position = "fixed";
+            pdfContainer.style.top = "0";
+            pdfContainer.style.left = "0";
+            pdfContainer.style.width = "100%";
+            pdfContainer.style.height = "100%";
+            pdfContainer.style.backgroundColor = "rgba(0, 0, 0, 0)";
+            pdfContainer.style.zIndex = "9999";
+            pdfContainer.style.display = "flex";
+            pdfContainer.style.justifyContent = "center";
+            pdfContainer.style.alignItems = "center";
+
+            adobeDCView.previewFile({
+                content: {
+                    location: {
+                        url: pdfUrl,
+                    },
+                },
+                metaData: {
+                    fileName: title,
+                },
+            }, {
+                embedMode: "LIGHT_BOX",
+                defaultViewMode: "FIT_WIDTH",
+            });
+
+            pdfContainer.addEventListener("click", (event) => {
+                if (event.target === pdfContainer) {
+                    pdfContainer.style.display = "none";
+                }
+            });
+        }
+    </script>
 <script>
     const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
     const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
@@ -4265,8 +4504,8 @@ window.onload = function() {
   <div class="lightbox" id="lightbox">
     <div class="lightbox-content">
       <div id="content-container">
-<iframe id="lightbox-iframe" src="" allowfullscreen allow="autoplay"></iframe>
-          <button class="close-btn" onclick="closeLightbox()">
+<iframe id="lightbox-iframe" class="lightbox-iframe" src="" allowfullscreen allow="autoplay"></iframe>
+          <button id="close-btn" class="close-btn">
         <i class="material-icons">close</i>
       </button>
       </div>
@@ -4279,6 +4518,7 @@ window.onload = function() {
 
     <!-- Placeholder div for Adobe PDF Embed API -->
     <div id="adobe-dc-view"></div>
+    <div id="modalOverlay" class="modal-overlay"></div>
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close" id="closeModal">&times;</span>
@@ -4299,8 +4539,8 @@ Providing a way for the user to navigate or access the content that falls outsid
 The appropriate solution will depend on your specific requirements and the nature of the content being displayed within the modal.</p>
                 </div>
                 <div id="page3" class="tab-page">
-                    <h2>Page 3</h2>
-                    <button id="syncToDrive" class="g-button" onclick="saveToGoogleDrive()">
+                    <h2>Settings</h2>
+<button id="syncToDrive" class="g-button" onclick="saveToGoogleDrive()">
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
@@ -4308,8 +4548,16 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncFromIcon" class="material-icons">sync</span>
     Sync FROM Drive
 </button>
+<button id="clearStorage" class="g-button" onclick="clearLinks()">
+    <span class="material-icons">delete_forever</span>
+    Delete all
+</button>
+<button id="toggleTheme" class="g-button" onclick="toggleTheme()">
+    <span class="material-icons">sync</span>
+    Change theme
+</button>                    
                     <p id="output"></p>
-                    <p>You can <a href="#" onclick="clearLinks(); return false;">clear all the bookmarks</a> to start over. <a href="#" onclick="followTheme(); return false;">Follow system theme</a> or <a href="#" onclick="toggleMode(); return false;">change your theme</a> to the opposite of system default. Click <a href="#" onclick="setPassword(); return false;">here</a> to set a password or to change the existing one. Click <a href="#" onclick="removePassword(); return false;">here</a> to remove it.</p>
+                    <p>You can <a href="#" onclick="clearLinks(); return false;">clear all the bookmarks</a> to start over. <a href="#" onclick="toggleTheme(); return false;">Follow system theme</a> or <a href="#" onclick="toggleTheme(); return false;">change your theme</a> to the opposite of system default. Click <a href="#" onclick="setPassword(); return false;">here</a> to set a password or to change the existing one. Click <a href="#" onclick="removePassword(); return false;">here</a> to remove it.</p>
                 </div>
             </div>
             <div class="tabs">
@@ -4325,7 +4573,7 @@ The appropriate solution will depend on your specific requirements and the natur
     </div>
 <div class="add-banner" id="add-banner">
   <button class="material-btn bottom-left-btn" id="openModal">
-    <i class="material-icons material-icon">help_center</i>
+    <i class="material-icons material-icon">settings</i>
   </button>
   <button class="material-btn main-btn" style="margin-left: 15%; margin-right: 15%;" onclick="openAdd()">
     <i class="material-icons material-icon">radio_button_unchecked</i>
@@ -4351,6 +4599,7 @@ The appropriate solution will depend on your specific requirements and the natur
         <option value="intro">Post</option>
         <option value="window">Window (embed a webpage)</option>
         <option value="pdf">PDF document</option>
+        <option value="download">Download</option>
         <option value="location">Location</option>
         <option value="payment">Paylink</option>
         <option value="other">other (any custom url protocol)</option>
