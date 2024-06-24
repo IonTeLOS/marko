@@ -562,7 +562,6 @@ input:focus {
 
 #icon-selection-container {
   position: relative;
-  padding-bottom: 80px; /* Space for the buttons */
   overflow: hidden;
 }
 
@@ -581,13 +580,7 @@ input:focus {
         @media only screen and (min-width: 601px) {
             .container { width: 85%; }
         }
-    .container {
-      flex: 1;    
-      max-width: 500px;
-      margin: 0 auto;
-      padding-left: 40px;
-      padding-right: 40px;    
-    }
+
 
     .input-field {
       margin-bottom: 20px;
@@ -833,21 +826,53 @@ input:focus {
             aspect-ratio: 16/9;
             width: 100%;
         }
+    
+.container {
+  transition: margin-bottom 0.3s ease;
+  margin-bottom: 40px;    
+}    
+#menu-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  bottom: 80px; /* Positioned just above the always visible element */
+  height: 80px;
+  background-color: #4267B2;
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(100%);
+}
 
+#menu-container.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+#menu-container.hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(100%);
+}
 .form-buttons {
   position: fixed;
-  bottom: 0;
   left: 0;
   width: 100%;
   height: 80px;    
   background-color: #4267B2;
-  margin-bottom: 80px;    
   box-sizing: border-box;
   z-index: 999;
   text-align: center; /* Center the buttons horizontally */
   justify-content: center;    
-  transition: transform 0.5s ease-in-out;  
+  display: flex;
+  align-items: center;
+  transform: translateY(0);
+  transition: transform 0.3s ease-in-out;
 }
+.form-buttons.hidden {
+  transform: translateY(100%);
+}    
 
 .add-banner {
   position: fixed;
@@ -860,7 +885,7 @@ input:focus {
   box-sizing: border-box;
   z-index: 1000;
   text-align: center; /* Center the buttons horizontally */
-  justify-content: center;    
+  justify-content: center;      
 }
 
       
@@ -1210,16 +1235,17 @@ function toggleTheme() {
   // Listen for changes in the system theme and follow them
  // window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', toggleTheme);
 
-  function toggleButtonContainerVisibility() {
-    const newLinkForm = document.getElementById('new-link-form');
-    const buttonContainer = document.getElementById('menu-container');
-    // show the upper row of menu buttons only when user is in the process of adding a new bookmark
-    if (newLinkForm.style.display !== 'none' && newLinkForm.style.display !== '') {
-      buttonContainer.style.display = 'block';
-    } else {
-      buttonContainer.style.display = 'none';
-    }
-  }
+         function toggleButtonContainerVisibility() {
+            const newLinkForm = document.getElementById('new-link-form');
+            const buttonContainer = document.getElementById('menu-container');
+            if (newLinkForm.style.display === 'block') {
+                buttonContainer.classList.remove('hidden');
+                buttonContainer.classList.add('visible');
+            } else {
+                buttonContainer.classList.remove('visible');
+                buttonContainer.classList.add('hidden');
+            }
+        }
 
   // Ensure this function runs when the DOM content is fully loaded
   document.addEventListener('DOMContentLoaded', () => {
@@ -2245,7 +2271,7 @@ function addLink() {
     // Clear the form inputs and hide the form
     urlInput.value = '';
     nameInput.value = '';
-    hideForm();
+    toggleNewLinkForm();
     saveLinks();
 }
     
@@ -2714,26 +2740,14 @@ function removeBookmark(index) {
             }
         }
 
-    function showForm() {
-        document.getElementById('new-link-url').style.display = 'inline-block';
-        document.getElementById('new-link-name').style.display = 'inline-block';
-        document.getElementById('new-link-icon').style.display = 'inline-block';
-        document.querySelector('.add').style.display = 'inline-block';
-        document.querySelector('.cancel').style.display = 'inline-block';
-    }
-
-    function hideForm() {
-        document.getElementById('new-link-url').style.display = 'none';
-        document.getElementById('new-link-name').style.display = 'none';
-        document.getElementById('new-link-icon').style.display = 'none';
-    }
+    function toggleNewLinkForm() {
+            const newLinkForm = document.getElementById('new-link-form');
+            newLinkForm.style.display = newLinkForm.style.display === 'none' || newLinkForm.style.display === '' ? 'block' : 'none';
+            toggleButtonContainerVisibility();
+        }
 
     function cancelAddLink() {
-        document.getElementById('new-link-url').value = '';
-        document.getElementById('new-link-name').value = '';
-        document.getElementById('new-link-icon').value = '';
-        hideForm();
-        hideAdd();
+        toggleButtonContainerVisibility();
     }
 
     // Listen for Enter key press to add link
@@ -3213,23 +3227,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
 // this is the definition of what the main button does, it initiates (or if clicked again ends!) the process of adding a new bookmark, shows the form and an extra row of buttons    
 function openAdd() {
-    var divToHide = document.getElementById('new-link-form');
-    const linkContainer = document.querySelector('.bookmarks-container'); 
-    if (divToHide.style.display !== 'none') {
-        divToHide.style.display = 'none';
-        // TODO instead of hiding all these maybe make the container hidden
-        document.getElementById('icon-selection-container').style.display = 'none';
-        document.getElementById('link-type').value = "";
-        document.getElementById('additional-fields').style.display = 'none';
-        document.getElementById('phone-number-field').style.display = 'none';
-        document.getElementById('note-content').style.display = 'none';
-        document.getElementById('intro-field').style.display = 'none';
-        document.getElementById('window-url').style.display = 'none';
-        linkContainer.style.display = 'block';
+    const linkContainer = document.querySelector('.bookmarks-container');
+    const upperContainer = document.querySelector('.container'); 
+    if (upperContainer.style.display === 'none') {
+        linkContainer.style.display = 'none';
+        upperContainer.style.display = 'block';
+        document.getElementById('new-link-form').style.display = 'block';
     } 
     else {
-    document.getElementById('new-link-form').style.display = 'block';
-    linkContainer.style.display = 'none';
+        document.getElementById('new-link-form').style.display = 'none';
+        upperContainer.style.display = 'none';
+        linkContainer.style.display = 'block';
     }
     }
     
@@ -4583,7 +4591,7 @@ The appropriate solution will depend on your specific requirements and the natur
 
  
       
-<div class="container">
+<div id="upper-container" class="container" style="display: none;">
   <div id="new-link-form" style="display: none;">
     <div class="input-field">
       <select id="link-type">
@@ -4635,7 +4643,6 @@ The appropriate solution will depend on your specific requirements and the natur
       <input type="tel" id="phone-number" placeholder="Add number with country code">
       <button id="p-clear-btn" class="clear-btn" style="display:none;">✕</button>
     </div>
-    </div>
  
       
    
@@ -4668,6 +4675,7 @@ The appropriate solution will depend on your specific requirements and the natur
     </div>
   </div>
 </div>
+    </div>
 
 
     <div class="bookmarks-container">
@@ -4698,8 +4706,8 @@ The appropriate solution will depend on your specific requirements and the natur
     </div>
   </div>
     </div>
-
-<div class="form-buttons" id="menu-container" style="display: none;">
+    
+<div class="form-buttons" id="menu-container">
   <button class="material-btn left-btn" onclick="downloadPage()">
     <i class="material-icons material-icon">cloud_download</i>
   </button>
