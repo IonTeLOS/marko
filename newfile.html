@@ -2900,10 +2900,8 @@ function saveLinks() {
                     hideModal();
                 });
 
-                window.addEventListener('click', function(event) {
-                    if (event.target === modalOverlay) {
-                        hideModal();
-                    }
+                modalOverlay.addEventListener('click', function() {
+                    hideModal();
                 });
             } else {
                 console.error('One or more elements not found');
