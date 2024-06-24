@@ -1903,7 +1903,6 @@ function saveBookmark(linkData) {
     window.cancelAddLink = function() {
      clearForm();
      hideAdd();
-     location.reload(); // TODO test extensively and comment this after implementing another reliable strategy 
     };
 
     function clearForm() {
@@ -3244,8 +3243,8 @@ function openAdd() {
     }
     
     function hideAdd() {
+    document.getElementById('upper-container').style.display = 'none';
     document.getElementById('new-link-form').style.display = 'none';
-    document.getElementById('icon-selection-container').style.display = 'none';
     const linkContainer = document.querySelector('.bookmarks-container'); 
     linkContainer.style.display = 'block';
     }
