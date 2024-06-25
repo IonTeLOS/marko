@@ -4,31 +4,37 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Send Notification</title>
-  <!-- Link to icon for notifications -->
-  <link rel="icon" type="image/svg+xml" href="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg">
 </head>
 <body>
   <button onclick="scheduleNotification()">Send Notification in 5 Seconds</button>
 
-  <!-- JavaScript to register Service Worker -->
+  <!-- JavaScript to register Service Worker and handle notifications -->
   <script>
-      if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/marko/serviceworker.js')
-        .then((registration) => {
-          console.log('Service Worker registered:', registration);
-        })
-        .catch((error) => {
-          console.error('Service Worker registration failed:', error);
+    if ('Notification' in window) {
+      // Check if the current permission status is 'granted', 'denied', or 'default'
+      if (Notification.permission === 'granted') {
+        console.log('Notification permission already granted.');
+      } else if (Notification.permission !== 'denied') {
+        // Request permission from the user
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            console.log('Notification permission granted.');
+          } else {
+            console.warn('Notification permission denied.');
+          }
+        }).catch(error => {
+          console.error('Error requesting Notification permission:', error);
         });
-    });
-  } else {
-    console.log('Service Worker not supported.');
-  }
-    
+      }
+    } else {
+      console.log('Notification API not supported.');
+    }
+
+    // Function to schedule and show a notification
     function scheduleNotification() {
-      setTimeout(() => {
-        if ('serviceWorker' in navigator && 'Notification' in window) {
+      if ('serviceWorker' in navigator && 'Notification' in window) {
+        // Check permission again before showing the notification
+        if (Notification.permission === 'granted') {
           navigator.serviceWorker.ready.then(registration => {
             registration.showNotification('Scheduled Notification', {
               body: 'This is a notification from your web app!',
@@ -38,9 +44,26 @@
             console.error('Service Worker registration error:', error);
           });
         } else {
-          console.log('Service Worker or Notification API not supported.');
+          console.warn('Notification permission is not granted.');
         }
-      }, 5000); // 5 seconds delay
+      } else {
+        console.log('Service Worker or Notification API not supported.');
+      }
+    }
+    
+    // Service Worker registration
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/marko/serviceworker.js')
+          .then((registration) => {
+            console.log('Service Worker registered:', registration);
+          })
+          .catch((error) => {
+            console.error('Service Worker registration failed:', error);
+          });
+      });
+    } else {
+      console.log('Service Worker not supported.');
     }
   </script>
 </body>
