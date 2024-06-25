@@ -44,6 +44,7 @@
           }).catch(error => {
             console.error('Service Worker registration error:', error);
           });
+          }, 15000); // 5 seconds timeout
         } else {
           console.warn('Notification permission is not granted.');
           // Optionally, request permission again or prompt the user to enable notifications
