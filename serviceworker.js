@@ -1,26 +1,30 @@
+// serviceworker.js
 self.addEventListener('install', event => {
-  console.log('Service Worker installed');
+  console.log('Service Worker installed.');
 });
 
 self.addEventListener('activate', event => {
-  console.log('Service Worker activated');
+  console.log('Service Worker activated.');
 });
 
+// Example: Listen for messages from the main thread
+self.addEventListener('message', event => {
+  if (event.data && event.data.action === 'scheduleNotification') {
+    const { title, body, icon, timeToShow } = event.data.payload;
+
+    // Schedule the notification to show at the specified time
+    setTimeout(() => {
+      self.registration.showNotification(title, {
+        body: body,
+        icon: icon
+      });
+    }, timeToShow - Date.now()); // Calculate the delay
+  }
+});
+
+// Example: Listen for notification click events
 self.addEventListener('notificationclick', event => {
   event.notification.close();
-  // Handle notification click event (e.g., open a specific URL)
+  // Handle notification click event as needed
 });
 
-self.addEventListener('notificationclose', event => {
-  console.log('Notification closed:', event);
-});
-
-self.addEventListener('push', event => {
-  console.log('Push notification received:', event);
-  const notificationOptions = {
-    body: 'This is a push notification from your web app!',
-    icon: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg'
-  };
-  event.waitUntil(self.registration.showNotification('Push Notification', notificationOptions));
-});
- 
