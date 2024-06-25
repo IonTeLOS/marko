@@ -11,11 +11,8 @@
   <!-- JavaScript to register Service Worker and handle notifications -->
   <script>
     if ('Notification' in window) {
-      // Check if the current permission status is 'granted', 'denied', or 'default'
-      if (Notification.permission === 'granted') {
-        console.log('Notification permission already granted.');
-      } else if (Notification.permission !== 'denied') {
-        // Request permission from the user
+      // Request permission if not already granted or denied
+      if (Notification.permission === 'default') {
         Notification.requestPermission().then(permission => {
           if (permission === 'granted') {
             console.log('Notification permission granted.');
@@ -25,6 +22,10 @@
         }).catch(error => {
           console.error('Error requesting Notification permission:', error);
         });
+      } else if (Notification.permission === 'denied') {
+        console.warn('Notification permission is denied.');
+      } else {
+        console.log('Notification permission is already granted.');
       }
     } else {
       console.log('Notification API not supported.');
@@ -45,6 +46,7 @@
           });
         } else {
           console.warn('Notification permission is not granted.');
+          // Optionally, request permission again or prompt the user to enable notifications
         }
       } else {
         console.log('Service Worker or Notification API not supported.');
