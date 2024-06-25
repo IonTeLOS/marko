@@ -64,24 +64,24 @@
       console.log('Service Worker not supported.');
     }
 
-    // Function to schedule a notification
-    function scheduleNotification(delay) {
+        // Function to schedule a notification
+    function scheduleNotification() {
       if ('serviceWorker' in navigator && 'Notification' in window) {
         // Check if the user has granted permission
         if (Notification.permission === 'granted') {
+          // Calculate the time to show the notification (5 seconds from now)
+          const timeToShow = Date.now() + 10000; // 10000 milliseconds from now
+
           // Schedule notification using Service Worker
           navigator.serviceWorker.ready.then(registration => {
-            // Calculate the time to show the notification
-            const timeToShow = Date.now() + delay;
-
             // Send a message to the Service Worker to schedule the notification
             registration.active.postMessage({
               action: 'scheduleNotification',
               payload: {
                 title: 'Scheduled Notification',
                 body: 'This is a notification from your web app!',
-              icon: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg'
-                timeToShow: 10000
+                icon: '/path/to/icon.svg', // Example icon path
+                timeToShow: timeToShow
               }
             });
           }).catch(error => {
