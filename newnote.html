@@ -10,7 +10,7 @@
 
 </head>
 <body data-swipe-threshold="150" data-swipe-timeout="250">
-  <button id="noteButton" style="width: 400px; height: 80px" onclick="scheduleNotification()">Send Notification in 5 Seconds</button>
+  <button id="noteButton" style="width: 400px; height: 80px" onclick="scheduleNotification('Hi', 'from Marko', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg', 10000)">Send Notification in 5 Seconds</button>
 
   <!-- JavaScript to register Service Worker -->
   <script>
@@ -34,22 +34,27 @@
       });
     }
     
-    function scheduleNotification() {
-      setTimeout(() => {
-        if ('serviceWorker' in navigator && 'Notification' in window) {
-          navigator.serviceWorker.ready.then(registration => {
-            registration.showNotification('Scheduled Notification', {
-              body: 'This is a notification from your web app!',
-              icon: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg'
-            });
-          }).catch(error => {
-            console.error('Service Worker registration error:', error);
-          });
-        } else {
-          console.log('Service Worker or Notification API not supported.');
-        }
-      }, 5000); // 5 seconds delay
-    }
+function scheduleNotification(title, body, icon, delay) {
+  if ('serviceWorker' in navigator && 'Notification' in window) {
+    navigator.serviceWorker.ready.then(registration => {
+      const notificationData = {
+        title: title || 'Scheduled Notification',
+        body: body || 'This is a notification from your web app!',
+        icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg',
+        delay: delay || 5000 // default to 5 seconds if not specified
+      };
+
+      registration.active.postMessage({
+        action: 'scheduleNotification',
+        notification: notificationData
+      });
+    }).catch(error => {
+      console.error('Service Worker registration error:', error);
+    });
+  } else {
+    console.log('Service Worker or Notification API not supported.');
+  }
+}
   </script>
 </body>
 </html>
