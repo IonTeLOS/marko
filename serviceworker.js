@@ -1,4 +1,3 @@
-// serviceworker.js
 self.addEventListener('install', event => {
   console.log('Service Worker installed.');
 });
@@ -39,7 +38,8 @@ self.addEventListener('push', event => {
 self.addEventListener('message', event => {
   if (event.data && event.data.action === 'scheduleNotification') {
     const notificationData = event.data.notification;
-    
+    console.log('Scheduling notification with data:', notificationData);
+
     setTimeout(() => {
       self.registration.showNotification(notificationData.title, {
         body: notificationData.body,
@@ -49,9 +49,10 @@ self.addEventListener('message', event => {
   }
 });
 
-// Example: Listen for notification click events
 self.addEventListener('notificationclick', event => {
   event.notification.close();
+  console.log('Notification clicked:', event.notification);
   // Handle notification click event as needed
 });
+
 
