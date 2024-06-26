@@ -4,24 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Send Notification</title>
-  <!-- Link to icon for notifications -->
   <link rel="icon" type="image/svg+xml" href="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg">
-      <script src="swiped-events.js"></script>
-
+  <script src="swiped-events.js"></script>
 </head>
 <body data-swipe-threshold="150" data-swipe-timeout="250">
-  <button id="noteButton" style="width: 400px; height: 80px" onclick="scheduleNotification('Hi', 'from Marko', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg', 10000)">Send Notification in 5 Seconds</button>
+  <button id="noteButton" style="width: 400px; height: 80px" onclick="scheduleNotification('Hi', 'from Marko', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg', 5000)">Send Notification in 5 Seconds</button>
 
-  <!-- JavaScript to register Service Worker -->
   <script>
     document.getElementById('noteButton').addEventListener('swiped-right', function(e) {
-    alert("swiped right");
-});
+      alert("swiped right");
+    });
 
     document.getElementById('noteButton').addEventListener('swiped-left', function(e) {
-    alert("swiped left");
-});
-    
+      alert("swiped left");
+    });
+
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('serviceworker.js')
@@ -33,48 +30,39 @@
           });
       });
     }
-    
-function scheduleNotification(title, body, icon, delay) {
-  if ('serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window) {
-    navigator.serviceWorker.ready.then(registration => {
-      const notificationData = {
-        title: title || 'Scheduled Notification',
-        body: body || 'This is a notification from your web app!',
-        icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg'
-      };
 
-      if (delay) {
-        registration.active.postMessage({
-          action: 'scheduleNotification',
-          notification: {
-            ...notificationData,
-            delay: delay
+    function scheduleNotification(title, body, icon, delay) {
+      if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+              navigator.serviceWorker.ready.then(registration => {
+                const notificationData = {
+                  title: title || 'Scheduled Notification',
+                  body: body || 'This is a notification from your web app!',
+                  icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg',
+                  delay: delay
+                };
+
+                console.log('Sending message to service worker:', notificationData);
+                registration.active.postMessage({
+                  action: 'scheduleNotification',
+                  notification: notificationData
+                });
+              }).catch(error => {
+                console.error('Service Worker registration error:', error);
+              });
+            } else {
+              console.log('Service Worker or Push API not supported.');
+            }
+          } else {
+            console.log('Notification permission denied.');
           }
         });
       } else {
-        // If no delay, send as a push notification
-        registration.pushManager.getSubscription()
-          .then(subscription => {
-            if (subscription) {
-              // Here you would typically send this data to your server
-              // which would then send the push notification
-              console.log('Would send these details to server:', notificationData);
-
-              // For testing purposes, we'll simulate a push event
-              registration.active.postMessage({
-                action: 'pushSimulation',
-                notification: notificationData
-              });
-            }
-          });
+        console.log('Notifications not supported in this browser.');
       }
-    }).catch(error => {
-      console.error('Service Worker registration error:', error);
-    });
-  } else {
-    console.log('Service Worker or Push API not supported.');
-  }
-}
+    }
   </script>
 </body>
 </html>
