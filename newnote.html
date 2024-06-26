@@ -4,55 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Send Notification</title>
+  <!-- Link to icon for notifications -->
+  <link rel="icon" type="image/svg+xml" href="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg">
+      <script src="swiped-events.js"></script>
+
 </head>
-<body>
-  <button onclick="scheduleNotification(5000)">Send Notification in 5 Seconds</button>
+<body data-swipe-threshold="150" data-swipe-timeout="250">
+  <button id="noteButton" style="width: 400px; height: 80px" onclick="scheduleNotification()">Send Notification in 5 Seconds</button>
 
   <!-- JavaScript to register Service Worker -->
   <script>
-        if ('Notification' in window) {
-      // Request permission if not already granted or denied
-      if (Notification.permission === 'default') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            console.log('Notification permission granted.');
-          } else {
-            console.warn('Notification permission denied.');
-          }
-        }).catch(error => {
-          console.error('Error requesting Notification permission:', error);
-        });
-      } else if (Notification.permission === 'denied') {
-        console.warn('Notification permission is denied.');
-      } else {
-        console.log('Notification permission is already granted.');
-      }
-    } else {
-      console.log('Notification API not supported.');
-    }    if ('Notification' in window) {
-      // Request permission if not already granted or denied
-      if (Notification.permission === 'default') {
-        Notification.requestPermission().then(permission => {
-          if (permission === 'granted') {
-            console.log('Notification permission granted.');
-          } else {
-            console.warn('Notification permission denied.');
-          }
-        }).catch(error => {
-          console.error('Error requesting Notification permission:', error);
-        });
-      } else if (Notification.permission === 'denied') {
-        console.warn('Notification permission is denied.');
-      } else {
-        console.log('Notification permission is already granted.');
-      }
-    } else {
-      console.log('Notification API not supported.');
-    }
+    document.getElementById('noteButton').addEventListener('swiped-right', function(e) {
+    alert("swiped right");
+});
+
+    document.getElementById('noteButton').addEventListener('swiped-left', function(e) {
+    alert("swiped left");
+});
     
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/marko/serviceworker.js')
+        navigator.serviceWorker.register('serviceworker.js')
           .then((registration) => {
             console.log('Service Worker registered:', registration);
           })
@@ -60,42 +32,24 @@
             console.error('Service Worker registration failed:', error);
           });
       });
-    } else {
-      console.log('Service Worker not supported.');
     }
-
-        // Function to schedule a notification
+    
     function scheduleNotification() {
-      if ('serviceWorker' in navigator && 'Notification' in window) {
-        // Check if the user has granted permission
-        if (Notification.permission === 'granted') {
-          // Calculate the time to show the notification (5 seconds from now)
-          const timeToShow = Date.now() + 10000; // 10000 milliseconds from now
-
-          // Schedule notification using Service Worker
+      setTimeout(() => {
+        if ('serviceWorker' in navigator && 'Notification' in window) {
           navigator.serviceWorker.ready.then(registration => {
-            // Send a message to the Service Worker to schedule the notification
-            registration.active.postMessage({
-              action: 'scheduleNotification',
-              payload: {
-                title: 'Scheduled Notification',
-                body: 'This is a notification from your web app!',
-                icon: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg', // Example icon path
-                timeToShow: timeToShow
-              }
+            registration.showNotification('Scheduled Notification', {
+              body: 'This is a notification from your web app!',
+              icon: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg'
             });
           }).catch(error => {
-            console.error('Error showing notification:', error);
+            console.error('Service Worker registration error:', error);
           });
         } else {
-          console.warn('Notification permission is not granted.');
-          // Optionally, request permission again or prompt the user to enable notifications
+          console.log('Service Worker or Notification API not supported.');
         }
-      } else {
-        console.log('Service Worker or Notification API not supported.');
-      }
+      }, 5000); // 5 seconds delay
     }
   </script>
 </body>
 </html>
-
