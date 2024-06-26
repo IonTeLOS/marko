@@ -47,96 +47,43 @@ body {
   max-width: 100%;
   overflow-x: hidden;
   height:auto!important;    
-  margin: 0;
+  margin 0;
   gap: 6px; /* Add some spacing between bookmarks */
   padding: 0;
-  padding-top: 16px;
-  padding-bottom: 80px;  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  padding-top: 8px;
+  padding-bottom: 80px;  transition: background-color 0.2s ease-in-out, color;
 }
-
+    
 body.light-mode {
-  background-color: #fdf6e3; /* Solarized Base3 */
-  color: #657b83; /* Solarized Base00 */
+  background-color: #e3f2fd;
+  color: #333333;
 }
 
 body.light-mode .bookmark,
 body.light-mode .top-bookmark,
 body.light-mode .menu-bookmarks .bookmark {
-  background-color: #eee8d5; /* Solarized Base2 */
+  background-color: #bbdefb;
 }
-
-body.light-mode .bookmark-icon,
-body.light-mode .top-bookmark .bookmark-icon {
-  color: #586e75; /* Solarized Base01 */
-}
-
+    
 body.dark-mode {
-  background-color: #002b36; /* Solarized Base03 */
-  color: #839496; /* Solarized Base0 */
+  background-color: #292929;
+  color: #999999;
 }
 
 body.dark-mode .bookmark,
 body.dark-mode .top-bookmark,
 body.dark-mode .menu-bookmarks .bookmark {
-  background-color: #073642; /* Solarized Base02 */
-  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .top-bookmark .icon-container,
-body.dark-mode .menu-item:hover {
-  background-color: #586e75; /* Solarized Base01 */
-}
-
-body.dark-mode .bookmark-icon,
-body.dark-mode .top-bookmark .bookmark-icon {
-  color: #93a1a1; /* Solarized Base1 */
+background-color: #1f1b24;
 }
       
 .bookmarks-container {
       flex: 100;
       display: flex;
       flex-direction: column;
-
     }      
 
 
-body.light-mode {
-  background-color: #fdf6e3; /* Solarized Base3 */
-  color: #657b83; /* Solarized Base00 */
-}
 
-body.light-mode .bookmark,
-body.light-mode .top-bookmark,
-body.light-mode .menu-bookmarks .bookmark {
-  background-color: #eee8d5; /* Solarized Base2 */
-}
-
-body.light-mode .bookmark-icon,
-body.light-mode .top-bookmark .bookmark-icon {
-  color: #586e75; /* Solarized Base01 */
-}
-
-body.dark-mode {
-  background-color: #002b36; /* Solarized Base03 */
-  color: #839496; /* Solarized Base0 */
-}
-
-body.dark-mode .bookmark,
-body.dark-mode .top-bookmark,
-body.dark-mode .menu-bookmarks .bookmark {
-  background-color: #073642; /* Solarized Base02 */
-  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
-}
-
-body.dark-mode .top-bookmark .icon-container,
-body.dark-mode .menu-item:hover {
-  background-color: #586e75; /* Solarized Base01 */
-}
-
-body.dark-mode .bookmark-icon,
-body.dark-mode .top-bookmark .bookmark-icon {
-  color: #93a1a1; /* Solarized Base1 */
-}
 
 .top-container {
   flex: 1;
@@ -184,7 +131,8 @@ body.dark-mode .top-bookmark .bookmark-icon {
     }
 
     .top-bookmark .icon-container:hover,
-    .bookmark:hover .icon-container {
+    .bookmark:hover .icon-container,
+    .bookmark-title:hover {
       transform: scale(1.1); /* Enlarge container on hover */
     }
 
@@ -194,15 +142,13 @@ body.dark-mode .top-bookmark .bookmark-icon {
   justify-content: space-between;
   padding: 10px;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   position: relative;
   margin-bottom: 8px;
 }
 
 .bookmark:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adjusted shadow color and intensity */
 }
 
 .bookmark.active {
@@ -217,7 +163,7 @@ body.dark-mode .top-bookmark .bookmark-icon {
 }
 
 .bookmark:hover .bookmark-title {
-  transform: scale(1.02);
+  transform: scale(1.50);
 }
 
 .icon-container {
@@ -232,7 +178,7 @@ body.dark-mode .top-bookmark .bookmark-icon {
             width: 62px; /* 72px (size of container) - 5px (border) * 2 */
             height: 62px; /* Same calculation as width */
             border-radius: 50%; /* Makes the ring circular */
-            border: 5px solid var(--ring-color, #2ecc71); /* Thickness and color of the ring */
+            border: 5px solid var(--ring-color, #2ecc71); /* Thickness and color of the ring TODO change default color */
             box-sizing: border-box; /* Ensures the border is included in the size */
         }  
 .bookmark-icon {
@@ -243,34 +189,8 @@ body.dark-mode .top-bookmark .bookmark-icon {
 }
 
 .bookmark:hover .bookmark-icon {
-  color: #333;
+  color: #000000;
 }
-
-.bookmark.active .icon-container {
-  background-color: #1976d2;
-  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.4);
-}
-
-.bookmark.active .bookmark-icon {
-  color: #fff;
-}
-
-    /* Custom colors for specific icons */
-    .bookmark[data-link="show-content"]:hover .icon-container {
-      background-color: rgba(13, 71, 161, 0.1); /* Light blue for info icon */
-    }
-
-    .bookmark[data-link="show-content"]:hover .bookmark-icon {
-      color: #0d47a1; /* Darker blue for info icon */
-    }
-
-    .bookmark[data-link^="https://"]:hover .icon-container {
-      background-color: rgba(46, 125, 50, 0.1); /* Light green for external link */
-    }
-
-    .bookmark[data-link^="https://"]:hover .bookmark-icon {
-      color: #2e7d32; /* Green for external link icon */
-    }
 
     .delete-icon {
       color: #f44336; /* Material Design error color */
@@ -319,56 +239,12 @@ body.dark-mode .top-bookmark .bookmark-icon {
     .menu-bookmarks .bookmark:hover {
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
     }
-
-    /* Specific Icons for Menu Items */
-    .bookmark[data-action="info"] .icon-container {
-      background-color: rgba(33, 150, 243, 0.1);
-    }
-
-    .bookmark[data-action="add-link"] .icon-container {
-      background-color: rgba(76, 175, 80, 0.1);
-    }
-
-    .bookmark[data-action="generate"] .icon-container {
-      background-color: rgba(255, 152, 0, 0.1);
-    }
-
-    .bookmark[data-action="toggle-mode"] .icon-container {
-      background-color: rgba(156, 39, 176, 0.1);
-    }
-
-    .bookmark[data-action="info"]:hover .bookmark-icon {
-      color: #2196f3;
-    }
-
-    .bookmark[data-action="add-link"]:hover .bookmark-icon {
-      color: #4caf50;
-    }
-
-    .bookmark[data-action="generate"]:hover .bookmark-icon {
-      color: #ff9800;
-    }
-
-    .bookmark[data-action="toggle-mode"]:hover .bookmark-icon {
-      color: #9c27b0;
-    }
-
    
 
       [id^="bookmark-"]:hover {
-          background-color: #444;
-      }  
-      
-    #marko.bookmark.top-bookmark,
-    icon-container.menu-icon:hover,  
-    body.dark-mode .top-bookmark .icon-container:hover,
-    body.dark-mode .menu-bookmarks .bookmark:hover .icon-container {
-      background-color: #444; /* Slight hover effect in dark mode */
-    }
+          color: #ffffff;
+      } 
 
-    body.dark-mode .mode-indicator::after {
-      content: '🌚';
-    }
 
     /* Dropdown Menu */
     .dropdown-menu {
@@ -394,59 +270,49 @@ body.dark-mode .top-bookmark .bookmark-icon {
     .menu-item:hover {
       background-color: #f5f5f5;
     }
-
-    /* System Default (initial state) */
-    @media (prefers-color-scheme: dark) {
-       body { background-color: #121212; color: #e0e0e0; }
-      .bookmark, .dropdown-menu { background-color: #1e1e1e; box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); }
-      .top-bookmark { background-color: #333; }
-      .top-bookmark .icon-container, .menu-item:hover { background-color: #424242; }
-      .icon-container.add-link-icon:hover, .icon-container.menu-icon:hover { background-color: darkcyan; }    
-    }
-
-/* Light Mode */
-body.light-mode { 
-  background-color: #fdf6e3; /* Solarized Base3 */
-  color: #657b83; /* Solarized Base00 */
-}
-body.light-mode .bookmark { 
-  background-color: #eee8d5; /* Solarized Base2 */
-}
-body.light-mode .top-bookmark { 
-  background-color: #eee8d5; /* Solarized Base2 */
-}
-body.light-mode .mode-indicator::after { 
-  content: '🌞'; 
-}
-body.light-mode .bookmark-icon, 
-body.light-mode .top-bookmark .bookmark-icon { 
-  color: #586e75; /* Solarized Base01 */
+    
+/* System Default (initial state) */
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #e3f2fd; /* Align with .body.light-mode */
+    color: #333333; /* Align with .body.light-mode */
+  }
+  .bookmark,
+  .top-bookmark,
+  .menu-bookmarks .bookmark {
+    background-color: #bbdefb; /* Align with .body.light-mode .bookmark */
+    transition: background-color 0.2s ease-in-out; /* Smooth transition on background color change */
+  }
 }
 
-/* Dark Mode */
-body.dark-mode { 
-  background-color: #002b36; /* Solarized Base03 */
-  color: #839496; /* Solarized Base0 */
+/* Hover effect for .bookmark and related elements */
+.body.light-mode .bookmark:hover,
+.body.light-mode .top-bookmark:hover,
+.body.light-mode .menu-bookmarks .bookmark:hover {
+  background-color: #acc8e5; /* Lighter background on hover */
 }
-body.dark-mode .bookmark, 
-body.dark-mode .dropdown-menu { 
-  background-color: #073642; /* Solarized Base02 */
-  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); 
+    
+/* System Default (initial state) */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #292929;
+    color: #999999;
+  }
+  .bookmark,
+  .top-bookmark,
+  .menu-bookmarks .bookmark {
+    background-color: #1f1b24;
+    transition: background-color 0.2s ease-in-out; /* Smooth transition on background color change */
+  }
 }
-body.dark-mode .top-bookmark { 
-  background-color: #073642; /* Solarized Base02 */
+
+/* Hover effect for .bookmark and related elements */
+.body.dark-mode .bookmark:hover,
+.body.dark-mode .top-bookmark:hover,
+.body.dark-mode .menu-bookmarks .bookmark:hover {
+  background-color: #333; /* Darker background on hover */
 }
-body.dark-mode .top-bookmark .icon-container, 
-body.dark-mode .menu-item:hover { 
-  background-color: #586e75; /* Solarized Base01 */
-}
-body.dark-mode .mode-indicator::after { 
-  content: '🌚'; 
-}
-body.dark-mode .bookmark-icon, 
-body.dark-mode .top-bookmark .bookmark-icon { 
-  color: #93a1a1; /* Solarized Base1 */
-}      
+
 
 input {
   padding-right: 30px; /* Space for the clear button */
@@ -574,11 +440,13 @@ input:focus {
 .icon { text-align: center; cursor: pointer; padding: 10px; border-radius: 4px; transition: background-color 0.3s; }
 .icon:hover { background-color: #f0f0f0; }
 .material-icons-outlined { font-size: 24px; }
+.material-icons-outlined { color: black; }
+    
 
 
 #color-select { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; font-size: 12px; font-weight: bold; color: white; text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); cursor: pointer; }
         @media only screen and (min-width: 601px) {
-            .container { width: 85%; }
+            .container { width: 90%; }
         }
 
 
@@ -905,12 +773,8 @@ input:focus {
 }
 
 .material-btn:hover {
-  color: #ffeb3b;
+  color: #333333;
   transform: scale(1.1);
-}
-
-.material-btn.clicked {
-  background: rgba(255, 255, 255, 0.2); /* Transparent white hue */
 }
 
 .material-btn .material-icon {
@@ -1369,6 +1233,24 @@ document.addEventListener('DOMContentLoaded', function() {
         iconDropdown.style.display = 'block';
     }
 });
+        document.addEventListener('DOMContentLoaded', function() {
+    // Assume that the possible values for x range from 1 to 10
+for (let x = 1; x <= 10; x++) {
+  // Construct the ID based on the current value of x
+  let elementId = `bookmark-${x}-bookmark`;
+
+  // Get the element by its ID
+  let element = document.getElementById(elementId);
+
+  // Check if the element exists
+  if (element) {
+    // Add an event listener to the element
+    element.addEventListener('swiped-right', function(e) {
+                    alert(`Element with ID ${elementId}`);
+      });
+                }
+            }
+        });
 
     function showIconSelectionPanel() {
       iconSelectionContainer.style.display = 'block';
