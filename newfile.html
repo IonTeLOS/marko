@@ -4725,7 +4725,9 @@ function handleLeftSwipe(event) {
   event.preventDefault();
   // Stop the event from bubbling up to parent elements
   event.stopPropagation();
-  deleteLink(${event.currentTarget.id});
+  const bookmarkNumber = event.currentTarget.id.split('-')[1];
+
+  deleteLink(bookmarkNumber);
 
 }
 
@@ -4735,7 +4737,9 @@ function handleRightSwipe(event) {
   event.preventDefault();
   // Stop the event from bubbling up to parent elements
   event.stopPropagation();
-    constructLinkFromBookmark(${event.currentTarget.id});
+  const bookmarkNumber = event.currentTarget.id.split('-')[1];
+
+  constructLinkFromBookmark(bookmarkNumber);
     }
     
 // Function to initialize everything once the DOM is loaded
