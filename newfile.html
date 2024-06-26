@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
-  <script src="swiped-events.js"></script>
+    <script src="swiped-events.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
@@ -1234,20 +1234,8 @@ document.addEventListener('DOMContentLoaded', function() {
         iconDropdown.style.display = 'block';
     }
 });
-
-  let elementId = `bookmark-${index}`;
-
-  // Get the element by its ID
-  let element = document.getElementById(elementId);
-
-  // Check if the element exists
-  if (element) {
-    // Add an event listener to the element
-    element.addEventListener('swiped-right', function(e) {
-                    alert(`Element with ID ${elementId}`);
-      });
-                }
-            
+    
+ 
 
     function showIconSelectionPanel() {
       iconSelectionContainer.style.display = 'block';
@@ -4385,7 +4373,7 @@ window.onload = function() {
 </script>
 </head>
     
-<body data-swipe-threshold="100" data-swipe-timeout="250">
+<body data-swipe-threshold="150" data-swipe-timeout="250">
     <!-- Lightbox with iframe and YouTube player -->
   <div class="lightbox" id="lightbox">
     <div class="lightbox-content">
@@ -4713,6 +4701,62 @@ searchInput.addEventListener('input', function() {
             }
         });
     </script>
+<script>
+// Log that the script tag has been reached
+console.log("Script tag reached");
 
+// Function to add listeners to bookmarks
+function addListenersToBookmarks(eventType, eventHandler) {
+  console.log("Starting to add listeners to bookmarks");
+  const bookmarks = document.querySelectorAll('.bookmark[id^="bookmark-"]');
+  console.log(`Found ${bookmarks.length} bookmarks`);
+
+  bookmarks.forEach((bookmark, index) => {
+    console.log(`Adding listener to ${bookmark.id}`);
+    bookmark.addEventListener(eventType, eventHandler);
+  });
+
+  return bookmarks.length;
+}
+
+  // Event handler for left swipes
+function handleLeftSwipe(event) {
+  // Prevent the default click behavior
+  event.preventDefault();
+  // Stop the event from bubbling up to parent elements
+  event.stopPropagation();
+
+  alert(`Swiped left bookmark: ${event.currentTarget.id}`);
+}
+
+  // Event handler for right swipes
+function handleRightSwipe(event) {
+  // Prevent the default click behavior
+  event.preventDefault();
+  // Stop the event from bubbling up to parent elements
+  event.stopPropagation();
+
+  alert(`Swiped right bookmark: ${event.currentTarget.id}`);
+}
+    
+// Function to initialize everything once the DOM is loaded
+function initializeBookmarks() {
+  console.log("Initializing bookmarks");
+  const bookmarklCount = addListenersToBookmarks('swiped-left', handleLeftSwipe);
+  const bookmarkrCount = addListenersToBookmarks('swiped-right', handleRightSwipe);
+
+  console.log(`Found and added left listeners to ${bookmarklCount} bookmarks`);
+  console.log(`Found and added right listeners to ${bookmarkrCount} bookmarks`);
+}
+
+// Check if the DOM is already loaded
+if (document.readyState === "loading") {
+  // If not, add event listener
+  document.addEventListener("DOMContentLoaded", initializeBookmarks);
+} else {
+  // If it's already loaded, run initialization immediately
+  initializeBookmarks();
+}
+</script>
 </body>
 </html>
