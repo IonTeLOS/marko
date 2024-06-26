@@ -4725,8 +4725,8 @@ function handleLeftSwipe(event) {
   event.preventDefault();
   // Stop the event from bubbling up to parent elements
   event.stopPropagation();
+  deleteLink(${event.currentTarget.id});
 
-  alert(`Swiped left bookmark: ${event.currentTarget.id}`);
 }
 
   // Event handler for right swipes
@@ -4735,9 +4735,8 @@ function handleRightSwipe(event) {
   event.preventDefault();
   // Stop the event from bubbling up to parent elements
   event.stopPropagation();
-
-  alert(`Swiped right bookmark: ${event.currentTarget.id}`);
-}
+    constructLinkFromBookmark(${event.currentTarget.id});
+    }
     
 // Function to initialize everything once the DOM is loaded
 function initializeBookmarks() {
@@ -4757,6 +4756,50 @@ if (document.readyState === "loading") {
   // If it's already loaded, run initialization immediately
   initializeBookmarks();
 }
+    
+function constructLinkFromBookmark(index) {
+  const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
+  if (!bookmark) {
+    console.log(`No bookmark found with index ${index}`);
+    return null;
+  }
+
+  const bookmarkWrapper = bookmark.querySelector('.bookmark-wrapper');
+  const iconContainer = bookmark.querySelector('.icon-container');
+  const bookmarkTitle = bookmark.querySelector('.bookmark-title');
+
+  // Extract the required values
+  const onclickValue = bookmarkWrapper.getAttribute('onclick');
+  const action = onclickValue ? onclickValue.match(/'(.+?)'/)[1] : '';
+  const name = bookmarkTitle ? bookmarkTitle.textContent : '';
+  const color = iconContainer ? iconContainer.style.getPropertyValue('--ring-color').replace('#', '#') : '';
+
+  // Construct the URL
+  const url = new URL('https://teloslinux.org/marko/newfile');
+  url.searchParams.append('type', 'site');
+  url.searchParams.append('action', action);
+  url.searchParams.append('name', name);
+  url.searchParams.append('color', color);
+
+  const shareLink = url.toString();
+  const title = "That's my Marko link !";    
+  if (navigator.share) {
+    navigator.share({
+      title: title,
+      url: shareLink
+    })
+    .then(() => console.log('Shared successfully'))
+    .catch((error) => console.error('Error in sharing:', error));
+  } else {
+    // Fallback for browsers that do not support Web Share API
+    alert("Link has been copied to your clipboard.");
+  }    
+}
+
+// Usage
+const linkForBookmark2 = constructLinkFromBookmark(2);
+console.log(linkForBookmark2);    
+    
 </script>
 </body>
 </html>
