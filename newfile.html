@@ -31,7 +31,7 @@
     
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+      navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
       }, function(err) {
         console.log('ServiceWorker registration failed: ', err);
@@ -1050,6 +1050,34 @@ input:focus {
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
         }
+ .install-banner {
+    display: none;
+    position: fixed;
+    top: -100px; /* Initially hidden above the viewport */
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background-color: #6200ea;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: top 1s ease; /* Smooth drop-down effect */
+}
+
+.install-banner .material-icons {
+    font-size: 36px;
+    margin-right: 10px;
+}
+
+.install-banner p {
+    margin: 0;
+    font-size: 18px;
+    font-weight: bold;
+}
   </style>    
 <script>
 function detectTheme() {
@@ -2672,7 +2700,7 @@ function addNote() {
 
 function showInstallPrompt() {
   // Show your install prompt UI here, for example, a button
-  const installButton = document.getElementById('install-button');
+  const installButton = document.getElementById('install-banner');
   installButton.style.display = 'block';
 
   installButton.addEventListener('click', () => {
@@ -4374,6 +4402,10 @@ window.onload = function() {
 </head>
     
 <body data-swipe-threshold="100" data-swipe-timeout="300">
+<div id="install-banner" class="install-banner">
+        <span class="material-icons">install_desktop</span>
+        <p>Install Marko</p>
+    </div>
     <!-- Lightbox with iframe and YouTube player -->
   <div class="lightbox" id="lightbox">
     <div class="lightbox-content">
@@ -4726,9 +4758,7 @@ function handleLeftSwipe(event) {
   // Stop the event from bubbling up to parent elements
   event.stopPropagation();
   const bookmarkNumber = event.currentTarget.id.split('-')[1];
-
   deleteLink(bookmarkNumber);
-
 }
 
   // Event handler for right swipes
@@ -4738,27 +4768,34 @@ function handleRightSwipe(event) {
   // Stop the event from bubbling up to parent elements
   event.stopPropagation();
   const bookmarkNumber = event.currentTarget.id.split('-')[1];
-
   constructLinkFromBookmark(bookmarkNumber);
     }
     
-// Function to initialize everything once the DOM is loaded
-function initializeBookmarks() {
-  console.log("Initializing bookmarks");
-  const bookmarklCount = addListenersToBookmarks('swiped-left', handleLeftSwipe);
-  const bookmarkrCount = addListenersToBookmarks('swiped-right', handleRightSwipe);
-
-  console.log(`Found and added left listeners to ${bookmarklCount} bookmarks`);
-  console.log(`Found and added right listeners to ${bookmarkrCount} bookmarks`);
+function initLeftSwipe() {
+  const bookmarkLCount = addListenersToBookmarks('swiped-left', handleLeftSwipe);
+  console.log(`Found and added left listeners to ${bookmarkLCount} bookmarks`);
 }
 
+function initRightSwipe() {
+  const bookmarkRCount = addListenersToBookmarks('swiped-right', handleRightSwipe);
+  console.log(`Found and added right listeners to ${bookmarkRCount} bookmarks`);
+}    
+
+if (document.readyState === "loading") {
+  // If not, add event listener
+  document.addEventListener("DOMContentLoaded", initRightSwipe);
+} else {
+  // If it's already loaded, run initialization immediately
+  initRightSwipe();
+}    
+    
 // Check if the DOM is already loaded
 if (document.readyState === "loading") {
   // If not, add event listener
-  document.addEventListener("DOMContentLoaded", initializeBookmarks);
+  document.addEventListener("DOMContentLoaded", initLeftSwipe);
 } else {
   // If it's already loaded, run initialization immediately
-  initializeBookmarks();
+  initLeftSwipe();
 }
     
 function constructLinkFromBookmark(index) {
