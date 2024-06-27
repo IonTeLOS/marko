@@ -4839,13 +4839,37 @@ function constructLinkFromBookmark(index) {
     // Fallback for browsers that do not support Web Share API
     alert("Link has been copied to your clipboard.");
   }
-
+alert(${parseBookmarkLink(shareLink)})
   return shareLink;
 }
 
 // Usage
 const linkForBookmark2 = constructLinkFromBookmark(12);
 console.log(linkForBookmark2);
+
+function parseBookmarkLink(url) {
+  const parsedUrl = new URL(url);
+  const type = parsedUrl.searchParams.get('type');
+  const action = parsedUrl.searchParams.get('action');
+  const title = parsedUrl.searchParams.get('title');
+  const icon = parsedUrl.searchParams.get('icon');
+  const color = parsedUrl.searchParams.get('color');
+  
+  // If the action contains multiple arguments, you might need to split them
+  const actionArgs = action ? action.split(',').map(arg => arg.trim()) : [];
+
+  return {
+    type,
+    action: actionArgs,
+    title,
+    icon,
+    color
+  };
+}
+
+// Example usage
+const bookmarkData = parseBookmarkLink('https://teloslinux.org/marko/newfile?type=email&action=openLink%2C+mailto%3Adesy.slava%40hotmail.com&title=Cbcxb&icon=https%3A%2F%2Fwww.google.com%2Fs2%2Ffavicons%3Fdomain%3Dhotmail.com%26sz%3D32&color=%23c0bad2');
+console.log(bookmarkData);
 
 
 </script>
