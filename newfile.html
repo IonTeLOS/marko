@@ -1050,7 +1050,7 @@ input:focus {
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
         }
- .install-banner {
+  .install-banner {
     display: none;
     position: fixed;
     top: -110px; /* Initially hidden above the viewport */
@@ -2176,7 +2176,7 @@ function clearFrame() {
     document.getElementById("lightbox-iframe").srcdoc = "";
 }  
     
-function showAndShare(title, text) {
+function showShareNote(title, text) {
 if (confirm("Do you want to share the note with your friends or other apps?")) {
     shareNote(title, text);
     return;
@@ -2353,7 +2353,7 @@ function renderLinks() {
                 bookmarkElement.dataset.index = index; // Store the index as a data attribute
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="loadVideo('${link[1]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(loadVideo, '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
@@ -2374,7 +2374,7 @@ function renderLinks() {
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="showWindow('${link[1]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(showWindow, '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
@@ -2396,7 +2396,7 @@ function renderLinks() {
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="showPDFLightbox('${proxied}', '${link[2]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(showPDFLightbox, '${proxied}', '${link[2]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2419,7 +2419,7 @@ function renderLinks() {
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="downloadFile('${link[1]}', '${link[2]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(downloadFile, '${link[1]}', '${link[2]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
@@ -2440,7 +2440,7 @@ function renderLinks() {
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-     <div class="bookmark-wrapper" onclick='showPost(${JSON.stringify(link[1])})'>
+     <div class="bookmark-wrapper" data-type='${link[0]}' onclick='openMarko(showPost, ${JSON.stringify(link[1])})'>
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2465,7 +2465,7 @@ function renderLinks() {
                 bookmarkElement.id = `bookmark-${index}`;
                 
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="showAndShare('${link[2]}', '${link[1]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(showShareNote, '${link[2]}', '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2489,7 +2489,7 @@ function renderLinks() {
                 bookmarkElement.id = `bookmark-${index}`;
                 
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="openLink('${link[1]}')">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(openLink, '${link[1]}')">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2507,40 +2507,7 @@ function renderLinks() {
             });
                 
         }
-        
-        function dontRenderFriends() {
-            const linkContainer = document.querySelector('.bookmarks-container');
-            // linkContainer.innerHTML = ''; // Clear the container
 
-            const defaultIconUrl = 'https://example.com/default-icon.png';  // Replace with an actual default icon URL
-            links.forEach((link, index) => {
-                if (link[0] !== "friend") {
-                const iconUrl = link[3] || defaultIconUrl;  // Use default icon if iconurl is undefined
-
-                const bookmarkElement = document.createElement('div');
-                bookmarkElement.className = 'bookmark';
-                bookmarkElement.dataset.index = index; // Store the index as a data attribute
-
-                bookmarkElement.id = `bookmark-${index}`;
-                
-                bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="openLink('${link[1]}')" style="cursor: pointer;">
-        <div class="icon-wrapper">
-            <div class="icon-container" style="--ring-color: ${link[4]};">
-                <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
-            </div>
-            <span class="bookmark-title">${link[2]}</span>
-        </div>
-        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
-    </div>
-`;
-                    linkContainer.appendChild(bookmarkElement);
-                hideAdd();
-            }
-                
-
-            });
-        }
         
         function renderFriend(friend) {
             const linkContainer = document.querySelector('.bookmarks-container');
@@ -2560,7 +2527,7 @@ function renderLinks() {
                 bookmarkElement.id = `bookmark-${index}`;
                 
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" onclick="openLink('${link[1]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(openLink, '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2573,6 +2540,7 @@ function renderLinks() {
                 linkContainer.appendChild(bookmarkElement);
             });
         }
+    
         function showPost(htmlContent) {
             document.getElementById('add-banner').style.display = 'none';
             var iframe = document.getElementById('lightbox-iframe');
@@ -2594,8 +2562,7 @@ iframe.srcdoc = `
             document.getElementById('lightbox').style.display = 'flex';
         }
 
-    
-        // function to open bookmark links in new tab. separate behavior for friends' links
+     // function to open bookmark links in new tab. separate behavior for friends' links
         function openLink(url) {
             if (url.startsWith("friends/")) {
                console.log("friend!!");
@@ -2603,6 +2570,24 @@ iframe.srcdoc = `
                renderFriend(url);
             } else {
                 window.open(url, '_blank');
+            }
+}
+        // function to open bookmark links in new tab. separate behavior for friends' links
+        function openMarko(action, data, extras) {
+            if (action === loadVideo) {
+               loadVideo(data);
+            } else if (action === showWindow) {
+                showWindow(data);
+            } else if (action === showPDFLightbox) {
+                showPDFLightbox(data, extras);                
+            } else if (action === downloadFile) {
+                downloadFile(data, extras);
+            } else if (action === showPost) {
+                showPost(data);
+            } else if (action === showShareNote) {
+                showShareNote(extras, data);
+            } else {
+                openLink(data);
             }
 }
 
@@ -4820,27 +4805,32 @@ function constructLinkFromBookmark(index) {
   }
 
   const bookmarkWrapper = bookmark.querySelector('.bookmark-wrapper');
-  const iconContainer = bookmark.querySelector('.icon-container');
-  const bookmarkTitle = bookmark.querySelector('.bookmark-title');
+  const iconContainer = bookmarkWrapper.querySelector('.icon-container');
+  const bookmarkTitle = bookmarkWrapper.querySelector('.bookmark-title');
+  const bookmarkIcon = iconContainer.querySelector('img');
 
   // Extract the required values
   const onclickValue = bookmarkWrapper.getAttribute('onclick');
-  const action = onclickValue ? onclickValue.match(/'(.+?)'/)[1] : '';
-  const name = bookmarkTitle ? bookmarkTitle.textContent : '';
-  const color = iconContainer ? iconContainer.style.getPropertyValue('--ring-color').replace('#', '#') : '';
+  const actionMatch = onclickValue ? onclickValue.match(/openMarko\((.+?)\)/) : null;
+  const action = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
+  const type = bookmarkWrapper.getAttribute('data-type') || '';
+  const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
+  const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
+  const color = iconContainer ? getComputedStyle(iconContainer).getPropertyValue('--ring-color').trim() : '';
 
   // Construct the URL
   const url = new URL('https://teloslinux.org/marko/newfile');
-  url.searchParams.append('type', 'site');
+  url.searchParams.append('type', type);
   url.searchParams.append('action', action);
-  url.searchParams.append('name', name);
+  url.searchParams.append('title', title);
+  url.searchParams.append('icon', icon);
   url.searchParams.append('color', color);
 
   const shareLink = url.toString();
-  const title = "That's my Marko link !";    
+  const shareTitle = "That's my Marko link!";
   if (navigator.share) {
     navigator.share({
-      title: title,
+      title: shareTitle,
       url: shareLink
     })
     .then(() => console.log('Shared successfully'))
@@ -4848,13 +4838,15 @@ function constructLinkFromBookmark(index) {
   } else {
     // Fallback for browsers that do not support Web Share API
     alert("Link has been copied to your clipboard.");
-  }    
+  }
+
+  return shareLink;
 }
 
 // Usage
-const linkForBookmark2 = constructLinkFromBookmark(2);
-console.log(linkForBookmark2);    
-    
+const linkForBookmark2 = constructLinkFromBookmark(12);
+console.log(linkForBookmark2);
+
 </script>
 </body>
 </html>
