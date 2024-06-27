@@ -16,7 +16,7 @@
     <meta name="theme-color" content="#0288d1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="manifest" href="/manifest.json">    
+    <link rel="manifest" href="manifest.json">    
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>    
@@ -31,7 +31,7 @@
     
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+      navigator.serviceWorker.register('service-worker.js').then(function(registration) {
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
       }, function(err) {
         console.log('ServiceWorker registration failed: ', err);
