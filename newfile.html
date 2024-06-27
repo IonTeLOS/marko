@@ -4820,11 +4820,11 @@ function constructLinkFromBookmark(index) {
 
   // Construct the URL
   const url = new URL('https://teloslinux.org/marko/newfile');
-  url.searchParams.append('type', encodeURIComponent(type));
-  url.searchParams.append('action', encodeURIComponent(action));
-  url.searchParams.append('title', encodeURIComponent(title));
-  url.searchParams.append('icon', encodeURIComponent(icon));
-  url.searchParams.append('color', encodeURIComponent(color));
+  url.searchParams.append('type', type);
+  url.searchParams.append('action', action);
+  url.searchParams.append('title', title);
+  url.searchParams.append('icon', icon);
+  url.searchParams.append('color', color);
 
   const shareLink = url.toString();
   const shareTitle = "That's my Marko link!";
@@ -4846,6 +4846,7 @@ function constructLinkFromBookmark(index) {
 // Usage
 const linkForBookmark2 = constructLinkFromBookmark(12);
 console.log(linkForBookmark2);
+
 
 </script>
 </body>
