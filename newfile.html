@@ -4731,6 +4731,72 @@ searchInput.addEventListener('input', function() {
                 this.click();
             }
         });
+    function constructLinkFromBookmark(index) {
+  const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
+  if (!bookmark) {
+    console.log(`No bookmark found with index ${index}`);
+    return null;
+  }
+
+  const bookmarkWrapper = bookmark.querySelector('.bookmark-wrapper');
+  const iconContainer = bookmarkWrapper.querySelector('.icon-container');
+  const bookmarkTitle = bookmarkWrapper.querySelector('.bookmark-title');
+  const bookmarkIcon = iconContainer.querySelector('img');
+
+  // Extract the required values
+  const onclickValue = bookmarkWrapper.getAttribute('onclick');
+  const actionMatch = onclickValue ? onclickValue.match(/openMarko\((.+?)\)/) : null;
+  const action = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
+  const type = bookmarkWrapper.getAttribute('data-type') || '';
+  const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
+  const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
+  const color = iconContainer ? getComputedStyle(iconContainer).getPropertyValue('--ring-color').trim() : '';
+
+  // Construct the URL
+  const url = new URL('https://teloslinux.org/marko/newfile');
+  url.searchParams.append('type', type);
+  url.searchParams.append('action', action);
+  url.searchParams.append('title', title);
+  url.searchParams.append('icon', icon);
+  url.searchParams.append('color', color);
+
+  const shareLink = url.toString();
+  const shareTitle = "That's my Marko link!";
+  if (navigator.share) {
+    navigator.share({
+      title: shareTitle,
+      url: shareLink
+    })
+    .then(() => console.log('Shared successfully'))
+    .catch((error) => console.error('Error in sharing:', error));
+  } else {
+    // Fallback for browsers that do not support Web Share API
+    alert("Link has been copied to your clipboard.");
+  }
+alert(${parseBookmarkLink(shareLink)});
+  return shareLink;
+}
+
+
+function parseBookmarkLink(url) {
+  const parsedUrl = new URL(url);
+  const type = parsedUrl.searchParams.get('type');
+  const action = parsedUrl.searchParams.get('action');
+  const title = parsedUrl.searchParams.get('title');
+  const icon = parsedUrl.searchParams.get('icon');
+  const color = parsedUrl.searchParams.get('color');
+  
+  // If the action contains multiple arguments, you might need to split them
+  const actionArgs = action ? action.split(',').map(arg => arg.trim()) : [];
+
+  return {
+    type,
+    action: actionArgs,
+    title,
+    icon,
+    color
+  };
+}
     </script>
 <script>
 // Log that the script tag has been reached
@@ -4796,80 +4862,6 @@ if (document.readyState === "loading") {
   // If it's already loaded, run initialization immediately
   initLeftSwipe();
 }
-    
-function constructLinkFromBookmark(index) {
-  const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
-  if (!bookmark) {
-    console.log(`No bookmark found with index ${index}`);
-    return null;
-  }
-
-  const bookmarkWrapper = bookmark.querySelector('.bookmark-wrapper');
-  const iconContainer = bookmarkWrapper.querySelector('.icon-container');
-  const bookmarkTitle = bookmarkWrapper.querySelector('.bookmark-title');
-  const bookmarkIcon = iconContainer.querySelector('img');
-
-  // Extract the required values
-  const onclickValue = bookmarkWrapper.getAttribute('onclick');
-  const actionMatch = onclickValue ? onclickValue.match(/openMarko\((.+?)\)/) : null;
-  const action = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
-  const type = bookmarkWrapper.getAttribute('data-type') || '';
-  const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
-  const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
-  const color = iconContainer ? getComputedStyle(iconContainer).getPropertyValue('--ring-color').trim() : '';
-
-  // Construct the URL
-  const url = new URL('https://teloslinux.org/marko/newfile');
-  url.searchParams.append('type', type);
-  url.searchParams.append('action', action);
-  url.searchParams.append('title', title);
-  url.searchParams.append('icon', icon);
-  url.searchParams.append('color', color);
-
-  const shareLink = url.toString();
-  const shareTitle = "That's my Marko link!";
-  if (navigator.share) {
-    navigator.share({
-      title: shareTitle,
-      url: shareLink
-    })
-    .then(() => console.log('Shared successfully'))
-    .catch((error) => console.error('Error in sharing:', error));
-  } else {
-    // Fallback for browsers that do not support Web Share API
-    alert("Link has been copied to your clipboard.");
-  }
-alert(${parseBookmarkLink(shareLink)})
-  return shareLink;
-}
-
-// Usage
-const linkForBookmark2 = constructLinkFromBookmark(12);
-console.log(linkForBookmark2);
-
-function parseBookmarkLink(url) {
-  const parsedUrl = new URL(url);
-  const type = parsedUrl.searchParams.get('type');
-  const action = parsedUrl.searchParams.get('action');
-  const title = parsedUrl.searchParams.get('title');
-  const icon = parsedUrl.searchParams.get('icon');
-  const color = parsedUrl.searchParams.get('color');
-  
-  // If the action contains multiple arguments, you might need to split them
-  const actionArgs = action ? action.split(',').map(arg => arg.trim()) : [];
-
-  return {
-    type,
-    action: actionArgs,
-    title,
-    icon,
-    color
-  };
-}
-
-// Example usage
-const bookmarkData = parseBookmarkLink('https://teloslinux.org/marko/newfile?type=email&action=openLink%2C+mailto%3Adesy.slava%40hotmail.com&title=Cbcxb&icon=https%3A%2F%2Fwww.google.com%2Fs2%2Ffavicons%3Fdomain%3Dhotmail.com%26sz%3D32&color=%23c0bad2');
-console.log(bookmarkData);
 
 
 </script>
