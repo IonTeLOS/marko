@@ -57,7 +57,7 @@ self.addEventListener('notificationclick', event => {
   console.log('Notification clicked:', event.notification);
 
   const uuid = event.notification.data.uuid;
-  const urlToOpen = `https://teloslinux.org/marko/newfile/resource?uuid=${uuid}`;
+  const urlToOpen = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
 
   if (urlToOpen) {
     event.waitUntil(clients.openWindow(urlToOpen));
