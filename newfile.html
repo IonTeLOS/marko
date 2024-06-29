@@ -1062,7 +1062,7 @@ input:focus {
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
         }
-  .install-banner {
+ .install-banner {
     display: none;
     position: fixed;
     top: -110px; /* Initially hidden above the viewport */
@@ -1079,6 +1079,7 @@ input:focus {
     z-index: 10001;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: top 1s ease; /* Smooth drop-down effect */
+    border-bottom: 4px solid white; /* White line at the bottom */
 }
 
 .install-banner .material-icons {
@@ -1091,6 +1092,16 @@ input:focus {
     font-size: 20px;
     font-weight: bold;
 }
+
+.install-banner .close-button {
+    position: absolute;
+    bottom: 5px; /* Adjust this value as needed */
+    right: 10px; /* Adjust this value as needed */
+    font-size: 24px;
+    cursor: pointer;
+    color: white;
+}
+
     .context-menu {
         display: none;
         position: absolute;
@@ -2400,7 +2411,8 @@ function changeURL(url) {
             const purelink = params.get('friendlink');
             const uncompressed = params.get('title');
             const reminder = params.get('uuid');
-            console.log('UUID:', reminder); // Log the UUID value
+
+
             if (reminder) {
                 openReminder(params.get('uuid'));
             }
@@ -2521,7 +2533,7 @@ function addReminderToMarko(index) {
         }
 
         // Add the uuid as the last element in the bookmark array
-// Check if there is already a UUID in the array
+        // Check if there is already a UUID in the array
 if (bookmark.length >= 6) {
     // Replace the existing UUID (if any) with the new one
     bookmark[5] = uuid;
@@ -2529,7 +2541,12 @@ if (bookmark.length >= 6) {
     // Add the UUID as the 6th item
     bookmark.push(uuid);
 }
-// Replace existing title in the 3rd position
+
+// Ensure there are no more than 6 items in the array
+if (bookmark.length > 6) {
+    bookmark.splice(0, bookmark.length - 6); // Remove excess items
+}
+        
 // Replace existing title in the 3rd position
 // Material Icon HTML representation
 const materialIconHTML = '<span class="material-icons">notifications_active</span>';
@@ -2538,12 +2555,7 @@ const materialIconHTML = '<span class="material-icons">notifications_active</spa
 bookmark[2] = `${materialIconHTML} ${bookmark[2]}`;      
 
 console.log('Updated bookmark array:', bookmark);
-// Ensure there are no more than 6 items in the array
-if (bookmark.length > 6) {
-    bookmark.splice(0, bookmark.length - 6); // Remove excess items
-}
 
-console.log('Updated bookmark array:', bookmark);
         // Update the bookmark in the links array
         links[index] = bookmark;
 
@@ -2601,6 +2613,11 @@ console.log('Updated bookmark array:', bookmark);
     
 // Function to find and click bookmark with matching UUID
 function openReminder(uuid) {
+    if (confirm("Open Marko?")) {
+    }
+    else {
+        return;
+    }
     console.log("checking..");
     // Iterate through bookmarks
     // Select all bookmark elements
@@ -2812,8 +2829,9 @@ const bookmarkElement = document.createElement('div');
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
             </div>
-            <span class="bookmark-title">${link[2]}</span>
-        </div>
+<span class="bookmark-title">${link[2]}</span>
+        <span class="material-icons bell-icon" style="margin-left: 8px; margin-right: 80px">notifications_active</span>
+    </div>        </div>
         <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
     </div>
 `;
@@ -3117,7 +3135,7 @@ function saveLinks() {
 }
  
   // this is the way friends are added..    
- // window.onload = loadArrayFromURL();
+  window.onload = loadArrayFromURL();
         
     function openSettings () {
 var button = document.getElementById('openModal');
@@ -3469,6 +3487,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fallback for browsers that do not support Web Share API
     alert("Link has been copied to your clipboard.");
   }
+}
+
+function hideInstallBanner() {
+    document.getElementById('install-banner').style.display = 'none';
 }
     
 // this is the definition of what the main button does, it initiates (or if clicked again ends!) the process of adding a new bookmark, shows the form and an extra row of buttons    
@@ -4745,7 +4767,6 @@ function hasPaid() {
 
 window.onload = function() {
     loadDonationParams();
-    loadArrayFromURL();
     initializeGoogleIdentity();
     // openReminder('293b5970-a013-4a63-8788-165885b80766');    //test
 
@@ -4796,9 +4817,10 @@ window.onload = function() {
 
 <!-- Context Menu --> 
 <div id="install-banner" class="install-banner">
-        <span class="material-icons">install_desktop</span>
-        <p>Install Marko</p>
-    </div>
+    <span class="material-icons">install_desktop</span>
+    <p>Install Marko</p>
+    <span class="material-icons close-button" onclick="hideInstallBanner()">close</span>
+</div>
     <!-- Lightbox with iframe and YouTube player -->
   <div class="lightbox" id="lightbox">
     <div class="lightbox-content">
