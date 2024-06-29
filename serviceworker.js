@@ -58,6 +58,7 @@ self.addEventListener('message', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   console.log('Notification clicked:', event.notification);
+  console.log('Notification data:', event.notification.data);
 
 const uuid = event.notification.data ? event.notification.data.uuid : null;
 console.log('UUID from notification data:', uuid);
@@ -84,5 +85,7 @@ console.log('UUID from notification data:', uuid);
     );
   } else {
     console.error('UUID is missing in notification data');
+    const defaultUrl = 'https://teloslinux.org/marko/newfile';
+    return clients.openWindow(defaultUrl);
   }
 });
