@@ -2529,15 +2529,18 @@ function addReminderToMarko(index) {
         saveLinks();
         renderLinks();
         constructLinkFromBookmark(index, false);
-        scheduleNotification(shareTitle, shareLink, 10000, 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg'
-);
+        const result = constructLinkFromBookmark(index, false); // Example call with full=false
+        if (result) {
+        // Use result.shareTitle and result.shareLink here if needed
+        scheduleNotification(result.shareTitle, result.shareLink, 10000, 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg', uuid);
+}
     } else {
         console.error(`Index ${index} is out of bounds for links array.`);
         return;
     }
 }
 
- function scheduleNotification(title, body, delay, icon) {
+ function scheduleNotification(title, body, delay, icon, uuid) {
       if ('Notification' in window) {
         Notification.requestPermission().then(permission => {
           if (permission === 'granted') {
@@ -4722,7 +4725,7 @@ function hasPaid() {
 window.onload = function() {
     loadDonationParams();
     initializeGoogleIdentity();
-    openReminder('293b5970-a013-4a63-8788-165885b80766');    
+    // openReminder('293b5970-a013-4a63-8788-165885b80766');    //test
 
 }; 
 </script>
