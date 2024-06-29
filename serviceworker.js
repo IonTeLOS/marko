@@ -23,10 +23,13 @@ self.addEventListener('push', event => {
         ...notificationData,
         ...payload
       };
+      console.log('Parsed payload:', payload);
     } catch (e) {
       console.error('Error parsing push notification data:', e);
     }
   }
+
+  console.log('Notification data to be shown:', notificationData);
 
   event.waitUntil(
     self.registration.showNotification(notificationData.title, {
@@ -56,13 +59,13 @@ self.addEventListener('notificationclick', event => {
   event.notification.close();
   console.log('Notification clicked:', event.notification);
 
-  const uuid = event.notification.data.uuid;
-  const urlToOpen = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
+  const uuid = event.notification.data ? event.notification.data.uuid : null;
+  console.log('UUID from notification data:', uuid);
 
-  if (urlToOpen) {
+  if (uuid) {
+    const urlToOpen = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
     event.waitUntil(clients.openWindow(urlToOpen));
+  } else {
+    console.error('UUID is missing in notification data');
   }
 });
-
-
-
