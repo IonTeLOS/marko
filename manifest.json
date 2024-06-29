@@ -7,7 +7,6 @@
     "client_mode": "navigate-existing"
    },
   "orientation": "portrait-primary",
-{
   "share_target": {
     "action": "/shared-content-receiver/",
     "method": "GET",
@@ -16,8 +15,7 @@
       "text": "description",
       "url": "link"
     }
-  }
-} 
+  },
   "icons": [
     {
       "src": "icon.png",
