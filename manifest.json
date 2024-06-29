@@ -2,6 +2,7 @@
   "name": "Marko",
   "short_name": "Marko",
   "description": "A sophisticated bookmarking application",
+  "categories": ["business", "productivity", "utilities", "lifestyle"],
   "icons": [
     {
       "src": "icon.png",
