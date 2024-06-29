@@ -10,9 +10,10 @@ self.addEventListener('push', event => {
   console.log('Push notification received:', event);
 
   let notificationData = {
-    title: 'Default Title',
-    body: 'This is a default notification message.',
-    icon: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg'
+    title: 'Marko Notification',
+    body: 'open your reminder...',
+    icon: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notification_active/default/48px.svg',
+    data: {} // Initialize data as an empty object
   };
 
   if (event.data) {
@@ -30,7 +31,8 @@ self.addEventListener('push', event => {
   event.waitUntil(
     self.registration.showNotification(notificationData.title, {
       body: notificationData.body,
-      icon: notificationData.icon
+      icon: notificationData.icon,
+      data: notificationData.data // Ensure data is passed to the notification
     })
   );
 });
@@ -43,7 +45,8 @@ self.addEventListener('message', event => {
     setTimeout(() => {
       self.registration.showNotification(notificationData.title, {
         body: notificationData.body,
-        icon: notificationData.icon
+        icon: notificationData.icon,
+        data: notificationData.data // Ensure data is passed to the notification
       });
     }, notificationData.delay || 0);
   }
@@ -52,7 +55,14 @@ self.addEventListener('message', event => {
 self.addEventListener('notificationclick', event => {
   event.notification.close();
   console.log('Notification clicked:', event.notification);
-  // Handle notification click event as needed
+
+  const uuid = event.notification.data.uuid;
+  const urlToOpen = `https://teloslinux.org/marko/newfile/resource?uuid=${uuid}`;
+
+  if (urlToOpen) {
+    event.waitUntil(clients.openWindow(urlToOpen));
+  }
 });
+
 
 
