@@ -1065,7 +1065,7 @@ input:focus {
 .install-banner {
     display: none;
     position: fixed;
-    top: -110px; /* Initially hidden above the viewport */
+    top: 0; /* Stick to the top of the viewport */
     left: 0;
     width: 100%;
     height: 110px;
@@ -1080,7 +1080,6 @@ input:focus {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: top 1s ease; /* Smooth drop-down effect */
     border-bottom: 4px solid white; /* White line at the bottom */
-    position: relative; /* Ensure relative positioning for absolute children */
 }
 
 .install-banner .material-icons {
@@ -1094,7 +1093,7 @@ input:focus {
     font-weight: bold;
 }
 
-.install-banner .close-button {
+.close-banner {
     position: absolute;
     top: 10px; /* Adjust this value to position the close button */
     right: 10px; /* Adjust this value to position the close button */
@@ -1108,10 +1107,9 @@ input:focus {
     z-index: 10002; /* Higher z-index to ensure it covers elements below */
 }
 
-.install-banner .close-button:hover {
+.close-banner:hover {
     background-color: rgba(255, 255, 255, 0.3); /* Darker background on hover */
 }
-
 
     .context-menu {
         display: none;
@@ -4831,7 +4829,7 @@ window.onload = function() {
 <div id="install-banner" class="install-banner">
     <span class="material-icons">install_desktop</span>
     <p>Install Marko</p>
-    <span class="material-icons close-button" onclick="hideInstallBanner(event)">close</span>
+    <span class="material-icons close-banner" onclick="hideInstallBanner(event)">close</span>
 </div>
     <!-- Lightbox with iframe and YouTube player -->
   <div class="lightbox" id="lightbox">
