@@ -2555,14 +2555,7 @@ if (bookmark.length >= 6) {
 if (bookmark.length > 6) {
     bookmark.splice(0, bookmark.length - 6); // Remove excess items
 }
-        
-// Replace existing title in the 3rd position
-// Material Icon HTML representation
-const materialIconHTML = '<span class="material-icons">notifications_active</span>';
-
-// Replace the 3rd item with the Material Icon + existing value with added space
-bookmark[2] = `${materialIconHTML} ${bookmark[2]}`;      
-
+            
 console.log('Updated bookmark array:', bookmark);
 
         // Update the bookmark in the links array
@@ -2574,6 +2567,12 @@ console.log('Updated bookmark array:', bookmark);
         // Call saveLinks and renderLinks to update the UI
         saveLinks();
         renderLinks();
+        
+                // Show the bell icon if a UUID is present
+        const bellIcon = document.querySelector(`#bell-icon-${index}`);
+        if (bellIcon) {
+            bellIcon.style.display = 'inline-block';
+        }
         constructLinkFromBookmark(index, false);
         const result = constructLinkFromBookmark(index, false); // Example call with full=false
         if (result) {
@@ -2839,8 +2838,9 @@ const bookmarkElement = document.createElement('div');
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
             </div>
 <span class="bookmark-title">${link[2]}</span>
-        <span class="material-icons bell-icon" style="margin-left: 8px; margin-right: 80px">notifications_active</span>
-    </div>        </div>
+        <span id="bell-icon-${index}" class="material-icons bell-icon" style="margin-left: 8px; margin-right: 80px; display: none;">notifications_active</span>
+    </div>        
+</div>
         <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
     </div>
 `;
