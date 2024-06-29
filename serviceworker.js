@@ -64,7 +64,24 @@ self.addEventListener('notificationclick', event => {
 
   if (uuid) {
     const urlToOpen = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
-    event.waitUntil(clients.openWindow(urlToOpen));
+    console.log('Opening URL:', urlToOpen);
+
+    event.waitUntil(
+      clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+        if (clientList.length > 0) {
+          let client = clientList[0];
+          for (let i = 0; i < clientList.length; i++) {
+            if (clientList[i].url === urlToOpen && 'focus' in clientList[i]) {
+              return clientList[i].focus();
+            }
+          }
+          if (client && 'navigate' in client) {
+            return client.navigate(urlToOpen);
+          }
+        }
+        return clients.openWindow(urlToOpen);
+      })
+    );
   } else {
     console.error('UUID is missing in notification data');
   }
