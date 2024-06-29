@@ -2530,12 +2530,12 @@ if (bookmark.length >= 6) {
     bookmark.push(uuid);
 }
 // Replace existing title in the 3rd position
-const existingTitle = bookmark[2]; // 'item3' in this case
+// Replace existing title in the 3rd position
+// Material Icon HTML representation
+const materialIconHTML = '<span class="material-icons">notifications_active</span>';
 
-// Unicode character U+1F56D (🕭)
-const unicodeCharacter = '\u{1F56D}'; // Unicode escape sequence
-
-bookmark[2] = `${unicodeCharacter} ${existingTitle}`;
+// Replace the 3rd item with the Material Icon + existing value with added space
+bookmark[2] = `${materialIconHTML} ${bookmark[2]}`;      
 
 console.log('Updated bookmark array:', bookmark);
 // Ensure there are no more than 6 items in the array
