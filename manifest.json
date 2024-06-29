@@ -8,7 +8,7 @@
   },
   "orientation": "portrait-primary",
   "share_target": {
-    "action": "/shared-content-receiver/",
+    "action": "/marko/shared-content-receiver/",
     "method": "GET",
     "params": {
       "title": "name",
@@ -29,6 +29,7 @@
     }
   ],
   "start_url": "/marko/newfile",
+  "scope": "/marko/",
   "display": "standalone",
   "background_color": "#ffa426",
   "theme_color": "#0d47a1"
