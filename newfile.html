@@ -2529,13 +2529,12 @@ if (bookmark.length >= 6) {
     // Add the UUID as the 6th item
     bookmark.push(uuid);
 }
-// Example existing value in the 3rd position
+// Replace existing title in the 3rd position
 const existingTitle = bookmark[2]; // 'item3' in this case
 
 // Unicode character U+1F56D (🕭)
 const unicodeCharacter = '\u{1F56D}'; // Unicode escape sequence
 
-// Replace the 3rd item with the Unicode character + existing value with added space
 bookmark[2] = `${unicodeCharacter} ${existingTitle}`;
 
 console.log('Updated bookmark array:', bookmark);
