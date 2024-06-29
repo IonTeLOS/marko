@@ -5,7 +5,7 @@
   "categories": ["business", "productivity", "utilities", "lifestyle"],
   "launch_handler": {
     "client_mode": "navigate-existing"
-   },
+  },
   "orientation": "portrait-primary",
   "share_target": {
     "action": "/shared-content-receiver/",
@@ -33,4 +33,5 @@
   "background_color": "#ffa426",
   "theme_color": "#0d47a1"
 }
+
  
