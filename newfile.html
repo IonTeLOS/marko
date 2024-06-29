@@ -2524,7 +2524,29 @@ function changeURL(url) {
                 }
             }
 
+function toggleBell(index) {
+    // Check if index is within bounds of the links array
+    if (index >= 0 && index < links.length) {
+        // Get the bookmark array at the specified index
+        const bookmark = links[index];
 
+        // Ensure bookmark is defined and has a UUID (i.e., has at least 6 elements)
+        if (bookmark && bookmark.length >= 6 && bookmark[5]) {
+            // Locate the bookmark wrapper element
+            const bookmarkWrapper = document.querySelector(`.bookmark-wrapper[data-index='${index}']`);
+
+            if (bookmarkWrapper) {
+                // Check if the bell icon already exists, if not, add it
+                if (!bookmarkWrapper.querySelector('.bell-icon')) {
+                    const bellIconHTML = `<span class="material-icons bell-icon" style="margin-left: 8px; display: inline-block;">notifications_active</span>`;
+                    bookmarkWrapper.innerHTML += bellIconHTML;
+                }
+            }
+        }
+    } else {
+        console.error(`Index ${index} is out of bounds for links array.`);
+    }
+}
 
 // Function to remove a bookmark and then add it again at the same index with data-uuid
 function addReminderToMarko(index) {
@@ -2568,11 +2590,8 @@ console.log('Updated bookmark array:', bookmark);
         saveLinks();
         renderLinks();
         
-                // Show the bell icon if a UUID is present
-        const bellIcon = document.querySelector(`#bell-icon-${index}`);
-        if (bellIcon) {
-            bellIcon.style.display = 'inline-block';
-        }
+        toggleBell(index);
+
         constructLinkFromBookmark(index, false);
         const result = constructLinkFromBookmark(index, false); // Example call with full=false
         if (result) {
