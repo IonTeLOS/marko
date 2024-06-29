@@ -2551,7 +2551,7 @@ function addReminderToMarko(index) {
                   body: body || 'open your reminder..',
                   delay: delay,
                   icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
-                  data: uuid    
+                  data: { uuid: uuid } 
                 };
 
                 console.log('Sending message to service worker:', notificationData);
