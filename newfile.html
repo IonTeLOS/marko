@@ -2399,7 +2399,12 @@ function changeURL(url) {
             const compressed = params.get('data');
             const purelink = params.get('friendlink');
             const uncompressed = params.get('title');
+            const reminder = params.get('uuid');
 
+
+            if (reminder) {
+                openReminder(params.get('friendlink'));
+            }
             if (purelink) {
                     if (confirm("Do you want to add " + params.get('friendname') + " as friend?")) {
                        linkData = ["friend", params.get('friendlink'), params.get('friendname'), "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
