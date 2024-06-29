@@ -1080,7 +1080,6 @@ input:focus {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: top 1s ease; /* Smooth drop-down effect */
     border-bottom: 4px solid white; /* White line at the bottom */
-    position: relative; /* Ensure relative positioning for absolute children */
 }
 
 .install-banner .material-icons {
@@ -4829,7 +4828,7 @@ window.onload = function() {
 <div id="install-banner" class="install-banner">
     <span class="material-icons">install_desktop</span>
     <p>Install Marko</p>
-    <span class="material-icons close-button" onclick="hideInstallBanner(event)">close</span>
+    <span class="material-icons close-button" onclick="hideInstallBanner()">close</span>
 </div>
     <!-- Lightbox with iframe and YouTube player -->
   <div class="lightbox" id="lightbox">
