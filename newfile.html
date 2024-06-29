@@ -2532,7 +2532,7 @@ function addReminderToMarko(index) {
         const result = constructLinkFromBookmark(index, false); // Example call with full=false
         if (result) {
         // Use result.shareTitle and result.shareLink here if needed
-        scheduleNotification(result.shareTitle, result.shareLink, 10000, 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg', uuid);
+        scheduleNotification(result.shareTitle, result.shareBody, 10000, result.shareIcon, uuid);
 }
     } else {
         console.error(`Index ${index} is out of bounds for links array.`);
@@ -2547,10 +2547,11 @@ function addReminderToMarko(index) {
             if ('serviceWorker' in navigator && 'PushManager' in window) {
               navigator.serviceWorker.ready.then(registration => {
                 const notificationData = {
-                  title: title || 'Scheduled Notification',
-                  body: body || 'This is a notification from your web app!',
+                  title: title || 'Marko Notification',
+                  body: body || 'open your reminder..',
                   delay: delay,
-                  icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg'
+                  icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
+                  data: uuid    
                 };
 
                 console.log('Sending message to service worker:', notificationData);
@@ -5278,11 +5279,13 @@ function constructLinkFromBookmark(index, full) {
 
   const shareLink = url.toString();
   const shareTitle = "Use Marko to open..";
+  const shareBody = title;
+  const shareIcon = icon;
 
 // this function serves 2 distinct purposes: create a link for a shareable Marko (full=true), or return just values of title and link to create a notification     
   if (!full) {
         console.log('Execution stopped because full is false.');
-        return { shareTitle, shareLink }; // Exit the function early
+        return { shareTitle, shareBody, shareIcon}; // Exit the function early
     }
   if (navigator.share) {
     navigator.share({
