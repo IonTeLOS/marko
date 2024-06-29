@@ -3,6 +3,19 @@
   "short_name": "Marko",
   "description": "A sophisticated bookmarking application",
   "categories": ["business", "productivity", "utilities", "lifestyle"],
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+   },
+  "orientation": "portrait-primary",
+  "share_target": {
+    "action": "/shared-content-receiver/",
+    "method": "GET",
+    "params": {
+      "title": "name",
+      "text": "description",
+      "url": "link"
+    }
+  }
   "icons": [
     {
       "src": "icon.png",
