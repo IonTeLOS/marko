@@ -2400,8 +2400,7 @@ function changeURL(url) {
             const purelink = params.get('friendlink');
             const uncompressed = params.get('title');
             const reminder = params.get('uuid');
-
-
+            console.log('UUID:', reminder); // Log the UUID value
             if (reminder) {
                 openReminder(params.get('uuid'));
             }
