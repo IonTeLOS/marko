@@ -1062,7 +1062,8 @@ input:focus {
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
         }
- .install-banner {
+
+.install-banner {
     display: none;
     position: fixed;
     top: -110px; /* Initially hidden above the viewport */
@@ -1080,6 +1081,7 @@ input:focus {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: top 1s ease; /* Smooth drop-down effect */
     border-bottom: 4px solid white; /* White line at the bottom */
+    position: relative; /* Ensure relative positioning for absolute children */
 }
 
 .install-banner .material-icons {
