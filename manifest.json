@@ -7,15 +7,16 @@
     "client_mode": "navigate-existing"
   },
   "orientation": "portrait-primary",
+ {
   "share_target": {
-    "action": "/marko/shared-content-receiver/",
-    "method": "GET",
+    "action": "/marko/newfile/save-bookmark",
+    "method": "POST",
+    "enctype": "multipart/form-data",
     "params": {
-      "title": "name",
-      "text": "description",
       "url": "link"
     }
-  },
+  }
+}
   "icons": [
     {
       "src": "icon.png",
@@ -29,7 +30,7 @@
     }
   ],
   "start_url": "/marko/newfile",
-  "scope": "/marko/",
+  "scope": "/marko/newfile",
   "display": "standalone",
   "background_color": "#ffa426",
   "theme_color": "#0d47a1"
