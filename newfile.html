@@ -2521,8 +2521,21 @@ function addReminderToMarko(index) {
         }
 
         // Add the uuid as the last element in the bookmark array
-        bookmark.push(uuid);
+// Check if there is already a UUID in the array
+if (bookmark.length >= 6) {
+    // Replace the existing UUID (if any) with the new one
+    bookmark[5] = uuid;
+} else {
+    // Add the UUID as the 6th item
+    bookmark.push(uuid);
+}
 
+// Ensure there are no more than 6 items in the array
+if (bookmark.length > 6) {
+    bookmark.splice(0, bookmark.length - 6); // Remove excess items
+}
+
+console.log('Updated bookmark array:', bookmark);
         // Update the bookmark in the links array
         links[index] = bookmark;
 
