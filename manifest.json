@@ -1,7 +1,7 @@
 {
   "name": "Marko",
   "short_name": "Marko",
-  "description": "A simple bookmarking application",
+  "description": "A sophisticated bookmarking application",
   "icons": [
     {
       "src": "icon.png",
@@ -16,7 +16,7 @@
   ],
   "start_url": "/marko/newfile",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0288d1"
+  "background_color": "#ffa426",
+  "theme_color": "#0d47a1"
 }
  
