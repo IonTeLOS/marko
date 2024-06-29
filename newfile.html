@@ -18,6 +18,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">    
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>    
 <!-- Materialize CSS -->
@@ -38,6 +39,17 @@
       });
     });
   }
+if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('serviceworker.js')
+          .then((registration) => {
+            console.log('Service Worker registered:', registration);
+          })
+          .catch((error) => {
+            console.error('Service Worker registration failed:', error);
+          });
+      });
+    }
 </script>
 <style>
 body {
@@ -1079,6 +1091,118 @@ input:focus {
     font-size: 20px;
     font-weight: bold;
 }
+    .context-menu {
+        display: none;
+        position: absolute;
+        z-index: 1000;
+    }
+
+    /* Light Mode Styles */
+    .bg-white {
+        background-color: #ffffff;
+    }
+
+    .border-gray-300 {
+        border-color: #e5e7eb;
+    }
+
+    .text-gray-500 {
+        color: #6b7280;
+    }
+
+    .hover\:bg-gray-100:hover {
+        background-color: #f3f4f6;
+    }
+
+    .text-gray-900 {
+        color: #111827;
+    }
+
+    .dark\:bg-gray-700 {
+        background-color: #374151;
+    }
+
+    .dark\:border-gray-700 {
+        border-color: #4b5563;
+    }
+
+    .dark\:text-gray-300 {
+        color: #d1d5db;
+    }
+
+    .dark\:hover\:bg-gray-700:hover {
+        background-color: #4a5568;
+    }
+
+    /* Material Icons Styles */
+    .material-icons-outlined {
+        font-family: 'Material Icons Outlined';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 1.5rem; /* Adjust icon size */
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+        -moz-osx-font-smoothing: grayscale;
+        vertical-align: middle;
+    }
+
+        .no-select {
+            user-select: none;
+        }
+.tooltip {
+    position: fixed;
+    bottom: 85px; /* Adjust as needed */
+    left: 10px; /* Adjust as needed */
+    width: 16rem; /* 256px (w-64 in tailwindcss) */
+    background-color: #ffffff; /* White background */
+    border: 1px solid #cccccc; /* Gray border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    padding: 5px 10px;
+    border-radius: 4px;
+    display: none;
+    z-index: 1003; /* Set z-index to 1003 */
+    font-size: 0.875rem; /* 14px (text-sm in tailwindcss) */
+    color: #0d47a1; /* Blue text color */
+    white-space: nowrap; /* Prevent line breaks */
+    overflow: hidden; /* Hide overflowing content */
+}
+
+.tooltip-content {
+    display: inline-block;
+    white-space: nowrap;
+    position: relative;
+}
+
+@keyframes scroll-text {
+    0% {
+        transform: translateX(100%);
+    }
+    15% {
+        transform: translateX(0); /* Immediately show text */
+    }
+    90% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(-100%); /* Restart */
+    }
+}
+
+.tooltip-scrolling {
+    animation: scroll-text 10s linear infinite;
+}
+#current-link .ml-3 {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
   </style>    
 <script>
 function detectTheme() {
@@ -1188,7 +1312,7 @@ document.addEventListener('DOMContentLoaded', function() {
     placeholder: "Write your post here... (max 10000 characters)",
     maxLength: 10000
   });
-    
+
   var urlInput = document.getElementById('new-link-url');
   var uclearBtn = document.getElementById('u-clear-btn');
   var wclearBtn = document.getElementById('w-clear-btn');
@@ -1379,6 +1503,8 @@ if (isMobileDevice()) {
   console.log("Marko seems to be running on desktop");
 }    
 
+
+    
 function getRandomColor() {
     const iconSource = iconSourceSelect.value;
 
@@ -2072,17 +2198,21 @@ document.getElementById('phone-number').addEventListener('keydown', function(eve
         }
         
         
-    let links = [];
+let links = [];    
     const linkIcon = 'https://fonts.gstatic.com/s/i/materialicons/open_in_new/v15/24px.svg';
     const mailIcon = 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
     const phoneIcon = 'https://fonts.gstatic.com/s/i/materialicons/call/v15/24px.svg';
     const fileIcon = 'https://fonts.gstatic.com/s/i/materialicons/insert_drive_file/v15/24px.svg';
     const noteIcon = 'https://fonts.gstatic.com/s/i/materialicons/note/v15/24px.svg';
 
+
     // this is what is mainly done: each time page is loaded it checks local storage and -after it confirms if user is logged it- it renders the bbokmarks
     document.addEventListener("DOMContentLoaded", () => {
+    
         const savedLinks = JSON.parse(localStorage.getItem('bookmarks')) || [];
         console.log('Saved Links:', savedLinks);  // Debug log
+        // links = [mainLink, ...savedLinks];
+
         links = savedLinks;  // Initialize links array
         passCheck();  // Render the bookmarks
         detectTheme();
@@ -2091,6 +2221,7 @@ document.getElementById('phone-number').addEventListener('keydown', function(eve
 
     // show an offline notice in the form of a banner if offline, autohide it when back online
     function checkConnection() {
+
         const offlineBanner = document.getElementById('offline-banner');
         if (!navigator.onLine) {
             document.getElementById('offline-banner').classList.add('show');
@@ -2330,19 +2461,175 @@ function changeURL(url) {
     // delete a bookmark from local storage and remove it from now shown (the later by calling removeBookmark function)
     function deleteLink(index) {
             if (confirm('Are you sure you want to delete this bookmark?')) {
+              removeBookmark(index);
               links.splice(index, 1);
               localStorage.setItem('bookmarks', JSON.stringify(links));
-              removeBookmark(index);
               saveLinks();
         }
     }
+    
+        function clearLink(index) {
+              removeBookmark(index);
+              links.splice(index, 1);
+              localStorage.setItem('bookmarks', JSON.stringify(links));
+              saveLinks();
+    }
+    
+            function moveMarkoUp(index) {
+                if (index > 0) {
+                    [links[index - 1], links[index]] = [links[index], links[index - 1]];
+                    localStorage.setItem('bookmarks', JSON.stringify(links));
+                    saveLinks();
+                    renderLinks();
+                } else {
+                    alert("This Marko is already at the top.");
+                }
+            }    
+    
+            function moveMarkoDown(index) {
+                if (index < links.length - 1) {
+                    const [link] = links.splice(index, 1);
+                    links.push(link);
+                    localStorage.setItem('bookmarks', JSON.stringify(links));
+                    saveLinks();
+                    renderLinks();
 
+                } else {
+                    alert("This bookmark is already at the bottom.");
+                }
+            }
+
+
+
+// Function to remove a bookmark and then add it again at the same index with data-uuid
+function addReminderToMarko(index) {
+    // Check if index is within bounds of the links array
+    if (index >= 0 && index < links.length) {
+        // Generate a UUID
+        const uuid = generateUUID();
+
+        // Get the bookmark array at the specified index
+        let bookmark = links[index];
+
+        // If bookmark is undefined (should not happen with proper index validation), create a new bookmark array
+        if (!bookmark) {
+            bookmark = [];
+        }
+
+        // Add the uuid as the last element in the bookmark array
+        bookmark.push(uuid);
+
+        // Update the bookmark in the links array
+        links[index] = bookmark;
+
+        // Save the updated links array to localStorage
+        localStorage.setItem('bookmarks', JSON.stringify(links));
+
+        // Call saveLinks and renderLinks to update the UI
+        saveLinks();
+        renderLinks();
+        constructLinkFromBookmark(index, false);
+        scheduleNotification(shareTitle, shareLink, 10000, 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg'
+);
+    } else {
+        console.error(`Index ${index} is out of bounds for links array.`);
+        return;
+    }
+}
+
+ function scheduleNotification(title, body, delay, icon) {
+      if ('Notification' in window) {
+        Notification.requestPermission().then(permission => {
+          if (permission === 'granted') {
+            if ('serviceWorker' in navigator && 'PushManager' in window) {
+              navigator.serviceWorker.ready.then(registration => {
+                const notificationData = {
+                  title: title || 'Scheduled Notification',
+                  body: body || 'This is a notification from your web app!',
+                  delay: delay,
+                  icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/mail/default/48px.svg'
+                };
+
+                console.log('Sending message to service worker:', notificationData);
+                registration.active.postMessage({
+                  action: 'scheduleNotification',
+                  notification: notificationData
+                });
+              }).catch(error => {
+                console.error('Service Worker registration error:', error);
+              });
+            } else {
+              console.log('Service Worker or Push API not supported.');
+            }
+          } else {
+            console.log('Notification permission denied.');
+          }
+        });
+      } else {
+        console.log('Notifications not supported in this browser.');
+      }
+    }
+    
+// Function to find and click bookmark with matching UUID
+function openReminder(uuid) {
+    if (confirm("Open Marko?")) {
+    }
+    else {
+        return;
+    }
+    console.log("checking..");
+    // Iterate through bookmarks
+    // Select all bookmark elements
+    const bookmarkElements = document.querySelectorAll('.bookmark');
+
+    // Iterate through each bookmark element
+    bookmarkElements.forEach(bookmarkElement => {
+        // Find the bookmark-wrapper element inside each bookmark
+        const bookmarkWrapper = bookmarkElement.querySelector('.bookmark-wrapper');
+        
+        // Retrieve data-uuid attribute from bookmark-wrapper
+        const dataUUID = bookmarkWrapper.getAttribute('data-uuid');
+        
+        // Compare data-uuid with the UUID you are looking for
+        if (dataUUID === uuid) {
+            // Found the bookmark with matching UUID
+            console.log(`Found bookmark with data-uuid: ${uuid}. Clicking it...`);
+            
+            // Simulate click on the bookmark or perform your action
+            bookmarkWrapper.click(); // Example: Click on the bookmark-wrapper
+            // Replace with your specific logic to interact with the bookmark
+        }
+    });
+}
+
+    function addReminder() {
+        alert("added");
+    }
+
+//localStorage.clear();
 // main function to show the bookmarks that are stored as arrays in local storage as visual elements    
 function renderLinks() {
             const linkContainer = document.querySelector('.bookmarks-container');
-            // linkContainer.innerHTML = ''; // Clear the container
-
+            linkContainer.innerHTML = ''; // Clear the container
+            // Add no-select class to prevent text selection
+            document.body.classList.add('no-select');
             const defaultIconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg';  // Replace with an actual default icon URL
+const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.id = `main-bookmark`;
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" data-type='website' onmouseover="showTooltip('Welcome!')"
+     onmouseout="hideTooltip()" onclick="openMarko(openLink, 'https://teloslinux.org')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: #ff005678;">
+                <img src="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg",
+                alt="Home" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">Home</span>
+        </div>
+    </div>
+`
+                linkContainer.appendChild(bookmarkElement);
 
                 links.forEach((link, index) => {
                 if (link[0] === "YouTube") {
@@ -2353,7 +2640,8 @@ function renderLinks() {
                 bookmarkElement.dataset.index = index; // Store the index as a data attribute
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(loadVideo, '${link[1]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+     onmouseout="hideTooltip()" onclick="openMarko(loadVideo, '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
@@ -2374,7 +2662,8 @@ function renderLinks() {
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(showWindow, '${link[1]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+     onmouseout="hideTooltip()" onclick="openMarko(showWindow, '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
@@ -2396,7 +2685,8 @@ function renderLinks() {
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(showPDFLightbox, '${proxied}', '${link[2]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+     onmouseout="hideTooltip()" onclick="openMarko(showPDFLightbox, '${proxied}', '${link[2]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2419,7 +2709,8 @@ function renderLinks() {
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(downloadFile, '${link[1]}', '${link[2]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+     onmouseout="hideTooltip()" onclick="openMarko(downloadFile, '${link[1]}', '${link[2]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
@@ -2440,7 +2731,8 @@ function renderLinks() {
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-     <div class="bookmark-wrapper" data-type='${link[0]}' onclick='openMarko(showPost, ${JSON.stringify(link[1])})'>
+     <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('open to view post')"
+     onmouseout="hideTooltip()" onclick='openMarko(showPost, ${JSON.stringify(link[1])})'>
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2465,7 +2757,8 @@ function renderLinks() {
                 bookmarkElement.id = `bookmark-${index}`;
                 
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(showShareNote, '${link[2]}', '${link[1]}')" style="cursor: pointer;">
+    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+     onmouseout="hideTooltip()" onclick="openMarko(showShareNote, '${link[2]}', '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2489,7 +2782,8 @@ function renderLinks() {
                 bookmarkElement.id = `bookmark-${index}`;
                 
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onclick="openMarko(openLink, '${link[1]}')">
+    <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+     onmouseout="hideTooltip()" onclick="openMarko(openLink, '${link[1]}')">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
@@ -2507,7 +2801,44 @@ function renderLinks() {
             });
                 
         }
+// detect if run on mobile or on desktop based on screen width. TODO use this function to make it more mobile friendly
+let currentLink = null; // Global variable to store current link
+    
+function showTooltip(link) {
+    currentLink = link;
+    const isGoodForStatus = () => {
+        return 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 0 ||
+               window.matchMedia('(max-width: 768px)').matches;
+    };
 
+    if (!isGoodForStatus ()) {
+        const tooltip = document.getElementById('tooltip');
+        const tooltipContent = document.getElementById('tooltip-content');
+
+        if (tooltip && tooltipContent) {
+            tooltipContent.textContent = link;
+            tooltip.style.display = 'block';
+
+            const tooltipWidth = tooltip.offsetWidth;
+            const textWidth = tooltipContent.scrollWidth;
+
+            // If the text overflows the tooltip, apply the scrolling animation
+            if (textWidth > tooltipWidth) {
+                tooltipContent.style.animation = 'scroll-text 10s linear infinite';
+            } else {
+                tooltipContent.style.animation = 'none';
+            }
+        }
+    }
+}
+
+
+    function hideTooltip() {
+        const tooltip = document.getElementById('tooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    }
         
         function renderFriend(friend) {
             const linkContainer = document.querySelector('.bookmarks-container');
@@ -2585,7 +2916,7 @@ iframe.srcdoc = `
             } else if (action === showPost) {
                 showPost(data);
             } else if (action === showShareNote) {
-                showShareNote(extras, data);
+                showShareNote(data, extras);
             } else {
                 openLink(data);
             }
@@ -2763,22 +3094,18 @@ function saveLinks() {
  
   // this is the way friends are added..    
   window.onload = loadArrayFromURL;
-
-        document.addEventListener('DOMContentLoaded', (event) => {
-      const bookmark = document.querySelector('.bookmark.menu-item[data-link="show-content"]');
-      const content = bookmark.querySelector('.content');
-
-      bookmark.addEventListener('click', () => {
-        if (content.style.display === 'block') {
-          content.style.display = 'none';
-          bookmark.classList.remove('active');
-        } else {
-          content.style.display = 'block';
-          bookmark.classList.add('active');
-        }
-      });
-    });
         
+    function openSettings () {
+var button = document.getElementById('openModal');
+
+// Check if the button element exists
+if (button) {
+    // Programmatically trigger a click event on the button
+    button.click();
+} else {
+    console.error('Button with id "openModal" not found.');
+}
+    }
         // open modal as pseudo menu with About, Privacy and Settings tab
         document.addEventListener('DOMContentLoaded', function() {
             const openModalButton = document.getElementById('openModal');
@@ -4395,12 +4722,54 @@ function hasPaid() {
 window.onload = function() {
     loadDonationParams();
     initializeGoogleIdentity();
-}; 
+    openReminder('293b5970-a013-4a63-8788-165885b80766');    
 
+}; 
 </script>
 </head>
-    
-<body data-swipe-threshold="100" data-swipe-timeout="300">
+<body data-swipe-threshold="100" data-swipe-timeout="300">    
+<!-- Context Menu -->
+ <div class="context-menu">
+    <div class="bg-white dark:bg-gray-800 w-64 border border-gray-300 dark:border-gray-700 rounded-lg flex flex-col text-sm py-4 px-2 text-gray-700 dark:text-gray-300 shadow-lg">
+        <div id="current-link" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">question_mark</span>
+            <div class="ml-3"></div>
+        </div>
+        <hr class="my-2 border-gray-300 dark:border-gray-700" />
+        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="deleteLink(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">delete</span>
+            <div class="ml-3">Delete Marko</div>
+        </div>
+        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="moveMarkoUp(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">arrow_upward</span>
+            <div class="ml-3">Move One Up</div>
+        </div>
+        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="moveMarkoDown(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">vertical_align_bottom</span>
+            <div class="ml-3">Move to Bottom</div>
+        </div>
+        <hr class="my-2 border-gray-300 dark:border-gray-700" />
+        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center" onclick="constructLinkFromBookmark(`${currentIndex}`, true)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">link</span>
+            <div class="ml-3">Share Marko</div>
+        </div>
+                <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="openSettings()">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">settings</span>
+            <div class="ml-3">Settings</div>
+        </div>
+        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="addReminderToMarko(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">notifications</span>
+            <div class="ml-3">Add Reminder</div>
+        </div>
+    </div>
+</div>
+
+<!-- Context Menu --> 
 <div id="install-banner" class="install-banner">
         <span class="material-icons">install_desktop</span>
         <p>Install Marko</p>
@@ -4473,11 +4842,16 @@ The appropriate solution will depend on your specific requirements and the natur
             </div>
         </div>
     </div>
+    </div>
 
+<div id="tooltip" class="tooltip">
+    <div class="tooltip-content" id="tooltip-content"></div>
+</div>
+    
   <div class="offline-banner" id="offline-banner">
         <span class="material-icons">wifi_off</span>
     </div>
-<div class="add-banner" id="add-banner">
+<div oncontextmenu="return false;" class="add-banner" id="add-banner">
   <button class="material-btn bottom-left-btn" id="openModal">
     <i class="material-icons material-icon">settings</i>
   </button>
@@ -4487,8 +4861,7 @@ The appropriate solution will depend on your specific requirements and the natur
   <button class="material-btn bottom-right-btn" onclick="sharePage()">
     <i class="material-icons material-icon">share</i>
   </button>
-</div>    
-    </div>        
+</div>           
 
  
       
@@ -4579,36 +4952,13 @@ The appropriate solution will depend on your specific requirements and the natur
     </div>
 
 
-    <div class="bookmarks-container">
+    <div class="bookmarks-container" no-select>
 <div>
-    <!-- Regular bookmarks -->
-    <div class="bookmark menu-item" data-link="https://example.com">
-      <div class="icon-wrapper">
-        <div class="icon-container">
-          <span class="material-icons bookmark-icon">link</span>
-        </div>
-        <span class="bookmark-title">Example Link</span>
-      </div>
-      <span class="material-icons delete-icon">delete</span>
-    </div>
 
-    <div class="bookmark menu-item" data-link="show-content">
-      <div class="icon-wrapper">
-        <div class="icon-container">
-          <span class="material-icons bookmark-icon">info</span>
-        </div>
-        <span class="bookmark-title">Show Content</span>
-      </div>
-      <span class="material-icons delete-icon">delete</span>
-                </div>
-
-    <div class="content">
-      <p>This is the hidden content that can be shown or hidden.</p>
-    </div>
-  </div>
+</div>
     </div>
     
-<div class="form-buttons" id="menu-container">
+<div oncontextmenu="return false;" class="form-buttons" id="menu-container">
   <button class="material-btn left-btn" onclick="downloadPage()">
     <i class="material-icons material-icon">cloud_download</i>
   </button>
@@ -4618,10 +4968,173 @@ The appropriate solution will depend on your specific requirements and the natur
   <button class="material-btn right-btn" onclick="cancelAddLink()">
     <i class="material-icons material-icon">cancel</i>
   </button>
+    <pre id="created-bookmark"></pre>
 </div>
 
-    <pre id="created-bookmark"></pre>
 <script>
+    // Log that the script tag has been reached
+console.log("Script tag reached");
+var currentIndex = null;
+var allIndex = null;
+    
+// Function to handle the context menu
+document.addEventListener("DOMContentLoaded", function () {
+    var menu = document.querySelector(".context-menu");
+    var menuState = 0;
+    var contextMenuActive = "block";
+
+    const linkContainer = document.querySelector('.bookmarks-container');
+    const mainBookmark = document.getElementById('main-bookmark');
+
+
+    document.addEventListener("contextmenu", function (event) {
+        if (!linkContainer.contains(event.target)) {
+            return;
+        }
+        if (event.target.closest('#main-bookmark')) {
+        event.preventDefault(); // Prevent context menu on main bookmark
+        return;
+        }
+        event.preventDefault();
+
+        var targetElement = event.target;
+        while (targetElement) {
+            if (targetElement.id && (targetElement.id.startsWith('bookmark-') || targetElement.id.startsWith('delete-'))) {
+                currentIndex = targetElement.id.split('-')[1];
+                console.log("Right-clicked element index:", currentIndex);
+                break;
+            }
+            targetElement = targetElement.parentElement;
+        }
+
+        toggleMenuOn();
+        positionMenu(event);
+    });
+
+    function toggleMenuOn() {
+        if (menuState !== 1) {
+            menuState = 1;
+            menu.classList.add(contextMenuActive);
+        }
+    }
+
+    function toggleMenuOff() {
+        if (menuState !== 0) {
+            menuState = 0;
+            menu.classList.remove(contextMenuActive);
+        }
+    }
+
+    function getPosition(e) {
+        var posx = 0;
+        var posy = 0;
+
+        if (!e) e = window.event;
+
+        if (e.pageX || e.pageY) {
+            posx = e.pageX;
+            posy = e.pageY;
+        } else if (e.clientX || e.clientY) {
+            posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+        }
+
+        return { x: posx, y: posy };
+    }
+
+    function positionMenu(e) {
+        const linkPlace = document.getElementById('current-link');
+
+        // Update the menu element with the currentLink text
+        if (linkPlace) {
+            // Truncate the link to 30 characters
+    
+        linkPlace.querySelector('.ml-3').textContent = currentLink;
+        }
+        let clickCoords = getPosition(e);
+        let clickCoordsX = clickCoords.x;
+        let clickCoordsY = clickCoords.y;
+
+        let menuWidth = menu.offsetWidth + 4;
+        let menuHeight = menu.offsetHeight + 4;
+
+        let windowWidth = window.innerWidth;
+        let windowHeight = window.innerHeight;
+
+        if (windowWidth - clickCoordsX < menuWidth) {
+            menu.style.left = windowWidth - menuWidth + "px";
+        } else {
+            menu.style.left = clickCoordsX + "px";
+        }
+
+        if (windowHeight - clickCoordsY < menuHeight) {
+            menu.style.top = windowHeight - menuHeight + "px";
+        } else {
+            menu.style.top = clickCoordsY + "px";
+        }
+    }
+
+    document.addEventListener("click", (e) => {
+        var button = e.which || e.button;
+        if (button === 1) {
+            toggleMenuOff();
+            initSwipeDetection(); // Reinitialize swipe detection after the menu is closed
+        }
+    });
+
+    window.onkeyup = function (e) {
+        if (e.keyCode === 27) {
+            toggleMenuOff();
+        }
+    }
+});
+
+function initSwipeDetection() {
+    document.querySelectorAll('.bookmark-wrapper').forEach(wrapper => {
+        let touchstartX = 0;
+        let touchendX = 0;
+        const bookmarkId = wrapper.closest('.bookmark').getAttribute('data-index');
+
+let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+if (isTouchDevice) {
+    wrapper.addEventListener('touchstart', (e) => {
+        touchstartX = e.changedTouches[0].screenX;
+    });
+
+    wrapper.addEventListener('touchend', (e) => {
+        touchendX = e.changedTouches[0].screenX;
+        handleSwipe(wrapper, bookmarkId, touchstartX, touchendX);
+    });
+} else {
+    wrapper.addEventListener('mousedown', (e) => {
+        touchstartX = e.screenX;
+    });
+
+    wrapper.addEventListener('mouseup', (e) => {
+        touchendX = e.screenX;
+        handleSwipe(wrapper, bookmarkId, touchstartX, touchendX);
+    });
+}
+    });
+}
+
+function handleSwipe(wrapper, bookmarkId, startX, endX) {
+    const threshold = 150; // Minimum distance to consider a swipe
+    if (startX - endX > threshold) {
+        clearLink(bookmarkId);
+    } else if (endX - startX > threshold) {
+        constructLinkFromBookmark(bookmarkId, true);
+    }
+}
+
+// Check if the DOM is already loaded for swipe detection initialization
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSwipeDetection);
+} else {
+    initSwipeDetection();
+}
+
         const icons = [
             '3d_rotation','ac_unit','access_alarm','access_alarms','access_time','accessibility','accessible','account_balance','account_balance_wallet','account_box','account_circle','adb','add','add_a_photo','add_alarm','add_alert','add_box','add_circle','add_circle_outline','add_location','add_shopping_cart','add_to_photos','add_to_queue','adjust','airline_seat_flat','airline_seat_flat_angled','airline_seat_individual_suite','airline_seat_legroom_extra','airline_seat_legroom_normal','airline_seat_legroom_reduced','airline_seat_recline_extra','airline_seat_recline_normal','airplanemode_active','airplanemode_inactive','airplay','airport_shuttle','alarm','alarm_add','alarm_off','alarm_on','album','all_inclusive','all_out','android','announcement','apps','archive','arrow_back','arrow_downward','arrow_drop_down','arrow_drop_down_circle','arrow_drop_up','arrow_forward','arrow_upward','art_track','aspect_ratio','assessment','assignment','assignment_ind','assignment_late','assignment_return','assignment_returned','assignment_turned_in','assistant','assistant_photo','attach_file','attach_money','attachment','audiotrack','autorenew','av_timer','backspace','backup','battery_alert','battery_charging_full','battery_full','battery_std','battery_unknown','beach_access','beenhere','block','bluetooth','bluetooth_audio','bluetooth_connected','bluetooth_disabled','bluetooth_searching','blur_circular','blur_linear','blur_off','blur_on','book','bookmark','bookmark_border','border_all','border_bottom','border_clear','border_color','border_horizontal','border_inner','border_left','border_outer','border_right','border_style','border_top','border_vertical','branding_watermark','brightness_1','brightness_2','brightness_3','brightness_4','brightness_5','brightness_6','brightness_7','brightness_auto','brightness_high','brightness_low','brightness_medium','broken_image','brush','bubble_chart','bug_report','build','burst_mode','business','business_center','cached','cake','call','call_end','call_made','call_merge','call_missed','call_missed_outgoing','call_received','call_split','call_to_action','camera','camera_alt','camera_enhance','camera_front','camera_rear','camera_roll','cancel','card_giftcard','card_membership','card_travel','casino','cast','cast_connected','center_focus_strong','center_focus_weak','change_history','chat','chat_bubble','chat_bubble_outline','check','check_box','check_box_outline_blank','check_circle','chevron_left','chevron_right','child_care','child_friendly','chrome_reader_mode','class','clear','clear_all','close','closed_caption','cloud','cloud_circle','cloud_done','cloud_download','cloud_off','cloud_queue','cloud_upload','code','collections','collections_bookmark','color_lens','colorize','comment','compare','compare_arrows','computer','confirmation_number','contact_mail','contact_phone','contacts','content_copy','content_cut','content_paste','control_point','control_point_duplicate','copyright','create','create_new_folder','credit_card','crop','crop_16_9','crop_3_2','crop_5_4','crop_7_5','crop_din','crop_free','crop_landscape','crop_original','crop_portrait','crop_rotate','crop_square','dashboard','data_usage','date_range','dehaze','delete','delete_forever','delete_sweep','description','desktop_mac','desktop_windows','details','developer_board','developer_mode','device_hub','devices','devices_other','dialer_sip','dialpad','directions','directions_bike','directions_boat','directions_bus','directions_car','directions_railway','directions_run','directions_subway','directions_transit','directions_walk','disc_full','dns','do_not_disturb','do_not_disturb_alt','do_not_disturb_off','do_not_disturb_on','dock','domain','done','done_all','donut_large','donut_small','drafts','drag_handle','drive_eta','dvr','edit','edit_location','eject','email','enhanced_encryption','equalizer','error','error_outline','euro_symbol','ev_station','event','event_available','event_busy','event_note','event_seat','exit_to_app','expand_less','expand_more','explicit','explore','exposure','exposure_neg_1','exposure_neg_2','exposure_plus_1','exposure_plus_2','exposure_zero','extension','face','fast_forward','fast_rewind','favorite','favorite_border','featured_play_list','featured_video','feedback','fiber_dvr','fiber_manual_record','fiber_new','fiber_pin','fiber_smart_record','file_download','file_upload','filter','filter_1','filter_2','filter_3','filter_4','filter_5','filter_6','filter_7','filter_8','filter_9','filter_9_plus','filter_b_and_w','filter_center_focus','filter_drama','filter_frames','filter_hdr','filter_list','filter_none','filter_tilt_shift','filter_vintage','find_in_page','find_replace','fingerprint','first_page','fitness_center','flag','flare','flash_auto','flash_off','flash_on','flight','flight_land','flight_takeoff','flip','flip_to_back','flip_to_front','folder','folder_open','folder_shared','folder_special','font_download','format_align_center','format_align_justify','format_align_left','format_align_right','format_bold','format_clear','format_color_fill','format_color_reset','format_color_text','format_indent_decrease','format_indent_increase','format_italic','format_line_spacing','format_list_bulleted','format_list_numbered','format_paint','format_quote','format_shapes','format_size','format_strikethrough','format_textdirection_l_to_r','format_textdirection_r_to_l','format_underlined','forum','forward','forward_10','forward_30','forward_5','free_breakfast','fullscreen','fullscreen_exit','functions','g_translate','gamepad','games','gavel','gesture','get_app','gif','golf_course','gps_fixed','gps_not_fixed','gps_off','grade','gradient','grain','graphic_eq','grid_off','grid_on','group','group_add','group_work','hd','hdr_off','hdr_on','hdr_strong','hdr_weak','headset','headset_mic','healing','hearing','help','help_outline','high_quality','highlight','highlight_off','history','home','hot_tub','hotel','hourglass_empty','hourglass_full','http','https','image','image_aspect_ratio','import_contacts','import_export','important_devices','inbox','indeterminate_check_box','info','info_outline','input','insert_chart','insert_comment','insert_drive_file','insert_emoticon','insert_invitation','insert_link','insert_photo','invert_colors','invert_colors_off','iso','keyboard','keyboard_arrow_down','keyboard_arrow_left','keyboard_arrow_right','keyboard_arrow_up','keyboard_backspace','keyboard_capslock','keyboard_hide','keyboard_return','keyboard_tab','keyboard_voice','kitchen','label','label_outline','landscape','language','laptop','laptop_chromebook','laptop_mac','laptop_windows','last_page','launch','layers','layers_clear','leak_add','leak_remove','lens','library_add','library_books','library_music','lightbulb_outline','line_style','line_weight','linear_scale','link','linked_camera','list','live_help','live_tv','local_activity','local_airport','local_atm','local_bar','local_cafe','local_car_wash','local_convenience_store','local_dining','local_drink','local_florist','local_gas_station','local_grocery_store','local_hospital','local_hotel','local_laundry_service','local_library','local_mall','local_movies','local_offer','local_parking','local_pharmacy','local_phone','local_pizza','local_play','local_post_office','local_printshop','local_see','local_shipping','local_taxi','location_city','location_disabled','location_off','location_on','location_searching','lock','lock_open','lock_outline','looks','looks_3','looks_4','looks_5','looks_6','looks_one','looks_two','loop','loupe','low_priority','loyalty','mail','mail_outline','map','markunread','markunread_mailbox','memory','menu','merge_type','message','mic','mic_none','mic_off','mms','mode_comment','mode_edit','monetization_on','money_off','monochrome_photos','mood','mood_bad','more','more_horiz','more_vert','motorcycle','mouse','move_to_inbox','movie','movie_creation','movie_filter','multiline_chart','music_note','music_video','my_location','nature','nature_people','navigate_before','navigate_next','navigation','near_me','network_cell','network_check','network_locked','network_wifi','new_releases','next_week','nfc','no_encryption','no_sim','not_interested','note','note_add','notifications','notifications_active','notifications_none','notifications_off','notifications_paused','offline_pin','ondemand_video','opacity','open_in_browser','open_in_new','open_with','pages','pageview','palette','pan_tool','panorama','panorama_fish_eye','panorama_horizontal','panorama_vertical','panorama_wide_angle','party_mode','pause','pause_circle_filled','pause_circle_outline','payment','people','people_outline','perm_camera_mic','perm_contact_calendar','perm_data_setting','perm_device_information','perm_identity','perm_media','perm_phone_msg','perm_scan_wifi','person','person_add','person_outline','person_pin','person_pin_circle','personal_video','pets','phone','phone_android','phone_bluetooth_speaker','phone_forwarded','phone_in_talk','phone_iphone','phone_locked','phone_missed','phone_paused','phonelink','phonelink_erase','phonelink_lock','phonelink_off','phonelink_ring','phonelink_setup','photo','photo_album','photo_camera','photo_filter','photo_library','photo_size_select_actual','photo_size_select_large','photo_size_select_small','picture_as_pdf','picture_in_picture','picture_in_picture_alt','pie_chart','pie_chart_outlined','pin_drop','place','play_arrow','play_circle_filled','play_circle_outline','play_for_work','playlist_add','playlist_add_check','playlist_play','plus_one','poll','polymer','pool','portable_wifi_off','portrait','power','power_input','power_settings_new','pregnant_woman','present_to_all','print','priority_high','public','publish','query_builder','question_answer','queue','queue_music','queue_play_next','radio','radio_button_checked','radio_button_unchecked','rate_review','receipt','recent_actors','record_voice_over','redeem','redo','refresh','remove','remove_circle','remove_circle_outline','remove_from_queue','remove_red_eye','remove_shopping_cart','reorder','repeat','repeat_one','replay','replay_10','replay_30','replay_5','reply','reply_all','report','report_problem','restaurant','restaurant_menu','restore','restore_page','ring_volume','room','room_service','rotate_90_degrees_ccw','rotate_left','rotate_right','rounded_corner','router','rowing','rss_feed','rv_hookup','satellite','save','scanner','schedule','school','screen_lock_landscape','screen_lock_portrait','screen_lock_rotation','screen_rotation','screen_share','sd_card','sd_storage','search','security','select_all','send','sentiment_dissatisfied','sentiment_neutral','sentiment_satisfied','sentiment_very_dissatisfied','sentiment_very_satisfied','settings','settings_applications','settings_backup_restore','settings_bluetooth','settings_brightness','settings_cell','settings_ethernet','settings_input_antenna','settings_input_component','settings_input_composite','settings_input_hdmi','settings_input_svideo','settings_overscan','settings_phone','settings_power','settings_remote','settings_system_daydream','settings_voice','share','shop','shop_two','shopping_basket','shopping_cart','short_text','show_chart','shuffle','signal_cellular_4_bar','signal_cellular_connected_no_internet_4_bar','signal_cellular_no_sim','signal_cellular_null','signal_cellular_off','signal_wifi_4_bar','signal_wifi_4_bar_lock','signal_wifi_off','sim_card','sim_card_alert','skip_next','skip_previous','slideshow','slow_motion_video','smartphone','smoke_free','smoking_rooms','sms','sms_failed','snooze','sort','sort_by_alpha','spa','space_bar','speaker','speaker_group','speaker_notes','speaker_notes_off','speaker_phone','spellcheck','star','star_border','star_half','stars','stay_current_landscape','stay_current_portrait','stay_primary_landscape','stay_primary_portrait','stop','stop_screen_share','storage','store','store_mall_directory','straighten','streetview','strikethrough_s','style','subdirectory_arrow_left','subdirectory_arrow_right','subject','subscriptions','subtitles','subway','supervisor_account','surround_sound','swap_calls','swap_horiz','swap_vert','swap_vertical_circle','switch_camera','switch_video','sync','sync_disabled','sync_problem','system_update','system_update_alt','tab','tab_unselected','tablet','tablet_android','tablet_mac','tag_faces','tap_and_play','terrain','text_fields','text_format','textsms','texture','theaters','thumb_down','thumb_up','thumbs_up_down','time_to_leave','timelapse','timeline','timer','timer_10','timer_3','timer_off','title','toc','today','toll','tonality','touch_app','toys','track_changes','traffic','train','tram','transfer_within_a_station','transform','translate','trending_down','trending_flat','trending_up','tune','turned_in','turned_in_not','tv','unarchive','undo','unfold_less','unfold_more','update','usb','verified_user','vertical_align_bottom','vertical_align_center','vertical_align_top','vibration','video_call','video_label','video_library','videocam','videocam_off','videogame_asset','view_agenda','view_array','view_carousel','view_column','view_comfy','view_compact','view_day','view_headline','view_list','view_module','view_quilt','view_stream','view_week','vignette','visibility','visibility_off','voice_chat','voicemail','volume_down','volume_mute','volume_off','volume_up','vpn_key','vpn_lock','wallpaper','warning','watch','watch_later','wb_auto','wb_cloudy','wb_incandescent','wb_iridescent','wb_sunny','wc','web','web_asset','weekend','whatshot','widgets','wifi','wifi_lock','wifi_tethering','work','wrap_text','youtube_searched_for','zoom_in','zoom_out','zoom_out_map'
         ];
@@ -4731,7 +5244,7 @@ searchInput.addEventListener('input', function() {
                 this.click();
             }
         });
-    function constructLinkFromBookmark(index) {
+function constructLinkFromBookmark(index, full) {
   const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
   if (!bookmark) {
     console.log(`No bookmark found with index ${index}`);
@@ -4761,7 +5274,13 @@ searchInput.addEventListener('input', function() {
   url.searchParams.append('color', color);
 
   const shareLink = url.toString();
-  const shareTitle = "That's my Marko link!";
+  const shareTitle = "Use Marko to open..";
+
+// this function serves 2 distinct purposes: create a link for a shareable Marko (full=true), or return just values of title and link to create a notification     
+  if (!full) {
+        console.log('Execution stopped because full is false.');
+        return { shareTitle, shareLink }; // Exit the function early
+    }
   if (navigator.share) {
     navigator.share({
       title: shareTitle,
@@ -4798,73 +5317,7 @@ function parseBookmarkLink(url) {
     color
   };
 }
-    </script>
-<script>
-// Log that the script tag has been reached
-console.log("Script tag reached");
-
-// Function to add listeners to bookmarks
-function addListenersToBookmarks(eventType, eventHandler) {
-  console.log("Starting to add listeners to bookmarks");
-  const bookmarks = document.querySelectorAll('.bookmark[id^="bookmark-"]');
-  console.log(`Found ${bookmarks.length} bookmarks`);
-
-  bookmarks.forEach((bookmark, index) => {
-    console.log(`Adding listener to ${bookmark.id}`);
-    bookmark.addEventListener(eventType, eventHandler);
-  });
-
-  return bookmarks.length;
-}
-
-  // Event handler for left swipes
-function handleLeftSwipe(event) {
-  // Prevent the default click behavior
-  event.preventDefault();
-  // Stop the event from bubbling up to parent elements
-  event.stopPropagation();
-  const bookmarkNumber = event.currentTarget.id.split('-')[1];
-  deleteLink(bookmarkNumber);
-}
-
-  // Event handler for right swipes
-function handleRightSwipe(event) {
-  // Prevent the default click behavior
-  event.preventDefault();
-  // Stop the event from bubbling up to parent elements
-  event.stopPropagation();
-  const bookmarkNumber = event.currentTarget.id.split('-')[1];
-  constructLinkFromBookmark(bookmarkNumber);
-    }
     
-function initLeftSwipe() {
-  const bookmarkLCount = addListenersToBookmarks('swiped-left', handleLeftSwipe);
-  console.log(`Found and added left listeners to ${bookmarkLCount} bookmarks`);
-}
-
-function initRightSwipe() {
-  const bookmarkRCount = addListenersToBookmarks('swiped-right', handleRightSwipe);
-  console.log(`Found and added right listeners to ${bookmarkRCount} bookmarks`);
-}    
-
-if (document.readyState === "loading") {
-  // If not, add event listener
-  document.addEventListener("DOMContentLoaded", initRightSwipe);
-} else {
-  // If it's already loaded, run initialization immediately
-  initRightSwipe();
-}    
-    
-// Check if the DOM is already loaded
-if (document.readyState === "loading") {
-  // If not, add event listener
-  document.addEventListener("DOMContentLoaded", initLeftSwipe);
-} else {
-  // If it's already loaded, run initialization immediately
-  initLeftSwipe();
-}
-
-
 </script>
 </body>
 </html>
