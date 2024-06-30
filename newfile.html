@@ -30,17 +30,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!-- Firebase App (the core Firebase SDK) is always required and should be listed first -->
 <!-- Firebase App (the core Firebase SDK) is always required and should be listed first -->
+<!-- Firebase App (the core Firebase SDK) is always required and should be listed first -->
 <script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js"></script>
 
 <!-- Add additional Firebase products that you want to use -->
 <script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js"></script>
-    <script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-    </script>
     <script>
   // Import the functions you need from the SDKs you need
   // TODO: Add SDKs for Firebase products that you want to use
@@ -56,10 +51,10 @@
     appId: "1:7036670175:web:99992356716578ea13996a"
   };
 
-  // Initialize Firebase
+ // Initialize Firebase
   document.addEventListener("DOMContentLoaded", function() {
-      const app = initializeApp(firebaseConfig);
-      // Your Firebase code using `app` and other objects goes here
+    const app = firebase.initializeApp(firebaseConfig);
+    // Your Firebase code using `app` and other objects goes here
   });
 const firestore = firebase.firestore();
 const auth = firebase.auth();
