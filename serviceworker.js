@@ -91,4 +91,21 @@ self.addEventListener('notificationclick', event => {
     event.waitUntil(clients.openWindow(defaultUrl));
   }
 });
+self.addEventListener('message', event => {
+    if (event.data && event.data.action === 'cancelNotification') {
+        const uuid = event.data.uuid;
+        console.log(`Cancel notification request received for UUID: ${uuid}`);
+
+        // Get all notifications and find the one with the matching UUID
+        self.registration.getNotifications().then(notifications => {
+            notifications.forEach(notification => {
+                const notificationUUID = notification.data.uuid;
+                if (notificationUUID === uuid) {
+                    notification.close();
+                    console.log(`Canceled notification with UUID ${uuid}`);
+                }
+            });
+        });
+    }
+});
 
