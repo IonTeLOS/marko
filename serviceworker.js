@@ -55,48 +55,44 @@ self.addEventListener('push', event => {
     );
 });
 
+const scheduledNotifications = new Map();
+
 self.addEventListener('message', event => {
     if (event.data && event.data.action === 'scheduleNotification') {
         const notificationData = event.data.notification;
         console.log('Scheduling notification with data:', notificationData);
 
-        setTimeout(() => {
+        const timeoutId = setTimeout(() => {
             self.registration.showNotification(notificationData.title, {
                 body: notificationData.body,
                 icon: notificationData.icon,
-                data: notificationData.data // Ensure data is passed to the notification
+                data: notificationData.data
             });
+            scheduledNotifications.delete(notificationData.data.uuid);
         }, notificationData.delay || 0);
+
+        scheduledNotifications.set(notificationData.data.uuid, timeoutId);
     } else if (event.data && event.data.action === 'cancelNotification') {
         const uuid = event.data.uuid;
         console.log(`Cancel notification request received for UUID: ${uuid}`);
 
-        // Cancel the notification if it has not been shown yet
+        if (scheduledNotifications.has(uuid)) {
+            clearTimeout(scheduledNotifications.get(uuid));
+            scheduledNotifications.delete(uuid);
+            console.log(`Canceled scheduled notification with UUID ${uuid}`);
+        }
+
+        // Also check for shown notifications
         event.waitUntil(
             self.registration.getNotifications().then(notifications => {
                 notifications.forEach(notification => {
-                    const notificationUUID = notification.data.uuid;
-                    if (notificationUUID === uuid) {
+                    if (notification.data && notification.data.uuid === uuid) {
                         notification.close();
-                        console.log(`Canceled notification with UUID ${uuid}`);
+                        console.log(`Closed shown notification with UUID ${uuid}`);
                     }
                 });
             })
         );
-    } else if (event.data && event.data.action === 'checkNotificationCancellation') {
-        const uuid = event.data.uuid;
-        console.log(`Check notification cancellation request received for UUID: ${uuid}`);
-
-        // Check if the notification with the UUID should be canceled
-        self.registration.getNotifications().then(notifications => {
-            notifications.forEach(notification => {
-                const notificationUUID = notification.data.uuid;
-                if (notificationUUID === uuid) {
-                    console.log(`Notification with UUID ${uuid} should be canceled`);
-                    notification.close();
-                }
-            });
-        });
     }
 });
 
