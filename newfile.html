@@ -6,6 +6,9 @@
   <title>Marko</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M0 0h24v24H0z'/%3E%3Cpath fill='%2300bcd4' d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM15 3v2h2.59L8.7 13.89l1.41 1.41L19 6.41V9h2V3h-6z'/%3E%3C/svg%3E" type="image/svg+xml">    
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore-compat.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
     <script src="swiped-events.js"></script>
@@ -17,12 +20,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">    
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-functions.js"></script>
+
+<script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-functions.js"></script>
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -34,16 +35,10 @@
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <!-- Materialize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <!-- Firebase App (the core Firebase SDK) is always required and should be listed first -->
-<!-- Firebase App (the core Firebase SDK) is always required and should be listed first -->
-<!-- Firebase App (the core Firebase SDK) is always required and should be listed first -->
+
 
     <script>
-  // Import the functions you need from the SDKs you need
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
 
-  // Your web app's Firebase configuration
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
@@ -1321,7 +1316,6 @@ input:focus {
 <script>
 
 
-document.addEventListener("DOMContentLoaded", function() {
     const firebaseConfig = {
     apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
     authDomain: "marko-be9a9.firebaseapp.com",
@@ -1330,11 +1324,11 @@ document.addEventListener("DOMContentLoaded", function() {
     messagingSenderId: "7036670175",
     appId: "1:7036670175:web:99992356716578ea13996a"
   };
-  const app = initializeApp(firebaseConfig);
+  const app = firebase.initializeApp(firebaseConfig);
   // Your Firebase code using `app` and other objects goes here
-});
 
-        
+    </script>
+    <script>       
 function detectTheme() {
     const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const theme = localStorage.getItem("theme");
