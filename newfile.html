@@ -2499,10 +2499,13 @@ function changeURL(url) {
             const reminder = params.get('uuid');
 
 
+
             if (reminder) {
-                // before leaving app invalidate the address, so that openReminder doesnt fire again when app is reopened
-                window.history.pushState({}, '');        
+                removeReminder(reminder);
                 openReminder(reminder);
+                // go Home
+                const homeUrl = 'https://teloslinux.org/marko/newfile';
+                window.location.href = homeUrl;
             }
             if (purelink) {
                     if (confirm("Do you want to add " + params.get('friendname') + " as friend?")) {
@@ -5075,7 +5078,7 @@ window.onload = function() {
         <div class="input-field">
         <select id="timeDelaySelect" name="timeDelay">
           <option value="0" selected>No delay</option>
-          <option value="300000">In half an hour</option>
+          <option value="30000">In half an hour</option>
           <option value="60000000">In 1 hour</option>
           <option value="120000000">In 2 hours</option>
           <option value="180000000">In 3 hours</option>
