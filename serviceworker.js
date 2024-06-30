@@ -32,10 +32,25 @@ self.addEventListener('push', event => {
     console.log('Notification data to be shown:', notificationData);
 
     event.waitUntil(
-        self.registration.showNotification(notificationData.title, {
-            body: notificationData.body,
-            icon: notificationData.icon,
-            data: notificationData.data // Ensure data is passed to the notification
+        new Promise((resolve, reject) => {
+            self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+                for (let client of clientList) {
+                    client.postMessage({
+                        action: 'checkNotificationCancellation',
+                        uuid: notificationData.data.uuid
+                    });
+                }
+                resolve();
+            }).catch(error => {
+                console.error('Error getting client list:', error);
+                reject(error);
+            });
+        }).then(() => {
+            return self.registration.showNotification(notificationData.title, {
+                body: notificationData.body,
+                icon: notificationData.icon,
+                data: notificationData.data // Ensure data is passed to the notification
+            });
         })
     );
 });
@@ -56,12 +71,29 @@ self.addEventListener('message', event => {
         const uuid = event.data.uuid;
         console.log(`Cancel notification request received for UUID: ${uuid}`);
 
+        // Cancel the notification if it has not been shown yet
+        event.waitUntil(
+            self.registration.getNotifications().then(notifications => {
+                notifications.forEach(notification => {
+                    const notificationUUID = notification.data.uuid;
+                    if (notificationUUID === uuid) {
+                        notification.close();
+                        console.log(`Canceled notification with UUID ${uuid}`);
+                    }
+                });
+            })
+        );
+    } else if (event.data && event.data.action === 'checkNotificationCancellation') {
+        const uuid = event.data.uuid;
+        console.log(`Check notification cancellation request received for UUID: ${uuid}`);
+
+        // Check if the notification with the UUID should be canceled
         self.registration.getNotifications().then(notifications => {
             notifications.forEach(notification => {
                 const notificationUUID = notification.data.uuid;
                 if (notificationUUID === uuid) {
+                    console.log(`Notification with UUID ${uuid} should be canceled`);
                     notification.close();
-                    console.log(`Canceled notification with UUID ${uuid}`);
                 }
             });
         });
