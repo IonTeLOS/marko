@@ -3513,7 +3513,7 @@ function saveLinks() {
 }
  
   // this is the way friends are added..    
-  // window.onload = loadArrayFromURL();
+  window.onload = loadArrayFromURL();
         
     function openSettings () {
 var button = document.getElementById('openModal');
@@ -5146,7 +5146,7 @@ function hasPaid() {
 
 window.onload = function() {
     loadDonationParams();
-    loadArrayFromURL();
+    //loadArrayFromURL();
     checkForMissedNotifications();
     toggleBellIcons();
     initializeGoogleIdentity();
