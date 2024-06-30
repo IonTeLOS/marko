@@ -2837,26 +2837,32 @@ function toggleFormVisibility(showForm) {
 
     
 function calculateDelay() {
-      const datetimeInput = document.getElementById('datetimeInput').value;
-      const timeDelay = parseInt(document.getElementById('timeDelaySelect').value);
+    const datetimeInput = document.getElementById('datetimeInput').value;
+    const timeDelay = parseInt(document.getElementById('timeDelaySelect').value);
 
-      if (!datetimeInput) {
+    // Check if datetimeInput is empty
+    if (!datetimeInput) {
+        alert('Please enter a date and time.');
         return null;
-      }
+    }
 
-      const datetime = new Date(datetimeInput);
-      
-      if (isNaN(datetime.getTime())) {
+    // Parse the input datetime
+    const datetime = new Date(datetimeInput);
+
+    // Validate the parsed datetime
+    if (isNaN(datetime.getTime())) {
         alert('Invalid date and time.');
         return null;
-      }
-
-      const now = new Date();
-      const selectedTime = datetime.getTime();
-      const delayFromNow = selectedTime - now.getTime() + timeDelay;
-
-      return delayFromNow;
     }
+
+    // Calculate the delay from now
+    const now = new Date();
+    const selectedTime = datetime.getTime();
+    const delayFromNow = selectedTime - now.getTime() + timeDelay;
+
+    return delayFromNow;
+}
+
 
 // Function to handle form submission and construct notification
 function constructNotification(uuid, shareIcon, shareBody) {
@@ -2884,6 +2890,7 @@ function storeNotification(notificationData) {
 }
     
  function scheduleNotification(title, body, delay, icon, uuid) {
+    const notificationTime = new Date(Date.now() + delay).toISOString();
 
     // Assuming `delay` is in milliseconds from the current time
     const notificationTime = new Date(Date.now() + delay); // Calculate the time when notification will be shown
@@ -2938,10 +2945,11 @@ function checkForMissedNotifications() {
     const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
     console.log(notifications);
     const now = Date.now();
-    console.log(now);
+    console.log('Current time (epoch):', now);
 
     notifications.forEach(notification => {
-        if (now >= notification.data.scheduledTime) {
+        const scheduledTime = new Date(notification.data.scheduledTime).getTime();
+        if (now >= scheduledTime) {
             showMissedNotification(notification);
             console.log("showing..");
         } else {
