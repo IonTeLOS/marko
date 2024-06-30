@@ -2501,7 +2501,7 @@ function changeURL(url) {
 
 
             if (reminder) {
-                removeReminder(reminder);
+                removeBellAfterNotification(reminder);
                 openReminder(reminder);
                 // go Home
                 const homeUrl = 'https://teloslinux.org/marko/newfile';
@@ -2779,6 +2779,36 @@ function removeReminder(index) {
         console.error(`Index ${index} is out of bounds for links array.`);
         return;
     }
+}
+  function removeBellAfterNotification(uuid) {
+    // Find the bookmark index that matches the provided UUID
+    const index = links.findIndex(bookmark => bookmark && bookmark.length >= 6 && bookmark[5] === uuid);
+
+    if (index === -1) {
+        console.error(`Bookmark with UUID ${uuid} not found in links array.`);
+        return;
+    }
+
+    // Get the current UUID
+    const currentUUID = links[index][5];
+
+    // Prompt user for confirmation
+    const confirmed = confirm(`Are you sure you want to remove the reminder for this bookmark?`);
+    
+        // Remove the UUID (invalidate it)
+        links[index][5] = "";
+
+        // Save the updated links array to localStorage
+        localStorage.setItem('bookmarks', JSON.stringify(links));
+
+        // Update the UI
+        saveLinks();
+        renderLinks();
+        
+        toggleBellIcons(); // Update bell icons based on new state
+
+        console.log(`Bell removed for bookmark with UUID ${uuid}`);
+
 }
     // Function to get the current datetime in the correct format
 // Function to get current datetime as a string in the required format
