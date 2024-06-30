@@ -1,29 +1,60 @@
 importScripts('https://unpkg.com/idb@7/build/umd.js');
 
-// Open IndexedDB
 const dbPromise = idb.openDB('NotificationsDB', 1, {
   upgrade(db) {
-    db.createObjectStore('notifications', { keyPath: 'uuid' });
+    db.createObjectStore('notifications', { keyPath: 'data.uuid' });
   },
 });
 
-// Helper function to store notification data
 async function storeNotification(notification) {
   const db = await dbPromise;
   await db.put('notifications', notification);
 }
 
-// Helper function to retrieve all stored notifications
 async function getStoredNotifications() {
   const db = await dbPromise;
   return db.getAll('notifications');
 }
 
-// Helper function to delete a notification
 async function deleteNotification(uuid) {
   const db = await dbPromise;
   await db.delete('notifications', uuid);
 }
+
+self.addEventListener('message', event => {
+  if (event.data && event.data.action === 'storeNotification') {
+    storeNotification(event.data.notification);
+  } else if (event.data && event.data.action === 'cancelNotification') {
+    const uuid = event.data.uuid;
+    console.log(`Cancel notification request received for UUID: ${uuid}`);
+    deleteNotification(uuid);
+  }
+});
+
+self.addEventListener('sync', event => {
+  if (event.tag === 'show-notification') {
+    event.waitUntil(
+      getStoredNotifications().then(notifications => {
+        return Promise.all(notifications.map(notification => {
+          const now = new Date();
+          const scheduledTime = new Date(notification.data.scheduledTime);
+          
+          if (scheduledTime <= now) {
+            return self.registration.showNotification(notification.title, notification)
+              .then(() => deleteNotification(notification.data.uuid));
+          } else {
+            const delay = scheduledTime.getTime() - now.getTime();
+            setTimeout(() => {
+              self.registration.showNotification(notification.title, notification)
+                .then(() => deleteNotification(notification.data.uuid));
+            }, delay);
+            return Promise.resolve();
+          }
+        }));
+      })
+    );
+  }
+});
 
 // Handle push events
 self.addEventListener('push', event => {
@@ -53,20 +84,6 @@ self.addEventListener('push', event => {
         console.log('Notification scheduled for sync');
       })
   );
-});
-
-// Handle sync events
-self.addEventListener('sync', event => {
-  if (event.tag === 'show-notification') {
-    event.waitUntil(
-      getStoredNotifications().then(notifications => {
-        return Promise.all(notifications.map(notification => {
-          return self.registration.showNotification(notification.title, notification)
-            .then(() => deleteNotification(notification.data.uuid));
-        }));
-      })
-    );
-  }
 });
 
 // Handle message events (for cancelling notifications)
