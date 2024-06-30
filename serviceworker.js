@@ -1,178 +1,135 @@
-const DB_NAME = 'NotificationsDB';
-const STORE_NAME = 'notifications';
-
-function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      db.createObjectStore(STORE_NAME, { keyPath: 'data.uuid' });
-    };
-  });
-}
-
-async function storeNotification(notification) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.put(notification);
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve();
-  });
-}
-
-async function getStoredNotifications() {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, 'readonly');
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.getAll();
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
-  });
-}
-
-async function deleteNotification(uuid) {
-  const db = await openDB();
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE_NAME, 'readwrite');
-    const store = transaction.objectStore(STORE_NAME);
-    const request = store.delete(uuid);
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve();
-  });
-}
-
-self.addEventListener('message', event => {
-  if (event.data && event.data.action === 'storeNotification') {
-    storeNotification(event.data.notification);
-  } else if (event.data && event.data.action === 'cancelNotification') {
-    const uuid = event.data.uuid;
-    console.log(`Cancel notification request received for UUID: ${uuid}`);
-    deleteNotification(uuid);
-  }
+self.addEventListener('install', event => {
+    console.log('Service Worker installed.');
 });
 
-self.addEventListener('sync', event => {
-  if (event.tag === 'show-notification') {
-    event.waitUntil(
-      getStoredNotifications().then(notifications => {
-        return Promise.all(notifications.map(notification => {
-          const now = new Date();
-          const scheduledTime = new Date(notification.data.scheduledTime);
-          
-          if (scheduledTime <= now) {
-            return self.registration.showNotification(notification.title, notification)
-              .then(() => deleteNotification(notification.data.uuid));
-          } else {
-            const delay = scheduledTime.getTime() - now.getTime();
-            setTimeout(() => {
-              self.registration.showNotification(notification.title, notification)
-                .then(() => deleteNotification(notification.data.uuid));
-            }, delay);
-            return Promise.resolve();
-          }
-        }));
-      })
-    );
-  }
+self.addEventListener('activate', event => {
+    console.log('Service Worker activated.');
 });
 
-// Handle push events
 self.addEventListener('push', event => {
-  console.log('Push notification received:', event);
+    console.log('Push notification received:', event);
 
-  let notificationData = {
-    title: 'Marko Notification',
-    body: 'open your reminder...',
-    icon: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notification_active/default/48px.svg',
-    data: {}
-  };
+    let notificationData = {
+        title: 'Marko Notification',
+        body: 'open your reminder...',
+        icon: 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notification_active/default/48px.svg',
+        data: {} // Initialize data as an empty object
+    };
 
-  if (event.data) {
-    try {
-      const payload = event.data.json();
-      notificationData = { ...notificationData, ...payload };
-      console.log('Parsed payload:', payload);
-    } catch (e) {
-      console.error('Error parsing push notification data:', e);
+    if (event.data) {
+        try {
+            const payload = event.data.json();
+            notificationData = {
+                ...notificationData,
+                ...payload
+            };
+            console.log('Parsed payload:', payload);
+        } catch (e) {
+            console.error('Error parsing push notification data:', e);
+        }
     }
-  }
 
-  event.waitUntil(
-    storeNotification(notificationData)
-      .then(() => self.registration.sync.register('show-notification'))
-      .then(() => {
-        console.log('Notification scheduled for sync');
-      })
-  );
-});
-
-// Handle message events (for cancelling notifications)
-self.addEventListener('message', event => {
-  if (event.data && event.data.action === 'cancelNotification') {
-    const uuid = event.data.uuid;
-    console.log(`Cancel notification request received for UUID: ${uuid}`);
+    console.log('Notification data to be shown:', notificationData);
 
     event.waitUntil(
-      deleteNotification(uuid)
-        .then(() => self.registration.getNotifications())
-        .then(notifications => {
-          notifications.forEach(notification => {
-            if (notification.data && notification.data.uuid === uuid) {
-              notification.close();
-              console.log(`Closed shown notification with UUID ${uuid}`);
-            }
-          });
+        new Promise((resolve, reject) => {
+            self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+                // Notify clients of new notification
+                for (let client of clientList) {
+                    client.postMessage({
+                        action: 'checkNotificationCancellation',
+                        uuid: notificationData.data.uuid
+                    });
+                }
+                resolve();
+            }).catch(error => {
+                console.error('Error getting client list:', error);
+                reject(error);
+            });
+        }).then(() => {
+            return self.registration.showNotification(notificationData.title, {
+                body: notificationData.body,
+                icon: notificationData.icon,
+                data: notificationData.data // Ensure data is passed to the notification
+            });
         })
     );
-  }
 });
 
-// Handle notification clicks
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-  console.log('Notification clicked:', event.notification);
-  console.log('Notification data:', event.notification.data);
+const scheduledNotifications = new Map();
 
-  const uuid = event.notification.data ? event.notification.data.uuid : null;
-  console.log('UUID from notification data:', uuid);
+self.addEventListener('message', event => {
+    if (event.data && event.data.action === 'scheduleNotification') {
+        const notificationData = event.data.notification;
+        console.log('Scheduling notification with data:', notificationData);
 
-  if (uuid) {
-    const urlToOpen = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
-    console.log('Opening URL:', urlToOpen);
+        const timeoutId = setTimeout(() => {
+            self.registration.showNotification(notificationData.title, {
+                body: notificationData.body,
+                icon: notificationData.icon,
+                data: notificationData.data
+            });
+            scheduledNotifications.delete(notificationData.data.uuid);
+        }, notificationData.delay || 0);
 
-    event.waitUntil(
-      clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
-        if (clientList.length > 0) {
-          for (let client of clientList) {
-            if (client.url === urlToOpen && 'focus' in client) {
-              return client.focus();
-            }
-          }
-          if (clients.openWindow) {
-            return clients.openWindow(urlToOpen);
-          }
+        scheduledNotifications.set(notificationData.data.uuid, timeoutId);
+    } else if (event.data && event.data.action === 'cancelNotification') {
+        const uuid = event.data.uuid;
+        console.log(`Cancel notification request received for UUID: ${uuid}`);
+
+        if (scheduledNotifications.has(uuid)) {
+            clearTimeout(scheduledNotifications.get(uuid));
+            scheduledNotifications.delete(uuid);
+            console.log(`Canceled scheduled notification with UUID ${uuid}`);
         }
-        return clients.openWindow(urlToOpen);
-      })
-    );
-  } else {
-    console.error('UUID is missing in notification data');
-    const defaultUrl = 'https://teloslinux.org/marko/newfile';
-    event.waitUntil(clients.openWindow(defaultUrl));
-  }
+
+        // Also check for shown notifications
+        event.waitUntil(
+            self.registration.getNotifications().then(notifications => {
+                notifications.forEach(notification => {
+                    if (notification.data && notification.data.uuid === uuid) {
+                        notification.close();
+                        console.log(`Closed shown notification with UUID ${uuid}`);
+                    }
+                });
+            })
+        );
+    }
 });
 
-// Service Worker installation
-self.addEventListener('install', event => {
-  console.log('Service Worker installed.');
-});
+self.addEventListener('notificationclick', event => {
+    event.notification.close();
+    console.log('Notification clicked:', event.notification);
+    console.log('Notification data:', event.notification.data);
 
-// Service Worker activation
-self.addEventListener('activate', event => {
-  console.log('Service Worker activated.');
+    const uuid = event.notification.data ? event.notification.data.uuid : null;
+    console.log('UUID from notification data:', uuid);
+
+    if (uuid) {
+        const urlToOpen = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
+        console.log('Opening URL:', urlToOpen);
+
+        event.waitUntil(
+            clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+                if (clientList.length > 0) {
+                    // Check if there's already an open tab with the target URL
+                    for (let i = 0; i < clientList.length; i++) {
+                        const client = clientList[i];
+                        if (client.url === urlToOpen && 'focus' in client) {
+                            return client.focus();
+                        }
+                    }
+                    // If no existing tab with the target URL, open a new one
+                    if (clientList[0].focus) {
+                        return clientList[0].focus().then(client => client.navigate(urlToOpen));
+                    }
+                }
+                return clients.openWindow(urlToOpen);
+            })
+        );
+    } else {
+        console.error('UUID is missing in notification data');
+        const defaultUrl = 'https://teloslinux.org/marko/newfile';
+        event.waitUntil(clients.openWindow(defaultUrl));
+    }
 });
