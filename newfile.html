@@ -1319,7 +1319,10 @@ input:focus {
 
   </style>    
 <script>
-const firebaseConfig = {
+
+
+document.addEventListener("DOMContentLoaded", function() {
+    const firebaseConfig = {
     apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
     authDomain: "marko-be9a9.firebaseapp.com",
     projectId: "marko-be9a9",
@@ -1327,9 +1330,9 @@ const firebaseConfig = {
     messagingSenderId: "7036670175",
     appId: "1:7036670175:web:99992356716578ea13996a"
   };
-
-firebase.initializeApp(firebaseConfig);
+  const app = firebase.initializeApp(firebaseConfig);
   // Your Firebase code using `app` and other objects goes here
+});
 
         
 function detectTheme() {
