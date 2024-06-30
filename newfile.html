@@ -2035,11 +2035,6 @@ function saveBookmark(linkData) {
         easyMDE.value('');
         hideAllFields();
     }
-window.onload = function() {
-    loadArrayFromURL();
-    checkForMissedNotifications();
-    toggleBellIcons();
-}; 
     // main function
     window.addLink = function() {
         const linkType = linkTypeSelect.value;
@@ -5144,6 +5139,9 @@ function hasPaid() {
 window.onload = function() {
     loadDonationParams();
     initializeGoogleIdentity();
+    loadArrayFromURL();
+    checkForMissedNotifications();
+    toggleBellIcons();
 }; 
 </script>
 </head>
