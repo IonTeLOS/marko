@@ -29,11 +29,12 @@
     <!-- Materialize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <!-- Firebase App (the core Firebase SDK) is always required and should be listed first -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+<!-- Firebase App (the core Firebase SDK) is always required and should be listed first -->
+<script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-app.js"></script>
 
 <!-- Add additional Firebase products that you want to use -->
-<script src="https://www.gstatic.com/firebasejs/10.2.2/firebase-firestore.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.2.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.4.0/firebase-auth.js"></script>
     <script>
   // Import the functions you need from the SDKs you need
   // TODO: Add SDKs for Firebase products that you want to use
@@ -50,8 +51,12 @@
   };
 
   // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
     
+// Now you can use Firebase services like Firestore, Authentication, etc.
+const firestore = firebase.firestore();
+const auth = firebase.auth();
+        
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
       navigator.serviceWorker.register('service-worker.js').then(function(registration) {
