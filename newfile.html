@@ -2436,7 +2436,9 @@ function changeURL(url) {
 
 
             if (reminder) {
-                openReminder(params.get('uuid'));
+                // before leaving app invalidate the address, so that openReminder doesnt fire again when app is reopened
+                window.history.pushState({}, '');        
+                openReminder(reminder);
             }
             if (purelink) {
                     if (confirm("Do you want to add " + params.get('friendname') + " as friend?")) {
