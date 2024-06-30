@@ -2501,11 +2501,8 @@ function changeURL(url) {
 
 
             if (reminder) {
-                removeBellAfterNotification(reminder);
                 openReminder(reminder);
-                // go Home
-                const homeUrl = 'https://teloslinux.org/marko/newfile';
-                window.location.href = homeUrl;
+                removeBellAfterNotification(reminder);
             }
             if (purelink) {
                     if (confirm("Do you want to add " + params.get('friendname') + " as friend?")) {
