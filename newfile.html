@@ -51,9 +51,10 @@
   };
 
   // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-    
-// Now you can use Firebase services like Firestore, Authentication, etc.
+  document.addEventListener("DOMContentLoaded", function() {
+    const app = firebase.initializeApp(firebaseConfig);
+    // Your Firebase code using `app` and other objects goes here
+  });
 const firestore = firebase.firestore();
 const auth = firebase.auth();
         
