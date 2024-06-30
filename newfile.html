@@ -2036,11 +2036,9 @@ function saveBookmark(linkData) {
         hideAllFields();
     }
 window.onload = function() {
-    loadDonationParams();
     loadArrayFromURL();
     checkForMissedNotifications();
     toggleBellIcons();
-    initializeGoogleIdentity();
 }; 
     // main function
     window.addLink = function() {
@@ -5777,7 +5775,10 @@ function parseBookmarkLink(url) {
     color
   };
 }
-    
+window.onload = function() {
+    loadDonationParams();
+    initializeGoogleIdentity();
+}; 
 </script>
 </body>
 </html>
