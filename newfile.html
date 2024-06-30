@@ -2936,11 +2936,13 @@ function storeNotification(notificationData) {
     
 function checkForMissedNotifications() {
     const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    console.log(notifications);
     const now = Date.now();
 
     notifications.forEach(notification => {
         if (now >= notification.data.scheduledTime) {
             showMissedNotification(notification);
+            console.log("showing..");
         }
     });
 
@@ -2954,7 +2956,7 @@ function checkForMissedNotifications() {
         new Notification(notification.title, {
             body: notification.body,
             icon: notification.icon,
-            data: notification.data
+            data: notification.data.uuid
         });
 
         // Handle the notification click
@@ -2962,17 +2964,8 @@ function checkForMissedNotifications() {
             event.preventDefault(); // Prevent the browser from focusing the Notification's tab
             window.open(`https://teloslinux.org/marko/newfile?uuid=${notification.data.uuid}`, '_blank');
         };
-
-        // Remove the notification from the array in localStorage
-        removeShownMissedNotification(notification.data.uuid);
     }
 }
-    
-function removeShownMissedNotification(uuid) {
-    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-    const updatedNotifications = notifications.filter(notification => notification.data.uuid !== uuid);
-    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
-}    
     
 function cancelScheduledNotification(uuid) {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
