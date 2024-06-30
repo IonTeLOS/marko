@@ -2627,7 +2627,7 @@ console.log('Updated bookmark array:', bookmark);
         const result = constructLinkFromBookmark(index, false); // Example call with full=false
         if (result) {
         // Use result.shareTitle and result.shareLink here if needed
-        scheduleNotification(result.shareTitle, result.shareBody, 10000, result.shareIcon, uuid);
+        scheduleNotification(result.shareTitle, result.shareBody, 20000, result.shareIcon, uuid);
 }
     } else {
         console.error(`Index ${index} is out of bounds for links array.`);
