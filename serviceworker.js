@@ -1,24 +1,49 @@
-importScripts('https://unpkg.com/idb@7/build/umd.js');
+const DB_NAME = 'NotificationsDB';
+const STORE_NAME = 'notifications';
 
-const dbPromise = idb.openDB('NotificationsDB', 1, {
-  upgrade(db) {
-    db.createObjectStore('notifications', { keyPath: 'data.uuid' });
-  },
-});
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, 1);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      db.createObjectStore(STORE_NAME, { keyPath: 'data.uuid' });
+    };
+  });
+}
 
 async function storeNotification(notification) {
-  const db = await dbPromise;
-  await db.put('notifications', notification);
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.put(notification);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve();
+  });
 }
 
 async function getStoredNotifications() {
-  const db = await dbPromise;
-  return db.getAll('notifications');
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, 'readonly');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.getAll();
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
+  });
 }
 
 async function deleteNotification(uuid) {
-  const db = await dbPromise;
-  await db.delete('notifications', uuid);
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(STORE_NAME, 'readwrite');
+    const store = transaction.objectStore(STORE_NAME);
+    const request = store.delete(uuid);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve();
+  });
 }
 
 self.addEventListener('message', event => {
