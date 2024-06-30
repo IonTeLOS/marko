@@ -17,12 +17,12 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">    
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth.js"></script>
 
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore.js"></script>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-functions.js"></script>
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 
@@ -1328,10 +1328,8 @@ const firebaseConfig = {
     appId: "1:7036670175:web:99992356716578ea13996a"
   };
 
-document.addEventListener("DOMContentLoaded", function() {
-  const app = initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
   // Your Firebase code using `app` and other objects goes here
-});
 
         
 function detectTheme() {
@@ -2888,8 +2886,8 @@ function initializeDeviceToken() {
     }
     
     // Send this token to Firebase
-    return firestore().collection('devices').doc(deviceToken).set({
-        lastSeen: firestore.FieldValue.serverTimestamp()
+    return firebase.firestore().collection('devices').doc(deviceToken).set({
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
 }
     
@@ -2903,7 +2901,7 @@ function initializeDeviceToken() {
         if (fcmToken) {
             console.log('FCM Token:', fcmToken);
             // Store FCM token in Firebase, associated with the device token
-            return firestore().collection('devices').doc(deviceToken).update({
+            return firebase.firestore().collection('devices').doc(deviceToken).update({
                 fcmToken: fcmToken
             });
         }
@@ -2983,7 +2981,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
                 };
                 
                 // Send notification data to Firebase
-                return firestore().collection('scheduledNotifications').add(notificationData);
+                return firebase.firestore().collection('scheduledNotifications').add(notificationData);
             } else {
                 console.log('Notification permission denied.');
             }
