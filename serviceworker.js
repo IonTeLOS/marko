@@ -4,26 +4,7 @@ self.addEventListener('install', event => {
 
 self.addEventListener('activate', event => {
     console.log('Service Worker activated.');
-        // Retrieve and process stored notifications
-    const storedNotifications = JSON.parse(localStorage.getItem('storedNotifications')) || [];
-    storedNotifications.forEach(notificationData => {
-        self.registration.showNotification(notificationData.title, {
-            body: notificationData.body,
-            icon: notificationData.icon,
-            data: notificationData.data
-        });
-    });
-
-    // Clear stored notifications after processing
-    localStorage.removeItem('storedNotifications');
 });
-
-// Function to save notification data to storage for future retrieval of missed notifications
-function saveNotificationToStorage(notificationData) {
-    const storedNotifications = JSON.parse(localStorage.getItem('storedNotifications')) || [];
-    storedNotifications.push(notificationData);
-    localStorage.setItem('storedNotifications', JSON.stringify(storedNotifications));
-}
 
 self.addEventListener('push', event => {
     console.log('Push notification received:', event);
@@ -73,24 +54,6 @@ self.addEventListener('push', event => {
             });
         })
     );
-
-    // Save notification to storage if no clients are open
-    if (event.waitUntil) {
-        event.waitUntil(
-            new Promise((resolve, reject) => {
-                self.clients.matchAll().then(clients => {
-                    if (clients.length === 0) {
-                        // Save notification data to storage for later retrieval
-                        saveNotificationToStorage(notificationData);
-                    }
-                    resolve();
-                }).catch(err => {
-                    console.error('Error saving notification to storage:', err);
-                    reject(err);
-                });
-            })
-        );
-    }
 });
 
 const scheduledNotifications = new Map();
