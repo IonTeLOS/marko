@@ -5141,7 +5141,10 @@ function hasPaid() {
         const url = 'https://teloslinux.org/marko/newfile?donate=true';
         window.location.href = url;
 }
-
+window.onload = function() {
+    loadDonationParams();
+    initializeGoogleIdentity();
+}; 
 </script>
 </head>
 <body data-swipe-threshold="100" data-swipe-timeout="300">   
@@ -5775,10 +5778,7 @@ function parseBookmarkLink(url) {
     color
   };
 }
-window.onload = function() {
-    loadDonationParams();
-    initializeGoogleIdentity();
-}; 
+
 </script>
 </body>
 </html>
