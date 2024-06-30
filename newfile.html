@@ -2792,9 +2792,7 @@ function removeReminder(index) {
     // Get the current UUID
     const currentUUID = links[index][5];
 
-    // Prompt user for confirmation
-    const confirmed = confirm(`Are you sure you want to remove the reminder for this bookmark?`);
-    
+        
         // Remove the UUID (invalidate it)
         links[index][5] = "";
 
