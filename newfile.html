@@ -2861,8 +2861,8 @@ function constructNotification(uuid, shareIcon, shareBody) {
               navigator.serviceWorker.ready.then(registration => {
                 const notificationData = {
                   title: title || 'Marko Notification',
-                  body: textNotInput || body || 'open your reminder..',
-                  delay: newDelay,
+                  body: body || 'open your reminder..',
+                  delay: delay,
                   icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
                   data: { uuid: uuid } 
                 };
