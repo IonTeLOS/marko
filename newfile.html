@@ -1380,9 +1380,6 @@ function toggleTheme() {
 
     
   
-
-
-
 let linkTypeSelect;
 let iconSourceSelect;
 let currentLink = null; // Global variable to store current link    
@@ -2297,7 +2294,7 @@ document.getElementById('phone-number').addEventListener('keydown', function(eve
             }
         }
         
-        
+
 let links = [];    
     const linkIcon = 'https://fonts.gstatic.com/s/i/materialicons/open_in_new/v15/24px.svg';
     const mailIcon = 'https://fonts.gstatic.com/s/i/materialicons/mail/v15/24px.svg';
@@ -2647,8 +2644,8 @@ function toggleBellIcons() {
 
 
 
+    
 
-// Function to remove a bookmark and then add it again at the same index with data-uuid
 function addReminderToMarko(index) {
     // Check if index is within bounds of the links array
     if (index >= 0 && index < links.length) {
@@ -2664,21 +2661,20 @@ function addReminderToMarko(index) {
         }
 
         // Add the uuid as the last element in the bookmark array
-        // Check if there is already a UUID in the array
-if (bookmark.length >= 6) {
-    // Replace the existing UUID (if any) with the new one
-    bookmark[5] = uuid;
-} else {
-    // Add the UUID as the 6th item
-    bookmark.push(uuid);
-}
+        if (bookmark.length >= 6) {
+            // Replace the existing UUID (if any) with the new one
+            bookmark[5] = uuid;
+        } else {
+            // Add the UUID as the 6th item
+            bookmark.push(uuid);
+        }
 
-// Ensure there are no more than 6 items in the array
-if (bookmark.length > 6) {
-    bookmark.splice(0, bookmark.length - 6); // Remove excess items
-}
-            
-console.log('Updated bookmark array:', bookmark);
+        // Ensure there are no more than 6 items in the array
+        if (bookmark.length > 6) {
+            bookmark.splice(0, bookmark.length - 6); // Remove excess items
+        }
+
+        console.log('Updated bookmark array:', bookmark);
 
         // Update the bookmark in the links array
         links[index] = bookmark;
@@ -2689,22 +2685,54 @@ console.log('Updated bookmark array:', bookmark);
         // Call saveLinks and renderLinks to update the UI
         saveLinks();
         renderLinks();
-        
+
         toggleBellIcons();
 
-        constructLinkFromBookmark(index, false);
-        const result = constructLinkFromBookmark(index, false); // Example call with full=false
-        if (result) {
-        toggleFormVisibility(true); // Show the form
-    
-        // Use result.shareTitle and result.shareLink here if needed
-        scheduleNotification(result.shareTitle, result.shareBody, 20000, result.shareIcon, uuid);
-}
+        // Call constructLinkFromBookmark to get shareTitle, shareBody, and shareIcon
+        const { shareTitle, shareBody, shareIcon } = constructLinkFromBookmark(index, false);
+
+        // Store uuid, shareBody, and shareIcon in sessionStorage
+        const reminderDetails = {
+            uuid,
+            shareBody,
+            shareIcon
+        };
+        sessionStorage.setItem('reminderDetails', JSON.stringify(reminderDetails));
+         
+        // show the form after storing data in sessionStorage
+        toggleFormVisibility(true);
     } else {
         console.error(`Index ${index} is out of bounds for links array.`);
         return;
     }
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Event listener for form submission
+    document.getElementById('submitButton').addEventListener('click', function(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        // Retrieve uuid, shareBody, and shareIcon from sessionStorage
+        const reminderDetails = JSON.parse(sessionStorage.getItem('reminderDetails'));
+        if (!reminderDetails) {
+            console.error('Reminder details not found in sessionStorage.');
+            return;
+        }
+
+        const { uuid, shareBody, shareIcon } = reminderDetails;
+        console.log('Retrieved reminder details:', reminderDetails);
+
+        // Construct notification details
+        const { textInput, delay } = constructNotification();
+        console.log('Constructed notification details:', { textInput, delay });
+
+        // Example usage of returned values
+        scheduleNotification(textInput, shareBody, delay, shareIcon, uuid);
+        console.log('Notification scheduled with:', { textInput, shareBody, delay, shareIcon, uuid });
+    });
+});
+
 
 function removeReminder(index) {
     if (index >= 0 && index < links.length) {
@@ -2750,6 +2778,7 @@ function removeReminder(index) {
     }
 }
     // Function to get the current datetime in the correct format
+// Function to get current datetime as a string in the required format
 function getCurrentDatetimeString() {
   const now = new Date();
   const year = now.getFullYear();
@@ -2759,22 +2788,24 @@ function getCurrentDatetimeString() {
   const minutes = ('0' + now.getMinutes()).slice(-2);
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
-    // Function to toggle form visibility
-    function toggleFormVisibility(showForm) {
-      const formContainer = document.getElementById('notificationForm');
 
+// Function to toggle form visibility
+function toggleFormVisibility(showForm) {
+  const formContainer = document.getElementById('notificationForm');
+  const datetimeInput = document.getElementById('datetimeInput'); // Correctly get datetime input element
 
-      if (showForm) {
-                  formContainer.classList.add('active'); // Show the form
+  if (showForm) {
+    formContainer.classList.add('active'); // Show the form
+    datetimeInput.value = getCurrentDatetimeString(); // Set current datetime string to datetime input
+  } else {
+    formContainer.classList.remove('active'); // Hide the form
+    // Clear form inputs
+    datetimeInput.value = '';
+    document.getElementById('timeDelaySelect').value = '0';
+    document.getElementById('textInput').value = '';
+  }
+}
 
-      } else {
-        formContainer.classList.remove('active'); // Hide the form
-        // Clear form inputs
-        datetimeInput.value = '';
-        document.getElementById('timeDelaySelect').value = '0';
-        document.getElementById('textInput').value = '';
-      }
-    }
     
 function calculateDelay() {
       const datetimeInput = document.getElementById('datetimeInput').value;
@@ -2798,17 +2829,30 @@ function calculateDelay() {
       return delayFromNow;
     }
 
-        
+// Function to handle form submission and construct notification
+function constructNotification(uuid, shareIcon, shareBody) {
+    
+  const textNotInput = document.getElementById('textInput').value;
+  const newDelay = calculateDelay(); // Assuming you have a function to calculate delay
+
+  // Log the values to show they are accessible globally
+  console.log('Text Input:', textNotInput);
+  console.log('New Delay:', newDelay);
+
+  // Optionally, close the form after submission
+  toggleFormVisibility(false);
+
+  // Return an object with the values
+  return {
+    textInput: textNotInput,
+    delay: newDelay
+  };
+}
+
+    
  function scheduleNotification(title, body, delay, icon, uuid) {
-     const textInput = document.getElementById('textInput').value;
-      const newDelay = calculateDelay();
-      const datetimeInput = document.getElementById('datetimeInput');
-      datetimeInput.value = getCurrentDatetimeString(); // Set the current datetime
-      if (newDelay === null) {
-        return; // Don't proceed if delay calculation failed
-      } else {
-          console.log(newDelay);
-      }
+
+
       if ('Notification' in window) {
         toggleFormVisibility(false);  
         Notification.requestPermission().then(permission => {
@@ -2817,7 +2861,7 @@ function calculateDelay() {
               navigator.serviceWorker.ready.then(registration => {
                 const notificationData = {
                   title: title || 'Marko Notification',
-                  body: body || 'open your reminder..',
+                  body: textNotInput || body || 'open your reminder..',
                   delay: newDelay,
                   icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
                   data: { uuid: uuid } 
@@ -2887,9 +2931,6 @@ function openReminder(uuid) {
     });
 }
 
-    function addReminder() {
-        alert("added");
-    }
 
 //localStorage.clear();
 // main function to show the bookmarks that are stored as arrays in local storage as visual elements    
@@ -5053,7 +5094,9 @@ window.onload = function() {
         <label for="textInput">Enter Text</label>
         <input type="text" id="textInput" name="textInput" placeholder="Type something...">
       </div>
-      <button type="button" class="btn" onclick="scheduleNotification()">Submit</button>
+<button type="button" class="btn" id="submitButton" style="display: flex; align-items: center; justify-content: center;">
+  Submit <i class="material-icons" style="margin-left: 5px;">send</i>
+</button>
     </form>
   </div>
     </div>
