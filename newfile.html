@@ -2898,12 +2898,8 @@ function storeNotification(notificationData) {
  function scheduleNotification(title, body, delay, icon, uuid) {
     const notificationTime = new Date(Date.now() + delay).toISOString();
 
-
-    // Format the notification time in DD.MM.YY HH:MM format
-    const formattedTime = `${('0' + notificationTime.getDate()).slice(-2)}.${('0' + (notificationTime.getMonth() + 1)).slice(-2)}.${String(notificationTime.getFullYear()).slice(-2)} ${('0' + notificationTime.getHours()).slice(-2)}:${('0' + notificationTime.getMinutes()).slice(-2)}`;
-
-    // Log the formatted time
-    console.log(`Notification will be shown at: ${formattedTime}`);
+    console.log("notificationTime");
+    
       if ('Notification' in window) {
         toggleFormVisibility(false);  
         Notification.requestPermission().then(permission => {
