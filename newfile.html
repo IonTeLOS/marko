@@ -2938,11 +2938,14 @@ function checkForMissedNotifications() {
     const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
     console.log(notifications);
     const now = Date.now();
+    console.log(now);
 
     notifications.forEach(notification => {
         if (now >= notification.data.scheduledTime) {
             showMissedNotification(notification);
             console.log("showing..");
+        } else {
+            console.log("no missed notifications");
         }
     });
 
