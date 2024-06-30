@@ -53,11 +53,10 @@
 
  // Initialize Firebase
   document.addEventListener("DOMContentLoaded", function() {
-    const app = firebase.initializeApp(firebaseConfig);
+    const app = initializeApp(firebaseConfig);
     // Your Firebase code using `app` and other objects goes here
   });
-const firestore = firebase.firestore();
-const auth = firebase.auth();
+
         
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
