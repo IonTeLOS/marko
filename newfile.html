@@ -202,7 +202,7 @@ background-color: #1f1b24;
 }
 
 .bookmark:hover .bookmark-icon {
-  color: #000000;
+  color: #0d47a1;
 }
 
     .delete-icon {
@@ -213,7 +213,7 @@ background-color: #1f1b24;
       transform: translateY(-50%); /* Center icon vertically */
       opacity: 0; /* Initially hide the delete icon */
       transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Add transitions */
-      font-size: 24px; /* Slightly smaller than main icons */
+      font-size: 24px; /* Smaller than main icons */
     }
 
     .bookmark:hover .delete-icon,
@@ -227,6 +227,18 @@ background-color: #1f1b24;
       cursor: pointer; /* Change cursor to indicate clickability */
       transform: translateY(-50%) scale(1.2); /* Scale up more on direct hover */
     }
+.bookmark .bell-icon {
+    position: absolute; /* Position bell icon absolutely */
+    top: 50%;
+    right: 10px; /* Adjust as necessary */
+    transform: translateY(-50%); /* Center icon vertically */
+    font-size: 24px; /* Smaller than main icons */
+}
+    .bell-icon:hover {
+      color: #ffd700; /* Darker red on hover */
+      cursor: pointer; /* Change cursor to indicate clickability */
+      transform: translateY(-50%) scale(1.2); /* Scale up more on direct hover */
+    }    
 
     .content {
       display: none; /* Initially hide content divs */
@@ -1306,6 +1318,7 @@ function toggleTheme() {
 
 let linkTypeSelect;
 let iconSourceSelect;
+let currentLink = null; // Global variable to store current link    
 
 document.addEventListener('DOMContentLoaded', function() {
     // definitions of elements
@@ -2524,29 +2537,47 @@ function changeURL(url) {
                 }
             }
 
-function toggleBell(index) {
-    // Check if index is within bounds of the links array
-    if (index >= 0 && index < links.length) {
-        // Get the bookmark array at the specified index
-        const bookmark = links[index];
+function toggleBellIcons() {
+    const bookmarks = document.querySelectorAll('.bookmark');
 
-        // Ensure bookmark is defined and has a UUID (i.e., has at least 6 elements)
-        if (bookmark && bookmark.length >= 6 && bookmark[5]) {
-            // Locate the bookmark wrapper element
-            const bookmarkWrapper = document.querySelector(`.bookmark-wrapper[data-index='${index}']`);
+    bookmarks.forEach((bookmark) => {
+        const index = bookmark.getAttribute('data-index');
+        const wrapper = bookmark.querySelector('.bookmark-wrapper');
+        const bellIcon = document.getElementById(`bell-${index}`);
+        const deleteIcon = document.getElementById(`delete-${index}`); // Get the delete icon element
 
-            if (bookmarkWrapper) {
-                // Check if the bell icon already exists, if not, add it
-                if (!bookmarkWrapper.querySelector('.bell-icon')) {
-                    const bellIconHTML = `<span class="material-icons bell-icon" style="margin-left: 8px; display: inline-block;">notifications_active</span>`;
-                    bookmarkWrapper.innerHTML += bellIconHTML;
-                }
+        if (!wrapper) {
+            console.error(`No .bookmark-wrapper found inside #bookmark-${index}`);
+            return;
+        }
+
+        const uuid = wrapper.getAttribute('data-uuid');
+
+        if (!bellIcon) {
+            console.error(`No bell icon found with id bell-${index}`);
+            return;
+        }
+
+        // Check if uuid is blank, "null", or "undefined"
+        if (uuid === "" || uuid === "null" || uuid === "undefined") {
+            bellIcon.style.display = 'none'; // Hide the bell icon
+        } else {
+            bellIcon.style.display = 'inline-block'; // Show the bell icon
+            // Hide the delete icon
+            if (deleteIcon) {
+                deleteIcon.style.display = 'none';
             }
         }
-    } else {
-        console.error(`Index ${index} is out of bounds for links array.`);
-    }
+
+        // If bell icon is visible, ensure delete icon is hidden
+        if (bellIcon.style.display === 'inline-block' && deleteIcon) {
+            deleteIcon.style.display = 'none';
+        }
+    });
 }
+
+
+
 
 // Function to remove a bookmark and then add it again at the same index with data-uuid
 function addReminderToMarko(index) {
@@ -2590,7 +2621,7 @@ console.log('Updated bookmark array:', bookmark);
         saveLinks();
         renderLinks();
         
-        toggleBell(index);
+        toggleBellIcons();
 
         constructLinkFromBookmark(index, false);
         const result = constructLinkFromBookmark(index, false); // Example call with full=false
@@ -2604,6 +2635,50 @@ console.log('Updated bookmark array:', bookmark);
     }
 }
 
+function removeReminder(index) {
+    if (index >= 0 && index < links.length) {
+        // Check if there's a bookmark at the specified index
+        let bookmark = links[index];
+
+        if (!bookmark || bookmark.length < 6) {
+            console.error(`No valid bookmark found at index ${index}`);
+            return;
+        }
+
+        const currentUUID = bookmark[5]; // Get the current UUID
+
+        // Prompt user for confirmation
+        const confirmed = confirm(`Are you sure you want to remove the reminder for this bookmark?`);
+        
+        if (confirmed) {
+            // Remove the UUID (invalidate it)
+            bookmark[5] = "";
+
+            // Update the links array
+            links[index] = bookmark;
+
+            // Save the updated links array to localStorage
+            localStorage.setItem('bookmarks', JSON.stringify(links));
+
+            // Call saveLinks and renderLinks to update the UI
+            saveLinks();
+            renderLinks();
+
+            toggleBellIcons();
+
+            // Optionally, you may want to cancel any scheduled notifications for the removed bookmark
+            cancelScheduledNotification(currentUUID);
+
+            console.log(`Reminder removed for bookmark at index ${index}`);
+        } else {
+            console.log(`User canceled removal of reminder for bookmark at index ${index}`);
+        }
+    } else {
+        console.error(`Index ${index} is out of bounds for links array.`);
+        return;
+    }
+}
+    
  function scheduleNotification(title, body, delay, icon, uuid) {
       if ('Notification' in window) {
         Notification.requestPermission().then(permission => {
@@ -2637,6 +2712,23 @@ console.log('Updated bookmark array:', bookmark);
         console.log('Notifications not supported in this browser.');
       }
     }
+    
+function cancelScheduledNotification(uuid) {
+    if ('serviceWorker' in navigator && 'PushManager' in window) {
+        navigator.serviceWorker.ready.then(registration => {
+            registration.active.postMessage({
+                action: 'cancelNotification',
+                uuid: uuid
+            });
+
+            console.log(`Requested cancellation of notification with UUID ${uuid}`);
+        }).catch(error => {
+            console.error('Service Worker registration error:', error);
+        });
+    } else {
+        console.log('Service Worker or Push API not supported.');
+    }
+}
     
 // Function to find and click bookmark with matching UUID
 function openReminder(uuid) {
@@ -2847,13 +2939,15 @@ const bookmarkElement = document.createElement('div');
                 bookmarkElement.innerHTML = `
     <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
      onmouseout="hideTooltip()" onclick="openMarko(openLink, '${link[1]}')">
+
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon">
             </div>
 <span class="bookmark-title">${link[2]}</span>
     </div>        
-</div>
+</div> 
+    <span id="bell-${index}" class="material-icons bell-icon" style="display: none;" onclick="removeReminder(${index}); event.stopPropagation();">notifications_active</span>
         <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
     </div>
 `;
@@ -2866,7 +2960,6 @@ const bookmarkElement = document.createElement('div');
                 
         }
 // detect if run on mobile or on desktop based on screen width. TODO use this function to make it more mobile friendly
-let currentLink = null; // Global variable to store current link
     
 function showTooltip(link) {
     currentLink = link;
@@ -2904,6 +2997,7 @@ function showTooltip(link) {
         }
     }
         
+
         function renderFriend(friend) {
             const linkContainer = document.querySelector('.bookmarks-container');
             linkContainer.innerHTML = ''; // Clear the container
@@ -4790,7 +4884,8 @@ function hasPaid() {
 
 window.onload = function() {
     loadDonationParams();
-    loadArrayFromURL()
+    loadArrayFromURL();
+    toggleBellIcons();
     initializeGoogleIdentity();
     // openReminder('293b5970-a013-4a63-8788-165885b80766');    //test
 
