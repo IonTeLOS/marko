@@ -2499,7 +2499,6 @@ function changeURL(url) {
             const reminder = params.get('uuid');
 
 
-
             if (reminder) {
                 openReminder(reminder);
                 removeBellAfterNotification(reminder);
@@ -2777,7 +2776,8 @@ function removeReminder(index) {
         return;
     }
 }
-  function removeBellAfterNotification(uuid) {
+    
+function removeBellAfterNotification(uuid) {
     // Find the bookmark index that matches the provided UUID
     const index = links.findIndex(bookmark => bookmark && bookmark.length >= 6 && bookmark[5] === uuid);
 
@@ -2789,7 +2789,7 @@ function removeReminder(index) {
     // Get the current UUID
     const currentUUID = links[index][5];
 
-        
+    
         // Remove the UUID (invalidate it)
         links[index][5] = "";
 
@@ -2805,6 +2805,7 @@ function removeReminder(index) {
         console.log(`Bell removed for bookmark with UUID ${uuid}`);
 
 }
+    
     // Function to get the current datetime in the correct format
 // Function to get current datetime as a string in the required format
 function getCurrentDatetimeString() {
@@ -2876,11 +2877,22 @@ function constructNotification(uuid, shareIcon, shareBody) {
     delay: newDelay
   };
 }
-
+function storeNotification(notificationData) {
+    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    notifications.push(notificationData);
+    localStorage.setItem('notifications', JSON.stringify(notifications));
+}
     
  function scheduleNotification(title, body, delay, icon, uuid) {
 
+    // Assuming `delay` is in milliseconds from the current time
+    const notificationTime = new Date(Date.now() + delay); // Calculate the time when notification will be shown
 
+    // Format the notification time in DD.MM.YY HH:MM format
+    const formattedTime = `${('0' + notificationTime.getDate()).slice(-2)}.${('0' + (notificationTime.getMonth() + 1)).slice(-2)}.${String(notificationTime.getFullYear()).slice(-2)} ${('0' + notificationTime.getHours()).slice(-2)}:${('0' + notificationTime.getMinutes()).slice(-2)}`;
+
+    // Log the formatted time
+    console.log(`Notification will be shown at: ${formattedTime}`);
       if ('Notification' in window) {
         toggleFormVisibility(false);  
         Notification.requestPermission().then(permission => {
@@ -2892,8 +2904,15 @@ function constructNotification(uuid, shareIcon, shareBody) {
                   body: body || 'open your reminder..',
                   delay: delay,
                   icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
-                  data: { uuid: uuid } 
+                  data: { 
+                       uuid: uuid,             
+                       scheduledTime: notificationTime
+                  } 
                 };
+
+                // Store the notification in localStorage
+                storeNotification(notificationData);
+                console.log(`Notification scheduled to be shown at: ${new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}`);
 
                 console.log('Sending message to service worker:', notificationData);
                 registration.active.postMessage({
@@ -2914,6 +2933,46 @@ function constructNotification(uuid, shareIcon, shareBody) {
         console.log('Notifications not supported in this browser.');
       }
     }
+    
+function checkForMissedNotifications() {
+    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    const now = Date.now();
+
+    notifications.forEach(notification => {
+        if (now >= notification.data.scheduledTime) {
+            showMissedNotification(notification);
+        }
+    });
+
+    // Filter out the notifications that have been shown
+    const remainingNotifications = notifications.filter(notification => now < notification.data.scheduledTime);
+    localStorage.setItem('notifications', JSON.stringify(remainingNotifications));
+}    
+    
+    function showMissedNotification(notification) {
+    if (Notification.permission === 'granted') {
+        new Notification(notification.title, {
+            body: notification.body,
+            icon: notification.icon,
+            data: notification.data
+        });
+
+        // Handle the notification click
+        notification.onclick = function(event) {
+            event.preventDefault(); // Prevent the browser from focusing the Notification's tab
+            window.open(`https://teloslinux.org/marko/newfile?uuid=${notification.data.uuid}`, '_blank');
+        };
+
+        // Remove the notification from the array in localStorage
+        removeShownMissedNotification(notification.data.uuid);
+    }
+}
+    
+function removeShownMissedNotification(uuid) {
+    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
+    const updatedNotifications = notifications.filter(notification => notification.data.uuid !== uuid);
+    localStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+}    
     
 function cancelScheduledNotification(uuid) {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
@@ -5084,6 +5143,7 @@ function hasPaid() {
 window.onload = function() {
     loadDonationParams();
     loadArrayFromURL();
+    checkForMissedNotifications();
     toggleBellIcons();
     initializeGoogleIdentity();
 }; 
@@ -5103,7 +5163,7 @@ window.onload = function() {
         <div class="input-field">
         <select id="timeDelaySelect" name="timeDelay">
           <option value="0" selected>No delay</option>
-          <option value="30000">In half an hour</option>
+          <option value="300000">In half an hour</option>
           <option value="60000000">In 1 hour</option>
           <option value="120000000">In 2 hours</option>
           <option value="180000000">In 3 hours</option>
