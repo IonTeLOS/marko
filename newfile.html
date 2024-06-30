@@ -1329,7 +1329,7 @@ const firebaseConfig = {
   };
 
 document.addEventListener("DOMContentLoaded", function() {
-  const app = firebase.initializeApp(firebaseConfig);
+  const app = initializeApp(firebaseConfig);
   // Your Firebase code using `app` and other objects goes here
 });
 
@@ -2888,8 +2888,8 @@ function initializeDeviceToken() {
     }
     
     // Send this token to Firebase
-    return firebase.firestore().collection('devices').doc(deviceToken).set({
-        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+    return firestore().collection('devices').doc(deviceToken).set({
+        lastSeen: firestore.FieldValue.serverTimestamp()
     }, { merge: true });
 }
     
@@ -2903,7 +2903,7 @@ function initializeDeviceToken() {
         if (fcmToken) {
             console.log('FCM Token:', fcmToken);
             // Store FCM token in Firebase, associated with the device token
-            return firebase.firestore().collection('devices').doc(deviceToken).update({
+            return firestore().collection('devices').doc(deviceToken).update({
                 fcmToken: fcmToken
             });
         }
@@ -2983,7 +2983,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
                 };
                 
                 // Send notification data to Firebase
-                return firebase.firestore().collection('scheduledNotifications').add(notificationData);
+                return firestore().collection('scheduledNotifications').add(notificationData);
             } else {
                 console.log('Notification permission denied.');
             }
