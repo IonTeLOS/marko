@@ -28,6 +28,25 @@
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <!-- Materialize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
+    authDomain: "marko-be9a9.firebaseapp.com",
+    projectId: "marko-be9a9",
+    storageBucket: "marko-be9a9.appspot.com",
+    messagingSenderId: "7036670175",
+    appId: "1:7036670175:web:99992356716578ea13996a"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
 <script>
     
   if ('serviceWorker' in navigator) {
@@ -2841,6 +2860,46 @@ function toggleFormVisibility(showForm) {
   }
 }
 
+  function generateUniqueToken() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+    
+    let deviceToken;
+
+function initializeDeviceToken() {
+    deviceToken = localStorage.getItem('deviceToken');
+    if (!deviceToken) {
+        deviceToken = generateUniqueToken();
+        localStorage.setItem('deviceToken', deviceToken);
+    }
+    
+    // Send this token to Firebase
+    return firebase.firestore().collection('devices').doc(deviceToken).set({
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+}
+    
+    function requestNotificationPermission() {
+    Notification.requestPermission().then((permission) => {
+        if (permission === 'granted') {
+            console.log('Notification permission granted.');
+            return firebase.messaging().getToken();
+        }
+    }).then((fcmToken) => {
+        if (fcmToken) {
+            console.log('FCM Token:', fcmToken);
+            // Store FCM token in Firebase, associated with the device token
+            return firebase.firestore().collection('devices').doc(deviceToken).update({
+                fcmToken: fcmToken
+            });
+        }
+    }).catch((err) => {
+        console.error('An error occurred while retrieving token. ', err);
+    });
+}
     
 function calculateDelay() {
     const datetimeInput = document.getElementById('datetimeInput').value;
@@ -2903,43 +2962,35 @@ function scheduleNotification(title, body, delay, icon, uuid) {
         toggleFormVisibility(false);  
         Notification.requestPermission().then(permission => {
             if (permission === 'granted') {
-                if ('serviceWorker' in navigator && 'SyncManager' in window) {
-                    navigator.serviceWorker.ready.then(registration => {
-                        const notificationData = {
-                            title: title || 'Marko Notification',
-                            body: body || 'open your reminder..',
-                            icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
-                            data: { 
-                                uuid: uuid,             
-                                scheduledTime: notificationTime
-                            } 
-                        };
-                        
-                        // Store the notification data and register for sync
-                        registration.active.postMessage({
-                            action: 'storeNotification',
-                            notification: notificationData
-                        });
-
-                        registration.sync.register('show-notification').then(() => {
-                            console.log(`Notification scheduled to be shown at: ${new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}`);
-                        }).catch(error => {
-                            console.error('Sync registration failed:', error);
-                        });
-                    }).catch(error => {
-                        console.error('Service Worker registration error:', error);
-                    });
-                } else {
-                    console.log('Service Worker or Sync API not supported.');
-                }
+                const notificationData = {
+                    title: title || 'Marko Notification',
+                    body: body || 'open your reminder..',
+                    icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
+                    scheduledTime: notificationTime,
+                    uuid: uuid,
+                    deviceToken: deviceToken  // Add this line
+                };
+                
+                // Send notification data to Firebase
+                return firebase.firestore().collection('scheduledNotifications').add(notificationData);
             } else {
                 console.log('Notification permission denied.');
             }
+        }).then(() => {
+            console.log(`Notification scheduled to be shown at: ${new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}`);
+        }).catch(error => {
+            console.error('Error scheduling notification:', error);
         });
     } else {
         console.log('Notifications not supported in this browser.');
     }
 }
+    
+    document.addEventListener('DOMContentLoaded', (event) => {
+    initializeDeviceToken()
+        .then(() => requestNotificationPermission())
+        .catch(error => console.error('Error initializing:', error));
+});
     
 function checkForMissedNotifications() {
     const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
