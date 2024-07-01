@@ -1327,7 +1327,8 @@ input:focus {
   };
   const app = firebase.initializeApp(firebaseConfig);
   // Your Firebase code using `app` and other objects goes here
-const db = firebase.database();
+const db = getDatabase(app);
+
 
     </script>
     <script>       
