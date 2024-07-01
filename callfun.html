@@ -33,13 +33,13 @@
         }
 
         // Function to schedule a notification
-        async function scheduleNotif(title, body, scheduledTime, icon) {
+        async function scheduleNotification(title, body, scheduledTime, icon) {
             const deviceToken = localStorage.getItem('deviceToken') || uuidv4();
             localStorage.setItem('deviceToken', deviceToken);
 
             const uuid = uuidv4(); // Generate a unique ID for this notification
 
-            const functionUrl = 'https://us-central1-marko-be9a9.cloudfunctions.net/scheduleNotif';
+            const functionUrl = 'https://us-central1-marko-be9a9.cloudfunctions.net/scheduleNotification';
 
             try {
                 const response = await fetch(functionUrl, {
@@ -78,7 +78,7 @@
             const scheduledTime = new Date(document.getElementById('scheduledTime').value).toISOString();
             const icon = document.getElementById('icon').value;
 
-            scheduleNotif(title, body, scheduledTime, icon);
+            scheduleNotification(title, body, scheduledTime, icon);
         });
     </script>
 </body>
