@@ -1331,6 +1331,7 @@ input:focus {
   const app = firebase.initializeApp(firebaseConfig);
   // Your Firebase code using `app` and other objects goes here
 const db = firebase.database();
+const mes = firebase.messaging();
 
     </script>
     <script>       
@@ -2898,7 +2899,7 @@ function requestNotificationPermission() {
     Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
             console.log('Notification permission granted.');
-            return firebase.messaging().getToken();
+            return mes.getToken();
         }
     }).then((fcmToken) => {
         if (fcmToken) {
