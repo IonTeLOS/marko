@@ -7,7 +7,6 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M0 0h24v24H0z'/%3E%3Cpath fill='%2300bcd4' d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM15 3v2h2.59L8.7 13.89l1.41 1.41L19 6.41V9h2V3h-6z'/%3E%3C/svg%3E" type="image/svg+xml">    
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js"></script>
@@ -1318,17 +1317,17 @@ input:focus {
 <script>
 
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
-  authDomain: "marko-be9a9.firebaseapp.com",
-  databaseURL: "https://marko-be9a9-default-rtdb.firebaseio.com",
-  projectId: "marko-be9a9",
-  storageBucket: "marko-be9a9.appspot.com",
-  messagingSenderId: "7036670175",
-  appId: "1:7036670175:web:99992356716578ea13996a"
-};
+    const firebaseConfig = {
+    apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
+    authDomain: "marko-be9a9.firebaseapp.com",
+    projectId: "marko-be9a9",
+    storageBucket: "marko-be9a9.appspot.com",
+    messagingSenderId: "7036670175",
+    appId: "1:7036670175:web:99992356716578ea13996a"
+  };
   const app = firebase.initializeApp(firebaseConfig);
   // Your Firebase code using `app` and other objects goes here
+const db = firebase.database();
 
     </script>
     <script>       
@@ -2885,13 +2884,14 @@ function initializeDeviceToken() {
         localStorage.setItem('deviceToken', deviceToken);
     }
     
-    // Send this token to Firebase
-    return firebase.firestore().collection('devices').doc(deviceToken).set({
-        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
+    // Send this token to Firebase Realtime Database
+    return db.ref('devices/' + deviceToken).set({
+        lastSeen: firebase.database.ServerValue.TIMESTAMP
+    });
 }
+
     
-    function requestNotificationPermission() {
+function requestNotificationPermission() {
     Notification.requestPermission().then((permission) => {
         if (permission === 'granted') {
             console.log('Notification permission granted.');
@@ -2900,8 +2900,8 @@ function initializeDeviceToken() {
     }).then((fcmToken) => {
         if (fcmToken) {
             console.log('FCM Token:', fcmToken);
-            // Store FCM token in Firebase, associated with the device token
-            return firebase.firestore().collection('devices').doc(deviceToken).update({
+            // Store FCM token in Firebase Realtime Database
+            return db.ref('devices/' + deviceToken).update({
                 fcmToken: fcmToken
             });
         }
@@ -2909,6 +2909,7 @@ function initializeDeviceToken() {
         console.error('An error occurred while retrieving token. ', err);
     });
 }
+
     
 function calculateDelay() {
     const datetimeInput = document.getElementById('datetimeInput').value;
@@ -2964,7 +2965,7 @@ function storeNotification(notificationData) {
 }
     
 function scheduleNotification(title, body, delay, icon, uuid) {
-    const notificationTime = new Date(Date.now() + delay);
+    const notificationTime = new Date(Date.now() + delay).toISOString();
     console.log("notificationTime:", notificationTime);
     
     if ('Notification' in window) {
@@ -2973,15 +2974,15 @@ function scheduleNotification(title, body, delay, icon, uuid) {
             if (permission === 'granted') {
                 const notificationData = {
                     title: title || 'Marko Notification',
-                    body: body || 'open your reminder..',
+                    body: body || 'Open your reminder...',
                     icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
                     scheduledTime: notificationTime,
                     uuid: uuid,
-                    deviceToken: deviceToken  // Add this line
+                    deviceToken: deviceToken
                 };
                 
-                // Send notification data to Firebase
-                return firebase.firestore().collection('scheduledNotifications').add(notificationData);
+                // Send notification data to Firebase Realtime Database
+                return db.ref('scheduledNotifications').push(notificationData);
             } else {
                 console.log('Notification permission denied.');
             }
@@ -2994,8 +2995,9 @@ function scheduleNotification(title, body, delay, icon, uuid) {
         console.log('Notifications not supported in this browser.');
     }
 }
+
     
-    document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
     initializeDeviceToken()
         .then(() => requestNotificationPermission())
         .catch(error => console.error('Error initializing:', error));
