@@ -1395,7 +1395,10 @@ messaging.onMessage(function(payload) {
     event.preventDefault();
     window.open(notificationOptions.data.url, '_blank');
   };
-}
+});
+
+// Request notification permission on page load
+requestNotificationPermission();
 
 // Request notification permission on page load
 requestNotificationPermission();
