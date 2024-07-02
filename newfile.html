@@ -1337,10 +1337,68 @@ input:focus {
     messagingSenderId: "7036670175",
     appId: "1:7036670175:web:99992356716578ea13996a"
   };
-  const app = firebase.initializeApp(firebaseConfig);
-  // Your Firebase code using `app` and other objects goes here
-const db = firebase.database();
-const mes = firebase.messaging();
+const app = firebase.initializeApp(firebaseConfig);
+
+// Initialize Firebase Realtime Database
+var db = firebase.database();
+
+// Initialize Firebase Cloud Messaging
+var messaging = firebase.messaging();
+
+// Device token (could be a unique identifier for the device)
+// var deviceToken = 'unique-device-token';
+
+// Request permission for notifications
+function requestNotificationPermission() {
+  Notification.requestPermission().then(function(permission) {
+    if (permission === 'granted') {
+      console.log('Notification permission granted.');
+
+      // Get the FCM token
+      return messaging.getToken({ vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' });
+    } else {
+      throw new Error('Notification permission denied');
+    }
+  }).then(function(fcmToken) {
+    if (fcmToken) {
+      console.log('FCM Token:', fcmToken);
+
+      // Store FCM token in Firebase Realtime Database
+      return db.ref('devices/' + deviceToken).update({
+        fcmToken: fcmToken
+      });
+    } else {
+      throw new Error('No registration token available. Request permission to generate one.');
+    }
+  }).catch(function(err) {
+    console.error('An error occurred while retrieving token. ', err);
+  });
+}
+
+// Handle incoming messages
+messaging.onMessage(function(payload) {
+  console.log('Message received. ', payload);
+
+  // Customize notification here
+  var notificationTitle = payload.notification.title;
+  var notificationOptions = {
+    body: payload.notification.body,
+    icon: payload.notification.icon,
+    data: {
+      url: `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`
+    }
+  };
+
+  var notification = new Notification(notificationTitle, notificationOptions);
+
+  notification.onclick = function(event) {
+    event.preventDefault();
+    window.open(notificationOptions.data.url, '_blank');
+  };
+}
+
+// Request notification permission on page load
+requestNotificationPermission();
 
     </script>
     <script>       
@@ -2888,7 +2946,7 @@ function toggleFormVisibility(showForm) {
     });
 }
     
-    let deviceToken;
+let deviceToken;
 
 function initializeDeviceToken() {
     deviceToken = localStorage.getItem('deviceToken');
@@ -2904,26 +2962,7 @@ function initializeDeviceToken() {
 }
 
     
-function requestNotificationPermission() {
-    Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-            console.log('Notification permission granted.');
-            return mes.getToken();
-        }
-    }).then((fcmToken) => {
-        if (fcmToken) {
-            console.log('FCM Token:', fcmToken);
-            // Store FCM token in Firebase Realtime Database
-            return db.ref('devices/' + deviceToken).update({
-                fcmToken: fcmToken
-            });
-        }
-    }).catch((err) => {
-        console.error('An error occurred while retrieving token. ', err);
-    });
-}
 
-    
 function calculateDelay() {
     const datetimeInput = document.getElementById('datetimeInput').value;
     const timeDelay = parseInt(document.getElementById('timeDelaySelect').value);
