@@ -1343,7 +1343,7 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 
 // Initialize Firebase Realtime Database
-const installationId = await firebase.installations().getId();
+const installationId = firebase.installations().getId();
 console.log(installationId);
   var db = firebase.database();
 
