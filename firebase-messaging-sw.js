@@ -24,7 +24,6 @@ messaging.onBackgroundMessage(function(payload) {
   var notificationTitle = payload.notification.title;
   var notificationOptions = {
     body: payload.notification.body,
-    icon: payload.notification.icon,
     data: {
       url: `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`
     }
