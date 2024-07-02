@@ -2969,7 +2969,7 @@ function storeNotification(notificationData) {
 }
     
 function scheduleNotification(title, body, delay, icon, uuid) {
-    const notificationTime = new Date(Date.now() + delay);
+    const notificationTime = new Date(Date.now() + delay).toISOString();
     console.log("notificationTime:", notificationTime);
     
     if ('Notification' in window) {
