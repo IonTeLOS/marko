@@ -1343,9 +1343,10 @@ const firebaseConfig = {
 const app = firebase.initializeApp(firebaseConfig);
 
 // Initialize Firebase Realtime Database
-var db = firebase.database();
 const installationId = await firebase.installations().getId();
 console.log(installationId);
+  var db = firebase.database();
+
 // Initialize Firebase Cloud Messaging
 var messaging = firebase.messaging();
 
