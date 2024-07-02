@@ -2969,9 +2969,13 @@ function storeNotification(notificationData) {
 }
     
 function scheduleNotification(title, body, delay, icon, uuid) {
-    const notificationTime = new Date(Date.now() + delay).toISOString();
+    const notificationTime = new Date(Date.now() + delay).toString();
     console.log("notificationTime:", notificationTime);
-    
+    if (fcmToken) {
+      token = fcmToken 
+    } else {
+      token = deviceToken
+    }
     if ('Notification' in window) {
         toggleFormVisibility(false);  
         Notification.requestPermission().then(permission => {
@@ -2980,9 +2984,9 @@ function scheduleNotification(title, body, delay, icon, uuid) {
                     title: title || 'Marko Notification',
                     body: body || 'Open your reminder...',
                     icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
-                    scheduledTime: notificationTime,
                     uuid: uuid,
-                    deviceToken: fcmToken || deviceToken
+                    deviceToken: token,
+                    scheduledTime: notificationTime
                 };
                 
                 // Send notification data to Firebase Realtime Database
