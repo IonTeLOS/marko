@@ -2982,7 +2982,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
                     icon: icon || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/notifications_active/default/48px.svg',
                     scheduledTime: notificationTime,
                     uuid: uuid,
-                    deviceToken: deviceToken
+                    deviceToken: fcmToken || deviceToken
                 };
                 
                 // Send notification data to Firebase Realtime Database
