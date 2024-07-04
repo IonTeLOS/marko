@@ -1377,26 +1377,27 @@ function requestNotificationPermission() {
   });
 }
 
-// Handle incoming messages
+// Handle incoming messages when the app is in the foreground
 messaging.onMessage(function(payload) {
   console.log('Message received. ', payload);
 
   // Customize notification here
-  var notificationTitle = payload.notification.title;
-  var notificationOptions = {
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
     body: payload.notification.body,
-    icon: "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg",
+    icon: payload.notification.icon || "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg",
     data: {
-      url: `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`
+      uuid: payload.data.uuid,
+      url: payload.fcmOptions.link || `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`
     }
   };
 
-  var notification = new Notification(notificationTitle, notificationOptions);
+const notification = new Notification(notificationTitle, notificationOptions);
 
   notification.onclick = function(event) {
     event.preventDefault();
-    window.open(notificationOptions.data.url, '_blank');
     removeBellAfterNotification(notificationOptions.data.uuid);  
+    window.open(notificationOptions.data.url, '_blank');
   };
 });
 
