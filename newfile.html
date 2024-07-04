@@ -1387,6 +1387,7 @@ messaging.onMessage(function(payload) {
     body: payload.notification.body,
     icon: "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg",
     data: {
+      uuid: payload.data.uuid,    
       url: `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`
     }
   };
@@ -1395,12 +1396,14 @@ messaging.onMessage(function(payload) {
 
   notification.onclick = function(event) {
     event.preventDefault();
+    removeBellAfterNotification(notificationOptions.data.uuid);  
+    toggleBellIcons();  
     window.open(notificationOptions.data.url, '_blank');
   };
 });
 
 // Request notification permission on page load
-requestNotificationPermission();
+// requestNotificationPermission();
 
     </script>
     <script>       
@@ -2138,7 +2141,6 @@ function saveBookmark(linkData) {
 window.onload = function() {
     loadDonationParams();
     loadArrayFromURL();
-    checkForMissedNotifications();
     toggleBellIcons();
     initializeGoogleIdentity();
 }; 
@@ -2606,8 +2608,9 @@ function changeURL(url) {
 
 
             if (reminder) {
-                openReminder(reminder);
                 removeBellAfterNotification(reminder);
+                openReminder(reminder);
+                return;
             }
             if (purelink) {
                     if (confirm("Do you want to add " + params.get('friendname') + " as friend?")) {
@@ -3012,12 +3015,6 @@ function constructNotification() {
     delay: newDelay
   };
 }
-        
-function storeNotification(notificationData) {
-    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-    notifications.push(notificationData);
-    localStorage.setItem('notifications', JSON.stringify(notifications));
-}
     
 function scheduleNotification(title, body, delay, icon, uuid) {
     const notificationTime = new Date(Date.now() + delay).toISOString();
@@ -3078,43 +3075,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         .catch(error => console.error('Error initializing:', error));
 });
     
-function checkForMissedNotifications() {
-    const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-    console.log(notifications);
-    const now = Date.now();
-    console.log('Current time (epoch):', now);
 
-    notifications.forEach(notification => {
-        const scheduledTime = new Date(notification.data.scheduledTime).getTime();
-        if (now >= scheduledTime) {
-            showMissedNotification(notification);
-            console.log("showing..");
-        } else {
-            console.log("no missed notifications");
-        }
-    });
-
-    // Filter out the notifications that have been shown
-    const remainingNotifications = notifications.filter(notification => now < notification.data.scheduledTime);
-    localStorage.setItem('notifications', JSON.stringify(remainingNotifications));
-}    
-    
-    function showMissedNotification(notification) {
-    if (Notification.permission === 'granted') {
-        new Notification(notification.title, {
-            body: notification.body,
-            icon: notification.icon,
-            data: notification.data.uuid
-        });
-
-        // Handle the notification click
-        notification.onclick = function(event) {
-            event.preventDefault(); // Prevent the browser from focusing the Notification's tab
-            window.open(`https://teloslinux.org/marko/newfile?uuid=${notification.data.uuid}`, '_blank');
-        };
-    }
-}
-    
 function cancelScheduledNotification(uuid) {
     if ('serviceWorker' in navigator && 'PushManager' in window) {
         navigator.serviceWorker.ready.then(registration => {
