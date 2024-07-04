@@ -1389,7 +1389,7 @@ messaging.onMessage(function(payload) {
   var notificationTitle = payload.notification.title;
   var notificationOptions = {
     body: payload.notification.body,
-    icon: payload.notification.icon,
+    icon: "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg",
     data: {
       url: `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`
     }
