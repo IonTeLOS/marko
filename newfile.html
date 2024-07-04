@@ -1397,7 +1397,6 @@ messaging.onMessage(function(payload) {
   notification.onclick = function(event) {
     event.preventDefault();
     removeBellAfterNotification(notificationOptions.data.uuid);  
-    toggleBellIcons();  
     window.open(notificationOptions.data.url, '_blank');
   };
 });
