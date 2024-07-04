@@ -1344,14 +1344,10 @@ const app = firebase.initializeApp(firebaseConfig);
 
 // Initialize Firebase Realtime Database
 const installationId = firebase.installations().getId();
-console.log(installationId);
-  var db = firebase.database();
+var db = firebase.database();
 
 // Initialize Firebase Cloud Messaging
 var messaging = firebase.messaging();
-
-// Device token (could be a unique identifier for the device)
-// var deviceToken = 'unique-device-token';
 
 // Request permission for notifications
 function requestNotificationPermission() {
@@ -1402,9 +1398,6 @@ messaging.onMessage(function(payload) {
     window.open(notificationOptions.data.url, '_blank');
   };
 });
-
-// Request notification permission on page load
-requestNotificationPermission();
 
 // Request notification permission on page load
 requestNotificationPermission();
@@ -2801,16 +2794,17 @@ function addReminderToMarko(index) {
         toggleBellIcons();
 
         // Call constructLinkFromBookmark to get shareTitle, shareBody, and shareIcon
-        const { shareTitle, shareBody, shareIcon } = constructLinkFromBookmark(index, false);
-
+        const { shareBody, shareIcon } = constructLinkFromBookmark(index, false); 
+        
         // Store uuid, shareBody, and shareIcon in sessionStorage
         const reminderDetails = {
             uuid,
             shareBody,
             shareIcon
         };
+        // temporarily save data to session storage for immediate retrieval
         sessionStorage.setItem('reminderDetails', JSON.stringify(reminderDetails));
-         
+        
         // show the form after storing data in sessionStorage
         toggleFormVisibility(true);
     } else {
@@ -2828,6 +2822,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Retrieve uuid, shareBody, and shareIcon from sessionStorage
         const reminderDetails = JSON.parse(sessionStorage.getItem('reminderDetails'));
         if (!reminderDetails) {
+            alert("Something went wrong..");
             console.error('Reminder details not found in sessionStorage.');
             return;
         }
@@ -2919,7 +2914,6 @@ function removeBellAfterNotification(uuid) {
 
 }
     
-    // Function to get the current datetime in the correct format
 // Function to get current datetime as a string in the required format
 function getCurrentDatetimeString() {
   const now = new Date();
@@ -2971,7 +2965,6 @@ function initializeDeviceToken() {
 }
 
     
-
 function calculateDelay() {
     const datetimeInput = document.getElementById('datetimeInput').value;
     const timeDelay = parseInt(document.getElementById('timeDelaySelect').value);
@@ -3001,7 +2994,7 @@ function calculateDelay() {
 
 
 // Function to handle form submission and construct notification
-function constructNotification(uuid, shareIcon, shareBody) {
+function constructNotification() {
     
   const textNotInput = document.getElementById('textInput').value;
   const newDelay = calculateDelay(); // Assuming you have a function to calculate delay
@@ -3019,6 +3012,7 @@ function constructNotification(uuid, shareIcon, shareBody) {
     delay: newDelay
   };
 }
+        
 function storeNotification(notificationData) {
     const notifications = JSON.parse(localStorage.getItem('notifications')) || [];
     notifications.push(notificationData);
@@ -3027,40 +3021,57 @@ function storeNotification(notificationData) {
     
 function scheduleNotification(title, body, delay, icon, uuid) {
     const notificationTime = new Date(Date.now() + delay).toISOString();
-    console.log("notificationTime:", notificationTime);
+    let token;
+
+    // Retrieve the device Firebase token
     try {
-      token = localStorage.getItem('fcmt');
-    } catch {
-      token = deviceToken;
+        token = localStorage.getItem('fcmt');
+        if (!token) {
+            throw new Error("No device token found");
+        }
+    } catch (error) {
+        alert("Could not identify device, aborting..");
+        return;
     }
-    if ('Notification' in window) {
-        toggleFormVisibility(false);  
-        Notification.requestPermission().then(permission => {
-            if (permission === 'granted') {
-                const notificationData = {
-                    title: title || 'Marko Notification',
-                    body: body || 'Open your reminder...',
-                    uuid: uuid,
-                    deviceToken: token,
-                    scheduledTime: notificationTime
-                };
-                
-                // Send notification data to Firebase Realtime Database
-                return db.ref('scheduledNotifications').push(notificationData);
-            } else {
-                console.log('Notification permission denied.');
-            }
-        }).then(() => {
-            console.log(`Notification scheduled to be shown at: ${new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}`);
-        }).catch(error => {
-            console.error('Error scheduling notification:', error);
-        });
-    } else {
+
+    // Determine the notification icon
+    const notIcon = icon.startsWith("https://fonts.gstatic.com/") ? icon : "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg";
+
+    // Check if Notifications are supported in the browser
+    if (!('Notification' in window)) {
         console.log('Notifications not supported in this browser.');
+        return;
     }
+
+    // Request notification permission
+    Notification.requestPermission().then(permission => {
+        if (permission !== 'granted') {
+            alert("You have to give permission for notifications to be shown.");
+            console.log('Notification permission denied.');
+            return Promise.reject('Notification permission denied');
+        }
+
+        const notificationData = {
+            title: title || 'Click to open..',
+            body: body || 'your Marko reminder',
+            uuid: uuid,
+            icon: notIcon,
+            deviceToken: token,
+            scheduledTime: notificationTime
+        };
+
+        // Send notification data to Firebase Realtime Database
+        return db.ref('scheduledNotifications').push(notificationData);
+    }).then(() => {
+        alert(`Notification scheduled to be shown at: ${new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}`);
+    }).catch(error => {
+        if (error !== 'Notification permission denied') {
+            alert("Something went wrong..");
+            console.error('Error scheduling notification:', error);
+        }
+    });
 }
 
-    
 document.addEventListener('DOMContentLoaded', (event) => {
     initializeDeviceToken()
         .then(() => requestNotificationPermission())
@@ -5828,6 +5839,7 @@ searchInput.addEventListener('input', function() {
                 this.click();
             }
         });
+    
 function constructLinkFromBookmark(index, full) {
   const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
   if (!bookmark) {
@@ -5849,7 +5861,7 @@ function constructLinkFromBookmark(index, full) {
   const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
   const color = iconContainer ? getComputedStyle(iconContainer).getPropertyValue('--ring-color').trim() : '';
 
-  // Construct the URL
+  // Construct the URL for the shareable link
   const url = new URL('https://teloslinux.org/marko/newfile');
   url.searchParams.append('type', type);
   url.searchParams.append('action', action);
@@ -5862,11 +5874,12 @@ function constructLinkFromBookmark(index, full) {
   const shareBody = title;
   const shareIcon = icon;
 
-// this function serves 2 distinct purposes: create a link for a shareable Marko (full=true), or return just values of title and link to create a notification     
+// this function serves 2 distinct purposes: create a link for a shareable Marko (full=true), or just return values of title and link to create a notification     
   if (!full) {
-        console.log('Execution stopped because full is false.');
+        console.log('Retrieved data to construct a notification');
         return { shareTitle, shareBody, shareIcon}; // Exit the function early
     }
+    
   if (navigator.share) {
     navigator.share({
       title: shareTitle,
