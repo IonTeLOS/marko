@@ -1387,7 +1387,6 @@ messaging.onMessage(function(payload) {
     body: payload.notification.body,
     icon: "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg",
     data: {
-      uuid: payload.data.uuid,    
       url: `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`
     }
   };
