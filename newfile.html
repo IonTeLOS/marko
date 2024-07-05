@@ -1380,13 +1380,12 @@ function requestNotificationPermission() {
 messaging.onMessage(function(payload) {
   console.log('Message received. ', payload);
 
-  // Customize notification here
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: payload.notification.icon || "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg",
+    icon: payload.notification.icon,
     data: {
-      url: payload.data.url || 'https://teloslinux.org/marko/newfile',
+      url: `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`,
       uuid: payload.data.uuid
     }
   };
