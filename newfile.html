@@ -3083,13 +3083,13 @@ function scheduleNotification(title, body, delay, icon, uuid) {
         }
     });
 }
-      /*
+      
 document.addEventListener('DOMContentLoaded', (event) => {
     initializeDeviceToken()
         .then(() => requestNotificationPermission())
         .catch(error => console.error('Error initializing:', error));
 });
-    */
+  
 function cancelScheduledNotification(uuid) {
   if (!uuid) {
     alert("Invalid UUID provided.");
