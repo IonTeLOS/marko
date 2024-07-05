@@ -2835,8 +2835,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const { textInput, delay } = constructNotification();
         console.log('Constructed notification details:', { textInput, delay });
 
-        // Example usage of returned values
-        // scheduleNotification(textInput, shareBody, delay, shareIcon, uuid);
+        scheduleNotification(textInput, shareBody, delay, shareIcon, uuid);
         console.log('Notification scheduled with:', { textInput, shareBody, delay, shareIcon, uuid });
     });
 });
