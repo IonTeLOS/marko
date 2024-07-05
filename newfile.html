@@ -3083,22 +3083,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
         .catch(error => console.error('Error initializing:', error));
 });
     
-
 function cancelScheduledNotification(uuid) {
-    if ('serviceWorker' in navigator && 'PushManager' in window) {
-        navigator.serviceWorker.ready.then(registration => {
-            registration.active.postMessage({
-                action: 'cancelNotification',
-                uuid: uuid
-            });
+  if (!uuid) {
+    alert("Invalid UUID provided.");
+    return;
+  }
 
-            console.log(`Requested cancellation of notification with UUID ${uuid}`);
-        }).catch(error => {
-            console.error('Service Worker registration error:', error);
+  const confirmDelete = confirm("Are you sure you want to delete this scheduled notification?");
+  
+  if (confirmDelete) {
+    const ref = db.ref("scheduledNotifications");
+    
+    ref.orderByChild("uuid").equalTo(uuid).once("value", (snapshot) => {
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          childSnapshot.ref.remove()
+            .then(() => {
+              alert("Notification successfully deleted.");
+            })
+            .catch((error) => {
+              console.error("Error deleting notification:", error);
+              alert("An error occurred while deleting the notification.");
+            });
         });
-    } else {
-        console.log('Service Worker or Push API not supported.');
-    }
+      } else {
+        alert("No notification found with the provided UUID.");
+      }
+    });
+  }
 }
     
 // Function to find and click bookmark with matching UUID
