@@ -3012,7 +3012,7 @@ function constructNotification() {
     delay: newDelay
   };
 }
-
+/*
 function requestNotificationPermission() {
     if (!('Notification' in window)) {
         console.log('Notifications not supported in this browser.');
@@ -3029,7 +3029,7 @@ function requestNotificationPermission() {
         }
     });
 }
-
+*/
 function scheduleNotification(title, body, delay, icon, uuid) {
     const notificationTime = new Date(Date.now() + delay).toISOString();
     let token;
@@ -3070,11 +3070,6 @@ function scheduleNotification(title, body, delay, icon, uuid) {
             }
         });
 }
-
-document.addEventListener('DOMContentLoaded', (event) => {
-    initializeDeviceToken()
-        .catch(error => console.error('Error initializing device token:', error));
-});
       
 document.addEventListener('DOMContentLoaded', (event) => {
     initializeDeviceToken()
