@@ -1376,7 +1376,7 @@ function requestNotificationPermission() {
     console.error('An error occurred while retrieving token. ', err);
   });
 }
-/*
+
 messaging.onMessage(function(payload) {
   console.log('Message received. ', payload);
 
@@ -1399,7 +1399,7 @@ messaging.onMessage(function(payload) {
   };
 });
 
-*/
+
 // Request notification permission on page load
 // requestNotificationPermission();
 
@@ -3082,13 +3082,13 @@ function scheduleNotification(title, body, delay, icon, uuid) {
         }
     });
 }
-      
+      /*
 document.addEventListener('DOMContentLoaded', (event) => {
     initializeDeviceToken()
         .then(() => requestNotificationPermission())
         .catch(error => console.error('Error initializing:', error));
 });
-    
+    */
 function cancelScheduledNotification(uuid) {
   if (!uuid) {
     alert("Invalid UUID provided.");
