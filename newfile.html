@@ -1377,7 +1377,6 @@ function requestNotificationPermission() {
   });
 }
 
-// Handle incoming messages when the app is in the foreground
 messaging.onMessage(function(payload) {
   console.log('Message received. ', payload);
 
@@ -1387,11 +1386,12 @@ messaging.onMessage(function(payload) {
     body: payload.notification.body,
     icon: payload.notification.icon || "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg",
     data: {
-      url: payload.data.url || 'https://teloslinux.org/marko/newfile'
+      url: payload.data.url || 'https://teloslinux.org/marko/newfile',
+      uuid: payload.data.uuid
     }
   };
 
-const notification = new Notification(notificationTitle, notificationOptions);
+  const notification = new Notification(notificationTitle, notificationOptions);
 
   notification.onclick = function(event) {
     event.preventDefault();
@@ -1399,6 +1399,7 @@ const notification = new Notification(notificationTitle, notificationOptions);
     removeBellAfterNotification(notificationOptions.data.uuid);  
   };
 });
+
 
 // Request notification permission on page load
 // requestNotificationPermission();
