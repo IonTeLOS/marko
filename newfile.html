@@ -1404,6 +1404,15 @@ messaging.onMessage(function(payload) {
   
 });
 
+// app.js
+// Set up channel
+const broadcast = new BroadcastChannel('uuid-channel');
+
+// Listen to the response
+broadcast.onmessage = (event) => {
+  console.log(event.data.payload);
+};
+
 
 // Request notification permission on page load
 // requestNotificationPermission();
