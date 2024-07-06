@@ -1396,7 +1396,7 @@ function requestNotificationPermission() {
   });
 }
 
-messaging.onMessage(function(payload) {
+onMessage(function(payload) {
   console.log('Message received. ', payload);
   //window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
 
