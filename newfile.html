@@ -1351,7 +1351,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Realtime Database
-const installationId = firebase.installations().getId();
+const installationId = installations().getId();
 var db = firebase.database();
 
 // Initialize Firebase Cloud Messaging
