@@ -54,16 +54,7 @@
     });
   }
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.addEventListener('message', (event) => {
-    if (event.data && event.data.action === 'open_url') {
-      const url = event.data.url;
-      // Handle the URL as needed in your application
-      console.log('Received URL to open:', url);
-      window.location.href = url; // Navigate to the URL
-    }
-  });
-}
+
 
       // Register the service worker
 if ('serviceWorker' in navigator) {
@@ -89,6 +80,16 @@ if ('serviceWorker' in navigator) {
       });
     }
     */
+   if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data && event.data.action === 'open_url') {
+      const url = event.data.url;
+      // Handle the URL as needed in your application
+      console.log('Received URL to open:', url);
+      window.location.href = url; // Navigate to the URL
+    }
+  });
+}
 </script>
 <style>
 body {
