@@ -1351,11 +1351,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Realtime Database
-const installationId = installations().getId();
-var db = firebase.database();
+const installationId = app.installations().getId();
+var db = app.database();
 
 // Initialize Firebase Cloud Messaging
-var messaging = firebase.messaging();
+var messaging = app.messaging();
 
 // Request permission for notifications
 function requestNotificationPermission() {
