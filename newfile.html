@@ -1338,7 +1338,7 @@ input:focus {
 <script type=module>
 
 import { initializeApp, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { installations, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js";
+import { } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js";
 
 
 const firebaseConfig = {
@@ -1353,11 +1353,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Realtime Database
-const installationId = installations().getId();
-var db = app.database();
+const installationId = firebase.installations().getId();
+var db = firebase.database();
 
 // Initialize Firebase Cloud Messaging
-var messaging = app.messaging();
+var messaging = firebase.messaging();
 
 // Request permission for notifications
 function requestNotificationPermission() {
