@@ -3098,7 +3098,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
             };
 
         // Send notification data to Firebase Realtime Database
-            return window.ref('scheduledNotifications').push(notificationData);
+        return window.set(window.ref(window.db, 'scheduledNotifications').push(), notificationData);
     }).then(() => {
         alert(`Notification scheduled to be shown at: ${new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}`);
     }).catch(error => {
