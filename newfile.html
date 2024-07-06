@@ -13,6 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js" type="module"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js" type="module"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.9.0/localforage.min.js"></script>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
@@ -1429,7 +1430,20 @@ if ('serviceWorker' in navigator) {
   window.serverTimestamp = serverTimestamp;
   window.requestNotificationPermission = requestNotificationPermission;
     </script>
-    <script>       
+    <script>      
+      // Retrieve a value using localForage
+localforage.getItem('newNote').then(function(value) {
+  if (value !== null) {
+    console.log('Retrieved value:', value);
+    // Use the retrieved value in your application logic
+  } else {
+    console.log('Value not found in localForage.');
+  }
+}).catch(function(err) {
+  console.error('Error retrieving value from localForage:', err);
+});
+
+      
 function detectTheme() {
     const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const theme = localStorage.getItem("theme");
