@@ -42,19 +42,30 @@
 
 
     <script>
-/*
 
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('service-worker.js').then(function(registration) {
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      }, function(err) {
-        console.log('ServiceWorker registration failed: ', err);
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('service-worker.js').then(function(registration) {
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+
+      // Adding the message event listener after the service worker is registered
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.action === 'open_url') {
+          const url = event.data.url;
+          // Handle the URL as needed in your application
+          console.log('Received URL to open:', url);
+          window.location.href = url; // Navigate to the URL
+        }
       });
+    }).catch(function(err) {
+      console.log('ServiceWorker registration failed: ', err);
     });
-  }
+  });
+}
 
-*/
+
+/*
 
       // Register the service worker
 if ('serviceWorker' in navigator) {
