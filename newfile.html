@@ -46,8 +46,10 @@
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('service-worker.js').then(function(registration) {
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+      scope: '/marko/newfile/'
+    }).then(function(registration) {
+      console.log('Firebase Messaging ServiceWorker registration successful with scope:', registration.scope);
 
       // Adding the message event listener after the service worker is registered
       navigator.serviceWorker.addEventListener('message', (event) => {
@@ -58,11 +60,13 @@ if ('serviceWorker' in navigator) {
           window.location.href = url; // Navigate to the URL
         }
       });
+
     }).catch(function(err) {
-      console.log('ServiceWorker registration failed: ', err);
+      console.error('Firebase Messaging ServiceWorker registration failed:', err);
     });
   });
 }
+
 
 
 /*
