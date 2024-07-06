@@ -47,7 +47,7 @@
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
     navigator.serviceWorker.register('firebase-messaging-sw.js', {
-      scope: '/'
+      scope: '/marko/'
     }).then(function(registration) {
       console.log('Firebase Messaging ServiceWorker registration successful with scope:', registration.scope);
 
