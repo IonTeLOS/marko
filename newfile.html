@@ -1338,6 +1338,8 @@ input:focus {
 <script type=module>
 
 import { initializeApp, } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import ( } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
@@ -1351,7 +1353,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Realtime Database
-const installationId = app.installations().getId();
+const installationId = installations().getId();
 var db = app.database();
 
 // Initialize Firebase Cloud Messaging
