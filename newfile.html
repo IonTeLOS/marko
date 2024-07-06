@@ -1434,8 +1434,11 @@ if ('serviceWorker' in navigator) {
 
 // Request notification permission on page load
 // requestNotificationPermission();
+  // Expose db and necessary functions for other scripts
   window.db = db;
-
+  window.ref = ref;
+  window.set = set;
+  window.serverTimestamp = serverTimestamp;
     </script>
     <script>       
 function detectTheme() {
