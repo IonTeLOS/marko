@@ -8,9 +8,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-installations.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-database.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-messaging.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js"></script>
 
@@ -54,17 +54,26 @@
     });
   }
 
-      
-      // Register the service worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-    scope: '/marko/newfile/'
-  }).then(function(registration) {
-    console.log('Service Worker registered with scope:', registration.scope);
-  }).catch(function(error) {
-    console.error('Service Worker registration failed:', error);
+  navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data && event.data.action === 'open_url') {
+      const url = event.data.url;
+      // Handle the URL as needed in your application
+      console.log('Received URL to open:', url);
+      window.location.href = url; // Navigate to the URL
+    }
   });
 }
+
+// Existing code for registering the service worker
+navigator.serviceWorker.register('/firebase-messaging-sw.js')
+  .then((registration) => {
+    console.log('Firebase Messaging Service Worker registered with scope:', registration.scope);
+  })
+  .catch((error) => {
+    console.error('Firebase Messaging Service Worker registration failed:', error);
+  });
+
 /*
 if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
