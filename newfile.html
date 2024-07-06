@@ -43,17 +43,6 @@
     <script>
 
 
-      // Register the service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('firebase-messaging-sw.js', {
-    scope: '/marko/newfile/'
-  }).then(function(registration) {
-    console.log('Service Worker registered with scope:', registration.scope);
-  }).catch(function(error) {
-    console.error('Service Worker registration failed:', error);
-  });
-}
-
 
 /*
 
@@ -1418,15 +1407,17 @@ messaging.onMessage(function(payload) {
   
 });
 
-// app.js
-// Set up channel
-const broadcast = new BroadcastChannel('uuid-channel');
 
-// Listen to the response
-broadcast.onmessage = (event) => {
-  console.log(event.data.payload);
-};
-
+      // Register the service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('firebase-messaging-sw.js', {
+    scope: '/marko/newfile/'
+  }).then(function(registration) {
+    console.log('Service Worker registered with scope:', registration.scope);
+  }).catch(function(error) {
+    console.error('Service Worker registration failed:', error);
+  });
+}
 
 // Request notification permission on page load
 // requestNotificationPermission();
