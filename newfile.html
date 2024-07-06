@@ -49,7 +49,7 @@
 
       // Register the service worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/firebase-messaging-sw.js', {
+  navigator.serviceWorker.register('firebase-messaging-sw.js', {
     scope: '/marko/newfile/'
   }).then(function(registration) {
     console.log('Service Worker registered with scope:', registration.scope);
