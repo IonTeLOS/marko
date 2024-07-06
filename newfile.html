@@ -1365,7 +1365,7 @@ function requestNotificationPermission() {
       localStorage.setItem('fcmt', fcmToken);
 
       // Store FCM token in Firebase Realtime Database
-      return db.ref('devices/' + deviceToken).update({
+      return ref('devices/' + deviceToken).update({
         fcmToken: fcmToken
       });
     } else {
