@@ -1347,35 +1347,33 @@ getId(installations).then((installationId) => {
   console.error('Error getting installation ID:', error);
 });
 
-// Request permission for notifications
-function requestNotificationPermission() {
-  Notification.requestPermission().then(function(permission) {
-    if (permission === 'granted') {
-      console.log('Notification permission granted.');
-
-      // Get the FCM token
-      const tK = getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' });
-      return tK;
-    } else {
-      throw new Error('Notification permission denied');
-    }
-  }).then(function(fcmToken) {
-    if (fcmToken) {
-      console.log('FCM Token:', fcmToken);
-      localStorage.setItem('fcmt', fcmToken);
-
-      // Store FCM token in Firebase Realtime Database
-      return ref('devices/' + deviceToken).update({
-        fcmToken: fcmToken
-      });
-    } else {
-      throw new Error('No registration token available. Request permission to generate one.');
-    }
-  }).catch(function(err) {
-    console.error('An error occurred while retrieving token. ', err);
-  });
-}
-
+  // Request permission for notifications and get the token
+  function requestNotificationPermission() {
+    console.log('Requesting notification permission...');
+    Notification.requestPermission().then((permission) => {
+      if (permission === 'granted') {
+        console.log('Notification permission granted.');
+        // Get the token using the VAPID key
+        getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' }).then((currentToken) => {
+          if (currentToken) {
+            console.log('FCM Token:', currentToken);
+            // Send the token to your server or save it in the database
+            set(ref(db, 'tokens/' + currentToken), {
+              token: currentToken,
+              lastSeen: serverTimestamp()
+            });
+          } else {
+            console.log('No registration token available. Request permission to generate one.');
+          }
+        }).catch((error) => {
+          console.error('An error occurred while retrieving token.', error);
+        });
+      } else {
+        console.log('Notification permission denied.');
+      }
+    });
+  }
+  
 onMessage(function(payload) {
   console.log('Message received. ', payload);
   //window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
