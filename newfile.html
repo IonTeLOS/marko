@@ -1380,8 +1380,8 @@ function requestNotificationPermission() {
 
 messaging.onMessage(function(payload) {
   console.log('Message received. ', payload);
-  window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
-/*
+  //window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
+
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
@@ -1399,7 +1399,7 @@ messaging.onMessage(function(payload) {
     window.open(notificationOptions.data.url, '_blank');
     removeBellAfterNotification(notificationOptions.data.uuid);  
   };
-  */
+  
 });
 
 
