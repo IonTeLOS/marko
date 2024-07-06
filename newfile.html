@@ -3097,9 +3097,11 @@ function scheduleNotification(title, body, delay, icon, uuid) {
                 scheduledTime: notificationTime
             };
 
-        // Send notification data to Firebase Realtime Database
-        return window.set(window.ref(window.db, 'scheduledNotifications').push(), notificationData);
-    }).then(() => {
+// Generate a new key for the notification
+    const newNotificationRef = window.ref(window.db, 'scheduledNotifications').push();
+
+    // Send notification data to Firebase Realtime Database
+    return window.set(newNotificationRef, notificationData);    }).then(() => {
         alert(`Notification scheduled to be shown at: ${new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}`);
     }).catch(error => {
         if (error !== 'Notification permission denied') {
