@@ -2994,11 +2994,10 @@ function initializeDeviceToken() {
         localStorage.setItem('deviceToken', deviceToken);
     }
     
-       // Send this token to Firebase Realtime Database
-    const db = window.db; // Access the db initialized in the module script
-    const deviceRef = db.ref('devices/' + deviceToken);
-    return set(deviceRef, {
-      lastSeen: serverTimestamp()
+    // Send this token to Firebase Realtime Database
+    const dbRef = window.ref(window.db, 'devices/' + deviceToken);
+    return window.set(dbRef, {
+      lastSeen: window.serverTimestamp()
     });
   }
 
