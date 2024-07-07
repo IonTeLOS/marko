@@ -1438,40 +1438,43 @@ if ('serviceWorker' in navigator) {
   window.serverTimestamp = serverTimestamp;
   window.requestNotificationPermission = requestNotificationPermission;
 
-  // Function to cancel a scheduled notification
-  window.cancelScheduledNotification = function(uuid) {
-      if (!uuid) {
-        alert("Invalid UUID provided.");
-        return;
-      }
+  export function cancelScheduledNotification(uuid) {
+  if (!uuid) {
+    alert("Invalid UUID provided.");
+    return;
+  }
 
-      const confirmDelete = confirm("Are you sure you want to delete this scheduled notification?");
-      
-      if (confirmDelete) {
-        const notificationsRef = ref(db, "scheduledNotifications");
-        const queryRef = query(notificationsRef, orderByChild("uuid").equalTo(uuid));
+  const confirmDelete = confirm("Are you sure you want to delete this scheduled notification?");
+  
+  if (confirmDelete) {
+    const notificationsRef = ref(db, "scheduledNotifications");
+    const queryRef = query(notificationsRef, orderByChild("uuid").equalTo(uuid));
 
-        get(queryRef).then((snapshot) => {
-          if (snapshot.exists()) {
-            snapshot.forEach((childSnapshot) => {
-              remove(childSnapshot.ref)
-                .then(() => {
-                  alert("Notification successfully deleted.");
-                })
-                .catch((error) => {
-                  console.error("Error deleting notification:", error);
-                  alert("An error occurred while deleting the notification.");
-                });
+    get(queryRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          console.log("Removing notification with key:", childSnapshot.key);
+          remove(childSnapshot.ref)
+            .then(() => {
+              alert("Notification successfully deleted.");
+            })
+            .catch((error) => {
+              console.error("Error deleting notification:", error);
+              alert("An error occurred while deleting the notification.");
             });
-          } else {
-            alert("There was no active notification for this Marko.");
-          }
-        }).catch((error) => {
-          console.error("Error querying notifications:", error);
-          alert("An error occurred while querying the notifications.");
         });
+      } else {
+        alert("There was no active notification for this Marko.");
       }
-    }
+    }).catch((error) => {
+      console.error("Error querying notifications:", error);
+      alert("An error occurred while querying the notifications.");
+    });
+  }
+}
+
+// Expose the function globally
+window.cancelScheduledNotification = cancelScheduledNotification;
     </script>
     <script>      
 function onWindowFocus() {
