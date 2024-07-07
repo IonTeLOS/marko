@@ -3237,8 +3237,11 @@ function scheduleNotification(title, body, delay, icon, uuid) {
         // Add email to notificationData if not on mobile
         if (!isMobileDevice()) {
             const userEmail = localStorage.getItem('userEmail');
+            console.log("Sending email notification to: " + userEmail)
             if (userEmail) {
                 notificationData.email = userEmail;
+                          console.log("Sent email notification to: " + userEmail)
+
             }
         }
 
