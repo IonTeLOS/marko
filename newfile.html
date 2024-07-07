@@ -1359,7 +1359,7 @@ getId(installations).then((installationId) => {
           if (currentToken) {
             console.log('FCM Token:', currentToken);
             // Send the token to your server and save it in localStorage
-            localStorage.setItem('fcmt', fcmToken);
+            localStorage.setItem('fcmt', currentToken);
             set(ref(db, 'tokens/' + currentToken), {
               token: currentToken,
               lastSeen: serverTimestamp()
