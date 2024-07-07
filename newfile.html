@@ -1434,6 +1434,10 @@ if ('serviceWorker' in navigator) {
   window.requestNotificationPermission = requestNotificationPermission;
     </script>
     <script>      
+function onWindowFocus() {
+    console.log("Window is focused!");
+    // Your function code here
+
       // Retrieve a value using localForage
 localforage.getItem('newNote').then(function(value) {
   if (value !== null) {
@@ -1445,7 +1449,8 @@ localforage.getItem('newNote').then(function(value) {
 }).catch(function(err) {
   console.error('Error retrieving value from localForage:', err);
 });
-
+}
+window.addEventListener('focus', onWindowFocus);
 
 function detectTheme() {
     const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
