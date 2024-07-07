@@ -3079,6 +3079,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
     // Retrieve the device Firebase token
     try {
         myToken = localStorage.getItem('fcmt');
+        console.log(myToken);
         if (!myTtoken) {
             throw new Error("No device token found");
         }
