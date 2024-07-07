@@ -3079,8 +3079,8 @@ function scheduleNotification(title, body, delay, icon, uuid) {
 
     // Retrieve the device Firebase token
     try {
-        token = localStorage.getItem('fcmt');
-        if (!token) {
+        myToken = localStorage.getItem('fcmt');
+        if (!myTtoken) {
             throw new Error("No device token found");
         }
     } catch (error) {
@@ -3110,7 +3110,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
                 body: body || 'your Marko reminder',
                 uuid: uuid,
                 icon: notIcon,
-                deviceToken: token,
+                deviceToken: myToken,
                 scheduledTime: notificationTime
             };
 
@@ -3162,7 +3162,7 @@ function cancelScheduledNotification(uuid) {
             });
         });
       } else {
-        alert("No notification found with the provided UUID.");
+        alert("There was no active notification for this Marko..");
       }
     });
   }
