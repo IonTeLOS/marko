@@ -5344,12 +5344,18 @@ function handleSignOut() {
 
 function updateButtonState() {
     const button = document.getElementById('signInOutButton');
+    const icon = document.getElementById('signInOutIcon');
+    const text = document.getElementById('signInOutText');
+    
     if (isSignedIn) {
-        button.innerHTML = '<i class="material-icons">logout</i> Sign Out';
+        icon.textContent = 'logout';
+        text.textContent = 'Sign Out';
     } else {
-        button.innerHTML = '<i class="material-icons">login</i> Sign In';
+        icon.textContent = 'login';
+        text.textContent = 'Sign In';
     }
 }
+
 
 function checkInitialState() {
     const storedEmail = localStorage.getItem('userEmail');
@@ -5827,7 +5833,10 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
-<button id="signInOutButton" class="g-button"></button>              
+<button id="signInOutButton" class="g-button" onclick="toggleSignInOut()">
+    <span id="signInOutIcon" class="material-icons">login</span>
+    <span id="signInOutText">Sign In</span>
+</button>
 <button id="syncFromDrive" class="g-button" onclick="getFromGoogleDrive()">
     <span id="syncFromIcon" class="material-icons">sync</span>
     Sync FROM Drive
