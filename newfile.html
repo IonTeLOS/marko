@@ -1351,7 +1351,12 @@ getId(installations).then((installationId) => {
  // Handle foreground messages
 onMessage(messaging, (payload) => {
   console.log('Message received. ', payload);
-  window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
+  const uuid = payload.data.uuid;
+  const url = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
+  window.location.href = 'https://teloslinux.org/marko/newfile';
+  window.open(url, '_blank'); // Opens URL in a new tab or window
+
+  //window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
 /*
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
@@ -2655,6 +2660,7 @@ function changeURL(url) {
 
 
             if (reminder) {
+                window.location.href = 'https://teloslinux.org/marko/newfile';
                 openReminder(reminder);
                 removeBellAfterNotification(reminder);
                 redirectToHomepage();
