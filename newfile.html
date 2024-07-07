@@ -1576,6 +1576,8 @@ function toggleTheme() {
  // window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', toggleTheme);
   let isSignedIn = false;
 
+let isSignedIn = false;
+
 function toggleSignInOut() {
     if (isSignedIn) {
         handleSignOut();
@@ -1585,51 +1587,79 @@ function toggleSignInOut() {
 }
 
 function handleSignIn() {
+    // Disable the button and show loading state
+    updateButtonState('loading');
+    
     authorize()
         .then((result) => {
             console.log('Authorization successful');
             console.log('User email:', result.email);
             isSignedIn = true;
-            updateButtonState();
+            updateButtonState('signedIn');
             // Proceed with your application logic
         })
         .catch(error => {
             console.error('Authorization failed:', error);
+            isSignedIn = false;
+            updateButtonState('signedOut');
             // Handle the error appropriately
         });
 }
 
 function handleSignOut() {
+    // Disable the button and show loading state
+    updateButtonState('loading');
+
+    // Perform sign out operations
     localStorage.removeItem('userEmail');
     localStorage.removeItem('accessToken');
     isSignedIn = false;
-    updateButtonState();
-    console.log('User signed out');
+    
+    // Update button state after a short delay to ensure state changes are processed
+    setTimeout(() => {
+        updateButtonState('signedOut');
+        console.log('User signed out');
+    }, 100);
+
     // Additional sign-out logic if needed...
 }
 
-function updateButtonState() {
+function updateButtonState(state) {
     const button = document.getElementById('signInOutButton');
     const icon = document.getElementById('signInOutIcon');
     const text = document.getElementById('signInOutText');
     
-    if (isSignedIn) {
-        icon.textContent = 'logout';
-        text.textContent = 'Sign Out';
-    } else {
-        icon.textContent = 'login';
-        text.textContent = 'Sign In';
+    switch(state) {
+        case 'signedIn':
+            icon.textContent = 'logout';
+            text.textContent = 'Sign Out';
+            button.disabled = false;
+            break;
+        case 'signedOut':
+            icon.textContent = 'login';
+            text.textContent = 'Sign In';
+            button.disabled = false;
+            break;
+        case 'loading':
+            icon.textContent = 'hourglass_empty';
+            text.textContent = 'Loading...';
+            button.disabled = true;
+            break;
     }
 }
-
 
 function checkInitialState() {
     const storedEmail = localStorage.getItem('userEmail');
     if (storedEmail) {
         isSignedIn = true;
+        updateButtonState('signedIn');
+    } else {
+        updateButtonState('signedOut');
     }
-    updateButtonState();
 }
+
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', checkInitialState);
 
          function toggleButtonContainerVisibility() {
             const newLinkForm = document.getElementById('new-link-form');
@@ -5688,7 +5718,6 @@ function hasPaid() {
 window.onload = function() {
     const myMail = localStorage.getItem('userEmail');
     console.log(myMail);
-    checkInitialState();
     loadDonationParams();
     loadArrayFromURL();
     toggleBellIcons();
