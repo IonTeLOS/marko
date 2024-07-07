@@ -3183,12 +3183,12 @@ function cancelScheduledNotification(uuid) {
   const confirmDelete = confirm("Are you sure you want to delete this scheduled notification?");
   
   if (confirmDelete) {
-    const tref = window.ref("scheduledNotifications");
+    const tref = window.ref(window.db, "scheduledNotifications");
     
     tref.orderByChild("uuid").equalTo(uuid).once("value", (snapshot) => {
       if (snapshot.exists()) {
         snapshot.forEach((childSnapshot) => {
-          childSnapshot.tref.remove()
+          childSnapshot.ref.remove()
             .then(() => {
               alert("Notification successfully deleted.");
             })
@@ -3198,7 +3198,7 @@ function cancelScheduledNotification(uuid) {
             });
         });
       } else {
-        alert("There was no active notification for this Marko..");
+        alert("There was no active notification for this Marko.");
       }
     });
   }
