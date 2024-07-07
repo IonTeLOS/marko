@@ -1464,11 +1464,14 @@ localforage.getItem('newNot').then(function(value) {
 }).catch(function(err) {
   console.error('Error retrieving value from localForage:', err);
 });
-localforage.getItem('newNotUrl').then(function(newValue) {
-  if (newValue !== null) {
-    console.log('Retrieved value:', newValue);
+  
+localforage.getItem('newNotUrl').then(function(value) {
+  if (value !== null) {
+    console.log('Retrieved value:', value);
     // Use the retrieved value in your application logic
-    window.location.href = newValue;
+    window.open(value, '_blank');
+
+    // window.location.href = value;
         return localforage.removeItem('newNotUrl');
   } else {
     console.log('Url Value not found in localForage.');
