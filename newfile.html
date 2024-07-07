@@ -5152,6 +5152,8 @@ function openLink(url) {
     const FILE_NAME = 'bookmarksMarko.txt';
 
     let tokenClient;
+    let loggedInUserEmail; // Global variable to store the authenticated user's email
+
 
 function initializeGoogleIdentity() {
     tokenClient = google.accounts.oauth2.initTokenClient({
@@ -5161,6 +5163,13 @@ function initializeGoogleIdentity() {
             if (tokenResponse && tokenResponse.access_token) {
                 localStorage.setItem('accessToken', tokenResponse.access_token);
                 console.log('Authorization successful.');
+              // Extract email address and store globally
+                const idToken = tokenResponse.id_token;
+                const payload = idToken.split('.')[1];
+                const decodedPayload = atob(payload);
+                const email = JSON.parse(decodedPayload).email;
+                loggedInUserEmail = email;
+                console.log('Logged in user email:', loggedInUserEmail);
             }
         },
     });
@@ -5365,7 +5374,8 @@ function hasPaid() {
         const url = 'https://teloslinux.org/marko/newfile?donate=true';
         window.location.href = url;
 }
-
+  
+window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for other parts of the app to reuse
 </script>
 </head>
 <body data-swipe-threshold="100" data-swipe-timeout="300">   
