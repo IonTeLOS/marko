@@ -5186,6 +5186,13 @@ function authorize() {
                     reject(resp);
                 } else {
                     localStorage.setItem('accessToken', resp.access_token);
+                    // Resolve with the access token and also extract email here
+                    const idToken = resp.id_token;
+                    const payload = idToken.split('.')[1];
+                    const decodedPayload = atob(payload);
+                    const email = JSON.parse(decodedPayload).email;
+                    loggedInUserEmail = email;
+                    console.log('Logged in user email:', loggedInUserEmail);
                     resolve(resp);
                 }
             };
