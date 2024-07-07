@@ -3080,7 +3080,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
     try {
         myToken = localStorage.getItem('fcmt');
         console.log(myToken);
-        if (!myTtoken) {
+        if (!myToken) {
             throw new Error("No device token found");
         }
     } catch (error) {
