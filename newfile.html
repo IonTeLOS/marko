@@ -1448,7 +1448,7 @@ if ('serviceWorker' in navigator) {
   
   if (confirmDelete) {
     const notificationsRef = ref(db, "scheduledNotifications");
-    const queryRef = query(notificationsRef, orderByChild("uuid").equalTo(uuid));
+    const queryRef = query(notificationsRef, orderByChild("uuid"), equalTo(uuid));
 
     get(queryRef).then((snapshot) => {
       if (snapshot.exists()) {
@@ -1472,7 +1472,7 @@ if ('serviceWorker' in navigator) {
     });
   }
 }
-
+  
 // Expose the function globally
 window.cancelScheduledNotification = cancelScheduledNotification;
     </script>
