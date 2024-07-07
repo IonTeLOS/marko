@@ -2657,6 +2657,7 @@ function changeURL(url) {
             if (reminder) {
                 openReminder(reminder);
                 removeBellAfterNotification(reminder);
+                redirectToHomepage();
                 return;
             }
             if (purelink) {
