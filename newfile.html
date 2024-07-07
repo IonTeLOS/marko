@@ -1358,7 +1358,8 @@ getId(installations).then((installationId) => {
         getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' }).then((currentToken) => {
           if (currentToken) {
             console.log('FCM Token:', currentToken);
-            // Send the token to your server or save it in the database
+            // Send the token to your server and save it in localStorage
+            localStorage.setItem('fcmt', fcmToken);
             set(ref(db, 'tokens/' + currentToken), {
               token: currentToken,
               lastSeen: serverTimestamp()
