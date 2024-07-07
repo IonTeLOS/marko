@@ -5282,24 +5282,17 @@ function authorize() {
                 if (resp.error !== undefined) {
                     reject(new Error(`Authorization error: ${resp.error}`));
                 } else {
+                    console.log('Authorization successful, getting user email');
                     localStorage.setItem('accessToken', resp.access_token);
-                    fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
-                        headers: { 'Authorization': `Bearer ${resp.access_token}` }
-                    })
-                    .then(res => {
-                        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-                        return res.json();
-                    })
-                    .then(data => {
-                        loggedInUserEmail = data.email;
-                        localStorage.setItem('userEmail', loggedInUserEmail);
-                        console.log('Logged in user email:', loggedInUserEmail);
-                        resolve(resp);
-                    })
-                    .catch(error => {
-                        console.error('Error fetching user email:', error);
-                        reject(error);
-                    });
+                    getUserEmailAndStore()
+                        .then((email) => {
+                            console.log('User email retrieved:', email);
+                            resolve(resp);
+                        })
+                        .catch(error => {
+                            console.error('Failed to get user email:', error);
+                            reject(error); // Reject if email retrieval fails
+                        });
                 }
             };
             tokenClient.requestAccessToken({prompt: ''});
