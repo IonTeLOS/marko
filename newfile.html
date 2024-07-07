@@ -1443,6 +1443,8 @@ localforage.getItem('newNot').then(function(value) {
   if (value !== null) {
     console.log('Retrieved value:', value);
     // Use the retrieved value in your application logic
+    window.location.href = value;
+        loadArrayFromURL();
   } else {
     console.log('Value not found in localForage.');
   }
