@@ -1453,7 +1453,9 @@ localforage.getItem('newNot').then(function(value) {
         return localforage.removeItem('newNot');
   } else {
     console.log('Value not found in localForage.');
-    if (url.searchParams.has('uuid')) {
+    //const url = new URL(window.location.href); // Create a URL object
+
+    if (window.location.href.searchParams.has('uuid')) {
     // URL includes "?uuid="
     console.log("URL contains now useless 'uuid' parameter, redirecting");
     redirectToHomepage();
