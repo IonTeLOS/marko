@@ -1464,6 +1464,18 @@ localforage.getItem('newNot').then(function(value) {
 }).catch(function(err) {
   console.error('Error retrieving value from localForage:', err);
 });
+localforage.getItem('newNotUrl').then(function(newValue) {
+  if (newValue !== null) {
+    console.log('Retrieved value:', newValue);
+    // Use the retrieved value in your application logic
+    window.location.href = newValue;
+        return localforage.removeItem('newNotUrl');
+  } else {
+    console.log('Url Value not found in localForage.');
+  }
+}).catch(function(err) {
+  console.error('Error retrieving value from localForage:', err);
+});  
 }
 window.addEventListener('focus', onWindowFocus);
 
