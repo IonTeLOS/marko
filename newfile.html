@@ -5203,6 +5203,7 @@ function ensureAuthorization() {
             console.log('No access token found. Initiating authorization...');
             authorize().then(resolve).catch(reject);
         } else {
+            initializeGoogleIdentity();
             resolve(accessToken);
         }
     });
