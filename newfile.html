@@ -2663,6 +2663,7 @@ function changeURL(url) {
             if (reminder) {
                 openReminder(reminder);
                 removeBellAfterNotification(reminder);
+                window.close();
                 return;
             }
             if (purelink) {
