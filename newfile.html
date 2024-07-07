@@ -5150,7 +5150,7 @@ function openLink(url) {
 <script>
     const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
     const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
-    const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+    const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
     const FILE_NAME = 'bookmarksMarko.txt';
 
     let tokenClient;
@@ -5165,19 +5165,12 @@ function initializeGoogleIdentity() {
             if (tokenResponse && tokenResponse.access_token) {
                 localStorage.setItem('accessToken', tokenResponse.access_token);
                 console.log('Authorization successful.');
-              // Extract email address and store globally
-                const idToken = tokenResponse.id_token;
-                const payload = idToken.split('.')[1];
-                const decodedPayload = atob(payload);
-                const email = JSON.parse(decodedPayload).email;
-                loggedInUserEmail = email;
-                console.log('Logged in user email:', loggedInUserEmail);
-                localStorage.setItem('userEmail', loggedInUserEmail);
             }
         },
     });
 }
 
+/*
 function authorize() {
     return new Promise((resolve, reject) => {
         if (tokenClient) {
@@ -5186,14 +5179,39 @@ function authorize() {
                     reject(resp);
                 } else {
                     localStorage.setItem('accessToken', resp.access_token);
-                    // Resolve with the access token and also extract email here
-                    const idToken = resp.id_token;
-                    const payload = idToken.split('.')[1];
-                    const decodedPayload = atob(payload);
-                    const email = JSON.parse(decodedPayload).email;
-                    loggedInUserEmail = email;
-                    console.log('Logged in user email:', loggedInUserEmail);
                     resolve(resp);
+                }
+            };
+            tokenClient.requestAccessToken({prompt: ''});
+        } else {
+            reject(new Error('Token client not initialized'));
+        }
+    });
+} 
+*/
+  function authorize() {
+    return new Promise((resolve, reject) => {
+        if (tokenClient) {
+            tokenClient.callback = (resp) => {
+                if (resp.error !== undefined) {
+                    reject(resp);
+                } else {
+                    localStorage.setItem('accessToken', resp.access_token);
+                    // Get user email after successful authorization
+                    fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
+                        headers: { 'Authorization': `Bearer ${resp.access_token}` }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        loggedInUserEmail = data.email;
+                        console.log('Logged in user email:', loggedInUserEmail);
+                        localStorage.setItem('userEmail', loggedInUserEmail);
+                        resolve(resp);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching user email:', error);
+                        resolve(resp);
+                    });
                 }
             };
             tokenClient.requestAccessToken({prompt: ''});
@@ -5210,7 +5228,6 @@ function ensureAuthorization() {
             console.log('No access token found. Initiating authorization...');
             authorize().then(resolve).catch(reject);
         } else {
-            initializeGoogleIdentity();
             resolve(accessToken);
         }
     });
