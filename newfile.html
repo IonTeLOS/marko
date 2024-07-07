@@ -2257,6 +2257,8 @@ function saveBookmark(linkData) {
         hideAllFields();
     }
 window.onload = function() {
+    const em = localStorage.getItem('userEmail');
+    console.log(em);
     loadDonationParams();
     loadArrayFromURL();
     toggleBellIcons();
@@ -5170,6 +5172,7 @@ function initializeGoogleIdentity() {
                 const email = JSON.parse(decodedPayload).email;
                 loggedInUserEmail = email;
                 console.log('Logged in user email:', loggedInUserEmail);
+                localStorage.setItem('userEmail', loggedInUserEmail);
             }
         },
     });
