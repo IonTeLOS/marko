@@ -1574,6 +1574,62 @@ function toggleTheme() {
 
   // Listen for changes in the system theme and follow them
  // window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', toggleTheme);
+  let isSignedIn = false;
+
+function toggleSignInOut() {
+    if (isSignedIn) {
+        handleSignOut();
+    } else {
+        handleSignIn();
+    }
+}
+
+function handleSignIn() {
+    authorize()
+        .then((result) => {
+            console.log('Authorization successful');
+            console.log('User email:', result.email);
+            isSignedIn = true;
+            updateButtonState();
+            // Proceed with your application logic
+        })
+        .catch(error => {
+            console.error('Authorization failed:', error);
+            // Handle the error appropriately
+        });
+}
+
+function handleSignOut() {
+    localStorage.removeItem('userEmail');
+    localStorage.removeItem('accessToken');
+    isSignedIn = false;
+    updateButtonState();
+    console.log('User signed out');
+    // Additional sign-out logic if needed...
+}
+
+function updateButtonState() {
+    const button = document.getElementById('signInOutButton');
+    const icon = document.getElementById('signInOutIcon');
+    const text = document.getElementById('signInOutText');
+    
+    if (isSignedIn) {
+        icon.textContent = 'logout';
+        text.textContent = 'Sign Out';
+    } else {
+        icon.textContent = 'login';
+        text.textContent = 'Sign In';
+    }
+}
+
+
+function checkInitialState() {
+    const storedEmail = localStorage.getItem('userEmail');
+    if (storedEmail) {
+        isSignedIn = true;
+    }
+    updateButtonState();
+}
 
          function toggleButtonContainerVisibility() {
             const newLinkForm = document.getElementById('new-link-form');
@@ -5308,67 +5364,6 @@ function authorize() {
     });
 }
 
-  let isSignedIn = false;
-
-function toggleSignInOut() {
-    if (isSignedIn) {
-        handleSignOut();
-    } else {
-        handleSignIn();
-    }
-}
-
-function handleSignIn() {
-    authorize()
-        .then((result) => {
-            console.log('Authorization successful');
-            console.log('User email:', result.email);
-            isSignedIn = true;
-            updateButtonState();
-            // Proceed with your application logic
-        })
-        .catch(error => {
-            console.error('Authorization failed:', error);
-            // Handle the error appropriately
-        });
-}
-
-function handleSignOut() {
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('accessToken');
-    isSignedIn = false;
-    updateButtonState();
-    console.log('User signed out');
-    // Additional sign-out logic if needed...
-}
-
-function updateButtonState() {
-    const button = document.getElementById('signInOutButton');
-    const icon = document.getElementById('signInOutIcon');
-    const text = document.getElementById('signInOutText');
-    
-    if (isSignedIn) {
-        icon.textContent = 'logout';
-        text.textContent = 'Sign Out';
-    } else {
-        icon.textContent = 'login';
-        text.textContent = 'Sign In';
-    }
-}
-
-
-function checkInitialState() {
-    const storedEmail = localStorage.getItem('userEmail');
-    if (storedEmail) {
-        isSignedIn = true;
-    }
-    updateButtonState();
-}
-
-// Use this for your button click event
-document.getElementById('signInOutButton').addEventListener('click', toggleSignInOut);
-
-// The authorize and getUserEmailAndStore functions remain the same as in the previous response
 
 function isTokenExpired(token) {
     console.log('Checking token:', token);
@@ -5833,7 +5828,7 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
-<button id="signInOutButton" class="g-button">
+<button id="signInOutButton" class="g-button" onclick="toggleSignInOut()">
     <span id="signInOutIcon" class="material-icons">login</span>
     <span id="signInOutText">Sign In</span>
 </button>
