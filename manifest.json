@@ -8,11 +8,12 @@
   },
   "orientation": "portrait-primary",
   "share_target": {
-    "action": "/marko/newfile/save-bookmark",
-    "method": "POST",
-    "enctype": "multipart/form-data",
+    "action": "/marko/newfile",
+    "method": "GET",
     "params": {
-      "url": "link"
+      "title": "title",
+      "text": "text",
+      "url": "url"
     }
   },
   "icons": [
