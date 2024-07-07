@@ -3188,7 +3188,73 @@ function sendEmailNotification(title, body, uuid) {
 }      
       
 function scheduleNotification(title, body, delay, icon, uuid) {
-    sendEmailNotification(title, body, uuid);
+    const notificationTime = new Date(Date.now() + delay).toISOString();
+    let myToken;
+
+    // Retrieve the device Firebase token
+    try {
+        myToken = localStorage.getItem('fcmt');
+        console.log(myToken);
+        if (!myToken) {
+            throw new Error("No device token found");
+        }
+    } catch (error) {
+        alert("Could not identify device, aborting..");
+        return;
+    }
+
+    // Determine the notification icon
+    const notIcon = icon.startsWith("https://fonts.gstatic.com/") ? icon : "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg";
+
+    // Check if Notifications are supported in the browser
+    if (!('Notification' in window)) {
+        console.log('Notifications not supported in this browser.');
+        return;
+    }
+
+    // Request notification permission
+    Notification.requestPermission().then(permission => {
+        if (permission !== 'granted') {
+            alert("You have to give permission for notifications to be shown.");
+            console.log('Notification permission denied.');
+            return Promise.reject('Notification permission denied');
+        }
+
+        const notificationData = {
+            title: title || 'Click to open..',
+            body: body || 'your Marko reminder',
+            uuid: uuid,
+            icon: notIcon,
+            deviceToken: myToken,
+            scheduledTime: notificationTime
+        };
+
+        // Add email to notificationData if not on mobile
+        if (!isMobileDevice()) {
+            const userEmail = localStorage.getItem('userEmail');
+            if (userEmail) {
+                notificationData.email = userEmail;
+            }
+        }
+
+        // Generate a unique key
+        const uniqueKey = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        // Create a reference with the unique key
+        const newNotificationRef = window.ref(window.db, `scheduledNotifications/${uniqueKey}`);
+        // Send notification data to Firebase Realtime Database
+        return window.set(newNotificationRef, notificationData);  
+    }).then(() => {
+        alert(`Notification scheduled to be shown at: ${new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}`);
+    }).catch(error => {
+        if (error !== 'Notification permission denied') {
+            alert("Something went wrong..");
+            console.error('Error scheduling notification:', error);
+        }
+    });
+}
+      /*
+function scheduleNotification(title, body, delay, icon, uuid) {
+    // sendEmailNotification(title, body, uuid); // using it as part of the cloud function to schedule one instead
     const notificationTime = new Date(Date.now() + delay).toISOString();
     let token;
     // Retrieve the device Firebase token
@@ -3246,7 +3312,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
         }
     });
 }
-      
+    */  
 document.addEventListener('DOMContentLoaded', (event) => {
     initializeDeviceToken()
         .then(() => window.requestNotificationPermission())
