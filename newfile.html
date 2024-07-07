@@ -1408,7 +1408,8 @@ if ('serviceWorker' in navigator) {
   window.set = set;
   window.serverTimestamp = serverTimestamp;
   window.requestNotificationPermission = requestNotificationPermission;
-  window.onMessage = onMessage;
+  //window.onMessage = onMessage;
+  window.messaging = messaging;
     </script>
     <script>      
       // Retrieve a value using localForage
@@ -1423,7 +1424,7 @@ localforage.getItem('newNote').then(function(value) {
   console.error('Error retrieving value from localForage:', err);
 });
 
-onMessage(function(payload) {
+messaging.onMessage(function(payload) {
   console.log('Message received. ', payload);
   window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
 /*
