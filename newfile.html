@@ -5503,6 +5503,10 @@ function getFromGoogleDrive() {
             return retryOperation(() => findExistingFile(accessToken));
         })
           .then(data => {
+            // added 3 lines - maybe remove
+            loggedInUserEmail = data.email;
+            localStorage.setItem('userEmail', loggedInUserEmail);
+             console.log('Logged in user email:', loggedInUserEmail);
             if (data.files && data.files.length > 0) {
                 return fetch(`https://www.googleapis.com/drive/v3/files/${data.files[0].id}?alt=media`, {
                     method: 'GET',
