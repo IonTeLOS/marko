@@ -2796,8 +2796,8 @@ function changeURL(url) {
         }
 
 function handleSharedLink(url, title, text) {
-    console.log('Handling shared link:', url);
-    alert(text);
+    console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);    
+    alert(url);
 }
     // load the bookmarks of a friend by using the url parameters provided in the friend's link
     function loadArrayFromURL() {
@@ -2809,11 +2809,54 @@ function handleSharedLink(url, title, text) {
             const sharedUrl = params.get('url');
             const sharedText = params.get('text');
       
-            if (sharedUrl && uncompressed) {
+              const seemsLikeShared = (uncompressed ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
+              if (seemsLikeShared >= 2) {
               console.log('Shared Title:', uncompressed);
               console.log('Shared Text:', sharedText);
               console.log('Shared URL:', sharedUrl);
-              handleSharedLink(sharedUrl, uncompressed);
+              let sharedLink = null;
+              let remaining1 = null;
+              let remaining2 = null;
+
+ if (sharedText.startsWith("https://")) {
+    sharedLink = decodeURIComponent(sharedText);
+    remaining1 = uncompressed;
+    remaining2 = sharedUrl;
+} else if (uncompressed.startsWith("https://")) {
+    sharedLink = decodeURIComponent(uncompressed);
+    remaining1 = sharedText;
+    remaining2 = sharedUrl;
+} else if (sharedUrl.startsWith("https://")) {
+    sharedLink = decodeURIComponent(sharedUrl);
+    remaining1 = sharedText;
+    remaining2 = uncompressed;
+}  
+if (sharedLink) {
+    let title, text;
+    
+    if (remaining1 != null && remaining2 != null) {
+        if (remaining1.length < remaining2.length) {
+            title = remaining1;
+            text = remaining2;
+        } else {
+            title = remaining2;
+            text = remaining1;
+        }
+    } else if (remaining1 != null) {
+        title = remaining1;
+        text = "*";
+    } else if (remaining2 != null) {
+        title = remaining2;
+        text = "*";
+    } else {
+        title = "Shared with Marko";
+        text = "*";
+    }
+
+    handleSharedLink(sharedLink, title, text);
+} else {
+    console.log("No valid link found.");
+}
               window.history.replaceState({}, document.title, "/");
             }
             if (reminder) {
