@@ -3186,6 +3186,18 @@ function sendEmailNotification(title, body, uuid) {
             console.error('Error in authorization:', error);
         });
 }      
+
+// detect if run on mobile or on desktop based on screen width. TODO use this function to make it more mobile friendly
+function isMobileDevice() {
+  return 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 0 ||
+         window.matchMedia('(max-width: 768px)').matches;
+}
+
+if (isMobileDevice()) {
+  console.log("Marko seems to be running on mobile");
+} else {
+  console.log("Marko seems to be running on desktop");
+}    
       
 function scheduleNotification(title, body, delay, icon, uuid) {
     const notificationTime = new Date(Date.now() + delay).toISOString();
