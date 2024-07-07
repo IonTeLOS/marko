@@ -1347,7 +1347,7 @@ getId(installations).then((installationId) => {
 }).catch((error) => {
   console.error('Error getting installation ID:', error);
 });
-messaging.onMessage(function(payload) {
+getMessaging.onMessage(function(payload) {
   console.log('Message received. ', payload);
   window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
 /*
