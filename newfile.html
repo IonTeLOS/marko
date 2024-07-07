@@ -1380,12 +1380,12 @@ onMessage(messaging, (payload) => {
         console.log('Notification permission granted.');
         // Get the token using the VAPID key
         getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' }).then((currentToken) => {
-          if (currentToken) {
-            console.log('FCM Token:', currentToken);
+          if (fcmToken) {
+            console.log('FCM Token:', fcmToken);
             // Send the token to your server and save it in localStorage
-            localStorage.setItem('fcmt', currentToken);
-            set(ref(db, 'tokens/' + currentToken), {
-              token: currentToken,
+            localStorage.setItem('fcmt', fcmToken);
+            set(ref(db, 'tokens/' + fcmToken), {
+              token: fcmToken,
               lastSeen: serverTimestamp()
             });
           } else {
