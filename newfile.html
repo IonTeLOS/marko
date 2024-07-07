@@ -1439,7 +1439,7 @@ function onWindowFocus() {
     // Your function code here
 
       // Retrieve a value using localForage
-localforage.getItem('newNote').then(function(value) {
+localforage.getItem('newNot').then(function(value) {
   if (value !== null) {
     console.log('Retrieved value:', value);
     // Use the retrieved value in your application logic
