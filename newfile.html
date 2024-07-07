@@ -3236,7 +3236,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
 
         // Add email to notificationData if not on mobile
             const userEmail = localStorage.getItem('userEmail');
-            if (confirm("Do you also want an email reminder in your Gmail inbox?") {
+            if (confirm("Do you also want an email reminder in your Gmail inbox?")) {
               notificationData.email = userEmail;
                console.log("Scheduling an email notification to..: " + userEmail)
             }
