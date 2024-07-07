@@ -3154,7 +3154,41 @@ function requestNotificationPermission() {
     });
 }
 */
+
+function sendEmailNotification(title, body, uuid) {
+    authorize()
+        .then(() => {
+            console.log('User email:', loggedInUserEmail);
+            const email = loggedInUserEmail;
+            const body = "This is my Marko reminder, click.." + `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
+            const topic = uuid;
+          
+            fetch(`https://ntfy.sh/${encodeURIComponent(topic)}`, {
+                method: 'POST',
+                body: body,
+                headers: {
+                    'Email': email
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Email notification sent successfully!');
+                } else {
+                    alert('Failed to send email notification. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            });
+        })
+        .catch(error => {
+            console.error('Error in authorization:', error);
+        });
+}      
+      
 function scheduleNotification(title, body, delay, icon, uuid) {
+    sendEmailNotification(title, body, uuid);
     const notificationTime = new Date(Date.now() + delay).toISOString();
     let token;
     // Retrieve the device Firebase token
