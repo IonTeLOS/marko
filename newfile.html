@@ -2256,14 +2256,7 @@ function saveBookmark(linkData) {
         easyMDE.value('');
         hideAllFields();
     }
-window.onload = function() {
-    const em = localStorage.getItem('userEmail');
-    console.log(em);
-    loadDonationParams();
-    loadArrayFromURL();
-    toggleBellIcons();
-    initializeGoogleIdentity();
-}; 
+
     // main function
     window.addLink = function() {
         const linkType = linkTypeSelect.value;
@@ -5260,14 +5253,14 @@ function openLink(url) {
         }
     </script>
 <script>
-    const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
-    const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
-    const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
-    const FILE_NAME = 'bookmarksMarko.txt';
+const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
+const FILE_NAME = 'bookmarksMarko.txt';
+const APP_ID = 'marko';
 
-    let tokenClient;
-    let loggedInUserEmail; // Global variable to store the authenticated user's email
-
+let tokenClient;
+let loggedInUserEmail;
 
 function initializeGoogleIdentity() {
     tokenClient = google.accounts.oauth2.initTokenClient({
@@ -5282,47 +5275,29 @@ function initializeGoogleIdentity() {
     });
 }
 
-/*
 function authorize() {
     return new Promise((resolve, reject) => {
         if (tokenClient) {
             tokenClient.callback = (resp) => {
                 if (resp.error !== undefined) {
-                    reject(resp);
+                    reject(new Error(`Authorization error: ${resp.error}`));
                 } else {
                     localStorage.setItem('accessToken', resp.access_token);
-                    resolve(resp);
-                }
-            };
-            tokenClient.requestAccessToken({prompt: ''});
-        } else {
-            reject(new Error('Token client not initialized'));
-        }
-    });
-} 
-*/
-  function authorize() {
-    return new Promise((resolve, reject) => {
-        if (tokenClient) {
-            tokenClient.callback = (resp) => {
-                if (resp.error !== undefined) {
-                    reject(resp);
-                } else {
-                    localStorage.setItem('accessToken', resp.access_token);
-                    // Get user email after successful authorization
                     fetch('https://www.googleapis.com/oauth2/v1/userinfo?alt=json', {
                         headers: { 'Authorization': `Bearer ${resp.access_token}` }
                     })
-                    .then(res => res.json())
+                    .then(res => {
+                        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+                        return res.json();
+                    })
                     .then(data => {
                         loggedInUserEmail = data.email;
-                        console.log('Logged in user email:', loggedInUserEmail);
                         localStorage.setItem('userEmail', loggedInUserEmail);
                         resolve(resp);
                     })
                     .catch(error => {
                         console.error('Error fetching user email:', error);
-                        resolve(resp);
+                        reject(error);
                     });
                 }
             };
@@ -5333,38 +5308,91 @@ function authorize() {
     });
 }
 
-function ensureAuthorization() {
+function isTokenExpired(token) {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp < Date.now() / 1000;
+}
+
+function refreshToken() {
+    return new Promise((resolve, reject) => {
+        if (tokenClient) {
+            tokenClient.callback = (resp) => {
+                if (resp.error !== undefined) {
+                    reject(new Error(`Token refresh error: ${resp.error}`));
+                } else {
+                    localStorage.setItem('accessToken', resp.access_token);
+                    resolve(resp.access_token);
+                }
+            };
+            tokenClient.requestAccessToken({prompt: ''});
+        } else {
+            reject(new Error('Token client not initialized'));
+        }
+    });
+}
+
+function ensureValidToken() {
     return new Promise((resolve, reject) => {
         const accessToken = localStorage.getItem('accessToken');
-        if (!accessToken) {
-            console.log('No access token found. Initiating authorization...');
-            authorize().then(resolve).catch(reject);
+        if (!accessToken || isTokenExpired(accessToken)) {
+            console.log('Token expired or not found. Refreshing...');
+            refreshToken().then(resolve).catch(reject);
         } else {
             resolve(accessToken);
         }
     });
 }
 
-function deleteExistingFile(accessToken) {
-    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}'`, {
+function retryOperation(operation, maxRetries = 3, delay = 1000) {
+    return new Promise((resolve, reject) => {
+        let attempts = 0;
+        const attempt = () => {
+            attempts++;
+            operation()
+                .then(resolve)
+                .catch(error => {
+                    if (attempts < maxRetries) {
+                        console.log(`Attempt ${attempts} failed. Retrying in ${delay}ms...`);
+                        setTimeout(attempt, delay);
+                    } else {
+                        reject(error);
+                    }
+                });
+        };
+        attempt();
+    });
+}
+
+function findExistingFile(accessToken) {
+    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and properties has { key='appId' and value='${APP_ID}' }`, {
         method: 'GET',
         headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.files && data.files.length > 0) {
-            return fetch(`https://www.googleapis.com/drive/v3/files/${data.files[0].id}`, {
-                method: 'DELETE',
-                headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
-            });
-        }
+    .then(response => {
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        return response.json();
     });
+}
+
+function deleteExistingFile(accessToken) {
+    return findExistingFile(accessToken)
+        .then(data => {
+            if (data.files && data.files.length > 0) {
+                return fetch(`https://www.googleapis.com/drive/v3/files/${data.files[0].id}`, {
+                    method: 'DELETE',
+                    headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
+                });
+            }
+        });
 }
 
 function createNewFile(accessToken, content) {
     const metadata = {
         'name': FILE_NAME,
-        'mimeType': 'application/json'
+        'mimeType': 'application/json',
+        'properties': {
+            'appId': APP_ID
+        }
     };
     const form = new FormData();
     form.append('metadata', new Blob([JSON.stringify(metadata)], {type: 'application/json'}));
@@ -5393,20 +5421,16 @@ function saveToGoogleDrive() {
         return;
     }
 
-    let accessToken;
-    ensureAuthorization()
-        .then(token => {
-            accessToken = token;
-            return deleteExistingFile(accessToken);
-        })
-        .then(() => {
-            const bookmarksJson = localStorage.getItem('bookmarks');
-            return createNewFile(accessToken, bookmarksJson);
+    ensureValidToken()
+        .then(accessToken => {
+            return retryOperation(() => deleteExistingFile(accessToken))
+                .then(() => retryOperation(() => {
+                    const bookmarksJson = localStorage.getItem('bookmarks');
+                    return createNewFile(accessToken, bookmarksJson);
+                }));
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to create file');
-            }
+            if (!response.ok) throw new Error('Failed to create file');
             return response.json();
         })
         .then(() => {
@@ -5437,14 +5461,10 @@ function getFromGoogleDrive() {
         return;
     }
 
-    ensureAuthorization()
+    ensureValidToken()
         .then(accessToken => {
-            return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}'`, {
-                method: 'GET',
-                headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
-            });
+            return retryOperation(() => findExistingFile(accessToken));
         })
-        .then(response => response.json())
         .then(data => {
             if (data.files && data.files.length > 0) {
                 return fetch(`https://www.googleapis.com/drive/v3/files/${data.files[0].id}?alt=media`, {
@@ -5455,7 +5475,10 @@ function getFromGoogleDrive() {
                 throw new Error('No bookmarks file found in Google Drive');
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
         .then(data => {
             localStorage.setItem('bookmarks', JSON.stringify(data));
             links = data;
@@ -5464,7 +5487,16 @@ function getFromGoogleDrive() {
             alert("Your Markos are now in sync. Enjoy!");
         })
         .catch(error => {
-            alert('Error retrieving file: ' + error.message);
+            console.error('Full error object:', error);
+            let errorMessage = 'Error retrieving file: ';
+            if (error.response) {
+                errorMessage += `Server responded with status ${error.response.status}`;
+            } else if (error.request) {
+                errorMessage += 'No response received from server';
+            } else {
+                errorMessage += error.message;
+            }
+            alert(errorMessage);
             stopSpinning(syncFromButton, syncFromIcon);
         });
 }
@@ -5516,6 +5548,14 @@ function hasPaid() {
 }
   
 window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for other parts of the app to reuse
+window.onload = function() {
+    const em = localStorage.getItem('userEmail');
+    console.log(em);
+    loadDonationParams();
+    loadArrayFromURL();
+    toggleBellIcons();
+    initializeGoogleIdentity();
+};  
 </script>
 </head>
 <body data-swipe-threshold="100" data-swipe-timeout="300">   
