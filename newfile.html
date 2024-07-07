@@ -1376,29 +1376,7 @@ getId(installations).then((installationId) => {
     });
   }
   
-onMessage(function(payload) {
-  console.log('Message received. ', payload);
-  window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
-/*
-  const notificationTitle = payload.notification.title;
-  const notificationOptions = {
-    body: payload.notification.body,
-    icon: payload.notification.icon,
-    data: {
-      url: `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`,
-      uuid: payload.data.uuid
-    }
-  };
 
-  const notification = new Notification(notificationTitle, notificationOptions);
-
-  notification.onclick = function(event) {
-    event.preventDefault();
-    window.open(notificationOptions.data.url, '_blank');
-    removeBellAfterNotification(notificationOptions.data.uuid);  
-  };
-  */
-});
 
       // Register the service worker
 if ('serviceWorker' in navigator) {
@@ -1430,6 +1408,7 @@ if ('serviceWorker' in navigator) {
   window.set = set;
   window.serverTimestamp = serverTimestamp;
   window.requestNotificationPermission = requestNotificationPermission;
+  window.onMessage = onMessage;
     </script>
     <script>      
       // Retrieve a value using localForage
@@ -1444,7 +1423,29 @@ localforage.getItem('newNote').then(function(value) {
   console.error('Error retrieving value from localForage:', err);
 });
 
-      
+onMessage(function(payload) {
+  console.log('Message received. ', payload);
+  window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
+/*
+  const notificationTitle = payload.notification.title;
+  const notificationOptions = {
+    body: payload.notification.body,
+    icon: payload.notification.icon,
+    data: {
+      url: `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`,
+      uuid: payload.data.uuid
+    }
+  };
+
+  const notification = new Notification(notificationTitle, notificationOptions);
+
+  notification.onclick = function(event) {
+    event.preventDefault();
+    window.open(notificationOptions.data.url, '_blank');
+    removeBellAfterNotification(notificationOptions.data.uuid);  
+  };
+  */
+});      
 function detectTheme() {
     const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const theme = localStorage.getItem("theme");
