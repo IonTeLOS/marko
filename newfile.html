@@ -5772,16 +5772,15 @@ function hasPaid() {
         const url = 'https://teloslinux.org/marko/newfile?donate=true';
         window.location.href = url;
 }
+window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for other parts of the app to reuse  
+
   
 window.onload = function() {
-    const myMail = localStorage.getItem('userEmail');
-    console.log(myMail);
     loadDonationParams();
     loadArrayFromURL();
     toggleBellIcons();
     initializeGoogleIdentity();
 };  
-window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for other parts of the app to reuse  
 </script>
 </head>
 <body data-swipe-threshold="100" data-swipe-timeout="300">   
