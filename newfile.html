@@ -2905,9 +2905,9 @@ function changeURL(url) {
         }
 
 function handleSharedLink(url, title, text) {
-    console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);    
-    alert(url);
+    console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);  
     createMarko('', url, title, '', '');
+    alert("success");
 }
     // load the bookmarks of a friend by using the url parameters provided in the friend's link
     function loadArrayFromURL() {
