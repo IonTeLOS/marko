@@ -1047,9 +1047,10 @@ input:focus {
             opacity: 0;
             pointer-events: none;
         }
-    .g-button {
+.g-button {
     display: inline-flex;
     align-items: center;
+    justify-content: center; /* Center the text horizontally */
     background-color: #4285f4;
     color: white;
     border: none;
@@ -1058,12 +1059,15 @@ input:focus {
     font-size: 14px;
     font-weight: 500;
     padding: 10px 20px;
+    width: 150px; /* Set a fixed width */
+    height: 40px; /* Set a fixed height */
     cursor: pointer;
     transition: background-color 0.3s;
+    box-sizing: border-box; /* Ensure padding and border are included in the total width and height */
 }
 
 .g-button:hover {
-    background-color: #3367d6;
+    background-color: #357ae8; /* Add a hover effect */
 }
 
 .g-button .material-icons {
