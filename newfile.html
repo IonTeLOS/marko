@@ -1500,7 +1500,6 @@ localforage.getItem('newNot').then(function(value) {
         loadArrayFromURL();
         return localforage.removeItem('newNot');
   } else {
-    loadArrayFromURL();
     console.log('Value not found in localForage.');
     const url = new URL(window.location.href); // Create a URL object
 
