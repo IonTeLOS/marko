@@ -5302,59 +5302,71 @@ function openLink(url) {
         
         // also create a shareable link that, when loaded, can add the friend with his links
         if (confirm('Do you also want to create a shareable direct link?')) {
-          const loggedIn = sessionStorage.getItem('loggedIn');
+          createShareableLink(title);
+        }
+    }
+  
+  async function createShareableLink(title) {
+              const loggedIn = sessionStorage.getItem('loggedIn');
           // make sure the user is logged in before they can create a shareable link.
           if (loggedIn !== "true") {
             alert("log in to create a shareable link");
             return;
         }
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     
-        let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-        // exclude bookmarks of friends, we dont want a loop, we dont want to share more than the user created himself 
-        bookmarks = bookmarks.filter(bookmark => bookmark[0] !== "friend");
-        
-        const arrayOfArrays = bookmarks.map(item => [...item]);
-        
-        var finalData = JSON.stringify(arrayOfArrays, null, 2).replace(/\\/g, "");
-                try {
-                // Validate JSON input
-                const array = JSON.parse(finalData);
-                if (!Array.isArray(array)) {
-                    throw new Error('Input is not a valid JSON array.');
-                }
-
-                const jsonString = JSON.stringify(array);
-                const compressed = LZString.compressToEncodedURIComponent(jsonString);
-                const url = `${window.location.origin}${window.location.pathname}?title=${title}&data=${compressed}`;
-                loadArrayFromURL();
-                // Copy to clipboard
-                try {
-                    await navigator.clipboard.writeText(url);
-                    alert('Link copied to clipboard!');
-                } catch (clipboardError) {
-                    console.error('Error copying to clipboard:', clipboardError);
-                    alert('Failed to copy link to clipboard. You can manually copy the link.');
-                }
-
-                // Check if Web Share API is supported
-                if (navigator.share) {
-                    try {
-                        await navigator.share({
-                            title: `${title}`,
-                            text: 'This is my Marko superlink!',
-                            url: url,
-                        });
-                    } catch (shareError) {
-                        console.error('Error sharing:', shareError);
-                    }
-                } else {
-                    alert('Share link has been copied to clipboard.');
-                }
-            } catch (error) {
-                alert(`Invalid JSON array. Please enter a valid array. Error: ${error.message}`);
-            }
+    // Exclude bookmarks of friends
+    bookmarks = bookmarks.filter(bookmark => bookmark[0] !== "friend");
+    
+    // Remove the sixth item if it exists
+    const arrayOfArrays = bookmarks.map(item => item.slice(0, 5));
+    
+    // Convert the array to a JSON string
+    const finalData = JSON.stringify(arrayOfArrays, null, 2).replace(/\\/g, "");
+    
+    try {
+        // Validate JSON input
+        const array = JSON.parse(finalData);
+        if (!Array.isArray(array)) {
+            throw new Error('Input is not a valid JSON array.');
         }
+
+        // Compress and encode the JSON string
+        const jsonString = JSON.stringify(array);
+        const compressed = LZString.compressToEncodedURIComponent(jsonString);
+        const url = `${window.location.origin}${window.location.pathname}?title=${title}&data=${compressed}`;
+
+        // Load array from URL (assume this is a function you have)
+        loadArrayFromURL();
+
+        // Copy to clipboard
+        try {
+            await navigator.clipboard.writeText(url);
+            alert('Link copied to clipboard!');
+        } catch (clipboardError) {
+            console.error('Error copying to clipboard:', clipboardError);
+            alert('Failed to copy link to clipboard. You can manually copy the link.');
+        }
+
+        // Check if Web Share API is supported
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    title: `${title}`,
+                    text: 'This is my Marko superlink!',
+                    url: url,
+                });
+            } catch (shareError) {
+                console.error('Error sharing:', shareError);
+            }
+        } else {
+            alert('Share link has been copied to clipboard.');
+        }
+    } catch (error) {
+        alert(`Invalid JSON array. Please enter a valid array. Error: ${error.message}`);
     }
+}
+      
 </script>
         <script>
         function showPDFLightbox(pdfUrl, title) {
