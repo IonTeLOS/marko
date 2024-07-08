@@ -2878,7 +2878,7 @@ if (sharedLink) {
 
                        bookmarks.push(linkData);
                        localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-                       document.getElementById('created-bookmark').textContent = JSON.stringify(bookmarks);
+                       // document.getElementById('created-bookmark').textContent = JSON.stringify(bookmarks);
 
                        console.log('Bookmarks saved:', bookmarks);  // Debug log
 
@@ -2902,7 +2902,7 @@ try {
             const storageKey = "friends/" + `${sharedTitle}` + "+" + uuid;
             localStorage.setItem(storageKey, friendString);
             console.log("Friend " + `${sharedTitle}` + " saved:", friendString);  // Debug log
-            document.getElementById('created-bookmark').textContent = friendString;
+            //document.getElementById('created-bookmark').textContent = friendString;
             const friendUrl = `${storageKey}`;
 
             const linkData = ["friend", friendUrl, `${sharedTitle}`, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
@@ -2910,7 +2910,7 @@ try {
 
             bookmarks.push(linkData);
             localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-            document.getElementById('created-bookmark').textContent = JSON.stringify(bookmarks);
+            //document.getElementById('created-bookmark').textContent = JSON.stringify(bookmarks);
 
             console.log('Bookmarks saved:', bookmarks);  // Debug log
 
