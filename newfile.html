@@ -2807,7 +2807,8 @@ function changeURL(url) {
                 console.log("no parsable url provided");
             }
         }
-function createMarko(type, link, title, icon, color) {
+
+      function createMarko(type, link, title, icon, color) {
     // Function to get a random color
     function getRandomColor() {
         const letters = '0123456789ABCDEF';
@@ -2833,14 +2834,14 @@ function createMarko(type, link, title, icon, color) {
         } else if (/^(\d+\s*)+$/.test(link)) {
             return 'note';
         } else {
-            return 'website';
+            return 'website'; // Default to website if type cannot be inferred
         }
     }
 
     // Default icon based on type
-    function getDefaultIcon(type) {
+    function getDefaultIcon(type, url) {
         const icons = {
-            'website': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/all_out/default/48px.svg',
+            'website': `https://www.google.com/s2/favicons?domain=${url}&sz=32`,
             'email': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/email/default/48px.svg',
             'phone': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/perm_phone_msg/default/48px.svg',
             'note': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/short_text/default/48px.svg',
@@ -2848,6 +2849,12 @@ function createMarko(type, link, title, icon, color) {
             'viber': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/message/default/48px.svg',
             'contact': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg'
         };
+
+        // Check if the URL is valid for website type
+        if (type === 'website' && url && !url.includes('://')) {
+            return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/link/default/48px.svg'; // Invalid URL or domain
+        }
+
         return icons[type] || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/link/default/48px.svg';
     }
 
@@ -2875,9 +2882,9 @@ function createMarko(type, link, title, icon, color) {
         title = getDefaultTitle(type);
     }
 
-    // Use default icon if not provided
-    if (!icon) {
-        icon = getDefaultIcon(type);
+    // Use default icon if not provided or for websites
+    if (!icon || type === 'website') {
+        icon = getDefaultIcon(type, link);
     }
 
     // Use random color if not provided
@@ -2892,7 +2899,6 @@ function createMarko(type, link, title, icon, color) {
 
     // Construct the bookmark array
     const linkData = [type, link, title, icon, color];
-
     // Save the bookmark to local storage
     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     bookmarks.push(linkData);
@@ -2904,8 +2910,10 @@ function createMarko(type, link, title, icon, color) {
     // Reload the page
     window.location.href = window.location.origin + window.location.pathname;
 
+   
     return linkData;
 }
+
 function handleSharedLink(url, title, text) {
     console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);  
     createMarko('', url, title, '', '');
