@@ -5925,9 +5925,15 @@ The appropriate solution will depend on your specific requirements and the natur
 <button id="toggleTheme" class="g-button" onclick="toggleTheme()">
     <span class="material-icons">sync</span>
     Change theme
-</button>                    
-                    <p id="output"></p>
-                    <p>You can <a href="#" onclick="clearLinks(); return false;">clear all the bookmarks</a> to start over. <a href="#" onclick="toggleTheme(); return false;">Follow system theme</a> or <a href="#" onclick="toggleTheme(); return false;">change your theme</a> to the opposite of system default. Click <a href="#" onclick="setPassword(); return false;">here</a> to set a password or to change the existing one. Click <a href="#" onclick="removePassword(); return false;">here</a> to remove it.</p>
+</button>   
+<button id="setPass" class="g-button" onclick="setPassword()">
+    <span class="material-icons">lock</span>
+    Set Pass
+</button> 
+<button id="clearPPass" class="g-button" onclick="removePassword()">
+    <span class="material-icons">lock_reset</span>
+    Change Pass
+</button>                   
                 </div>
             </div>
             <div class="tabs">
