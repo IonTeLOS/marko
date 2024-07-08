@@ -3028,6 +3028,13 @@ try {
     }
         }
     }
+
+    window.onload = function() {
+    loadDonationParams();
+    loadArrayFromURL();
+    toggleBellIcons();
+    initializeGoogleIdentity();
+};   
    // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
     
     // delete a bookmark from local storage and remove it from now shown (the later by calling removeBookmark function)
@@ -5889,12 +5896,7 @@ function hasPaid() {
 window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for other parts of the app to reuse  
 
   
-window.onload = function() {
-    loadDonationParams();
-    loadArrayFromURL();
-    toggleBellIcons();
-    initializeGoogleIdentity();
-};  
+ 
 </script>
 </head>
 <body data-swipe-threshold="100" data-swipe-timeout="300">   
