@@ -2905,7 +2905,7 @@ function changeURL(url) {
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
 
     // Alert success message
-    alert(`Success! You just added a bookmark for ${title}`);
+    alert(`Success! You just added a Marko for ${title}`);
     
     // Reload the page
     window.location.href = window.location.origin + window.location.pathname;
@@ -2917,7 +2917,6 @@ function changeURL(url) {
 function handleSharedLink(url, title, text) {
     console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);  
     createMarko('', url, title, '', '');
-    alert("success");
 }
     function loadArrayFromURL() {
     const params = new URLSearchParams(window.location.search);
