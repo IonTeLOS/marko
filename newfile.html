@@ -2894,7 +2894,9 @@ function createMarko(type, link, title, icon, color) {
     const linkData = [type, link, title, icon, color];
 
     // Save the bookmark to local storage
-    saveBookmark(linkData);
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    bookmarks.push(linkData);
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
 
     // Alert success message
     alert(`Success! You just added a bookmark for ${title}`);
