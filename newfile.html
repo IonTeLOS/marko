@@ -2902,7 +2902,7 @@ function createMarko(type, link, title, icon, color) {
     alert(`Success! You just added a bookmark for ${title}`);
     
     // Reload the page
-    location.reload();
+    window.location.href = window.location.origin + window.location.pathname;
 
     return linkData;
 }
