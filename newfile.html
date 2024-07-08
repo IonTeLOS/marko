@@ -2808,15 +2808,16 @@ function handleSharedLink(url, title, text) {
     function loadArrayFromURL() {
             const params = new URLSearchParams(window.location.search);
             const compressed = params.get('data');
+            const isGlobal = params.get('globalMarko');
             const purelink = params.get('friendlink');
-            const uncompressed = params.get('title');
+            const sharedTitle = params.get('title');
             const reminder = params.get('uuid');
             const sharedUrl = params.get('url');
             const sharedText = params.get('text');
       
-              const seemsLikeShared = (uncompressed ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
+              const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
               if (seemsLikeShared >= 2) {
-              console.log('Shared Title:', uncompressed);
+              console.log('Shared Title:', sharedTitle);
               console.log('Shared Text:', sharedText);
               console.log('Shared URL:', sharedUrl);
               let sharedLink = null;
@@ -2825,16 +2826,16 @@ function handleSharedLink(url, title, text) {
 
  if (sharedText.startsWith("https://")) {
     sharedLink = decodeURIComponent(sharedText);
-    remaining1 = uncompressed;
+    remaining1 = sharedTitle;
     remaining2 = sharedUrl;
-} else if (uncompressed.startsWith("https://")) {
-    sharedLink = decodeURIComponent(uncompressed);
+} else if (sharedTitle.startsWith("https://")) {
+    sharedLink = decodeURIComponent(sharedTitle);
     remaining1 = sharedText;
     remaining2 = sharedUrl;
 } else if (sharedUrl.startsWith("https://")) {
     sharedLink = decodeURIComponent(sharedUrl);
     remaining1 = sharedText;
-    remaining2 = uncompressed;
+    remaining2 = sharedTitle;
 }  
 if (sharedLink) {
     let title, text;
@@ -2886,9 +2887,9 @@ if (sharedLink) {
             }
             }
 
-            if (compressed) {
+            if (compressed && isGlobal) {
                 try {
-                    if (confirm("Do you want to add " + `${uncompressed}` + " as friend?")) {
+                    if (confirm("Do you want to add " + `${sharedTitle}` + " as friend?")) {
 
                     const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
                     console.log(decompressed);  // Debug log
@@ -2899,13 +2900,13 @@ if (sharedLink) {
                     let uuid = generateUUID();
 
                     // Create the local storage key with the UUID
-                    let storageKey = "friends/" + `${uncompressed}` + "+" + uuid;
+                    let storageKey = "friends/" + `${sharedTitle}` + "+" + uuid;
                     localStorage.setItem(storageKey, friendString);
-                    console.log("Friend " + `${uncompressed}` + " saved:", friendString);  // Debug log
+                    console.log("Friend " + `${sharedTitle}` + " saved:", friendString);  // Debug log
                     document.getElementById('created-bookmark').textContent = friendString;
                     const friendUrl = `${storageKey}`;
 
-                    linkData = ["friend", friendUrl, `${uncompressed}`, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
+                    linkData = ["friend", friendUrl, `${sharedTitle}`, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
                     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
                     bookmarks.push(linkData);
@@ -5333,7 +5334,7 @@ function openLink(url) {
         // Compress and encode the JSON string
         const jsonString = JSON.stringify(array);
         const compressed = LZString.compressToEncodedURIComponent(jsonString);
-        const url = `${window.location.origin}${window.location.pathname}?title=${title}&data=${compressed}`;
+        const url = `${window.location.origin}${window.location.pathname}?title=${title}&data=${compressed}&globalMarko=true`;
 
         // Load array from URL (assume this is a function you have)
         loadArrayFromURL();
