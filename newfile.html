@@ -2909,125 +2909,123 @@ function handleSharedLink(url, title, text) {
     createMarko('', url, title, '', '');
     alert("success");
 }
-    // load the bookmarks of a friend by using the url parameters provided in the friend's link
     function loadArrayFromURL() {
-            const params = new URLSearchParams(window.location.search);
-            const compressed = params.get('data');
-            const isGlobal = params.get('globalMarko');
-            const purelink = params.get('friendlink');
-            const sharedTitle = params.get('title');
-            const reminder = params.get('uuid');
-            const sharedUrl = params.get('url');
-            const sharedText = params.get('text');
-      
-              const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
-              if (seemsLikeShared >= 2) {
-              console.log('Shared Title:', sharedTitle);
-              console.log('Shared Text:', sharedText);
-              console.log('Shared URL:', sharedUrl);
-              let sharedLink = null;
-              let remaining1 = null;
-              let remaining2 = null;
+    const params = new URLSearchParams(window.location.search);
+    const compressed = params.get('data');
+    const isGlobal = params.get('globalMarko');
+    const purelink = params.get('friendlink');
+    const sharedTitle = params.get('title');
+    const reminder = params.get('uuid');
+    const sharedUrl = params.get('url');
+    const sharedText = params.get('text');
 
- if (sharedText.startsWith("https://")) {
-    sharedLink = decodeURIComponent(sharedText);
-    remaining1 = sharedTitle;
-    remaining2 = sharedUrl;
-} else if (sharedTitle.startsWith("https://")) {
-    sharedLink = decodeURIComponent(sharedTitle);
-    remaining1 = sharedText;
-    remaining2 = sharedUrl;
-} else if (sharedUrl.startsWith("https://")) {
-    sharedLink = decodeURIComponent(sharedUrl);
-    remaining1 = sharedText;
-    remaining2 = sharedTitle;
-}  
-if (sharedLink) {
-    let title, text;
-    
-    if (remaining1 != null && remaining2 != null) {
-        if (remaining1.length < remaining2.length) {
-            title = remaining1;
-            text = remaining2;
+    const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
+    if (seemsLikeShared >= 2) {
+        console.log('Shared Title:', sharedTitle);
+        console.log('Shared Text:', sharedText);
+        console.log('Shared URL:', sharedUrl);
+        
+        let sharedLink = null;
+        let remaining1 = null;
+        let remaining2 = null;
+
+        if (sharedText && sharedText.startsWith("https://")) {
+            sharedLink = decodeURIComponent(sharedText);
+            remaining1 = sharedTitle;
+            remaining2 = sharedUrl;
+        } else if (sharedTitle && sharedTitle.startsWith("https://")) {
+            sharedLink = decodeURIComponent(sharedTitle);
+            remaining1 = sharedText;
+            remaining2 = sharedUrl;
+        } else if (sharedUrl && sharedUrl.startsWith("https://")) {
+            sharedLink = decodeURIComponent(sharedUrl);
+            remaining1 = sharedText;
+            remaining2 = sharedTitle;
+        }  
+
+        if (sharedLink) {
+            let title, text;
+            
+            if (remaining1 != null && remaining2 != null) {
+                if (remaining1.length < remaining2.length) {
+                    title = remaining1;
+                    text = remaining2;
+                } else {
+                    title = remaining2;
+                    text = remaining1;
+                }
+            } else if (remaining1 != null) {
+                title = remaining1;
+                text = "*";
+            } else if (remaining2 != null) {
+                title = remaining2;
+                text = "*";
+            } else {
+                title = "Shared with Marko";
+                text = "*";
+            }
+
+            handleSharedLink(sharedLink, title, text);
         } else {
-            title = remaining2;
-            text = remaining1;
+            console.log("No valid link found.");
         }
-    } else if (remaining1 != null) {
-        title = remaining1;
-        text = "*";
-    } else if (remaining2 != null) {
-        title = remaining2;
-        text = "*";
-    } else {
-        title = "Shared with Marko";
-        text = "*";
+        window.history.replaceState({}, document.title, "/");
     }
 
-    handleSharedLink(sharedLink, title, text);
-} else {
-    console.log("No valid link found.");
-}
-              window.history.replaceState({}, document.title, "/");
-            }
-            if (reminder) {
-                openReminder(reminder);
-                removeBellAfterNotification(reminder);
-                window.close();
-                return;
-            }
-            if (purelink) {
-                    if (confirm("Do you want to add " + params.get('friendname') + " as friend?")) {
-                       linkData = ["friend", params.get('friendlink'), params.get('friendname'), "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
-                       let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    if (reminder) {
+        openReminder(reminder);
+        removeBellAfterNotification(reminder);
+        window.close();
+        return;
+    }
 
-                       bookmarks.push(linkData);
-                       localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-                       // document.getElementById('created-bookmark').textContent = JSON.stringify(bookmarks);
-
-                       console.log('Bookmarks saved:', bookmarks);  // Debug log
-
-                       links = bookmarks;
-                       passCheck();
-            }
-            }
-
-            if (compressed && isGlobal) {
-try {
-        if (confirm("Do you want to add " + `${sharedTitle}` + " as a friend?")) {
-            const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
-            console.log(decompressed);  // Debug log
-            const array = JSON.parse(decompressed);
-            const friendString = JSON.stringify(array);
-            
-            // Generate a UUID
-            const uuid = generateUUID();
-            
-            // Create the local storage key with the UUID
-            const storageKey = "friends/" + `${sharedTitle}` + "+" + uuid;
-            localStorage.setItem(storageKey, friendString);
-            console.log("Friend " + `${sharedTitle}` + " saved:", friendString);  // Debug log
-            //document.getElementById('created-bookmark').textContent = friendString;
-            const friendUrl = `${storageKey}`;
-
-            const linkData = ["friend", friendUrl, `${sharedTitle}`, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
+    if (purelink) {
+        if (confirm("Do you want to add " + params.get('friendname') + " as friend?")) {
+            linkData = ["friend", params.get('friendlink'), params.get('friendname'), "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
             let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
             bookmarks.push(linkData);
             localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-            //document.getElementById('created-bookmark').textContent = JSON.stringify(bookmarks);
+            console.log('Bookmarks saved:', bookmarks);
 
-            console.log('Bookmarks saved:', bookmarks);  // Debug log
-
-            // Assuming links and passCheck are defined elsewhere in your script
             links = bookmarks;
             passCheck();
         }
-    } catch (error) {
-        console.log('Failed to load array from URL.');
     }
+
+    if (compressed && isGlobal) {
+        try {
+            if (confirm("Do you want to add " + `${sharedTitle}` + " as a friend?")) {
+                const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
+                console.log(decompressed);
+                const array = JSON.parse(decompressed);
+                const friendString = JSON.stringify(array);
+                
+                // Generate a UUID
+                const uuid = generateUUID();
+                
+                // Create the local storage key with the UUID
+                const storageKey = "friends/" + `${sharedTitle}` + "+" + uuid;
+                localStorage.setItem(storageKey, friendString);
+                console.log("Friend " + `${sharedTitle}` + " saved:", friendString);
+                
+                const friendUrl = `${storageKey}`;
+                const linkData = ["friend", friendUrl, `${sharedTitle}`, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
+                let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+
+                bookmarks.push(linkData);
+                localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+                console.log('Bookmarks saved:', bookmarks);
+
+                // Assuming links and passCheck are defined elsewhere in your script
+                links = bookmarks;
+                passCheck();
+            }
+        } catch (error) {
+            console.log('Failed to load array from URL.');
         }
     }
+}
 
     window.onload = function() {
     loadDonationParams();
