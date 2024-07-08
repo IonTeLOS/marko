@@ -2888,45 +2888,41 @@ if (sharedLink) {
             }
 
             if (compressed && isGlobal) {
-                try {
-                    if (confirm("Do you want to add " + `${sharedTitle}` + " as friend?")) {
+try {
+        if (confirm("Do you want to add " + `${sharedTitle}` + " as a friend?")) {
+            const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
+            console.log(decompressed);  // Debug log
+            const array = JSON.parse(decompressed);
+            const friendString = JSON.stringify(array);
+            
+            // Generate a UUID
+            const uuid = generateUUID();
+            
+            // Create the local storage key with the UUID
+            const storageKey = "friends/" + `${sharedTitle}` + "+" + uuid;
+            localStorage.setItem(storageKey, friendString);
+            console.log("Friend " + `${sharedTitle}` + " saved:", friendString);  // Debug log
+            document.getElementById('created-bookmark').textContent = friendString;
+            const friendUrl = `${storageKey}`;
 
-                    const decompressed = LZString.decompressFromEncodedURIComponent(compressed);
-                    console.log(decompressed);  // Debug log
-                    const array = JSON.parse(decompressed);
-                    let friend = [];
-                    const friendString = JSON.stringify(array);
-                    // Generate a UUID
-                    let uuid = generateUUID();
+            const linkData = ["friend", friendUrl, `${sharedTitle}`, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
+            let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
-                    // Create the local storage key with the UUID
-                    let storageKey = "friends/" + `${sharedTitle}` + "+" + uuid;
-                    localStorage.setItem(storageKey, friendString);
-                    console.log("Friend " + `${sharedTitle}` + " saved:", friendString);  // Debug log
-                    document.getElementById('created-bookmark').textContent = friendString;
-                    const friendUrl = `${storageKey}`;
+            bookmarks.push(linkData);
+            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+            document.getElementById('created-bookmark').textContent = JSON.stringify(bookmarks);
 
-                    linkData = ["friend", friendUrl, `${sharedTitle}`, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
-                    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+            console.log('Bookmarks saved:', bookmarks);  // Debug log
 
-                    bookmarks.push(linkData);
-                    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-                    document.getElementById('created-bookmark').textContent = JSON.stringify(bookmarks);
-
-                    console.log('Bookmarks saved:', bookmarks);  // Debug log
-
-                    links = bookmarks;
-                    passCheck();
-                    }
-                    //displayAll();
-
-                } catch (error) {
-                    console.log('Failed to load array from URL.');
-                }
-            } else {
-                    console.log('No array found in url');  // Debug log
-            }
-        }    
+            // Assuming links and passCheck are defined elsewhere in your script
+            links = bookmarks;
+            passCheck();
+        }
+    } catch (error) {
+        console.log('Failed to load array from URL.');
+    }
+        }
+    }
    // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
     
     // delete a bookmark from local storage and remove it from now shown (the later by calling removeBookmark function)
