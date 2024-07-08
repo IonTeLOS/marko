@@ -2313,103 +2313,7 @@ function getYouTubeId(url) {
         //document.getElementById('created-bookmark').textContent = JSON.stringify(linkData, null, 2); // previous version. new one escapes backlashes to render properly the html from Post
     }
 
-function createMarko(type, link, title, icon, color) {
-    // Function to get a random color
-    function getRandomColor() {
-        const letters = '0123456789ABCDEF';
-        let color = '#';
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
 
-    // Function to infer link type if not specified
-    function inferLinkType(link) {
-        if (link.startsWith('mailto:')) {
-            return 'email';
-        } else if (link.startsWith('tel:')) {
-            return 'phone';
-        } else if (link.startsWith('https://')) {
-            return 'website';
-        } else if (link.startsWith('https://wa.me/')) {
-            return 'whatsapp';
-        } else if (link.startsWith('viber://chat?number=')) {
-            return 'viber';
-        } else if (/^(\d+\s*)+$/.test(link)) {
-            return 'note';
-        } else {
-            return 'website';
-        }
-    }
-
-    // Default icon based on type
-    function getDefaultIcon(type) {
-        const icons = {
-            'website': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/all_out/default/48px.svg',
-            'email': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/email/default/48px.svg',
-            'phone': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/perm_phone_msg/default/48px.svg',
-            'note': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/short_text/default/48px.svg',
-            'whatsapp': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/message/default/48px.svg',
-            'viber': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/message/default/48px.svg',
-            'contact': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg'
-        };
-        return icons[type] || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/link/default/48px.svg';
-    }
-
-    // Default title based on type
-    function getDefaultTitle(type) {
-        const titles = {
-            'website': 'Website',
-            'email': 'Email',
-            'phone': 'Phone',
-            'note': 'Note',
-            'whatsapp': 'WhatsApp',
-            'viber': 'Viber',
-            'contact': 'Contact'
-        };
-        return titles[type] || 'Link';
-    }
-
-    // Infer the link type if not provided
-    if (!type) {
-        type = inferLinkType(link);
-    }
-
-    // Use default title if not provided
-    if (!title) {
-        title = getDefaultTitle(type);
-    }
-
-    // Use default icon if not provided
-    if (!icon) {
-        icon = getDefaultIcon(type);
-    }
-
-    // Use random color if not provided
-    if (!color) {
-        color = getRandomColor();
-    }
-
-    // If type is contact, construct the contact link
-    if (type === 'contact') {
-        link = `${window.location.origin}/friend/${title}`;
-    }
-
-    // Construct the bookmark array
-    const linkData = [type, link, title, icon, color];
-
-    // Save the bookmark to local storage
-    saveBookmark(linkData);
-
-    // Alert success message
-    alert(`Success! You just added a bookmark for ${title}`);
-    
-    // Reload the page
-    location.reload();
-
-    return linkData;
-}
 /*
 // Function to save a bookmark to local storage
 function saveBookmark(linkData) {
@@ -2903,7 +2807,103 @@ function changeURL(url) {
                 console.log("no parsable url provided");
             }
         }
+function createMarko(type, link, title, icon, color) {
+    // Function to get a random color
+    function getRandomColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
 
+    // Function to infer link type if not specified
+    function inferLinkType(link) {
+        if (link.startsWith('mailto:')) {
+            return 'email';
+        } else if (link.startsWith('tel:')) {
+            return 'phone';
+        } else if (link.startsWith('https://')) {
+            return 'website';
+        } else if (link.startsWith('https://wa.me/')) {
+            return 'whatsapp';
+        } else if (link.startsWith('viber://chat?number=')) {
+            return 'viber';
+        } else if (/^(\d+\s*)+$/.test(link)) {
+            return 'note';
+        } else {
+            return 'website';
+        }
+    }
+
+    // Default icon based on type
+    function getDefaultIcon(type) {
+        const icons = {
+            'website': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/all_out/default/48px.svg',
+            'email': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/email/default/48px.svg',
+            'phone': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/perm_phone_msg/default/48px.svg',
+            'note': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/short_text/default/48px.svg',
+            'whatsapp': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/message/default/48px.svg',
+            'viber': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/message/default/48px.svg',
+            'contact': 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg'
+        };
+        return icons[type] || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/link/default/48px.svg';
+    }
+
+    // Default title based on type
+    function getDefaultTitle(type) {
+        const titles = {
+            'website': 'Website',
+            'email': 'Email',
+            'phone': 'Phone',
+            'note': 'Note',
+            'whatsapp': 'WhatsApp',
+            'viber': 'Viber',
+            'contact': 'Contact'
+        };
+        return titles[type] || 'Link';
+    }
+
+    // Infer the link type if not provided
+    if (!type) {
+        type = inferLinkType(link);
+    }
+
+    // Use default title if not provided
+    if (!title) {
+        title = getDefaultTitle(type);
+    }
+
+    // Use default icon if not provided
+    if (!icon) {
+        icon = getDefaultIcon(type);
+    }
+
+    // Use random color if not provided
+    if (!color) {
+        color = getRandomColor();
+    }
+
+    // If type is contact, construct the contact link
+    if (type === 'contact') {
+        link = `${window.location.origin}/friend/${title}`;
+    }
+
+    // Construct the bookmark array
+    const linkData = [type, link, title, icon, color];
+
+    // Save the bookmark to local storage
+    saveBookmark(linkData);
+
+    // Alert success message
+    alert(`Success! You just added a bookmark for ${title}`);
+    
+    // Reload the page
+    location.reload();
+
+    return linkData;
+}
 function handleSharedLink(url, title, text) {
     console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);  
     createMarko('', url, title, '', '');
