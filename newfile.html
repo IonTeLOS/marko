@@ -3033,7 +3033,7 @@ if (sharedText) {
         }
 
         console.log('Creating note:', { title: noteTitle, content: noteContent });
-        createMarko('note', noteContent, noteTitle, '', '');
+         handleSharedLink(noteContent, noteTitle, '');
         window.history.replaceState({}, document.title, "/");
         return;
     }
