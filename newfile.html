@@ -2975,17 +2975,17 @@ function handleSharedLink(url, title, text) {
         window.history.replaceState({}, document.title, "/");
         return;
     }
-    if (text && text.startsWith('BEGIN:VCARD')) {
+    if (sharedText && sharedText.startsWith('BEGIN:VCARD')) {
         // Case 3: VCF (vCard) content
-        const vcfData = parseVCF(text);
+        const vcfData = parseVCF(sharedText);
         if (vcfData.name && vcfData.phone) {
             handleSharedLink(`tel:${vcfData.phone}`, vcfData.name, '*');
         } else if (vcfData.name) {
             // If we have a name but no phone, create a note with the name
-            handleSharedLink(text, `Contact: ${vcfData.name}`, '*');
+            handleSharedLink(sharedText, `Contact: ${vcfData.name}`, '*');
         } else {
             // If parsing fails, treat it as a regular note
-            handleSharedLink(text, 'Contact Information', '*');
+            handleSharedLink(sharedText, 'Contact Information', '*');
         }
     } 
     // Handle plain text sharing
