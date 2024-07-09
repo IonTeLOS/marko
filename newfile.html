@@ -2911,7 +2911,15 @@ function changeURL(url) {
    
     return linkData;
 }
+function parseVCF(vcfContent) {
+    const nameMatch = vcfContent.match(/FN:(.*)/);
+    const phoneMatch = vcfContent.match(/TEL;TYPE=CELL:(.*)/);
 
+    return {
+        name: nameMatch ? nameMatch[1].trim() : null,
+        phone: phoneMatch ? phoneMatch[1].trim() : null
+    };
+}
 function handleSharedLink(url, title, text) {
     console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);  
     createMarko('', url, title, '', '');
@@ -2931,7 +2939,13 @@ function handleSharedLink(url, title, text) {
         window.history.replaceState({}, document.title, "/");
         return;
     }
-
+    if (text && text.startsWith('BEGIN:VCARD')) {
+        // Case 3: VCF (vCard) content
+        const vcfData = parseVCF(text);
+        if (vcfData.name && vcfData.phone) {
+            handleSharedLink(`tel:${vcfData.phone}`, vcfData.name, '*');
+        }
+    }
     // Handle plain text sharing
     if (sharedText && !sharedUrl && !sharedTitle) {
         const parts = sharedText.split(/\s+/);
