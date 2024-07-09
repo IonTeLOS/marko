@@ -2923,12 +2923,16 @@ function parseVCF(vcfContent) {
 
 window.addEventListener('load', async () => {
   const params = new URLSearchParams(window.location.search);
+  
   if (params.get('vcf') === 'true') {
     const db = await openDatabase();
     const vcfContent = await getLatestVCF(db);
     if (vcfContent) {
-      handleSharedContent('', '', vcfContent);
+      handleSharedLink('', '', vcfContent);
     }
+  } else if (params.get('share')) {
+    const shareData = JSON.parse(decodeURIComponent(params.get('share')));
+    handleSharedLink(shareData.url, shareData.title, shareData.text);
   }
 });
 
