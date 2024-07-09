@@ -8,7 +8,7 @@
   },
   "orientation": "portrait-primary",
   "share_target": {
-    "action": "/share-target/",
+    "action": "/marko/newfile",
     "method": "POST",
     "enctype": "multipart/form-data",
     "params": {
