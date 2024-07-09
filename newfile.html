@@ -3008,8 +3008,15 @@ if (sharedText) {
     } else {
         // Case 3: Plain text sharing as a note (if no URL found)
         let noteTitle = 'Quick Note';
-        let noteContent = sharedText.trim();
+        let noteContent = '';
+
+        if (sharedText) {
+            noteContent = sharedText.trim();
+        } else if (sharedTitle) {
+            noteContent = sharedTitle.trim();
+        }
         handleSharedLink(noteContent, noteTitle, '');
+        }
         window.history.replaceState({}, document.title, "/");
         return;
     }
@@ -3018,7 +3025,8 @@ if (sharedText) {
 // Case 2: Simple link sharing
 if (sharedText && sharedText.startsWith("http")) {
     const baseUrl = getBaseUrl(sharedText);
-    handleSharedLink(sharedText, baseUrl || "Shared with Marko", "*");
+    const title = baseUrl || "Shared with Marko"; // Use base URL as title or default if not available
+    handleSharedLink(sharedText, title, "*");
     window.history.replaceState({}, document.title, "/");
     return;
 }
@@ -3079,7 +3087,11 @@ console.log("No valid sharing data found.");
         }
     }
 }
-
+// Function to extract base URL from a full URL
+function getBaseUrl(url) {
+    const parsedUrl = new URL(url);
+    return `${parsedUrl.protocol}//${parsedUrl.hostname}`;
+}
     window.onload = function() {
     loadDonationParams();
     loadArrayFromURL();
