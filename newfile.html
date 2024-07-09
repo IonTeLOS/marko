@@ -2911,51 +2911,7 @@ function changeURL(url) {
    
     return linkData;
 }
-function parseVCF(vcfContent) {
-    const nameMatch = vcfContent.match(/FN:(.*)/);
-    const phoneMatch = vcfContent.match(/TEL;TYPE=CELL:(.*)/i) || vcfContent.match(/TEL:(.*)/);
 
-    return {
-        name: nameMatch ? nameMatch[1].trim() : null,
-        phone: phoneMatch ? phoneMatch[1].trim() : null
-    };
-}
-
-window.addEventListener('load', async () => {
-  const params = new URLSearchParams(window.location.search);
-  
-  if (params.get('vcf') === 'true') {
-    const db = await openDatabase();
-    const vcfContent = await getLatestVCF(db);
-    if (vcfContent) {
-      handleSharedLink('', '', vcfContent);
-    }
-  } else if (params.get('share')) {
-    const shareData = JSON.parse(decodeURIComponent(params.get('share')));
-    handleSharedLink(shareData.url, shareData.title, shareData.text);
-  }
-});
-
-async function getLatestVCF(db) {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(['vcfs'], 'readonly');
-    const store = transaction.objectStore('vcfs');
-    const request = store.openCursor(null, 'prev');
-    request.onerror = () => reject(request.error);
-    request.onsuccess = (event) => {
-      const cursor = event.target.result;
-      if (cursor) {
-        resolve(cursor.value.content);
-        // Optionally, delete the entry after retrieving it
-        const deleteRequest = store.delete(cursor.key);
-        deleteRequest.onerror = console.error;
-      } else {
-        resolve(null);
-      }
-    };
-  });
-}
-      
 function handleSharedLink(url, title, text) {
     console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);  
     createMarko('', url, title, '', '');
@@ -2975,19 +2931,6 @@ function handleSharedLink(url, title, text) {
         window.history.replaceState({}, document.title, "/");
         return;
     }
-    if (sharedText && sharedText.startsWith('BEGIN:VCARD')) {
-        // Case 3: VCF (vCard) content
-        const vcfData = parseVCF(sharedText);
-        if (vcfData.name && vcfData.phone) {
-            handleSharedLink(`tel:${vcfData.phone}`, vcfData.name, '*');
-        } else if (vcfData.name) {
-            // If we have a name but no phone, create a note with the name
-            handleSharedLink(sharedText, `Contact: ${vcfData.name}`, '*');
-        } else {
-            // If parsing fails, treat it as a regular note
-            handleSharedLink(sharedText, 'Contact Information', '*');
-        }
-    } 
     // Handle plain text sharing
     if (sharedText && !sharedUrl && !sharedTitle) {
         const parts = sharedText.split(/\s+/);
