@@ -3002,21 +3002,38 @@ if (sharedText) {
     });
 
     if (url) {
-        handleSharedLink(url, title, "*");
+        const baseUrl = getBaseUrl(sharedText);
+        const baseLink = baseUrl || "Link shared with Marko"; // Use base URL as title or default if not available
+        handleSharedLink(url, baseLink, "*");
         window.history.replaceState({}, document.title, "/");
         return;
     } else {
-        // Case 3: Plain text sharing as a note (if no URL found)
-        let noteTitle = 'Quick Note';
-        let noteContent = '';
+                // Case 3: Plain text sharing (including selected text from mobile)
+        let noteTitle, noteContent;
 
-        if (sharedText) {
-            noteContent = sharedText.trim();
-        } else if (sharedTitle) {
-            noteContent = sharedTitle.trim();
+        if (text) {
+            const lines = text.trim().split('\n');
+            if (lines.length > 1) {
+                // Use the first line as title if there are multiple lines
+                noteTitle = lines[0].trim();
+                noteContent = lines.slice(1).join('\n').trim();
+            } else {
+                // If it's a single line, use a default title
+                noteTitle = title || 'Quick Note';
+                noteContent = text.trim();
+            }
+        } else if (title) {
+            // If only title is provided, treat it as the content
+            noteTitle = 'Quick Note';
+            noteContent = title.trim();
+        } else {
+            // Fallback case if somehow we don't have any text
+            noteTitle = 'Empty Note';
+            noteContent = '';
         }
-        handleSharedLink(noteContent, noteTitle, '');
-        }
+
+        console.log('Creating note:', { title: noteTitle, content: noteContent });
+        createMarko('note', noteContent, noteTitle, '', '');
         window.history.replaceState({}, document.title, "/");
         return;
     }
