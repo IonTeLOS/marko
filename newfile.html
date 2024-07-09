@@ -2941,8 +2941,16 @@ function handleSharedLink(url, title, text) {
         if (url) {
             handleSharedLink(url, title || "Shared with Marko", "*");
         } else {
-            // If no URL is found, treat the entire text as the URL
-            handleSharedLink(sharedText, "Shared with Marko", "*");
+        // Case 3: Plain text sharing (including selected text from mobile)
+        let noteTitle = 'Quick Note';
+        let noteContent = '';
+
+        if (sharedText) {
+            noteContent = sharedText.trim();
+        } else if (sharedTitle) {
+            noteContent = sharedTitle.trim();
+        }
+        handleSharedLink(noteContent, noteTitle, '');
         }
         window.history.replaceState({}, document.title, "/");
         return;
