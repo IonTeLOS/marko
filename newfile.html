@@ -2808,7 +2808,7 @@ function changeURL(url) {
             }
         }
 
-      function createMarko(type, link, title, icon, color) {
+  function createMarko(type, link, title, icon, color) {
     // Function to get a random color
     function getRandomColor() {
         const letters = '0123456789ABCDEF';
@@ -2831,10 +2831,8 @@ function changeURL(url) {
             return 'whatsapp';
         } else if (link.startsWith('viber://chat?number=')) {
             return 'viber';
-        } else if (/^(\d+\s*)+$/.test(link)) {
-            return 'note';
         } else {
-            return 'website'; // Default to website if type cannot be inferred
+            return 'note'; // Default to note if type cannot be inferred
         }
     }
 
@@ -2949,6 +2947,7 @@ function handleSharedLink(url, title, text) {
         window.history.replaceState({}, document.title, "/");
         return;
     }
+      
     const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
     if (seemsLikeShared >= 2) {
         console.log('Shared Title:', sharedTitle);
