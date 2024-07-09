@@ -2927,7 +2927,28 @@ function handleSharedLink(url, title, text) {
     const reminder = params.get('uuid');
     const sharedUrl = params.get('url');
     const sharedText = params.get('text');
+// Handle simple link sharing (e.g., from Facebook)
+    if (sharedText && sharedText.startsWith("http")) {
+        handleSharedLink(sharedText, "Shared with Marko", "*");
+        window.history.replaceState({}, document.title, "/");
+        return;
+    }
 
+    // Handle plain text sharing
+    if (sharedText && !sharedUrl && !sharedTitle) {
+        const parts = sharedText.split(/\s+/);
+        let url = parts.find(part => part.startsWith("http"));
+        let title = parts.filter(part => !part.startsWith("http")).join(" ").trim();
+        
+        if (url) {
+            handleSharedLink(url, title || "Shared with Marko", "*");
+        } else {
+            // If no URL is found, treat the entire text as the URL
+            handleSharedLink(sharedText, "Shared with Marko", "*");
+        }
+        window.history.replaceState({}, document.title, "/");
+        return;
+    }
     const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
     if (seemsLikeShared >= 2) {
         console.log('Shared Title:', sharedTitle);
