@@ -2913,7 +2913,7 @@ function changeURL(url) {
 }
 function parseVCF(vcfContent) {
     const nameMatch = vcfContent.match(/FN:(.*)/);
-    const phoneMatch = vcfContent.match(/TEL;TYPE=CELL:(.*)/);
+    const phoneMatch = vcfContent.match(/TEL;TYPE=CELL:(.*)/i) || vcfContent.match(/TEL:(.*)/);
 
     return {
         name: nameMatch ? nameMatch[1].trim() : null,
