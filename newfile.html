@@ -2926,6 +2926,7 @@ function handleSharedLink(url, title, text) {
     const sharedUrl = params.get('url');
     const sharedText = params.get('text');
 
+
 // Case 4: Handling multiple shared parameters
 const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
 if (seemsLikeShared >= 2) {
@@ -2954,18 +2955,20 @@ if (seemsLikeShared >= 2) {
     if (sharedLink) {
         let title, text;
         
-        if (remaining1 != null && remaining2 != null) {
-            if (remaining1.length < remaining2.length) {
-                title = remaining1;
-                text = remaining2;
+        // Determine title and text based on conditions
+        if (remaining1 && remaining2) {
+            if (!remaining1.startsWith("https://") && !remaining2.startsWith("https://")) {
+                // If neither remaining1 nor remaining2 starts with https://, use the shorter as title
+                title = remaining1.length <= remaining2.length ? remaining1 : remaining2;
+                text = "*";
             } else {
-                title = remaining2;
-                text = remaining1;
+                title = remaining1.startsWith("https://") ? remaining1 : remaining2;
+                text = remaining1.startsWith("https://") ? remaining2 : remaining1;
             }
-        } else if (remaining1 != null) {
+        } else if (remaining1) {
             title = remaining1;
             text = "*";
-        } else if (remaining2 != null) {
+        } else if (remaining2) {
             title = remaining2;
             text = "*";
         } else {
@@ -2974,25 +2977,36 @@ if (seemsLikeShared >= 2) {
         }
 
         handleSharedLink(sharedLink, title, text);
+        window.history.replaceState({}, document.title, "/");
+        return;
     } else {
-        console.log("No valid link found.");
+        console.log("No valid link found in shared parameters.");
     }
-    window.history.replaceState({}, document.title, "/");
-    return;
 }
 
-// Case 1: Plain text sharing as a potential link
+// Case 1: Plain text sharing as a potential link or note
 if (sharedText) {
-    const parts = sharedText.split(/\s+/);
-    let url = parts.find(part => part.startsWith("http"));
-    let title = sharedTitle || (url ? getBaseUrl(sharedText) : 'Quick Note'); // Use sharedTitle if present, otherwise derive title from sharedText
-    
+    // Split sharedText by newline characters to handle multiline scenarios
+    const lines = sharedText.split(/\r?\n/);
+
+    // Initialize variables to hold potential title and URL
+    let title = sharedTitle || 'Quick Note'; // Default title
+    let url = null;
+
+    // Iterate through each line to identify URL and adjust title
+    lines.forEach(line => {
+        if (!url && line.startsWith("http")) {
+            url = line.trim(); // Assume first line with http as URL
+            title = lines.length > 1 ? lines.find(l => l !== url) : url; // Use remaining line as title if more than one line
+        }
+    });
+
     if (url) {
         handleSharedLink(url, title, "*");
         window.history.replaceState({}, document.title, "/");
         return;
     } else {
-        // Case 3: Plain text sharing as a note
+        // Case 3: Plain text sharing as a note (if no URL found)
         let noteTitle = 'Quick Note';
         let noteContent = sharedText.trim();
         handleSharedLink(noteContent, noteTitle, '');
@@ -3008,6 +3022,8 @@ if (sharedText && sharedText.startsWith("http")) {
     window.history.replaceState({}, document.title, "/");
     return;
 }
+
+console.log("No valid sharing data found.");
 
     if (reminder) {
         openReminder(reminder);
