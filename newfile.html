@@ -2916,7 +2916,7 @@ function handleSharedLink(url, title, text) {
     console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);  
     createMarko('', url, title, '', '');
 }
-    function loadArrayFromURL() {
+  function loadArrayFromURL() {
     const params = new URLSearchParams(window.location.search);
     const compressed = params.get('data');
     const isGlobal = params.get('globalMarko');
@@ -2925,88 +2925,93 @@ function handleSharedLink(url, title, text) {
     const reminder = params.get('uuid');
     const sharedUrl = params.get('url');
     const sharedText = params.get('text');
-// Handle simple link sharing (e.g., from Facebook)
-    if (sharedText && sharedText.startsWith("http")) {
-        handleSharedLink(sharedText, "Shared with Marko", "*");
-        window.history.replaceState({}, document.title, "/");
-        return;
-    }
-    // Handle plain text sharing
-    if (sharedText && !sharedUrl && !sharedTitle) {
-        const parts = sharedText.split(/\s+/);
-        let url = parts.find(part => part.startsWith("http"));
-        let title = parts.filter(part => !part.startsWith("http")).join(" ").trim();
+const params = new URLSearchParams(window.location.search);
+const sharedTitle = params.get('title');
+const sharedUrl = params.get('url');
+const sharedText = params.get('text');
+
+// Case 4: Handling multiple shared parameters
+const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
+if (seemsLikeShared >= 2) {
+    console.log('Shared Title:', sharedTitle);
+    console.log('Shared Text:', sharedText);
+    console.log('Shared URL:', sharedUrl);
+    
+    let sharedLink = null;
+    let remaining1 = null;
+    let remaining2 = null;
+
+    if (sharedText && sharedText.startsWith("https://")) {
+        sharedLink = decodeURIComponent(sharedText);
+        remaining1 = sharedTitle;
+        remaining2 = sharedUrl;
+    } else if (sharedTitle && sharedTitle.startsWith("https://")) {
+        sharedLink = decodeURIComponent(sharedTitle);
+        remaining1 = sharedText;
+        remaining2 = sharedUrl;
+    } else if (sharedUrl && sharedUrl.startsWith("https://")) {
+        sharedLink = decodeURIComponent(sharedUrl);
+        remaining1 = sharedText;
+        remaining2 = sharedTitle;
+    }  
+
+    if (sharedLink) {
+        let title, text;
         
-        if (url) {
-            handleSharedLink(url, title || "Shared with Marko", "*");
-        } else {
-        // Case 3: Plain text sharing (including selected text from mobile)
-        let noteTitle = 'Quick Note';
-        let noteContent = '';
-
-        if (sharedText) {
-            noteContent = sharedText.trim();
-        } else if (sharedTitle) {
-            noteContent = sharedTitle.trim();
-        }
-        handleSharedLink(noteContent, noteTitle, '');
-        }
-        window.history.replaceState({}, document.title, "/");
-        return;
-    }
-      
-    const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
-    if (seemsLikeShared >= 2) {
-        console.log('Shared Title:', sharedTitle);
-        console.log('Shared Text:', sharedText);
-        console.log('Shared URL:', sharedUrl);
-        
-        let sharedLink = null;
-        let remaining1 = null;
-        let remaining2 = null;
-
-        if (sharedText && sharedText.startsWith("https://")) {
-            sharedLink = decodeURIComponent(sharedText);
-            remaining1 = sharedTitle;
-            remaining2 = sharedUrl;
-        } else if (sharedTitle && sharedTitle.startsWith("https://")) {
-            sharedLink = decodeURIComponent(sharedTitle);
-            remaining1 = sharedText;
-            remaining2 = sharedUrl;
-        } else if (sharedUrl && sharedUrl.startsWith("https://")) {
-            sharedLink = decodeURIComponent(sharedUrl);
-            remaining1 = sharedText;
-            remaining2 = sharedTitle;
-        }  
-
-        if (sharedLink) {
-            let title, text;
-            
-            if (remaining1 != null && remaining2 != null) {
-                if (remaining1.length < remaining2.length) {
-                    title = remaining1;
-                    text = remaining2;
-                } else {
-                    title = remaining2;
-                    text = remaining1;
-                }
-            } else if (remaining1 != null) {
+        if (remaining1 != null && remaining2 != null) {
+            if (remaining1.length < remaining2.length) {
                 title = remaining1;
-                text = "*";
-            } else if (remaining2 != null) {
-                title = remaining2;
-                text = "*";
+                text = remaining2;
             } else {
-                title = "Shared with Marko";
-                text = "*";
+                title = remaining2;
+                text = remaining1;
             }
-
-            handleSharedLink(sharedLink, title, text);
+        } else if (remaining1 != null) {
+            title = remaining1;
+            text = "*";
+        } else if (remaining2 != null) {
+            title = remaining2;
+            text = "*";
         } else {
-            console.log("No valid link found.");
+            title = "Shared with Marko";
+            text = "*";
         }
-        window.history.replaceState({}, document.title, "/");
+
+        handleSharedLink(sharedLink, title, text);
+    } else {
+        console.log("No valid link found.");
     }
+    window.history.replaceState({}, document.title, "/");
+    return;
+}
+
+// Case 1: Plain text sharing as a potential link
+if (sharedText) {
+    const parts = sharedText.split(/\s+/);
+    let url = parts.find(part => part.startsWith("http"));
+    let title = sharedTitle || (url ? getBaseUrl(sharedText) : 'Quick Note'); // Use sharedTitle if present, otherwise derive title from sharedText
+    
+    if (url) {
+        handleSharedLink(url, title, "*");
+        window.history.replaceState({}, document.title, "/");
+        return;
+    } else {
+        // Case 3: Plain text sharing as a note
+        let noteTitle = 'Quick Note';
+        let noteContent = sharedText.trim();
+        handleSharedLink(noteContent, noteTitle, '');
+        window.history.replaceState({}, document.title, "/");
+        return;
+    }
+}
+
+// Case 2: Simple link sharing
+if (sharedText && sharedText.startsWith("http")) {
+    const baseUrl = getBaseUrl(sharedText);
+    handleSharedLink(sharedText, baseUrl || "Shared with Marko", "*");
+    window.history.replaceState({}, document.title, "/");
+    return;
+}
 
     if (reminder) {
         openReminder(reminder);
