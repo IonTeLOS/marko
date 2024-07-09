@@ -2925,10 +2925,6 @@ function handleSharedLink(url, title, text) {
     const reminder = params.get('uuid');
     const sharedUrl = params.get('url');
     const sharedText = params.get('text');
-const params = new URLSearchParams(window.location.search);
-const sharedTitle = params.get('title');
-const sharedUrl = params.get('url');
-const sharedText = params.get('text');
 
 // Case 4: Handling multiple shared parameters
 const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
