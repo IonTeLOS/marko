@@ -3011,8 +3011,8 @@ if (sharedText) {
                 // Case 3: Plain text sharing (including selected text from mobile)
         let noteTitle, noteContent;
 
-        if (text) {
-            const lines = text.trim().split('\n');
+        if (sharedText) {
+            const lines = sharedText.trim().split('\n');
             if (lines.length > 1) {
                 // Use the first line as title if there are multiple lines
                 noteTitle = lines[0].trim();
@@ -3020,7 +3020,7 @@ if (sharedText) {
             } else {
                 // If it's a single line, use a default title
                 noteTitle = title || 'Quick Note';
-                noteContent = text.trim();
+                noteContent = sharedText.trim();
             }
         } else if (title) {
             // If only title is provided, treat it as the content
@@ -3045,6 +3045,7 @@ if (sharedText && sharedText.startsWith("http")) {
     const title = baseUrl || "Shared with Marko"; // Use base URL as title or default if not available
     handleSharedLink(sharedText, title, "*");
     window.history.replaceState({}, document.title, "/");
+  alert("2");
     return;
 }
 
@@ -3107,7 +3108,12 @@ console.log("No valid sharing data found.");
 // Function to extract base URL from a full URL
 function getBaseUrl(url) {
     const parsedUrl = new URL(url);
-    return `${parsedUrl.protocol}//${parsedUrl.hostname}`;
+    let baseUrl = `${parsedUrl.hostname}`;
+    // Optionally remove 'www.' if present
+    if (baseUrl.startsWith("www.")) {
+        baseUrl = baseUrl.slice(4);
+    }
+    return baseUrl;
 }
     window.onload = function() {
     loadDonationParams();
