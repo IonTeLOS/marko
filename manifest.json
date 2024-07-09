@@ -9,18 +9,11 @@
   "orientation": "portrait-primary",
   "share_target": {
     "action": "/marko/newfile",
-    "method": "POST",
-    "enctype": "multipart/form-data",
+    "method": "GET",
     "params": {
       "title": "title",
       "text": "text",
-      "url": "url",
-      "files": [
-        {
-          "name": "file",
-          "accept": ["text/vcard", ".vcf"]
-        }
-      ]
+      "url": "url"
     }
   },
   "icons": [
