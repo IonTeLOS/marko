@@ -5893,7 +5893,7 @@ function saveToGoogleDrivePublic() {
 
     ensureValidToken()
         .then(accessToken => {
-            return findExistingFile(accessToken, FILE_NAME)
+            return findExistingPublicFile(accessToken, FILE_NAME)
                 .then(fileData => {
                     const bookmarksJson = localStorage.getItem('bookmarks');
                     if (fileData) {
@@ -5920,7 +5920,7 @@ function saveToGoogleDrivePublic() {
         });
 }
 
-function findExistingFile(accessToken, fileName) {
+function findExistingPublicFile(accessToken, fileName) {
     return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${encodeURIComponent(fileName)}'&spaces=drive&fields=files(id)`, {
         method: 'GET',
         headers: {
