@@ -5835,6 +5835,7 @@ function saveToGoogleDrivePublic() {
     }
     const syncToButton = document.getElementById('syncToDrive');
     const syncFromButton = document.getElementById('syncFromDrive');
+    const syncToPublicButton = document.getElementById('syncToPublicDrive');
     const syncToPublicIcon = document.getElementById('syncToPublicIcon');
     syncToButton.disabled = true;
     syncFromButton.disabled = true;
@@ -6233,7 +6234,7 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
-<button id="syncToDrive" class="g-button" onclick="saveToGoogleDrivePublic()">
+<button id="syncToPublicDrive" class="g-button" onclick="saveToGoogleDrivePublic()">
     <span id="syncToPublicIcon" class="material-icons">public</span>
     Make public
 </button>                  
