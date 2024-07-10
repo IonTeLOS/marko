@@ -5741,7 +5741,67 @@ function findExistingFile(accessToken) {
     .then(response => {
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.json();
+    })
+    .then(data => {
+        console.log('Google Drive API response:', data);
+    if (!data || !data.files) {
+        throw new Error('Invalid response from Google Drive API');
+    }
+    return data;
     });
+}
+
+function getFromGoogleDrive() {
+    if (!navigator.onLine) {
+        alert("Connect to the Internet to proceed");
+        return;
+    }
+
+    const syncFromButton = document.getElementById('syncFromDrive');
+    const syncFromIcon = document.getElementById('syncFromIcon');
+    syncFromButton.disabled = true;
+    syncFromIcon.classList.add('spinning');
+
+    if (!confirm("Are you sure you want to sync your bookmarks from Google Drive? This will overwrite any existing local Marko bookmarks.")) {
+        stopSpinning(syncFromButton, syncFromIcon);
+        return;
+    }
+
+    ensureValidToken()
+        .then(accessToken => {
+            console.log('Using access token:', accessToken);
+            if (!accessToken) {
+                throw new Error('No valid access token available');
+            }
+            return retryOperation(() => findExistingFile(accessToken));
+        })
+        .then(data => {
+            if (data.files && data.files.length > 0) {
+                return fetch(`https://www.googleapis.com/drive/v3/files/${data.files[0].id}?alt=media`, {
+                    method: 'GET',
+                    headers: new Headers({ 'Authorization': 'Bearer ' + localStorage.getItem('accessToken') })
+                });
+            } else {
+                throw new Error('No bookmarks file found in Google Drive');
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            return response.json();
+        })
+        .then(data => {
+            localStorage.setItem('bookmarks', JSON.stringify(data));
+            links = data;
+            stopSpinning(syncFromButton, syncFromIcon);
+            location.reload();
+            alert("Your Markos are now in sync. Enjoy!");
+        })
+        .catch(error => {
+            console.error('Full error object:', error);
+            let errorMessage = 'Error retrieving file: ' + error.message;
+            alert(errorMessage);
+            stopSpinning(syncFromButton, syncFromIcon);
+        });
 }
 
 function deleteExistingFile(accessToken) {
@@ -5936,65 +5996,6 @@ function copyToClipboard(text) {
     }).catch(err => {
         console.error('Failed to copy: ', err);
     });
-}
-function getFromGoogleDrive() {
-    if (!navigator.onLine) {
-        alert("Connect to the Internet to proceed");
-        return;
-    }
-
-    const syncFromButton = document.getElementById('syncFromDrive');
-    const syncFromIcon = document.getElementById('syncFromIcon');
-    syncFromButton.disabled = true;
-    syncFromIcon.classList.add('spinning');
-
-    if (!confirm("Are you sure you want to sync your bookmarks from Google Drive? This will overwrite any existing local Marko bookmarks.")) {
-        stopSpinning(syncFromButton, syncFromIcon);
-        return;
-    }
-
-    ensureValidToken()
-        .then(accessToken => {
-            console.log('Using access token:', accessToken);
-            if (!accessToken) {
-                throw new Error('No valid access token available');
-            }
-            return retryOperation(() => findExistingFile(accessToken));
-        })
-          .then(data => {
-            if (data.files && data.files.length > 0) {
-                return fetch(`https://www.googleapis.com/drive/v3/files/${data.files[0].id}?alt=media`, {
-                    method: 'GET',
-                    headers: new Headers({ 'Authorization': 'Bearer ' + localStorage.getItem('accessToken') })
-                });
-            } else {
-                throw new Error('No bookmarks file found in Google Drive');
-            }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            localStorage.setItem('bookmarks', JSON.stringify(data));
-            links = data;
-            stopSpinning(syncFromButton, syncFromIcon);
-            location.reload();
-            alert("Your Markos are now in sync. Enjoy!");
-        })
-        .catch(error => {
-            console.error('Full error object:', error);
-            let errorMessage = 'Error retrieving file: ';
-            if (error.response) {
-                errorMessage += `Server responded with status ${error.response.status}`;
-            } else if (error.request) {
-                errorMessage += 'No response received from server';
-            } else {
-                errorMessage += error.message;
-            }
-            alert(errorMessage);
-            stopSpinning(syncFromButton, syncFromIcon);
-        });
 }
 
 function getUserEmailAndStore() {
