@@ -5836,7 +5836,7 @@ function saveToGoogleDrivePublic() {
 
     ensureValidToken()
         .then(accessToken => {
-            return findExistingFile(accessToken, FILE_NAME)
+            return findExistingPublicFile(accessToken, FILE_NAME)
                 .then(fileId => {
                     const bookmarksJson = localStorage.getItem('bookmarks');
                     if (fileInfo && !fileInfo.trashed) {
@@ -5860,7 +5860,7 @@ function saveToGoogleDrivePublic() {
         });
 }
 
-function findExistingFile(accessToken, fileName) {
+function findExistingPublicFile(accessToken, fileName) {
     return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}'&fields=files(id,trashed)`, {
         headers: {
             'Authorization': 'Bearer ' + accessToken
