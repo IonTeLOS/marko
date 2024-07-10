@@ -5879,12 +5879,8 @@ function saveToGoogleDrivePublic() {
         alert("Connect to the Internet to proceed");
         return;
     }
-    const syncToButton = document.getElementById('syncToDrive');
-    const syncFromButton = document.getElementById('syncFromDrive');
     const syncToPublicButton = document.getElementById('syncToPublicDrive');
     const syncToPublicIcon = document.getElementById('syncToPublicIcon');
-    syncToButton.disabled = true;
-    syncFromButton.disabled = true;
     syncToPublicButton.disabled = true;
     syncToPublicIcon.classList.add('spinning');
     
@@ -5897,15 +5893,15 @@ function saveToGoogleDrivePublic() {
 
     ensureValidToken()
         .then(accessToken => {
-            return findExistingFile(accessToken, FILE_NAME)
-                .then(fileInfo => {
+            return retryOperation(() => deleteExistingFile(accessToken))
+                .then(() => retryOperation(() => {
                     const bookmarksJson = localStorage.getItem('bookmarks');
-                    if (fileInfo && !fileInfo.trashed) {
-                        return updateExistingFile(accessToken, fileInfo.id, bookmarksJson);
-                    } else {
-                        return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
-                    }
-                });
+                    return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
+                }));
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to create file');
+            return response.json();
         })
         .then(fileData => {
             const shareableLink = `https://drive.google.com/file/d/${fileData.id}/view?usp=sharing`;
@@ -5919,37 +5915,6 @@ function saveToGoogleDrivePublic() {
             alert('An error occurred: ' + error.message);
             stopSpinning(syncToPublicButton, syncToPublicIcon);
         });
-}
-
-function findExistingPublicFile(accessToken, fileName) {
-    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}'&fields=files(id,trashed)`, {
-        headers: {
-            'Authorization': 'Bearer ' + accessToken
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.files && data.files.length > 0) {
-            return data.files[0];
-        }
-        return null;
-    });
-}
-
-function updateExistingFile(accessToken, fileId, content) {
-    const form = new FormData();
-    form.append('file', new Blob([content], { type: 'application/json' }));
-
-    return fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
-        method: 'PATCH',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken
-        },
-        body: form
-    })
-    .then(response => response.json())
-    .then(() => setFilePublic(accessToken, fileId))
-    .then(() => ({ id: fileId }));
 }
 
 function createNewPublicFile(accessToken, content, fileName) {
@@ -5969,7 +5934,10 @@ function createNewPublicFile(accessToken, content, fileName) {
         },
         body: form
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error('Failed to create file');
+        return response.json();
+    })
     .then(fileData => {
         return setFilePublic(accessToken, fileData.id).then(() => fileData);
     });
