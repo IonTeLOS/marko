@@ -5885,6 +5885,7 @@ function saveToGoogleDrivePublic() {
     const syncToPublicIcon = document.getElementById('syncToPublicIcon');
     syncToButton.disabled = true;
     syncFromButton.disabled = true;
+    syncToPublicButton.disabled = true;
     syncToPublicIcon.classList.add('spinning');
     
     if (!confirm("Are you sure you want to save your bookmarks to Google Drive as a public file?")) {
@@ -5896,27 +5897,27 @@ function saveToGoogleDrivePublic() {
 
     ensureValidToken()
         .then(accessToken => {
-            return findExistingPublicFile(accessToken, FILE_NAME)
-                .then(fileId => {
+            return findExistingFile(accessToken, FILE_NAME)
+                .then(fileInfo => {
                     const bookmarksJson = localStorage.getItem('bookmarks');
                     if (fileInfo && !fileInfo.trashed) {
-    return updateExistingFile(accessToken, fileInfo.id, bookmarksJson);
-} else {
-    return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
-}
+                        return updateExistingFile(accessToken, fileInfo.id, bookmarksJson);
+                    } else {
+                        return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
+                    }
                 });
         })
         .then(fileData => {
             const shareableLink = `https://drive.google.com/file/d/${fileData.id}/view?usp=sharing`;
             copyToClipboard(shareableLink);
             alert('Bookmarks saved to Google Drive as ' + FILE_NAME + '\nShareable link copied to clipboard.');
-            stopSpinning(syncToButton, syncToIcon);
+            stopSpinning(syncToPublicButton, syncToPublicIcon);
             openDonate();
         })
         .catch(error => {
             console.error('Error in saveToGoogleDrivePublic:', error);
             alert('An error occurred: ' + error.message);
-            stopSpinning(syncToButton, syncToIcon);
+            stopSpinning(syncToPublicButton, syncToPublicIcon);
         });
 }
 
