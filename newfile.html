@@ -5834,12 +5834,14 @@ function saveToGoogleDrivePublic() {
         return;
     }
     const syncToButton = document.getElementById('syncToDrive');
-    const syncToIcon = document.getElementById('syncToIcon');
+    const syncFromButton = document.getElementById('syncFromDrive');
+    const syncToPublicIcon = document.getElementById('syncToPublicIcon');
     syncToButton.disabled = true;
-    syncToIcon.classList.add('spinning');
+    syncFromButton.disabled = true;
+    syncToPublicIcon.classList.add('spinning');
     
     if (!confirm("Are you sure you want to save your bookmarks to Google Drive as a public file?")) {
-        stopSpinning(syncToButton, syncToIcon);
+        stopSpinning(syncToPublicButton, syncToPublicIcon);
         return;
     }
     
@@ -5850,11 +5852,11 @@ function saveToGoogleDrivePublic() {
             return findExistingFile(accessToken, FILE_NAME)
                 .then(fileId => {
                     const bookmarksJson = localStorage.getItem('bookmarks');
-                    if (fileId) {
-                        return updateExistingFile(accessToken, fileId, bookmarksJson);
-                    } else {
-                        return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
-                    }
+                    if (fileInfo && !fileInfo.trashed) {
+    return updateExistingFile(accessToken, fileInfo.id, bookmarksJson);
+} else {
+    return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
+}
                 });
         })
         .then(fileData => {
@@ -5872,7 +5874,7 @@ function saveToGoogleDrivePublic() {
 }
 
 function findExistingFile(accessToken, fileName) {
-    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}'`, {
+    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}'&fields=files(id,trashed)`, {
         headers: {
             'Authorization': 'Bearer ' + accessToken
         }
@@ -5880,7 +5882,7 @@ function findExistingFile(accessToken, fileName) {
     .then(response => response.json())
     .then(data => {
         if (data.files && data.files.length > 0) {
-            return data.files[0].id;
+            return data.files[0];
         }
         return null;
     });
