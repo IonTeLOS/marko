@@ -5828,7 +5828,6 @@ function saveToGoogleDrive() {
             stopSpinning(syncToButton, syncToIcon);
         });
 }
-
 function saveToGoogleDrivePublic() {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
@@ -5848,20 +5847,20 @@ function saveToGoogleDrivePublic() {
 
     ensureValidToken()
         .then(accessToken => {
-            return retryOperation(() => deleteExistingFile(accessToken))
-                .then(() => retryOperation(() => {
+            return findExistingFile(accessToken, FILE_NAME)
+                .then(fileId => {
                     const bookmarksJson = localStorage.getItem('bookmarks');
-                    return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
-                }));
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to create file');
-            return response.json();
+                    if (fileId) {
+                        return updateExistingFile(accessToken, fileId, bookmarksJson);
+                    } else {
+                        return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
+                    }
+                });
         })
         .then(fileData => {
-            const fileId = fileData.id;
-            copyToClipboard(fileId);
-            alert('Bookmarks saved to Google Drive as ' + FILE_NAME + '\nFile ID copied to clipboard.');
+            const shareableLink = `https://drive.google.com/file/d/${fileData.id}/view?usp=sharing`;
+            copyToClipboard(shareableLink);
+            alert('Bookmarks saved to Google Drive as ' + FILE_NAME + '\nShareable link copied to clipboard.');
             stopSpinning(syncToButton, syncToIcon);
             openDonate();
         })
@@ -5870,6 +5869,37 @@ function saveToGoogleDrivePublic() {
             alert('An error occurred: ' + error.message);
             stopSpinning(syncToButton, syncToIcon);
         });
+}
+
+function findExistingFile(accessToken, fileName) {
+    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}'`, {
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.files && data.files.length > 0) {
+            return data.files[0].id;
+        }
+        return null;
+    });
+}
+
+function updateExistingFile(accessToken, fileId, content) {
+    const form = new FormData();
+    form.append('file', new Blob([content], { type: 'application/json' }));
+
+    return fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        },
+        body: form
+    })
+    .then(response => response.json())
+    .then(() => setFilePublic(accessToken, fileId))
+    .then(() => ({ id: fileId }));
 }
 
 function createNewPublicFile(accessToken, content, fileName) {
@@ -5888,11 +5918,10 @@ function createNewPublicFile(accessToken, content, fileName) {
             'Authorization': 'Bearer ' + accessToken
         },
         body: form
-    }).then(response => {
-        if (!response.ok) throw new Error('Failed to create file');
-        return response.json();
-    }).then(fileData => {
-        return setFilePublic(accessToken, fileData.id);
+    })
+    .then(response => response.json())
+    .then(fileData => {
+        return setFilePublic(accessToken, fileData.id).then(() => fileData);
     });
 }
 
@@ -5914,7 +5943,7 @@ function setFilePublic(accessToken, fileId) {
 
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
-        console.log('File ID copied to clipboard');
+        console.log('Shareable link copied to clipboard');
     }).catch(err => {
         console.error('Failed to copy: ', err);
     });
