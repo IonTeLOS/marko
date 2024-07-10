@@ -5894,16 +5894,15 @@ function saveToGoogleDrivePublic() {
     ensureValidToken()
         .then(accessToken => {
             return retryOperation(() => deleteExistingFile(accessToken))
-                .then(() => retryOperation(() => {
+                .then(() => {
                     const bookmarksJson = localStorage.getItem('bookmarks');
                     return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
-                }));
-        })
-        .then(response => {
-            if (!response.ok) throw new Error('Failed to create file');
-            return response.json();
+                });
         })
         .then(fileData => {
+            if (!fileData || !fileData.id) {
+                throw new Error('Failed to create file: No file data returned');
+            }
             const shareableLink = `https://drive.google.com/file/d/${fileData.id}/view?usp=sharing`;
             copyToClipboard(shareableLink);
             alert('Bookmarks saved to Google Drive as ' + FILE_NAME + '\nShareable link copied to clipboard.');
@@ -5935,11 +5934,12 @@ function createNewPublicFile(accessToken, content, fileName) {
         body: form
     })
     .then(response => {
-        if (!response.ok) throw new Error('Failed to create file');
+        if (!response.ok) throw new Error(`Failed to create file: ${response.status} ${response.statusText}`);
         return response.json();
     })
     .then(fileData => {
-        return setFilePublic(accessToken, fileData.id).then(() => fileData);
+        return setFilePublic(accessToken, fileData.id)
+            .then(() => fileData);
     });
 }
 
@@ -5956,9 +5956,13 @@ function setFilePublic(accessToken, fileId) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(permission)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Failed to set file public: ${response.status} ${response.statusText}`);
+        return response;
     });
 }
-
+  
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         console.log('Shareable link copied to clipboard');
