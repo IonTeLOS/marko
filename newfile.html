@@ -5829,6 +5829,96 @@ function saveToGoogleDrive() {
         });
 }
 
+function saveToGoogleDrivePublic() {
+    if (!navigator.onLine) {
+        alert("Connect to the Internet to proceed");
+        return;
+    }
+    const syncToButton = document.getElementById('syncToDrive');
+    const syncToIcon = document.getElementById('syncToIcon');
+    syncToButton.disabled = true;
+    syncToIcon.classList.add('spinning');
+    
+    if (!confirm("Are you sure you want to save your bookmarks to Google Drive as a public file?")) {
+        stopSpinning(syncToButton, syncToIcon);
+        return;
+    }
+    
+    const FILE_NAME = 'myMarkos.json';
+
+    ensureValidToken()
+        .then(accessToken => {
+            return retryOperation(() => deleteExistingFile(accessToken))
+                .then(() => retryOperation(() => {
+                    const bookmarksJson = localStorage.getItem('bookmarks');
+                    return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
+                }));
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Failed to create file');
+            return response.json();
+        })
+        .then(fileData => {
+            const fileId = fileData.id;
+            copyToClipboard(fileId);
+            alert('Bookmarks saved to Google Drive as ' + FILE_NAME + '\nFile ID copied to clipboard.');
+            stopSpinning(syncToButton, syncToIcon);
+            openDonate();
+        })
+        .catch(error => {
+            console.error('Error in saveToGoogleDrivePublic:', error);
+            alert('An error occurred: ' + error.message);
+            stopSpinning(syncToButton, syncToIcon);
+        });
+}
+
+function createNewPublicFile(accessToken, content, fileName) {
+    const metadata = {
+        name: fileName,
+        mimeType: 'application/json'
+    };
+
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+    form.append('file', new Blob([content], { type: 'application/json' }));
+
+    return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        },
+        body: form
+    }).then(response => {
+        if (!response.ok) throw new Error('Failed to create file');
+        return response.json();
+    }).then(fileData => {
+        return setFilePublic(accessToken, fileData.id);
+    });
+}
+
+function setFilePublic(accessToken, fileId) {
+    const permission = {
+        type: 'anyone',
+        role: 'reader'
+    };
+
+    return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(permission)
+    });
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(() => {
+        console.log('File ID copied to clipboard');
+    }).catch(err => {
+        console.error('Failed to copy: ', err);
+    });
+}
 function getFromGoogleDrive() {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
@@ -6116,6 +6206,10 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
+<button id="syncToDrive" class="g-button" onclick="saveToGoogleDrivePublic()">
+    <span id="syncToPublicIcon" class="material-icons">public</span>
+    Make public
+</button>                  
 <button id="signInOutButton" class="g-button" onclick="toggleSignInOut()">
     <span id="signInOutIcon" class="material-icons">login</span>
     <span id="signInOutText">Sign In</span>
