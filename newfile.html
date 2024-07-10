@@ -5937,15 +5937,13 @@ function findExistingPublicFile(accessToken, fileName) {
 }
 
 function updateExistingFile(accessToken, fileId, content) {
-    const form = new FormData();
-    form.append('file', new Blob([content], { type: 'application/json' }));
-
     return fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
         method: 'PATCH',
         headers: {
-            'Authorization': 'Bearer ' + accessToken
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json'  // Correct content type for JSON
         },
-        body: form
+        body: content  // Directly send the JSON content
     })
     .then(response => {
         if (!response.ok) throw new Error(`Failed to update file: ${response.status} ${response.statusText}`);
