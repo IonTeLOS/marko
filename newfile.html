@@ -1337,6 +1337,15 @@ onMessage(messaging, (payload) => {
   console.log('Message received. ', payload);
   const uuid = payload.data.uuid;
   const url = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
+  localforage.getItem('notifications').then(function(notifications) {
+                if (!notifications) {
+                    console.error('No notifications found');
+                    return;
+                }
+  // Filter out the notification with the specified uuid
+  const updatedNotifications = notifications.filter(notification => notification[0] !== uuid);
+  // Save the updated array back to localForage
+  return localforage.setItem('notifications', updatedNotifications);
   window.location.href = 'https://teloslinux.org/marko/newfile';
   window.open(url, '_blank'); // Opens URL in a new tab or window
 
@@ -3363,7 +3372,15 @@ async function removeReminder(index) {
 
             // after removing the bell, cancel the actual notification
             cancelScheduledNotification(currentUUID);
-
+            localforage.getItem('notifications').then(function(notifications) {
+                if (!notifications) {
+                    console.error('No notifications found');
+                    return;
+                }
+            // Filter out the notification with the specified uuid
+            const updatedNotifications = notifications.filter(notification => notification[0] !== currentUUID);
+            // Save the updated array back to localForage
+            return localforage.setItem('notifications', updatedNotifications);
             console.log(`Reminder removed for bookmark at index ${index}`);
         } else {
             console.log(`User canceled removal of reminder for bookmark at index ${index}`);
