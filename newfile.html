@@ -2692,8 +2692,8 @@ let links = [];
         });
     }
 
- async function showPublicMarkos () {
-     await getMyPublicMarkos;
+ function showPublicMarkos () {
+     getMyPublicMarkos();
                const linkContainer = document.querySelector('.bookmarks-container');
 
                 linkContainer.innerHTML = ''; // Clear the container
