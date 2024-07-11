@@ -5896,7 +5896,7 @@ function getFromGoogleDrive() {
         });
 }
 
-function getMyPublicMarkos() {
+async function getMyPublicMarkos() {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
         return;
@@ -5912,41 +5912,48 @@ function getMyPublicMarkos() {
         return;
     }
 
-    ensureValidToken()
-        .then(accessToken => {
-            console.log('Using access token:', accessToken);
-            if (!accessToken) {
-                throw new Error('No valid access token available');
+    try {
+        const accessToken = await ensureValidToken();
+        console.log('Using access token:', accessToken);
+
+        const fileListResponse = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false`, {
+            method: 'GET',
+            headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
+        });
+
+        if (!fileListResponse.ok) {
+            throw new Error(`HTTP error! status: ${fileListResponse.status}`);
+        }
+
+        const fileListData = await fileListResponse.json();
+        console.log('File list data:', fileListData);
+
+        if (fileListData.files && fileListData.files.length > 0) {
+            const fileId = fileListData.files[0].id;
+            const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                method: 'GET',
+                headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
+            });
+
+            if (!fileResponse.ok) {
+                throw new Error(`HTTP error! status: ${fileResponse.status}`);
             }
-            return retryOperation(() => findExistingPublicFile(accessToken, FILE_NAME));
-        })
-        .then(data => {
-            if (data.files && data.files.length > 0) {
-                return fetch(`https://www.googleapis.com/drive/v3/files/${data.files[0].id}?alt=media`, {
-                    method: 'GET',
-                    headers: new Headers({ 'Authorization': 'Bearer ' + localStorage.getItem('accessToken') })
-                });
-            } else {
-                throw new Error('No public bookmarks file found in Google Drive');
-            }
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            return response.json();
-        })
-        .then(data => {
-            localStorage.setItem('public-bookmarks', JSON.stringify(data));
-            links = data;
+
+            const fileData = await fileResponse.json();
+            localStorage.setItem('public-bookmarks', JSON.stringify(fileData));
+            links = fileData;
             stopSpinning(syncFromButton, syncFromIcon);
             location.reload();
             alert("Your Markos are now in sync. Enjoy!");
-        })
-        .catch(error => {
-            console.error('Full error object:', error);
-            let errorMessage = 'Error retrieving file: ' + error.message;
-            alert(errorMessage);
-            stopSpinning(syncFromButton, syncFromIcon);
-        });
+        } else {
+            throw new Error('No public bookmarks file found in Google Drive');
+        }
+    } catch (error) {
+        console.error('Full error object:', error);
+        let errorMessage = 'Error retrieving file: ' + error.message;
+        alert(errorMessage);
+        stopSpinning(syncFromButton, syncFromIcon);
+    }
 }
 
 function deleteExistingFile(accessToken) {
@@ -6065,7 +6072,7 @@ function saveToGoogleDrivePublic() {
         });
 }
 
-async function findExistingPublicFile(accessToken, fileName) {
+function findExistingPublicFile(accessToken, fileName) {
     const response = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}' and trashed=false`, {
         method: 'GET',
         headers: {
