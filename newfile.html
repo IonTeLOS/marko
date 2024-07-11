@@ -1457,7 +1457,7 @@ export function cancelScheduledNotification(uuid) {
           }
         });
       } else {
-        alert("There was no active notification for this UUID.");
+        alert("There was no active notification for this Marko.");
       }
     }).catch((error) => {
       console.error("Error querying notifications:", error);
@@ -3382,6 +3382,7 @@ async function removeReminder(index) {
             // Save the updated array back to localForage
             return localforage.setItem('notifications', updatedNotifications);
             console.log(`Reminder removed for bookmark at index ${index}`);
+            })
         } else {
             console.log(`User canceled removal of reminder for bookmark at index ${index}`);
         }
