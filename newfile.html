@@ -2694,8 +2694,10 @@ let links = [];
 
  function showPublicMarkos () {
       getMyPublicMarkos;
-      document.addEventListener("DOMContentLoaded", () => {
-    
+               const linkContainer = document.querySelector('.bookmarks-container');
+
+                linkContainer.innerHTML = ''; // Clear the container
+
         const savedLinks = JSON.parse(localStorage.getItem('public-bookmarks')) || [];
         console.log('Saved Links:', savedLinks);  // Debug log
         // links = [mainLink, ...savedLinks];
@@ -2704,7 +2706,6 @@ let links = [];
         passCheck();  // Render the bookmarks
         detectTheme();
         checkConnection();
-    });
  }
 // main function to add a new bookmark
 function addLink() {
