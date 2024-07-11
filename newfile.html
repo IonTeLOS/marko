@@ -3661,6 +3661,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
     }).then(() => {
         const showTime = new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
         alert(`Notification scheduled to be shown at: ${showTime}`);
+        // store in localForage to show notification time to user when bell clicked >>> let them cancel it
         localforage.getItem('notifications').then(function(notifications) {
                 if (notifications === null) {
                     notifications = []; // Initialize as an empty array if it doesn't exist
