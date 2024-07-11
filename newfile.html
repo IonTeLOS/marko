@@ -1494,6 +1494,16 @@ export async function cancelScheduledNotification(uuid) {
             remove(childSnapshot.ref)
               .then(() => {
                 alert("Reminder successfully removed.");
+                localforage.getItem('notifications').then(function(notifications) {
+                if (!notifications) {
+                    console.error('No notifications found');
+                    return;
+                }
+            // Filter out the notification with the specified uuid
+            const updatedNotifications = notifications.filter(notification => notification[0] !== uuid);
+            // Save the updated array back to localForage
+            return localforage.setItem('notifications', updatedNotifications);
+            })
               })
               .catch((error) => {
                 console.error("Error deleting notification:", error);
