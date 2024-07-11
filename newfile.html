@@ -1431,7 +1431,7 @@ if ('serviceWorker' in navigator) {
   window.serverTimestamp = serverTimestamp;
   window.requestNotificationPermission = requestNotificationPermission;
 
-export async function cancelScheduledNotification(uuid) {
+async function cancelScheduledNotification(uuid) {
   if (!uuid) {
     alert("Invalid data provided.");
     return;
