@@ -2692,17 +2692,16 @@ let links = [];
         });
     }
 
-async function showPublicMarkos () {
-    await getMyPublicMarkos();
+function showPublicMarkos () {
+    getMyPublicMarkos();
                const linkContainer = document.querySelector('.bookmarks-container');
 
                 linkContainer.innerHTML = ''; // Clear the container
 
-        const savedLinks = JSON.parse(localStorage.getItem('public-bookmarks')) || [];
-        console.log('Saved Links:', savedLinks);  // Debug log
-        // links = [mainLink, ...savedLinks];
+        const savedPublicLinks = JSON.parse(localStorage.getItem('public-bookmarks')) || [];
+        console.log('Saved Links:', savedPublicLinks);  // Debug log
 
-        links = savedLinks;  // Initialize links array
+        links = savedPublicLinks;  // Initialize links array
         passCheck();  // Render the bookmarks
         detectTheme();
         checkConnection();
@@ -5911,7 +5910,7 @@ function getFromGoogleDrive() {
         });
 }
 
-async function getMyPublicMarkos() {
+function getMyPublicMarkos() {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
         return;
@@ -5931,7 +5930,7 @@ async function getMyPublicMarkos() {
         const accessToken = await ensureValidToken();
         console.log('Using access token:', accessToken);
 
-        const fileListResponse = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false`, {
+        const fileListResponse = fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false`, {
             method: 'GET',
             headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
         });
@@ -5940,12 +5939,12 @@ async function getMyPublicMarkos() {
             throw new Error(`HTTP error! status: ${fileListResponse.status}`);
         }
 
-        const fileListData = await fileListResponse.json();
+        const fileListData = fileListResponse.json();
         console.log('File list data:', fileListData);
 
         if (fileListData.files && fileListData.files.length > 0) {
             const fileId = fileListData.files[0].id;
-            const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+            const fileResponse = fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
                 method: 'GET',
                 headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
             });
@@ -5954,7 +5953,7 @@ async function getMyPublicMarkos() {
                 throw new Error(`HTTP error! status: ${fileResponse.status}`);
             }
 
-            const fileData = await fileResponse.json();
+            const fileData = fileResponse.json();
             localStorage.setItem('public-bookmarks', JSON.stringify(fileData));
             links = fileData;
             stopSpinning(syncFromButton, syncFromIcon);
