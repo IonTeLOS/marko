@@ -6065,8 +6065,8 @@ function saveToGoogleDrivePublic() {
         });
 }
 
-function findExistingPublicFile(accessToken, fileName) {
-    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${encodeURIComponent(fileName)}'&spaces=drive&fields=files(id)`, {
+async function findExistingPublicFile(accessToken, fileName) {
+    const response = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}' and trashed=false`, {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + accessToken
