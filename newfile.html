@@ -219,14 +219,16 @@ background-color: #1f1b24;
       cursor: pointer; /* Change cursor to indicate clickability */
       transform: translateY(-50%) scale(1.2); /* Scale up more on direct hover */
     }
-.bookmark .bell-icon {
+.bookmark .bell-icon,
+.bookmark .next-icon {
     position: absolute; /* Position bell icon absolutely */
     top: 50%;
     right: 10px; /* Adjust as necessary */
     transform: translateY(-50%); /* Center icon vertically */
     font-size: 24px; /* Smaller than main icons */
 }
-    .bell-icon:hover {
+    .bell-icon:hover,
+    .next-icon {
       color: #ffd700; /* Darker red on hover */
       cursor: pointer; /* Change cursor to indicate clickability */
       transform: translateY(-50%) scale(1.2); /* Scale up more on direct hover */
@@ -3793,7 +3795,7 @@ const bookmarkElement = document.createElement('div');
             </div>
             <span class="bookmark-title">Home</span>
         </div>
-        <span id="nextPage" class="material-icons delete" onclick="alert("clicked next"); event.stopPropagation();">arrow_forward_ios</span>
+        <span id="next-icon" class="material-icons next-icon" onclick="alert("clicked next"); event.stopPropagation();">arrow_forward_ios</span>
     </div>
 `
                 linkContainer.appendChild(bookmarkElement);
