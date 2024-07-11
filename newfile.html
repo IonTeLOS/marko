@@ -6517,15 +6517,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     
 function positionMenu(e) {
+    const menu = document.getElementById('contextMenu');
     const linkPlace = document.getElementById('current-link');
-    const menu = document.getElementById('contextMenu'); // Assuming the menu has this ID
 
-    // Update the menu element with the currentLink text
-    if (linkPlace) {
-        // Truncate the link to 30 characters
-        let currentLink = 'some link text that might be too long...'; // Replace this with your actual link text
-        linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
-    }
+        // Update the menu element with the currentLink text
+        if (linkPlace) {
+        linkPlace.querySelector('.ml-3').textContent = currentLink;
+        }
 
     let clickCoords = getPosition(e);
     let clickCoordsX = clickCoords.x;
