@@ -5927,7 +5927,7 @@ function getMyPublicMarkos() {
     }
 
     try {
-        const accessToken = await ensureValidToken();
+        const accessToken = ensureValidToken();
         console.log('Using access token:', accessToken);
 
         const fileListResponse = fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false`, {
