@@ -6515,38 +6515,48 @@ document.addEventListener("DOMContentLoaded", function () {
         return { x: posx, y: posy };
     }
 
-    function positionMenu(e) {
-        const linkPlace = document.getElementById('current-link');
-
-        // Update the menu element with the currentLink text
-        if (linkPlace) {
-            // Truncate the link to 30 characters
     
-        linkPlace.querySelector('.ml-3').textContent = currentLink;
-        }
-        let clickCoords = getPosition(e);
-        let clickCoordsX = clickCoords.x;
-        let clickCoordsY = clickCoords.y;
+To ensure the context menu is always visible and positioned correctly within the viewport while maintaining at least an 80px distance from the bottom, you can modify your positionMenu function. Here is the updated version:
 
-        let menuWidth = menu.offsetWidth + 4;
-        let menuHeight = menu.offsetHeight + 4;
+javascript
+Copy code
+function positionMenu(e) {
+    const linkPlace = document.getElementById('current-link');
+    const menu = document.getElementById('contextMenu'); // Assuming the menu has this ID
 
-        let windowWidth = window.innerWidth;
-        let windowHeight = window.innerHeight;
-
-        if (windowWidth - clickCoordsX < menuWidth) {
-            menu.style.left = windowWidth - menuWidth + "px";
-        } else {
-            menu.style.left = clickCoordsX + "px";
-        }
-
-        if (windowHeight - clickCoordsY < menuHeight) {
-            menu.style.top = windowHeight - menuHeight + "px";
-        } else {
-            menu.style.top = clickCoordsY + "px";
-        }
+    // Update the menu element with the currentLink text
+    if (linkPlace) {
+        // Truncate the link to 30 characters
+        let currentLink = 'some link text that might be too long...'; // Replace this with your actual link text
+        linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
     }
 
+    let clickCoords = getPosition(e);
+    let clickCoordsX = clickCoords.x;
+    let clickCoordsY = clickCoords.y;
+
+    let menuWidth = menu.offsetWidth + 4;
+    let menuHeight = menu.offsetHeight + 4;
+
+    let windowWidth = window.innerWidth;
+    let windowHeight = window.innerHeight;
+    let bottomOffset = 80; // Ensure at least 80px from the bottom
+
+    // Adjust horizontal position
+    if (windowWidth - clickCoordsX < menuWidth) {
+        menu.style.left = windowWidth - menuWidth + "px";
+    } else {
+        menu.style.left = clickCoordsX + "px";
+    }
+
+    // Adjust vertical position
+    if (windowHeight - clickCoordsY < menuHeight + bottomOffset) {
+        menu.style.top = windowHeight - menuHeight - bottomOffset + "px";
+    } else {
+        menu.style.top = clickCoordsY + "px";
+    }
+}
+  
     document.addEventListener("click", (e) => {
         var button = e.which || e.button;
         if (button === 1) {
