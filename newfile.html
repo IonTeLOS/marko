@@ -1431,61 +1431,97 @@ if ('serviceWorker' in navigator) {
   window.serverTimestamp = serverTimestamp;
   window.requestNotificationPermission = requestNotificationPermission;
 
-async function cancelScheduledNotification(uuid) {
-  if (!uuid) {
-    alert("Invalid data provided.");
-    return;
-  }
+  function getShowTimeByUuid(uuid) {
+            return localforage.getItem('notifications').then(function(notifications) {
+                if (!notifications) {
+                    console.error('No notifications found');
+                    return null;
+                }
 
-          // Prompt user for confirmation
-        const showTime = await getShowTimeByUuid(uuid);
-        const confirmDelete = confirm(`Scheduled for ${showTime}. Are you sure you want to delete the notification for this Marko?`);
-        
-        if (confirmDelete) {
+                // Find the pair with the matching uuid
+                const notification = notifications.find(notification => notification[0] === uuid);
+
+                if (notification) {
+                    return notification[1];
+                } else {
+                    console.error('Notification not found for uuid:', uuid);
+                    return null;
+                }
+            }).catch(function(err) {
+                console.error('Error retrieving notifications', err);
+                return null;
+            });
+        }
+  
+export async function cancelScheduledNotification(uuid) {
+    if (!uuid) {
+        alert("Invalid data provided.");
+        return;
+    }
+
+    const showTime = await getShowTimeByUuid(uuid);
+    if (!showTime) {
+        alert("No notification found for the given UUID.");
+        return;
+    }
+
+    const formattedShowTime = new Date(showTime).toLocaleString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    const confirmDelete = confirm(`Scheduled for ${formattedShowTime}. Are you sure you want to delete the notification for this Marko?`);
+
+    if (!confirmDelete) {
+        console.log("User canceled reminder removal.");
+        return;
+    }
+
     // Query based on scheduledTime (indexed field)
     const notificationsRef = ref(db, "scheduledNotifications");
     const queryRef = query(notificationsRef, orderByChild("scheduledTime"));
 
-    get(queryRef).then((snapshot) => {
-      if (snapshot.exists()) {
-        snapshot.forEach((childSnapshot) => {
-          const notification = childSnapshot.val();
-          if (notification.uuid === uuid) {
-            console.log("Removing notification with key:", childSnapshot.key);
-            remove(childSnapshot.ref)
-              .then(() => {
-                alert("Reminder successfully removed.");
-                           localforage.getItem('notifications').then(function(notifications) {
-                if (!notifications) {
-                    console.error('No notifications found');
-                    return;
-                }
-            console.log(`Reminder removed for bookmark at index ${index}`);
+    try {
+        const snapshot = await get(queryRef);
+        if (snapshot.exists()) {
+            snapshot.forEach(async (childSnapshot) => {
+                const notification = childSnapshot.val();
+                if (notification.uuid === uuid) {
+                    console.log("Removing notification with key:", childSnapshot.key);
+                    try {
+                        await remove(childSnapshot.ref);
+                        alert("Reminder successfully removed.");
+                        
+                        // Update localForage
+                        const notifications = await localforage.getItem('notifications');
+                        if (!notifications) {
+                            console.error('No notifications found');
+                            return;
+                        }
+                        console.log(`Reminder removed for bookmark at index ${index}`);
 
-            // Filter out the notification with the specified uuid
-            const updatedNotifications = notifications.filter(notification => notification[0] !== currentUUID);
-            // Save the updated array back to localForage
-            return localforage.setItem('notifications', updatedNotifications);
-            })
-              })
-              .catch((error) => {
-                console.error("Error deleting notification:", error);
-                alert("An error occurred while removing the reminder.");
-              });
-          }
-        });
-      } else {
-        alert("There was no active notification for this Marko.");
-      }
-    }).catch((error) => {
-      console.error("Error querying notifications:", error);
-      alert("An error occurred while querying the notifications.");
-    });
+                        // Filter out the notification with the specified uuid
+                        const updatedNotifications = notifications.filter(notification => notification[0] !== uuid);
+                        // Save the updated array back to localForage
+                        await localforage.setItem('notifications', updatedNotifications);
+                    } catch (error) {
+                        console.error("Error deleting notification:", error);
+                        alert("An error occurred while removing the reminder.");
+                    }
+                }
+            });
+        } else {
+            alert("There was no active notification for this Marko.");
+        }
+    } catch (error) {
+        console.error("Error querying notifications:", error);
+        alert("An error occurred while querying the notifications.");
+    }
 }
-  else {
-    console.log("user canceled reminder removal");
-  }
-}
+
 
           // Function to retrieve the showTime for a given uuid
 
@@ -3339,27 +3375,7 @@ function renameMarko(index) {
         return;
     }
 }
-        function getShowTimeByUuid(uuid) {
-            return localforage.getItem('notifications').then(function(notifications) {
-                if (!notifications) {
-                    console.error('No notifications found');
-                    return null;
-                }
-
-                // Find the pair with the matching uuid
-                const notification = notifications.find(notification => notification[0] === uuid);
-
-                if (notification) {
-                    return notification[1];
-                } else {
-                    console.error('Notification not found for uuid:', uuid);
-                    return null;
-                }
-            }).catch(function(err) {
-                console.error('Error retrieving notifications', err);
-                return null;
-            });
-        }      
+        
 function removeReminder(index) {
     if (index >= 0 && index < links.length) {
         // Check if there's a bookmark at the specified index
