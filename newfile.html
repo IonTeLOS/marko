@@ -1462,7 +1462,7 @@ export async function cancelScheduledNotification(uuid) {
 
     const showTime = await getShowTimeByUuid(uuid);
     if (!showTime) {
-        alert("No notification found for the given UUID.");
+        alert("No notification found for this Marko.");
         return;
     }
 
@@ -1485,42 +1485,29 @@ export async function cancelScheduledNotification(uuid) {
     const notificationsRef = ref(db, "scheduledNotifications");
     const queryRef = query(notificationsRef, orderByChild("scheduledTime"));
 
-    try {
-        const snapshot = await get(queryRef);
-        if (snapshot.exists()) {
-            snapshot.forEach(async (childSnapshot) => {
-                const notification = childSnapshot.val();
-                if (notification.uuid === uuid) {
-                    console.log("Removing notification with key:", childSnapshot.key);
-                    try {
-                        await remove(childSnapshot.ref);
-                        alert("Reminder successfully removed.");
-                        
-                        // Update localForage
-                        const notifications = await localforage.getItem('notifications');
-                        if (!notifications) {
-                            console.error('No notifications found');
-                            return;
-                        }
-                        console.log(`Reminder removed for bookmark at index ${index}`);
-
-                        // Filter out the notification with the specified uuid
-                        const updatedNotifications = notifications.filter(notification => notification[0] !== uuid);
-                        // Save the updated array back to localForage
-                        await localforage.setItem('notifications', updatedNotifications);
-                    } catch (error) {
-                        console.error("Error deleting notification:", error);
-                        alert("An error occurred while removing the reminder.");
-                    }
-                }
-            });
-        } else {
-            alert("There was no active notification for this Marko.");
-        }
-    } catch (error) {
-        console.error("Error querying notifications:", error);
-        alert("An error occurred while querying the notifications.");
-    }
+    get(queryRef).then((snapshot) => {
+      if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+          const notification = childSnapshot.val();
+          if (notification.uuid === uuid) {
+            console.log("Removing notification with key:", childSnapshot.key);
+            remove(childSnapshot.ref)
+              .then(() => {
+                alert("Reminder successfully removed.");
+              })
+              .catch((error) => {
+                console.error("Error deleting notification:", error);
+                alert("An error occurred while removing the reminder.");
+              });
+          }
+        });
+      } else {
+        alert("There was no active notification for this UUID.");
+      }
+    }).catch((error) => {
+      console.error("Error querying notifications:", error);
+      alert("An error occurred while querying the notifications.");
+    });
 }
 
 
