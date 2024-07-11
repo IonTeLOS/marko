@@ -2693,7 +2693,7 @@ let links = [];
     }
 
 function showPublicMarkos () {
-    getMyPublicMarkos();
+    await getMyPublicMarkos();
                const linkContainer = document.querySelector('.bookmarks-container');
 
                 linkContainer.innerHTML = ''; // Clear the container
@@ -2706,6 +2706,7 @@ function showPublicMarkos () {
         detectTheme();
         checkConnection();
  }
+      
 // main function to add a new bookmark
 function addLink() {
     const urlInput = document.getElementById('new-link-url');
@@ -5910,65 +5911,65 @@ function getFromGoogleDrive() {
         });
 }
 
-function getMyPublicMarkos() {
-    if (!navigator.onLine) {
-        alert("Connect to the Internet to proceed");
-        return;
-    }
-
-    const syncFromButton = document.getElementById('syncFromDrive');
-    const syncFromIcon = document.getElementById('syncFromIcon');
-    syncFromButton.disabled = true;
-    syncFromIcon.classList.add('spinning');
-
-    if (!confirm("Are you sure you want to show your public Markos from Google Drive?")) {
-        stopSpinning(syncFromButton, syncFromIcon);
-        return;
-    }
-
-    try {
-        const accessToken = ensureValidToken();
-        console.log('Using access token:', accessToken);
-
-        const fileListResponse = fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false`, {
-            method: 'GET',
-            headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
-        });
-
-        if (!fileListResponse.ok) {
-            throw new Error(`HTTP error! status: ${fileListResponse.status}`);
-        }
-
-        const fileListData = fileListResponse.json();
-        console.log('File list data:', fileListData);
-
-        if (fileListData.files && fileListData.files.length > 0) {
-            const fileId = fileListData.files[0].id;
-            const fileResponse = fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-                method: 'GET',
-                headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
-            });
-
-            if (!fileResponse.ok) {
-                throw new Error(`HTTP error! status: ${fileResponse.status}`);
+        async function getMyPublicMarkos() {
+            if (!navigator.onLine) {
+                alert("Connect to the Internet to proceed");
+                return;
             }
 
-            const fileData = fileResponse.json();
-            localStorage.setItem('public-bookmarks', JSON.stringify(fileData));
-            links = fileData;
-            stopSpinning(syncFromButton, syncFromIcon);
-            location.reload();
-            alert("Your Markos are now in sync. Enjoy!");
-        } else {
-            throw new Error('No public bookmarks file found in Google Drive');
+            const syncFromButton = document.getElementById('syncFromDrive');
+            const syncFromIcon = document.getElementById('syncFromIcon');
+            syncFromButton.disabled = true;
+            syncFromIcon.classList.add('spinning');
+
+            if (!confirm("Are you sure you want to show your public Markos from Google Drive?")) {
+                stopSpinning(syncFromButton, syncFromIcon);
+                return;
+            }
+
+            try {
+                const accessToken = await ensureValidToken();
+                console.log('Using access token:', accessToken);
+
+                const fileListResponse = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false`, {
+                    method: 'GET',
+                    headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
+                });
+
+                if (!fileListResponse.ok) {
+                    throw new Error(`HTTP error! status: ${fileListResponse.status}`);
+                }
+
+                const fileListData = await fileListResponse.json();
+                console.log('File list data:', fileListData);
+
+                if (fileListData.files && fileListData.files.length > 0) {
+                    const fileId = fileListData.files[0].id;
+                    const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                        method: 'GET',
+                        headers: new Headers({ 'Authorization': 'Bearer ' + accessToken })
+                    });
+
+                    if (!fileResponse.ok) {
+                        throw new Error(`HTTP error! status: ${fileResponse.status}`);
+                    }
+
+                    const fileData = await fileResponse.json();
+                    localStorage.setItem('public-bookmarks', JSON.stringify(fileData));
+                    links = fileData;
+                    stopSpinning(syncFromButton, syncFromIcon);
+                    location.reload();
+                    alert("Your Markos are now in sync. Enjoy!");
+                } else {
+                    throw new Error('No public bookmarks file found in Google Drive');
+                }
+            } catch (error) {
+                console.error('Full error object:', error);
+                let errorMessage = 'Error retrieving file: ' + error.message;
+                alert(errorMessage);
+                stopSpinning(syncFromButton, syncFromIcon);
+            }
         }
-    } catch (error) {
-        console.error('Full error object:', error);
-        let errorMessage = 'Error retrieving file: ' + error.message;
-        alert(errorMessage);
-        stopSpinning(syncFromButton, syncFromIcon);
-    }
-}
 
 function deleteExistingFile(accessToken) {
     return findExistingFile(accessToken)
