@@ -3316,9 +3316,8 @@ function renameMarko(index) {
     console.log(`Old Title: ${oldTitle}`);
     console.log(`New Title: ${newTitle}`);
         // Prompt user for confirmation
-        const confirmed = confirm(`Are you sure you want to remove the reminder for this bookmark?`);
         
-            bookmark[2] = newTitle;
+            bookmark[2] = ${newTitle};
 
             // Update the links array
             links[index] = bookmark;
