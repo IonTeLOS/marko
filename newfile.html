@@ -6498,58 +6498,68 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function getPosition(e) {
-        var posx = 0;
-        var posy = 0;
+        function getPosition(e) {
+            let posx = 0;
+            let posy = 0;
 
-        if (!e) e = window.event;
+            if (!e) e = window.event;
 
-        if (e.pageX || e.pageY) {
-            posx = e.pageX;
-            posy = e.pageY;
-        } else if (e.clientX || e.clientY) {
-            posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-            posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            if (e.pageX || e.pageY) {
+                posx = e.pageX;
+                posy = e.pageY;
+            } else if (e.clientX || e.clientY) {
+                posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+                posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
+            }
+
+            return { x: posx, y: posy };
         }
 
-        return { x: posx, y: posy };
-    }
+        function positionMenu(e) {
+            const menu = document.getElementById('contextMenu');
+            const linkPlace = document.getElementById('current-link');
 
-    
-function positionMenu(e) {
-    const menu = document.getElementById('contextMenu');
-    const linkPlace = document.getElementById('current-link');
+            // Ensure the menu element exists
+            if (!menu) {
+                console.error('Menu element not found');
+                return;
+            }
 
-        // Update the menu element with the currentLink text
-        if (linkPlace) {
-        linkPlace.querySelector('.ml-3').textContent = currentLink;
+            // Update the menu element with the currentLink text
+            if (linkPlace) {
+                let currentLink = 'some link text that might be too long...'; // Replace this with your actual link text
+                linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
+            }
+
+            let clickCoords = getPosition(e);
+            let clickCoordsX = clickCoords.x;
+            let clickCoordsY = clickCoords.y;
+
+            let menuWidth = menu.offsetWidth + 4;
+            let menuHeight = menu.offsetHeight + 4;
+
+            let windowWidth = window.innerWidth;
+            let windowHeight = window.innerHeight;
+            let bottomOffset = 80; // Ensure at least 80px from the bottom
+
+            // Adjust horizontal position
+            if (windowWidth - clickCoordsX < menuWidth) {
+                menu.style.left = windowWidth - menuWidth + "px";
+            } else {
+                menu.style.left = clickCoordsX + "px";
+            }
+
+            // Adjust vertical position
+            let adjustedTop = clickCoordsY;
+            if (windowHeight - clickCoordsY < menuHeight + bottomOffset) {
+                adjustedTop = windowHeight - menuHeight - bottomOffset;
+            } else {
+                if (windowHeight - clickCoordsY - menuHeight < bottomOffset) {
+                    adjustedTop = windowHeight - menuHeight - bottomOffset;
+                }
+            }
+            menu.style.top = adjustedTop + "px";
         }
-
-    let clickCoords = getPosition(e);
-    let clickCoordsX = clickCoords.x;
-    let clickCoordsY = clickCoords.y;
-
-    let menuWidth = menu.offsetWidth + 4;
-    let menuHeight = menu.offsetHeight + 4;
-
-    let windowWidth = window.innerWidth;
-    let windowHeight = window.innerHeight;
-    let bottomOffset = 80; // Ensure at least 80px from the bottom
-
-    // Adjust horizontal position
-    if (windowWidth - clickCoordsX < menuWidth) {
-        menu.style.left = windowWidth - menuWidth + "px";
-    } else {
-        menu.style.left = clickCoordsX + "px";
-    }
-
-    // Adjust vertical position
-    if (windowHeight - clickCoordsY < menuHeight + bottomOffset) {
-        menu.style.top = windowHeight - menuHeight - bottomOffset + "px";
-    } else {
-        menu.style.top = clickCoordsY + "px";
-    }
-}
   
     document.addEventListener("click", (e) => {
         var button = e.which || e.button;
