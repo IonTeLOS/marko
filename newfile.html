@@ -3624,7 +3624,14 @@ function scheduleNotification(title, body, delay, icon, uuid) {
         // Send notification data to Firebase Realtime Database
         return window.set(newNotificationRef, notificationData);  
     }).then(() => {
-        alert(`Notification scheduled to be shown at: ${new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' })}`);
+        const showTime = new Date(notificationTime).toLocaleString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+        alert(`Notification scheduled to be shown at: ${showTime}`);
+        localforage.getItem('notifications').then(function(notifications) {
+                if (notifications === null) {
+                    notifications = []; // Initialize as an empty array if it doesn't exist
+                }
+          // Push the new pair onto the array
+        notifications.push([uuid, showTime]);
     }).catch(error => {
         if (error !== 'Notification permission denied') {
             alert("Something went wrong..");
