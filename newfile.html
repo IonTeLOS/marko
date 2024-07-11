@@ -1346,6 +1346,7 @@ onMessage(messaging, (payload) => {
   const updatedNotifications = notifications.filter(notification => notification[0] !== uuid);
   // Save the updated array back to localForage
   return localforage.setItem('notifications', updatedNotifications);
+  })
   window.location.href = 'https://teloslinux.org/marko/newfile';
   window.open(url, '_blank'); // Opens URL in a new tab or window
 
