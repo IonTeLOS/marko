@@ -3633,7 +3633,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
           // Push the new pair onto the array
         notifications.push([uuid, showTime]);
         return localforage.setItem('notifications', notifications);
-        }
+        })
     }).catch(error => {
         if (error !== 'Notification permission denied') {
             alert("Something went wrong..");
