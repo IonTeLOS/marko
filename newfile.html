@@ -2667,7 +2667,7 @@ let links = [];
     // this is what is mainly done: each time page is loaded it checks local storage and -after it confirms if user is logged it- it renders the bbokmarks
     document.addEventListener("DOMContentLoaded", () => {
     
-        const savedLinks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+        const savedLinks = JSON.parse(localStorage.getItem('public-bookmarks')) || [];
         console.log('Saved Links:', savedLinks);  // Debug log
         // links = [mainLink, ...savedLinks];
 
