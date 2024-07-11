@@ -1448,8 +1448,8 @@ export function cancelScheduledNotification(uuid) {
     alert("Invalid UUID provided.");
     return;
   }
-
-  const confirmDelete = confirm("Are you sure you want to delete this scheduled notification?");
+  const showTime = getShowTimeByUuid(uuid);
+  const confirmDelete = confirm(`Scheduled for ${showTime}. Are you sure you want to delete this notification?`);
   
   if (confirmDelete) {
     // Query based on scheduledTime (indexed field)
@@ -1482,7 +1482,28 @@ export function cancelScheduledNotification(uuid) {
   }
 }
 
-  
+          // Function to retrieve the showTime for a given uuid
+        function getShowTimeByUuid(uuid) {
+            return localforage.getItem('notifications').then(function(notifications) {
+                if (!notifications) {
+                    console.error('No notifications found');
+                    return null;
+                }
+
+                // Find the pair with the matching uuid
+                const notification = notifications.find(notification => notification[0] === uuid);
+
+                if (notification) {
+                    return notification[1];
+                } else {
+                    console.error('Notification not found for uuid:', uuid);
+                    return null;
+                }
+            }).catch(function(err) {
+                console.error('Error retrieving notifications', err);
+                return null;
+            });
+        }
 // Expose the function globally
 window.cancelScheduledNotification = cancelScheduledNotification;
     </script>
