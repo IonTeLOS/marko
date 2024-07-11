@@ -1443,12 +1443,12 @@ if ('serviceWorker' in navigator) {
   window.serverTimestamp = serverTimestamp;
   window.requestNotificationPermission = requestNotificationPermission;
 
-export function cancelScheduledNotification(uuid) {
+export async function cancelScheduledNotification(uuid) {
   if (!uuid) {
     alert("Invalid UUID provided.");
     return;
   }
-  const showTime = getShowTimeByUuid(uuid);
+  const showTime = await getShowTimeByUuid(uuid);
   const confirmDelete = confirm(`Scheduled for ${showTime}. Are you sure you want to delete this notification?`);
   
   if (confirmDelete) {
