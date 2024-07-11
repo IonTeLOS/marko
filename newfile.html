@@ -2713,7 +2713,7 @@ async function syncAndShowPublicMarkos() {
         console.log('Using access token:', accessToken);
 
         // Fetch file list with cache-control headers
-        const fileListResponse = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false`, {
+        const fileListResponse = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${PUBLIC_FILE}' and trashed=false`, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer ' + accessToken,
@@ -5772,6 +5772,7 @@ const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleuser
 const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
 const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
 const FILE_NAME = 'bookmarksMarko.txt';
+const PUBLIC_FILE = 'myMarkos.json';  
 const APP_ID = 'marko';
 
 let tokenClient;
@@ -6061,17 +6062,15 @@ function saveToGoogleDrivePublic() {
         return;
     }
     
-    const FILE_NAME = 'myMarkos.json';
-
     ensureValidToken()
         .then(accessToken => {
-            return findExistingPublicFile(accessToken, FILE_NAME)
+            return findExistingPublicFile(accessToken, PUBLIC_FILE)
                 .then(fileData => {
                     const bookmarksJson = localStorage.getItem('bookmarks');
                     if (fileData) {
                         return updateExistingFile(accessToken, fileData.id, bookmarksJson);
                     } else {
-                        return createNewPublicFile(accessToken, bookmarksJson, FILE_NAME);
+                        return createNewPublicFile(accessToken, bookmarksJson, PUBLIC_FILE);
                     }
                 });
         })
@@ -6081,7 +6080,7 @@ function saveToGoogleDrivePublic() {
             }
             const shareableLink = `https://drive.google.com/file/d/${fileData.id}/view?usp=sharing`;
             copyToClipboard(shareableLink);
-            alert('Bookmarks saved to Google Drive as ' + FILE_NAME + '\nShareable link copied to clipboard.');
+            alert('Bookmarks saved to Google Drive as ' + PUBLIC_FILE + '\nShareable link copied to clipboard.');
             stopSpinning(syncToPublicButton, syncToPublicIcon);
             openDonate();
         })
