@@ -1457,27 +1457,7 @@ export function cancelScheduledNotification(uuid) {
 }
 
           // Function to retrieve the showTime for a given uuid
-        function getShowTimeByUuid(uuid) {
-            return localforage.getItem('notifications').then(function(notifications) {
-                if (!notifications) {
-                    console.error('No notifications found');
-                    return null;
-                }
 
-                // Find the pair with the matching uuid
-                const notification = notifications.find(notification => notification[0] === uuid);
-
-                if (notification) {
-                    return notification[1];
-                } else {
-                    console.error('Notification not found for uuid:', uuid);
-                    return null;
-                }
-            }).catch(function(err) {
-                console.error('Error retrieving notifications', err);
-                return null;
-            });
-        }
 // Expose the function globally
 window.cancelScheduledNotification = cancelScheduledNotification;
     </script>
@@ -3328,6 +3308,27 @@ function renameMarko(index) {
         return;
     }
 }
+        function getShowTimeByUuid(uuid) {
+            return localforage.getItem('notifications').then(function(notifications) {
+                if (!notifications) {
+                    console.error('No notifications found');
+                    return null;
+                }
+
+                // Find the pair with the matching uuid
+                const notification = notifications.find(notification => notification[0] === uuid);
+
+                if (notification) {
+                    return notification[1];
+                } else {
+                    console.error('Notification not found for uuid:', uuid);
+                    return null;
+                }
+            }).catch(function(err) {
+                console.error('Error retrieving notifications', err);
+                return null;
+            });
+        }      
 async function removeReminder(index) {
     if (index >= 0 && index < links.length) {
         // Check if there's a bookmark at the specified index
