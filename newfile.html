@@ -3300,7 +3300,7 @@ function renameMarko(index) {
         // Check if there's a bookmark at the specified index
         let bookmark = links[index];
 
-        const currentTitle = bookmark[3];
+        const currentTitle = bookmark[2];
 
     // Prompt the user for a new name, pre-filling with oldName
     let userInput = prompt("Enter new name for this Marko:", currentTitle);
@@ -3318,7 +3318,7 @@ function renameMarko(index) {
         // Prompt user for confirmation
         const confirmed = confirm(`Are you sure you want to remove the reminder for this bookmark?`);
         
-            bookmark[3] = newTitle;
+            bookmark[2] = newTitle;
 
             // Update the links array
             links[index] = bookmark;
