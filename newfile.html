@@ -2667,7 +2667,7 @@ let links = [];
     // this is what is mainly done: each time page is loaded it checks local storage and -after it confirms if user is logged it- it renders the bbokmarks
     document.addEventListener("DOMContentLoaded", () => {
     
-        const savedLinks = JSON.parse(localStorage.getItem('public-bookmarks')) || [];
+        const savedLinks = JSON.parse(localStorage.getItem('bookmarks')) || [];
         console.log('Saved Links:', savedLinks);  // Debug log
         // links = [mainLink, ...savedLinks];
 
@@ -2692,6 +2692,20 @@ let links = [];
         });
     }
 
+ function showPublicMarkos () {
+      await getMyPublicMarkos;
+      document.addEventListener("DOMContentLoaded", () => {
+    
+        const savedLinks = JSON.parse(localStorage.getItem('public-bookmarks')) || [];
+        console.log('Saved Links:', savedLinks);  // Debug log
+        // links = [mainLink, ...savedLinks];
+
+        links = savedLinks;  // Initialize links array
+        passCheck();  // Render the bookmarks
+        detectTheme();
+        checkConnection();
+    });
+ }
 // main function to add a new bookmark
 function addLink() {
     const urlInput = document.getElementById('new-link-url');
@@ -3795,7 +3809,7 @@ const bookmarkElement = document.createElement('div');
             </div>
             <span class="bookmark-title">Home</span>
         </div>
-        <span id="next-icon" class="material-icons next-icon" onclick="getMyPublicMarkos(); event.stopPropagation();">arrow_forward_ios</span>
+        <span id="next-icon" class="material-icons next-icon" onclick="showPublicMarkos(); event.stopPropagation();">arrow_forward_ios</span>
     </div>
 `
                 linkContainer.appendChild(bookmarkElement);
