@@ -2692,21 +2692,86 @@ let links = [];
         });
     }
 
-function showPublicMarkos () {
-    getMyPublicMarkos();
-               const linkContainer = document.querySelector('.bookmarks-container');
+async function syncAndShowPublicMarkos() {
+    if (!navigator.onLine) {
+        alert("Connect to the Internet to proceed");
+        return;
+    }
 
-                linkContainer.innerHTML = ''; // Clear the container
+    const syncFromButton = document.getElementById('syncFromDrive');
+    const syncFromIcon = document.getElementById('syncFromIcon');
+    syncFromButton.disabled = true;
+    syncFromIcon.classList.add('spinning');
+
+    if (!confirm("Are you sure you want to show your public Markos from Google Drive?")) {
+        stopSpinning(syncFromButton, syncFromIcon);
+        return;
+    }
+
+    try {
+        const accessToken = await ensureValidToken();
+        console.log('Using access token:', accessToken);
+
+        // Fetch file list with cache-control headers
+        const fileListResponse = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false`, {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + accessToken,
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
+            })
+        });
+
+        if (!fileListResponse.ok) {
+            throw new Error(`File list fetch failed. HTTP status: ${fileListResponse.status}`);
+        }
+
+        const fileListData = await fileListResponse.json();
+        console.log('File list data:', fileListData);
+
+        if (fileListData.files && fileListData.files.length > 0) {
+            const fileId = fileListData.files[0].id;
+
+            // Fetch file content with cache-control headers
+            const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+                method: 'GET',
+                headers: new Headers({
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Cache-Control': 'no-cache, no-store, must-revalidate'
+                })
+            });
+
+            if (!fileResponse.ok) {
+                throw new Error(`File fetch failed. HTTP status: ${fileResponse.status}`);
+            }
+
+            const fileData = await fileResponse.json();
+            localStorage.setItem('public-bookmarks', JSON.stringify(fileData));
+        } else {
+            throw new Error('No public bookmarks file found in Google Drive');
+        }
+
+        // After fetching and storing, proceed to show public Markos
+        const linkContainer = document.querySelector('.bookmarks-container');
+        linkContainer.innerHTML = ''; // Clear the container
 
         const savedPublicLinks = JSON.parse(localStorage.getItem('public-bookmarks')) || [];
-        console.log('Saved Links:', savedPublicLinks);  // Debug log
+        console.log('Saved Links:', savedPublicLinks); // Debug log
 
-        links = savedPublicLinks;  // Initialize links array
-        passCheck();  // Render the bookmarks
+        links = savedPublicLinks; // Initialize links array
+        passCheck(); // Render the bookmarks
         detectTheme();
         checkConnection();
- }
-      
+
+        stopSpinning(syncFromButton, syncFromIcon);
+        alert("Your Markos are now in sync. Enjoy!");
+    } catch (error) {
+        console.error('Full error object:', error);
+        let errorMessage = 'Error retrieving file: ' + error.message;
+        alert(errorMessage);
+        stopSpinning(syncFromButton, syncFromIcon);
+    }
+}
+
 // main function to add a new bookmark
 function addLink() {
     const urlInput = document.getElementById('new-link-url');
@@ -3810,7 +3875,7 @@ const bookmarkElement = document.createElement('div');
             </div>
             <span class="bookmark-title">Home</span>
         </div>
-        <span id="next-icon" class="material-icons next-icon" onclick="showPublicMarkos(); event.stopPropagation();">arrow_forward_ios</span>
+        <span id="next-icon" class="material-icons next-icon" onclick="syncAndshowPublicMarkos(); event.stopPropagation();">arrow_forward_ios</span>
     </div>
 `
                 linkContainer.appendChild(bookmarkElement);
@@ -5910,77 +5975,6 @@ function getFromGoogleDrive() {
             stopSpinning(syncFromButton, syncFromIcon);
         });
 }
-
-        async function getMyPublicMarkos() {
-    if (!navigator.onLine) {
-        alert("Connect to the Internet to proceed");
-        return;
-    }
-
-    const syncFromButton = document.getElementById('syncFromDrive');
-    const syncFromIcon = document.getElementById('syncFromIcon');
-    syncFromButton.disabled = true;
-    syncFromIcon.classList.add('spinning');
-
-    if (!confirm("Are you sure you want to show your public Markos from Google Drive?")) {
-        stopSpinning(syncFromButton, syncFromIcon);
-        return;
-    }
-
-    try {
-        const accessToken = await ensureValidToken();
-        console.log('Using access token:', accessToken);
-
-        // Fetch file list with cache-control headers
-        const fileListResponse = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${FILE_NAME}' and trashed=false`, {
-            method: 'GET',
-            headers: new Headers({
-                'Authorization': 'Bearer ' + accessToken,
-                'Cache-Control': 'no-cache, no-store, must-revalidate'
-            })
-        });
-
-        if (!fileListResponse.ok) {
-            throw new Error(`File list fetch failed. HTTP status: ${fileListResponse.status}`);
-        }
-
-        const fileListData = await fileListResponse.json();
-        console.log('File list data:', fileListData);
-
-        if (fileListData.files && fileListData.files.length > 0) {
-            const fileId = fileListData.files[0].id;
-
-            // Fetch file content with cache-control headers
-            const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-                method: 'GET',
-                headers: new Headers({
-                    'Authorization': 'Bearer ' + accessToken,
-                    'Cache-Control': 'no-cache, no-store, must-revalidate'
-                })
-            });
-
-            if (!fileResponse.ok) {
-                throw new Error(`File fetch failed. HTTP status: ${fileResponse.status}`);
-            }
-
-            const fileData = await fileResponse.json();
-            localStorage.setItem('public-bookmarks', JSON.stringify(fileData));
-            links = fileData;
-
-            stopSpinning(syncFromButton, syncFromIcon);
-            location.reload();
-            alert("Your Markos are now in sync. Enjoy!");
-        } else {
-            throw new Error('No public bookmarks file found in Google Drive');
-        }
-    } catch (error) {
-        console.error('Full error object:', error);
-        let errorMessage = 'Error retrieving file: ' + error.message;
-        alert(errorMessage);
-        stopSpinning(syncFromButton, syncFromIcon);
-    }
-}
-
 
 function deleteExistingFile(accessToken) {
     return findExistingFile(accessToken)
