@@ -2693,7 +2693,7 @@ let links = [];
     }
 
  function showPublicMarkos () {
-      await getMyPublicMarkos;
+      getMyPublicMarkos;
       document.addEventListener("DOMContentLoaded", () => {
     
         const savedLinks = JSON.parse(localStorage.getItem('public-bookmarks')) || [];
