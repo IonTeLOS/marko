@@ -3295,7 +3295,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+function renameMarko(index) {
+    if (index >= 0 && index < links.length) {
+        // Check if there's a bookmark at the specified index
+        let bookmark = links[index];
 
+        const currentTitle = bookmark[3];
+
+    // Prompt the user for a new name, pre-filling with oldName
+    let userInput = prompt("Enter new name for this Marko:", currentTitle);
+    
+    // If the user cancels the prompt, return immediately
+    if (userInput === null) {
+        return;
+    }
+    
+    // Trim the user's input and truncate to 30 characters max
+    const newTitle = userInput.trim().substring(0, 30);
+    
+    console.log(`Old Title: ${oldTitle}`);
+    console.log(`New Title: ${newTitle}`);
+        // Prompt user for confirmation
+        const confirmed = confirm(`Are you sure you want to remove the reminder for this bookmark?`);
+        
+            bookmark[3] = newTitle;
+
+            // Update the links array
+            links[index] = bookmark;
+
+            // Save the updated links array to localStorage
+            localStorage.setItem('bookmarks', JSON.stringify(links));
+
+            // Call saveLinks and renderLinks to update the UI
+            saveLinks();
+            renderLinks();
+    } else {
+        console.error(`Index ${index} is out of bounds for links array.`);
+        return;
+    }
+}
 function removeReminder(index) {
     if (index >= 0 && index < links.length) {
         // Check if there's a bookmark at the specified index
@@ -6176,6 +6214,11 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
             onclick="openSettings()">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">settings</span>
             <div class="ml-3">Settings</div>
+        </div>
+              <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="renameMarko(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">edit</span>
+            <div class="ml-3">Rename</div>
         </div>
         <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
             onclick="addReminderToMarko(`${currentIndex}`)">
