@@ -1431,11 +1431,17 @@ if ('serviceWorker' in navigator) {
   window.serverTimestamp = serverTimestamp;
   window.requestNotificationPermission = requestNotificationPermission;
 
-function cancelScheduledNotification(uuid) {
+export async function cancelScheduledNotification(uuid) {
   if (!uuid) {
     alert("Invalid data provided.");
     return;
   }
+
+          // Prompt user for confirmation
+        const showTime = await getShowTimeByUuid(uuid);
+        const confirmDelete = confirm(`Scheduled for ${showTime}. Are you sure you want to delete the notification for this Marko?`);
+        
+        if (confirmDelete) {
     // Query based on scheduledTime (indexed field)
     const notificationsRef = ref(db, "scheduledNotifications");
     const queryRef = query(notificationsRef, orderByChild("scheduledTime"));
@@ -1449,6 +1455,18 @@ function cancelScheduledNotification(uuid) {
             remove(childSnapshot.ref)
               .then(() => {
                 alert("Reminder successfully removed.");
+                           localforage.getItem('notifications').then(function(notifications) {
+                if (!notifications) {
+                    console.error('No notifications found');
+                    return;
+                }
+            console.log(`Reminder removed for bookmark at index ${index}`);
+
+            // Filter out the notification with the specified uuid
+            const updatedNotifications = notifications.filter(notification => notification[0] !== currentUUID);
+            // Save the updated array back to localForage
+            return localforage.setItem('notifications', updatedNotifications);
+            })
               })
               .catch((error) => {
                 console.error("Error deleting notification:", error);
@@ -1463,6 +1481,10 @@ function cancelScheduledNotification(uuid) {
       console.error("Error querying notifications:", error);
       alert("An error occurred while querying the notifications.");
     });
+}
+  else {
+    console.log("user canceled reminder removal");
+  }
 }
 
           // Function to retrieve the showTime for a given uuid
@@ -3338,7 +3360,7 @@ function renameMarko(index) {
                 return null;
             });
         }      
-async function removeReminder(index) {
+function removeReminder(index) {
     if (index >= 0 && index < links.length) {
         // Check if there's a bookmark at the specified index
         let bookmark = links[index];
@@ -3350,11 +3372,7 @@ async function removeReminder(index) {
 
         const currentUUID = bookmark[5]; // Get the current UUID
 
-        // Prompt user for confirmation
-        const showTime = await getShowTimeByUuid(currentUUID);
-        const confirmDelete = confirm(`Scheduled for ${showTime}. Are you sure you want to delete the notification for this Marko?`);
-        
-        if (confirmDelete) {
+
             // Remove the UUID (invalidate it)
             bookmark[5] = "";
 
@@ -3372,20 +3390,8 @@ async function removeReminder(index) {
 
             // after removing the bell, cancel the actual notification
             cancelScheduledNotification(currentUUID);
-            localforage.getItem('notifications').then(function(notifications) {
-                if (!notifications) {
-                    console.error('No notifications found');
-                    return;
-                }
-            // Filter out the notification with the specified uuid
-            const updatedNotifications = notifications.filter(notification => notification[0] !== currentUUID);
-            // Save the updated array back to localForage
-            return localforage.setItem('notifications', updatedNotifications);
-            console.log(`Reminder removed for bookmark at index ${index}`);
-            })
-        } else {
-            console.log(`User canceled removal of reminder for bookmark at index ${index}`);
-        }
+ 
+
     } else {
         console.error(`Index ${index} is out of bounds for links array.`);
         return;
