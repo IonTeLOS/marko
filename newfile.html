@@ -6074,7 +6074,7 @@ async function findExistingPublicFile(accessToken, fileName) {
     })
     .then(response => {
         if (!response.ok) throw new Error(`Failed to search for file: ${response.status} ${response.statusText}`);
-        return await response.json();
+        return response.json();
     })
     .then(data => {
         return data.files.length ? data.files[0] : null;
