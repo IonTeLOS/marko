@@ -2813,7 +2813,29 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
             // Find name from common-settings
             const nameSetting = commonSettings.find(setting => setting.name === 'userEmail');
             const name = nameSetting ? nameSetting.value : 'Unknown';
+            // Update UI dynamically based on conditions
+          const bookmarkTitle = document.querySelector('.bookmark-title');
+            if (bookmarkTitle) {
+                bookmarkTitle.textContent = uuid; // Set the name "Home" to the uuid
+                bookmarkTitle.dataset.uuid = uuid; // Store uuid in data attribute for later use
+            }
+            const nextIcon = document.getElementById('next-icon');
+            const backIcon = document.getElementById('back-icon');
 
+            // Toggle visibility and functionality of icons
+            nextIcon.style.display = 'none'; // Hide next-icon
+            backIcon.style.display = 'inline-block'; // Show back-icon
+
+            // Change nextIcon click behavior to reload page
+            nextIcon.addEventListener('click', function() {
+                location.reload();
+            });
+
+            // Change main-bookmark click behavior to open link with UUID
+            const mainBookmark = document.getElementById('main-bookmark');
+            mainBookmark.onclick = function() {
+                openLink(`https://ntfy.sh/${uuid}`);
+            };
             alert(`Sync complete. File was last saved by: ${name}`);
 // After fetching and storing, proceed to show public Markos
         const linkContainer = document.querySelector('.bookmarks-container');
