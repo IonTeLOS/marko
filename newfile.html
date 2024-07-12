@@ -2772,6 +2772,75 @@ async function syncAndShowPublicMarkos() {
     }
 }
 
+async function syncAndShowCommonMarko(fileId) {
+    if (!navigator.onLine) {
+        alert("Connect to the Internet to proceed");
+        return;
+    }
+
+    const syncButton = document.getElementById('syncCommonMarko');
+    const syncIcon = document.getElementById('syncCommonMarkoIcon');
+    syncButton.disabled = true;
+    syncIcon.classList.add('spinning');
+
+    if (!confirm("Are you sure you want to sync and show the common Marko file?")) {
+        stopSpinning(syncButton, syncIcon);
+        return;
+    }
+
+    try {
+        const accessToken = await ensureValidToken();
+        console.log('Using access token:', accessToken);
+
+        // Fetch file content with cache-control headers
+        const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + accessToken,
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
+            })
+        });
+
+        if (!fileResponse.ok) {
+            throw new Error(`File fetch failed. HTTP status: ${fileResponse.status}`);
+        }
+
+        const fileData = await fileResponse.json();
+        console.log('File data:', fileData);
+
+        if (fileData && fileData.content && Array.isArray(fileData.content)) {
+            const bookmarks = fileData.content;
+            const commonSettings = fileData['common-settings'] || [];
+            
+            // Find UUID from common-settings
+            const uuidSetting = commonSettings.find(setting => setting.name === 'uuid');
+            const uuid = uuidSetting ? uuidSetting.value : 'default';
+
+            // Store bookmarks in localStorage
+            localStorage.setItem(`common-bookmarks-${uuid}`, JSON.stringify(bookmarks));
+
+            // Find name from common-settings
+            const nameSetting = commonSettings.find(setting => setting.name === 'userEmail');
+            const name = nameSetting ? nameSetting.value : 'Unknown';
+
+            alert(`Sync complete. Name is ${name}`);
+
+            // You can add code here to display the bookmarks if needed
+
+        } else {
+            throw new Error('Invalid file format or missing content');
+        }
+
+        stopSpinning(syncButton, syncIcon);
+
+    } catch (error) {
+        console.error('Full error object:', error);
+        let errorMessage = 'Error retrieving file: ' + error.message;
+        alert(errorMessage);
+        stopSpinning(syncButton, syncIcon);
+    }
+}
+
 // main function to add a new bookmark
 function addLink() {
     const urlInput = document.getElementById('new-link-url');
@@ -3875,7 +3944,7 @@ const bookmarkElement = document.createElement('div');
             </div>
             <span class="bookmark-title">Home</span>
         </div>
-        <span id="next-icon" class="material-icons next-icon" onclick="syncAndShowPublicMarkos(); event.stopPropagation();">arrow_forward_ios</span>
+        <span id="next-icon" class="material-icons next-icon" onclick="syncAndShowCommonMarko(); event.stopPropagation();">arrow_forward_ios</span>
     </div>
 `
                 linkContainer.appendChild(bookmarkElement);
@@ -6168,6 +6237,129 @@ function setFilePublic(accessToken, fileId) {
         return response;
     });
 }
+
+function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
+    if (!navigator.onLine) {
+        alert("Connect to the Internet to proceed");
+        return;
+    }
+    const syncButton = document.getElementById('syncToPublicWritableDrive');
+    const syncIcon = document.getElementById('syncToPublicWritableIcon');
+    syncButton.disabled = true;
+    syncIcon.classList.add('spinning');
+    
+    if (!confirm("Are you sure you want to save your data to Google Drive as a publicly writable file?")) {
+        stopSpinning(syncButton, syncIcon);
+        return;
+    }
+    
+    ensureValidToken()
+        .then(accessToken => {
+            return findExistingPublicWritableFile(accessToken, fileName)
+                .then(fileData => {
+                    const fileContent = prepareFileContent();
+                    if (fileData) {
+                        return updateExistingWritableFile(accessToken, fileData.id, fileContent);
+                    } else {
+                        return createNewPublicWritableFile(accessToken, fileContent, fileName);
+                    }
+                });
+        })
+        .then(fileData => {
+            if (!fileData || !fileData.id) {
+                throw new Error('Failed to save file: No file data returned');
+            }
+            const shareableLink = `https://drive.google.com/file/d/${fileData.id}/view?usp=sharing`;
+            copyToClipboard(shareableLink);
+            
+            // Store friend-uuid and fileId in localStorage
+            const content = JSON.parse(fileContent);
+            const uuid = content['common-settings'].find(setting => setting.name === 'uuid')?.value;
+
+            localStorage.setItem(fileData.uuid, fileData.id);
+            
+            alert(`Data saved to Google Drive as ${fileName}\nShareable link copied to clipboard.`);
+            stopSpinning(syncButton, syncIcon);
+        })
+        .catch(error => {
+            console.error('Error in saveToGoogleDrivePublicWritable:', error);
+            alert('An error occurred: ' + error.message);
+            stopSpinning(syncButton, syncIcon);
+        });
+}
+  
+function prepareFileContent() {
+    const contentJson = localStorage.getItem('bookmarks'); 
+    const userEmail = localStorage.getItem('userEmail') || '';
+    const uuid = localStorage.getItem('uuid') || generateUUID();
+
+    // Store the UUID for future use
+    localStorage.setItem('uuid', uuid);
+
+    const fileContent = {
+        content: JSON.parse(contentJson),
+        'common-settings': [
+            { name: 'userEmail', value: userEmail },
+            { name: 'uuid', value: uuid }
+        ]
+    };
+
+    return JSON.stringify(fileContent);
+}
+
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+function updateExistingWritableFile(accessToken, fileId, content) {
+    return lockFile(accessToken, fileId)
+        .then(() => {
+            return fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                },
+                body: content
+            });
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`Failed to update file: ${response.status} ${response.statusText}`);
+            return response.json();
+        })
+        .finally(() => unlockFile(accessToken, fileId));
+}
+
+function createNewPublicWritableFile(accessToken, content, fileName) {
+    const metadata = {
+        name: fileName,
+        mimeType: 'application/json'
+    };
+
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+    form.append('file', new Blob([content], { type: 'application/json' }));
+
+    return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        },
+        body: form
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Failed to create file: ${response.status} ${response.statusText}`);
+        return response.json();
+    })
+    .then(fileData => {
+        return setFilePublicWritable(accessToken, fileData.id)
+            .then(() => fileData);
+    });
+}
+
   
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
@@ -6405,8 +6597,8 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
-<button id="syncToPublicDrive" class="g-button" onclick="saveToGoogleDrivePublic()">
-    <span id="syncToPublicIcon" class="material-icons">public</span>
+<button id="syncToPublicWritableDrive" class="g-button" onclick="saveToGoogleDrivePublicWritable()">
+    <span id="syncToPublicWritableIcon" class="material-icons">public</span>
     Make public
 </button>                  
 <button id="signInOutButton" class="g-button" onclick="toggleSignInOut()">
