@@ -2782,7 +2782,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         console.log('Using access token:', accessToken);
 
         // Fetch file metadata and content
-        const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,name,properties,appProperties`, {
+        const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,name,properties,appProperties?t=${new Date().getTime()}`, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer ' + accessToken,
@@ -5974,19 +5974,23 @@ function refreshToken() {
     });
 }
 
-function ensureValidToken() {
-    return new Promise((resolve, reject) => {
-        const accessToken = localStorage.getItem('accessToken');
-        console.log('Retrieved access token:', accessToken);
+async function ensureValidToken() {
+  const accessToken = localStorage.getItem('accessToken');
+  console.log('Retrieved access token:', accessToken);
 
-        if (!accessToken || isTokenExpired(accessToken)) {
-            console.log('Token expired or not found. Refreshing...');
-            refreshToken().then(resolve).catch(reject);
-        } else {
-            resolve(accessToken);
-        }
-    });
+  if (!accessToken || isTokenExpired(accessToken)) {
+    console.log('Token expired or not found. Refreshing...');
+    try {
+      const newAccessToken = await refreshToken();
+      return newAccessToken;
+    } catch (error) {
+      throw error; // Re-throw the error from refreshToken
+    }
+  } else {
+    return accessToken;
+  }
 }
+
 
 function retryOperation(operation, maxRetries = 3, delay = 1000) {
     return new Promise((resolve, reject) => {
