@@ -6314,6 +6314,40 @@ function generateUUID() {
     });
 }
 
+function findExistingPublicWritableFile(accessToken, fileName) {
+    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${encodeURIComponent(fileName)}'&spaces=drive&fields=files(id)`, {
+        method: 'GET',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Failed to search for file: ${response.status} ${response.statusText}`);
+        return response.json();
+    })
+    .then(data => {
+        return data.files.length ? data.files[0] : null;
+    });
+}
+  
+function updateExistingWritableFile(accessToken, fileId, content) {
+    return lockFile(accessToken, fileId)
+        .then(() => {
+            return fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': 'Bearer ' + accessToken,
+                    'Content-Type': 'application/json'
+                },
+                body: content
+            });
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`Failed to update file: ${response.status} ${response.statusText}`);
+            return response.json();
+        })
+        .finally(() => unlockFile(accessToken, fileId));
+}
 function updateExistingWritableFile(accessToken, fileId, content) {
     return lockFile(accessToken, fileId)
         .then(() => {
@@ -6360,6 +6394,51 @@ function createNewPublicWritableFile(accessToken, content, fileName) {
     });
 }
 
+  function setFilePublicWritable(accessToken, fileId) {
+    const permission = {
+        type: 'anyone',
+        role: 'writer'
+    };
+
+    return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(permission)
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Failed to set file public writable: ${response.status} ${response.statusText}`);
+        return response;
+    });
+}
+
+function lockFile(accessToken, fileId) {
+    return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/lock`, {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Failed to lock file: ${response.status} ${response.statusText}`);
+        return response;
+    });
+}
+
+function unlockFile(accessToken, fileId) {
+    return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/unlock`, {
+        method: 'POST',
+        headers: {
+            'Authorization': 'Bearer ' + accessToken
+        }
+    })
+    .then(response => {
+        if (!response.ok) throw new Error(`Failed to unlock file: ${response.status} ${response.statusText}`);
+        return response;
+    });
+}
   
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
