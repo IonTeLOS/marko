@@ -6329,24 +6329,7 @@ function findExistingPublicWritableFile(accessToken, fileName) {
     });
 }
   
-function updateExistingWritableFile(accessToken, fileId, content) {
-    return lockFile(accessToken, fileId)
-        .then(() => {
-            return fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
-                method: 'PATCH',
-                headers: {
-                    'Authorization': 'Bearer ' + accessToken,
-                    'Content-Type': 'application/json'
-                },
-                body: content
-            });
-        })
-        .then(response => {
-            if (!response.ok) throw new Error(`Failed to update file: ${response.status} ${response.statusText}`);
-            return response.json();
-        })
-        .finally(() => unlockFile(accessToken, fileId));
-}
+
 function updateExistingWritableFile(accessToken, fileId, content) {
     return lockFile(accessToken, fileId)
         .then(() => {
