@@ -2698,12 +2698,9 @@ async function syncAndShowPublicMarkos() {
     }
 
     const syncFromButton = document.getElementById('syncFromDrive');
-    const syncFromIcon = document.getElementById('syncFromIcon');
     syncFromButton.disabled = true;
-    syncFromIcon.classList.add('spinning');
 
     if (!confirm("Are you sure you want to show your public Markos from Google Drive?")) {
-        stopSpinning(syncFromButton, syncFromIcon);
         return;
     }
 
@@ -2761,13 +2758,11 @@ async function syncAndShowPublicMarkos() {
         detectTheme();
         checkConnection();
 
-        stopSpinning(syncFromButton, syncFromIcon);
         alert("Your Markos are now in sync. Enjoy!");
     } catch (error) {
         console.error('Full error object:', error);
         let errorMessage = 'Error retrieving file: ' + error.message;
         alert(errorMessage);
-        stopSpinning(syncFromButton, syncFromIcon);
     }
 }
 
@@ -2827,13 +2822,11 @@ async function syncAndShowCommonMarko(fileId) {
             throw new Error('Invalid file format or missing content');
         }
 
-        stopSpinning(syncButton, syncIcon);
 
     } catch (error) {
         console.error('Full error object:', error);
         let errorMessage = 'Error retrieving file: ' + error.message;
         alert(errorMessage);
-        stopSpinning(syncButton, syncIcon);
     }
 }
 
