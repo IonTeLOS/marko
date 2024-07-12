@@ -6423,14 +6423,6 @@ function createNewPublicWritableFile(accessToken, content, fileName) {
     });
 }
 
-gapi.load('client', () => {
-    gapi.client.init({
-        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
-    }).then(() => {
-        // Client is initialized and ready to use
-    });
-});
-
 function lockFile(accessToken, fileId) {
     return new Promise((resolve, reject) => {
         gapi.load('client', () => {
