@@ -2840,7 +2840,8 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
 
             // Change nextIcon click behavior to reload page
             nextIcon.onclick = function () {
-                location.reload();
+                location.reload(); 
+                event.stopPropagation();
             };
 
             // Change main-bookmark click behavior to open link with UUID
