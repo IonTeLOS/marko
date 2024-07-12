@@ -2778,6 +2778,8 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         return;
     }
     try {
+        await setFilePublicWritable(await ensureValidToken(), fileId);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second
         const accessToken = await ensureValidToken();
         console.log('Using access token:', accessToken);
 
@@ -2851,7 +2853,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         let errorMessage = 'Error retrieving file: ' + error.message;
         alert(errorMessage);
     } finally {
-        syncButton.disabled = false;
+        syncFromButton.disabled = false;
     }
 }
 
