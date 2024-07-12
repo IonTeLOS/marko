@@ -6292,9 +6292,6 @@ function prepareFileContent() {
     const userEmail = localStorage.getItem('userEmail') || '';
     const uuid = localStorage.getItem('uuid') || generateUUID();
 
-    // Store the UUID for future use
-    localStorage.setItem('uuid', uuid);
-
     const fileContent = {
         content: JSON.parse(contentJson),
         'common-settings': [
@@ -6333,7 +6330,7 @@ function findExistingPublicWritableFile(accessToken, fileName) {
 function updateExistingWritableFile(accessToken, fileId, content) {
     return lockFile(accessToken, fileId)
         .then(() => {
-            return fetch(`https://corsproxy.io/?https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+            return fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': 'Bearer ' + accessToken,
@@ -6359,7 +6356,7 @@ function createNewPublicWritableFile(accessToken, content, fileName) {
     form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
     form.append('file', new Blob([content], { type: 'application/json' }));
 
-    return fetch('https://corsproxy.io/?https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
         headers: {
             'Authorization': 'Bearer ' + accessToken
@@ -6382,7 +6379,7 @@ function createNewPublicWritableFile(accessToken, content, fileName) {
         role: 'writer'
     };
 
-    return fetch(`https://corsproxy.io/?https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+    return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
         method: 'POST',
         headers: {
             'Authorization': 'Bearer ' + accessToken,
@@ -6404,16 +6401,23 @@ function lockFile(fileId) {
             return;
         }
 
-        fetch(`https://corsproxy.io/?https://www.googleapis.com/drive/v3/files/${fileId}/lock`, {
+        // Set file to read-only by changing the permission
+        const permission = {
+            type: 'anyone',
+            role: 'reader'
+        };
+
+        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify(permission)
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`Failed to set file read-only: ${response.status} ${response.statusText}`);
             }
             return response.json();
         })
@@ -6430,23 +6434,31 @@ function unlockFile(fileId) {
             return;
         }
 
-        fetch(`https://corsproxy.io/?https://www.googleapis.com/drive/v3/files/${fileId}/unlock`, {
+        // Set file to writable by changing the permission
+        const permission = {
+            type: 'anyone',
+            role: 'writer'
+        };
+
+        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
-            }
+            },
+            body: JSON.stringify(permission)
         })
         .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
+            if (!response.ok) {
+                throw new Error(`Failed to set file writable: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
         })
         .then(data => resolve(data))
         .catch(error => reject(error));
     });
 }
+
   
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
