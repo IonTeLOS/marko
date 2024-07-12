@@ -2820,11 +2820,8 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
                 bookmarkTitle.dataset.uuid = uuid; // Store uuid in data attribute for later use
             }
             const nextIcon = document.getElementById('next-icon');
-            const backIcon = document.getElementById('back-icon');
-
-            // Toggle visibility and functionality of icons
-            nextIcon.style.display = 'none'; // Hide next-icon
-            backIcon.style.display = 'inline-block'; // Show back-icon
+            nextIcon.innerHTML = 'arrow_back';
+            nextIcon.classList.add('material-icons'); // Ensure it has the correct class for Material Icons
 
             // Change nextIcon click behavior to reload page
             nextIcon.addEventListener('click', function() {
