@@ -2771,20 +2771,18 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         alert("Connect to the Internet to proceed");
         return;
     }
-
     const syncButton = document.getElementById('syncToPublicWritableDrive');
     syncButton.disabled = true;
-
     if (!confirm("Are you sure you want to sync and show the common Marko file?")) {
+        syncButton.disabled = false;
         return;
     }
-
     try {
         const accessToken = await ensureValidToken();
         console.log('Using access token:', accessToken);
 
-        // Fetch file content with cache-control headers
-        const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+        // Fetch file metadata and content
+        const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?fields=id,name,properties,appProperties`, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer ' + accessToken,
@@ -2796,71 +2794,85 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
             throw new Error(`File fetch failed. HTTP status: ${fileResponse.status} ${fileResponse.statusText}`);
         }
 
-        const fileData = await fileResponse.json();
-        console.log('File data:', fileData);
+        const fileMetadata = await fileResponse.json();
+        console.log('File metadata:', fileMetadata);
 
-        if (fileData && fileData.content && Array.isArray(fileData.content)) {
-            const bookmarks = fileData.content;
-            const commonSettings = fileData['common-settings'] || [];
+        // Fetch file content
+        const contentResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+            method: 'GET',
+            headers: new Headers({
+                'Authorization': 'Bearer ' + accessToken,
+                'Cache-Control': 'no-cache, no-store, must-revalidate'
+            })
+        });
+
+        if (!contentResponse.ok) {
+            throw new Error(`Content fetch failed. HTTP status: ${contentResponse.status} ${contentResponse.statusText}`);
+        }
+
+        const fileContent = await contentResponse.json();
+        console.log('File content:', fileContent);
+
+        if (fileContent && Array.isArray(fileContent.content)) {
+            const bookmarks = fileContent.content;
+            const commonSettings = fileContent['common-settings'] || [];
             
             // Find UUID from common-settings
             const uuidSetting = commonSettings.find(setting => setting.name === 'uuid');
             const uuid = uuidSetting ? uuidSetting.value : 'default';
-
+            
             // Store bookmarks in localStorage
             localStorage.setItem(`common-bookmarks-${uuid}`, JSON.stringify(bookmarks));
-
+            
             // Find name from common-settings
             const nameSetting = commonSettings.find(setting => setting.name === 'userEmail');
             const name = nameSetting ? nameSetting.value : 'Unknown';
-
+            
             alert(`Sync complete. File was last saved by: ${name}`);
-// After fetching and storing, proceed to show public Markos
-        const linkContainer = document.querySelector('.bookmarks-container');
-        linkContainer.innerHTML = ''; // Clear the container
 
-        const savedCommonMarkos = JSON.parse(localStorage.getItem(`common-bookmarks-${uuid}`)) || [];
-        console.log('Common Links:', savedCommonMarkos); // Debug log
+            // Process and display bookmarks
+            const linkContainer = document.querySelector('.bookmarks-container');
+            linkContainer.innerHTML = ''; // Clear the container
+            const savedCommonMarkos = bookmarks;
+            console.log('Common Links:', savedCommonMarkos); // Debug log
+            links = savedCommonMarkos; // Initialize links array
+            passCheck(); // Render the bookmarks
+            detectTheme();
+            checkConnection();
+            alert("Your common Markos are now in sync. Enjoy!");
 
-        links = savedCommonMarkos; // Initialize links array
-        passCheck(); // Render the bookmarks
-        detectTheme();
-        checkConnection();
-
-        alert("Your common Markos are now in sync. Enjoy!")
-            // Update UI dynamically based on conditions
-          const bookmarkTitle = document.querySelector('.bookmark-title');
-            if (bookmarkTitle) {
-                bookmarkTitle.textContent = uuid; // Set the name "Home" to the uuid
-                bookmarkTitle.dataset.uuid = uuid; // Store uuid in data attribute for later use
-            }
-            const nextIcon = document.getElementById('next-icon');
-            nextIcon.innerHTML = 'arrow_back_ios';
-            nextIcon.classList.add('material-icons'); // Ensure it has the correct class for Material Icons
-
-            // Change nextIcon click behavior to reload page
-            nextIcon.onclick = function () {
-                location.reload(); 
-                event.stopPropagation();
-            };
-
-            // Change main-bookmark click behavior to open link with UUID
-            const mainBookmark = document.getElementById('main-bookmark');
-            mainBookmark.onclick = function() {
-                openLink(`https://ntfy.sh/${uuid}`);
-            };
+            // Update UI
+            updateUI(uuid);
         } else {
             throw new Error('Invalid file format or missing content');
         }
-
-
     } catch (error) {
         console.error('Full error object:', error);
         let errorMessage = 'Error retrieving file: ' + error.message;
         alert(errorMessage);
+    } finally {
+        syncButton.disabled = false;
     }
 }
 
+function updateUI(uuid) {
+    const bookmarkTitle = document.querySelector('.bookmark-title');
+    if (bookmarkTitle) {
+        bookmarkTitle.textContent = uuid;
+        bookmarkTitle.dataset.uuid = uuid;
+    }
+    const nextIcon = document.getElementById('next-icon');
+    nextIcon.innerHTML = 'arrow_back_ios';
+    nextIcon.classList.add('material-icons');
+    nextIcon.onclick = function (event) {
+        location.reload();
+        event.stopPropagation();
+    };
+    const mainBookmark = document.getElementById('main-bookmark');
+    mainBookmark.onclick = function() {
+        openLink(`https://ntfy.sh/${uuid}`);
+    };
+}
 
 // main function to add a new bookmark
 function addLink() {
