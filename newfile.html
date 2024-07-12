@@ -2782,7 +2782,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         console.log('Using access token:', accessToken);
 
         // Fetch file metadata and content
-        const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media?t=${new Date().getTime()}`, {
+const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&t=${new Date().getTime()}`, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer ' + accessToken,
