@@ -6314,7 +6314,7 @@ function generateUUID() {
 }
 
 function findExistingPublicWritableFile(accessToken, fileName) {
-    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${encodeURIComponent(fileName)}'&spaces=drive&fields=files(id)`, {
+    return fetch(`https://corsproxy.io/?https://www.googleapis.com/drive/v3/files?q=name='${encodeURIComponent(fileName)}'&spaces=drive&fields=files(id)`, {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + accessToken
@@ -6333,7 +6333,7 @@ function findExistingPublicWritableFile(accessToken, fileName) {
 function updateExistingWritableFile(accessToken, fileId, content) {
     return lockFile(accessToken, fileId)
         .then(() => {
-            return fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+            return fetch(`https://corsproxy.io/?https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': 'Bearer ' + accessToken,
@@ -6359,7 +6359,7 @@ function createNewPublicWritableFile(accessToken, content, fileName) {
     form.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
     form.append('file', new Blob([content], { type: 'application/json' }));
 
-    return fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+    return fetch('https://corsproxy.io/?https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
         method: 'POST',
         headers: {
             'Authorization': 'Bearer ' + accessToken
@@ -6382,7 +6382,7 @@ function createNewPublicWritableFile(accessToken, content, fileName) {
         role: 'writer'
     };
 
-    return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
+    return fetch(`https://corsproxy.io/?https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
         method: 'POST',
         headers: {
             'Authorization': 'Bearer ' + accessToken,
@@ -6404,7 +6404,7 @@ function lockFile(fileId) {
             return;
         }
 
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/lock`, {
+        fetch(`https://corsproxy.io/?https://www.googleapis.com/drive/v3/files/${fileId}/lock`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
@@ -6430,7 +6430,7 @@ function unlockFile(fileId) {
             return;
         }
 
-        fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/unlock`, {
+        fetch(`https://corsproxy.io/?https://www.googleapis.com/drive/v3/files/${fileId}/unlock`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
