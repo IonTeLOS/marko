@@ -6379,7 +6379,7 @@ async function createNewPublicWritableFile(accessToken, content, fileName) {
 async function setFilePublicWritable(accessToken, fileId) {
     const permission = {
         type: 'anyone',
-        role: 'owner'
+        role: 'writer'
     };
 
     const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
@@ -6433,7 +6433,7 @@ async function unlockFile(fileId) {
 
     const permission = {
         type: 'anyone',
-        role: 'owner'
+        role: 'writer'
     };
 
     const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
