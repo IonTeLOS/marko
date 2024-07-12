@@ -2778,12 +2778,9 @@ async function syncAndShowCommonMarko(fileId) {
     }
 
     const syncButton = document.getElementById('syncToPublicWritableDrive');
-    const syncIcon = document.getElementById('syncToPublicWritableIcon');
     syncButton.disabled = true;
-    syncIcon.classList.add('spinning');
 
     if (!confirm("Are you sure you want to sync and show the common Marko file?")) {
-        stopSpinning(syncButton, syncIcon);
         return;
     }
 
@@ -2801,7 +2798,7 @@ async function syncAndShowCommonMarko(fileId) {
         });
 
         if (!fileResponse.ok) {
-            throw new Error(`File fetch failed. HTTP status: ${fileResponse.status}`);
+            throw new Error(`File fetch failed. HTTP status: ${fileResponse.status} ${fileResponse.statusText}`);
         }
 
         const fileData = await fileResponse.json();
@@ -2822,7 +2819,7 @@ async function syncAndShowCommonMarko(fileId) {
             const nameSetting = commonSettings.find(setting => setting.name === 'userEmail');
             const name = nameSetting ? nameSetting.value : 'Unknown';
 
-            alert(`Sync complete. Name is ${name}`);
+            alert(`Sync complete. File was last saved by: ${name}`);
 
             // You can add code here to display the bookmarks if needed
 
@@ -2839,6 +2836,7 @@ async function syncAndShowCommonMarko(fileId) {
         stopSpinning(syncButton, syncIcon);
     }
 }
+
 
 // main function to add a new bookmark
 function addLink() {
@@ -6287,7 +6285,8 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
 
 function prepareFileContent() {
     const contentJson = localStorage.getItem('bookmarks'); 
-    //const userEmail = localStorage.getItem('userEmail') || '';
+    getUserEmailAndStore()
+    const userEmail = localStorage.getItem('userEmail') || '';
     const uuid = localStorage.getItem('uuid') || generateUUID();
 
     // Store the UUID for future use
@@ -6296,7 +6295,7 @@ function prepareFileContent() {
     const fileContent = {
         content: JSON.parse(contentJson),
         'common-settings': [
-            //{ name: 'userEmail', value: userEmail },
+            { name: 'userEmail', value: userEmail },
             { name: 'uuid', value: uuid }
         ]
     };
