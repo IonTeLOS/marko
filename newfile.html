@@ -2815,7 +2815,19 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
             const name = nameSetting ? nameSetting.value : 'Unknown';
 
             alert(`Sync complete. File was last saved by: ${name}`);
+// After fetching and storing, proceed to show public Markos
+        const linkContainer = document.querySelector('.bookmarks-container');
+        linkContainer.innerHTML = ''; // Clear the container
 
+        const savedCommonMarkos = JSON.parse(localStorage.getItem(`common-bookmarks-${uuid}`)) || [];
+        console.log('Common Links:', savedCommonMarkos); // Debug log
+
+        links = savedCommonMarkos; // Initialize links array
+        passCheck(); // Render the bookmarks
+        detectTheme();
+        checkConnection();
+
+        alert("Your common Markos are now in sync. Enjoy!")
             // You can add code here to display the bookmarks if needed
 
         } else {
