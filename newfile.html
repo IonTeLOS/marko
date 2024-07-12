@@ -2851,7 +2851,7 @@ const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fi
         let errorMessage = 'Error retrieving file: ' + error.message;
         alert(errorMessage);
     } finally {
-        syncFromButton.disabled = false;
+        syncButton.disabled = false;
     }
 }
 
