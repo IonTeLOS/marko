@@ -14,6 +14,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js" type="module"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js" type="module"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.9.0/localforage.min.js"></script>
+<script src="https://apis.google.com/js/api.js"></script>
+
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
@@ -3307,6 +3309,13 @@ function getBaseUrl(url) {
     return baseUrl;
 }
     window.onload = function() {
+    gapi.load('client', () => {
+    gapi.client.init({
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+    }).then(() => {
+console.log("gapi initialized");
+    });
+});
     loadDonationParams();
     loadArrayFromURL();
     toggleBellIcons();
@@ -6414,29 +6423,31 @@ function createNewPublicWritableFile(accessToken, content, fileName) {
     });
 }
 
-function lockFile(accessToken, fileId) {
-    return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/lock`, {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken
-        }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error(`Failed to lock file: ${response.status} ${response.statusText}`);
-        return response;
+gapi.load('client', () => {
+    gapi.client.init({
+        discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+    }).then(() => {
+        // Client is initialized and ready to use
     });
-}
-
+});
 function unlockFile(accessToken, fileId) {
-    return fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/unlock`, {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken
-        }
-    })
-    .then(response => {
-        if (!response.ok) throw new Error(`Failed to unlock file: ${response.status} ${response.statusText}`);
-        return response;
+    return new Promise((resolve, reject) => {
+        gapi.load('client', () => {
+            gapi.client.init({
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"],
+            }).then(() => {
+                gapi.auth.setToken({
+                    access_token: accessToken
+                });
+                return gapi.client.drive.files.unlock({
+                    fileId: fileId
+                });
+            }).then(response => {
+                resolve(response);
+            }, err => {
+                reject(err);
+            });
+        });
     });
 }
   
