@@ -6248,7 +6248,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
     syncButton.disabled = true;
     syncIcon.classList.add('spinning');
 
-    if (!confirm("Are you sure you want to save your data to Google Drive as a publicly writable file?")) {
+    if (!confirm("Are you sure you want to save your Markos to Google Drive as a publicly writable file?")) {
         stopSpinning(syncButton, syncIcon);
         return;
     }
@@ -6287,7 +6287,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
 
 function prepareFileContent() {
     const contentJson = localStorage.getItem('bookmarks'); 
-    const userEmail = localStorage.getItem('userEmail') || '';
+    //const userEmail = localStorage.getItem('userEmail') || '';
     const uuid = localStorage.getItem('uuid') || generateUUID();
 
     // Store the UUID for future use
@@ -6296,7 +6296,7 @@ function prepareFileContent() {
     const fileContent = {
         content: JSON.parse(contentJson),
         'common-settings': [
-            { name: 'userEmail', value: userEmail },
+            //{ name: 'userEmail', value: userEmail },
             { name: 'uuid', value: uuid }
         ]
     };
@@ -6379,7 +6379,7 @@ async function createNewPublicWritableFile(accessToken, content, fileName) {
 async function setFilePublicWritable(accessToken, fileId) {
     const permission = {
         type: 'anyone',
-        role: 'writer'
+        role: 'owner'
     };
 
     const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
@@ -6433,7 +6433,7 @@ async function unlockFile(fileId) {
 
     const permission = {
         type: 'anyone',
-        role: 'writer'
+        role: 'owner'
     };
 
     const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
