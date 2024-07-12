@@ -2839,7 +2839,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
             nextIcon.classList.add('material-icons'); // Ensure it has the correct class for Material Icons
 
             // Change nextIcon click behavior to reload page
-            nextIcon.addEventListener('click', function() {
+            nextIcon.onclick = function () {
                 location.reload();
             });
 
