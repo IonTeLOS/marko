@@ -6311,7 +6311,7 @@ function generateUUID() {
 }
 
 function findExistingPublicWritableFile(accessToken, fileName) {
-    return fetch(`https://corsproxy.io/?https://www.googleapis.com/drive/v3/files?q=name='${encodeURIComponent(fileName)}'&spaces=drive&fields=files(id)`, {
+    return fetch(`https://www.googleapis.com/drive/v3/files?q=name='${encodeURIComponent(fileName)}'&spaces=drive&fields=files(id)`, {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + accessToken
