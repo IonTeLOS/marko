@@ -6372,28 +6372,63 @@ async function updateExistingWritableFile(accessToken, fileId, content) {
     }
 }
 
-async function createNewPublicWritableFile(accessToken, content, fileName) {
+async function createNewPublicWritableFile(accessToken, fileContent, fileName) {
     const metadata = {
         name: fileName,
         mimeType: 'application/json'
     };
 
-    const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=media', {
-        method: 'POST',
-        headers: {
-            'Authorization': 'Bearer ' + accessToken
-        },
-        body: content
-    });
+    // Step 1: Create the file with metadata
+    const createUrl = 'https://www.googleapis.com/drive/v3/files';
 
-    if (!response.ok) {
-        throw new Error(`Failed to create file: ${response.status} ${response.statusText}`);
+    try {
+        const createResponse = await fetch(createUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(metadata)
+        });
+
+        if (!createResponse.ok) {
+            const errorText = await createResponse.text();
+            console.error('Full error response:', errorText);
+            throw new Error(`File creation failed. HTTP status: ${createResponse.status} ${createResponse.statusText}`);
+        }
+
+        const createResult = await createResponse.json();
+        const fileId = createResult.id;
+
+        // Step 2: Upload the file content
+        const uploadUrl = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`;
+
+        const uploadResponse = await fetch(uploadUrl, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: fileContent
+        });
+
+        if (!uploadResponse.ok) {
+            const errorText = await uploadResponse.text();
+            console.error('Full error response:', errorText);
+            throw new Error(`File upload failed. HTTP status: ${uploadResponse.status} ${uploadResponse.statusText}`);
+        }
+
+        const uploadResult = await uploadResponse.json();
+        console.log('File created and content uploaded:', uploadResult);
+
+        // Set permissions to make the file publicly writable
+    await setFileUserWritable(accessToken, fileId);
+    await setFilePublic(accessToken, fileId);
+        return uploadResult;
+    } catch (error) {
+        console.error('Error in createNewPublicWritableFile:', error);
+        throw new Error('An error occurred while creating and uploading the file: ' + error.message);
     }
-
-    const fileData = await response.json();
-    await setFileUserWritable(accessToken, fileData.id);
-    await setFilePublic(accessToken, fileData.id);
-    return fileData;
 }
 
 async function setFileUserWritable(accessToken, fileId) {
