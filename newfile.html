@@ -5860,7 +5860,7 @@ function openLink(url) {
 <script>
 const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
-const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
+const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/spreadsheets';
 const FILE_NAME = 'bookmarksMarko.txt';
 const PUBLIC_FILE = 'myMarkos.json';  
 const APP_ID = 'marko';
@@ -6225,6 +6225,63 @@ function setFilePublic(accessToken, fileId) {
     });
 }
 
+async function createCommonMarko() {
+    if (!navigator.onLine) {
+        alert("Connect to the Internet to proceed");
+        return;
+    }
+    const syncButton = document.getElementById('syncToPublicWritableDrive');
+    const syncIcon = document.getElementById('syncToPublicWritableIcon');
+    syncButton.disabled = true;
+    syncIcon.classList.add('spinning');
+
+    if (!confirm("Are you sure you want to update the file on Google Drive?")) {
+        stopSpinning(syncButton, syncIcon);
+        return;
+    }
+
+        // Get the access token
+        initializeGoogleIdentity();
+        const accessToken = localStorage.getItem('accessToken');
+        console.log("blum: " + accessToken)
+        // Prepare the file content
+        const content = prepareFileContent();
+
+        // Prepare the request body
+        const jsonData = JSON.stringify(content);
+  // Use Sheets API to create a new spreadsheet
+  const sheetId = await createNewGoogleSheet(accessToken);
+
+  // Define column positions (adjust as needed)
+  const linkTypeCol = 1;
+  const websiteUrlCol = 2;
+  const nameCol = 3;
+  const iconUrlCol = 4;
+  const colorCol = 5;
+  const mailRow = 6;  // Row for mail object
+  const uuidRow = 7;  // Row for uuid object
+
+  const sheet = await getSheetObject(accessToken, sheetId); // Get sheet object for writing
+
+  // Write content data
+  const content = sheetData.content;
+  for (const rowData of content) {
+    const linkType = rowData[0]; // Assuming link type is the first element
+    const websiteUrl = rowData[1];
+    const name = rowData[2];
+    const iconUrl = rowData[3];
+    const color = rowData[4];
+    await sheet.appendRow([linkType, websiteUrl, name, iconUrl, color]);
+  }
+
+  // Write common settings data (separate rows)
+  const mail = sheetData.common_settings[0].value;
+  const uuid = sheetData.common_settings[1].value;
+  await sheet.appendRow([sheetData.common_settings[0].name, mail]);
+  await sheet.appendRow([sheetData.common_settings[1].name, uuid]);
+
+  console.log("Sheet created with data successfully!");
+}
 
 async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
     if (!navigator.onLine) {
@@ -6757,7 +6814,7 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
-<button id="syncToPublicWritableDrive" class="g-button" onclick="writeToPublicWritableFile()">
+<button id="syncToPublicWritableDrive" class="g-button" onclick="createCommonMarko()">
     <span id="syncToPublicWritableIcon" class="material-icons">public</span>
     Make public
 </button>                  
