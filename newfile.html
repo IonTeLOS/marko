@@ -6271,6 +6271,7 @@ async function getSheetObject(accessToken, sheetId) {
   const response = await fetch(url, {
     headers: {
       'Authorization': `Bearer ${accessToken}`,
+      mode: 'no-cors'
     }
   });
 
