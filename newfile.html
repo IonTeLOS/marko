@@ -6264,8 +6264,8 @@ async function createCommonMarko() {
   const sheet = await getSheetObject(accessToken, sheetId); // Get sheet object for writing
 
   // Write content data
-  const content = sheetData.content;
-  for (const rowData of content) {
+  const sheetContent = sheetData.content;
+  for (const rowData of sheetContent) {
     const linkType = rowData[0]; // Assuming link type is the first element
     const websiteUrl = rowData[1];
     const name = rowData[2];
