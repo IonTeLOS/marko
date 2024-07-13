@@ -6227,7 +6227,7 @@ function setFilePublic(accessToken, fileId) {
 }
 
 async function createNewGoogleSheet(accessToken) {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets?key=${API_KEY}`;
+    const url = 'https://sheets.googleapis.com/v4/spreadsheets';
     const sheetTitle = "My New Marko Sheet";
 
     const body = {
