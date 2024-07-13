@@ -6402,7 +6402,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
         const accessToken = localStorage.getItem('accessToken');
         console.log("blum: " + accessToken)
         // Prepare the file content
-        const content = prepareFileContent();
+        const content = await prepareFileContent();
 
         // Prepare the request body
         const body = JSON.stringify(content);
@@ -6445,7 +6445,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
 }
 
 
-function prepareFileContent() {
+async function prepareFileContent() {
     const contentJson = localStorage.getItem('bookmarks'); 
     getUserEmailAndStore();
     const userEmail = localStorage.getItem('userEmail') || '';
