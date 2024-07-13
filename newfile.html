@@ -6439,8 +6439,8 @@ async function writeToPublicWritableFile(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQ
         }
 
         // Store uuid and fileId in localStorage if needed
-        localStorage.setItem(uuid, result.id);
-
+        // localStorage.setItem(uuid, result.id);
+        copyToClipboard(result.id);
         alert('File updated on Google Drive successfully.');
     } catch (error) {
         console.error('Error in writeToPublicWritableFile:', error);
