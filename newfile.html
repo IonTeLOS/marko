@@ -2784,7 +2784,6 @@ async function syncAndShowCommonMarko(fileId = '1eEhtsOYxkXtzkirq9wSJRadPh_Nnfc7
         const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
             method: 'GET',
             headers: new Headers({
-                'Authorization': 'Bearer ' + accessToken,
                 'Cache-Control': 'no-cache, no-store, must-revalidate'
             })
         });
