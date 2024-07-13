@@ -6264,6 +6264,25 @@ function setFilePublic(accessToken, fileId) {
   const sheetId = data.spreadsheetId;
   return sheetId;
 }
+async function getSheetObject(accessToken, sheetId) {
+  // Replace with your API key
+  const url = `https://www.googleapis.com/sheets/v4/spreadsheets/${sheetId}?key=${API_KEY}`;
+
+  const response = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to get sheet object: ' + response.statusText);
+  }
+
+  const data = await response.json();
+  const sheet = data.sheets[0]; // Assuming you want the first sheet
+
+  return sheet;
+}
 
 async function createCommonMarko() {
     if (!navigator.onLine) {
