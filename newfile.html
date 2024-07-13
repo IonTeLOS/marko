@@ -2781,7 +2781,7 @@ async function syncAndShowCommonMarko(fileId = '1eEhtsOYxkXtzkirq9wSJRadPh_Nnfc7
         initializeGoogleIdentity();
         const accessToken = localStorage.getItem('accessToken');
         console.log("Access Token:", accessToken);
-        const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`, {
+        const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
             method: 'GET',
             headers: new Headers({
                 'Authorization': 'Bearer ' + accessToken,
