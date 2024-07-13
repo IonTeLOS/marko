@@ -2795,18 +2795,16 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         const fileContent = await response.json();
         console.log('File content:', JSON.stringify(fileContent));
 
-        // Assuming the fileContent is in this format: 
-        // { "content": [...], "uuid": "...", "userEmail": "..." }
-        const uuid = fileContent.uuid;
-        const userEmail = fileContent.userEmail;
+        // Assuming the fileContent is in this format:
+        // { "content": [...] }
         const bookmarks = fileContent.content;
 
-        if (uuid && bookmarks) {
-            console.log('UUID:', uuid);
-            localStorage.setItem(`common-bookmarks-${uuid}`, JSON.stringify(bookmarks));
+        if (bookmarks) {
+            console.log('File ID:', fileId);
+            localStorage.setItem(`common-bookmarks-${fileId}`, JSON.stringify(bookmarks));
             
-            alert(`Sync complete. File was last saved by: ${userEmail || 'Unknown'}`);
-            
+            alert(`Sync complete.`);
+
             const linkContainer = document.querySelector('.bookmarks-container');
             linkContainer.innerHTML = '';
             console.log('Common Links:', bookmarks);
@@ -2815,11 +2813,10 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
             detectTheme();
             checkConnection();
             alert("Your common Markos are now in sync. Enjoy!");
-            updateUI(uuid);
+            updateUI(fileId);
         } else {
-            if (!uuid) console.error('UUID not found in fileContent');
-            if (!bookmarks) console.error('Bookmarks not found in fileContent');
-            alert('Error: Required data (UUID or bookmarks) not found in the file content.');
+            console.error('Bookmarks not found in fileContent');
+            alert('Error: Required data (bookmarks) not found in the file content.');
         }
     } catch (error) {
         console.error('Error:', error.message);
@@ -2828,6 +2825,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         syncButton.disabled = false;
     }
 }
+
 
       
 function updateUI(uuid) {
