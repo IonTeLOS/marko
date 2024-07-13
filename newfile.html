@@ -2787,11 +2787,11 @@ async function syncAndShowCommonMarko(fileId = '1eEhtsOYxkXtzkirq9wSJRadPh_Nnfc7
                 'Cache-Control': 'no-cache, no-store, must-revalidate'
             })
         });
-        if (!response.ok) {
-            throw new Error(`File fetch failed. HTTP status: ${response.status} ${response.statusText}`);
+        if (!fileResponse.ok) {
+            throw new Error(`File fetch failed. HTTP status: ${fileResponse.status} ${fileResponse.statusText}`);
         }
-        
-        const fileContent = await response.json();
+
+        const fileContent = await fileResponse.json();
         console.log('File content:', JSON.stringify(fileContent));
 
         // Since the fileContent is the bookmarks array
