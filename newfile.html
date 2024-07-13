@@ -2793,38 +2793,32 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
             throw new Error(`File fetch failed. HTTP status: ${response.status} ${response.statusText}`);
         }
 
-        const fileContent = await response.json();
-        console.log('File content:', fileContent);
+        try {
+    // Parse JSON response
+    const fileContent = await response.json();
+    console.log('File content:', fileContent); // Check if fileContent is correctly populated
 
-            const bookmarks = fileContent.content;
-            const commonSettings = fileContent['common-settings'] || [];
+    // Check if common-settings exists and is an array
+    if (fileContent && fileContent['common-settings'] && Array.isArray(fileContent['common-settings'])) {
+        // Extracting uuid value
+        const uuidSetting = fileContent['common-settings'].find(setting => setting.name === 'uuid');
+        if (uuidSetting) {
+            const uuid = uuidSetting.value;
+            console.log('UUID:', uuid); // Output: "a20dedf4-856e-4c73-8617-6ab5c6c83dfb"
 
-            // Find UUID from common-settings
-           //const uuid = fileContent['common-settings'].find(setting => setting.name === 'uuid').value;
-           //console.log("uuid is: " + uuid);
-            const uuid = generateUUID();
             // Store bookmarks in localStorage
-            const localStorageKey = `common-bookmarks-${uuid}`;
-            localStorage.setItem(localStorageKey, JSON.stringify(bookmarks));
+            localStorage.setItem(`common-bookmarks-${uuid}`, JSON.stringify(fileContent.content));
 
             // Find name from common-settings
-            const nameSetting = commonSettings.find(setting => setting.name === 'userEmail');
+            const nameSetting = fileContent['common-settings'].find(setting => setting.name === 'userEmail');
             const name = nameSetting ? nameSetting.value : 'Unknown';
-
             alert(`Sync complete. File was last saved by: ${name}`);
 
-            // Example of retrieving from localStorage
-            const storedData = localStorage.getItem(localStorageKey);
-            console.log('Stored data:', storedData);
-
-            // Example of parsing stored JSON data
-            let savedCommonMarkos = [];
-            if (storedData) {
-                savedCommonMarkos = JSON.parse(storedData);
-                console.log('Parsed data:', savedCommonMarkos);
-              // Process and display bookmarks
+            // Process and display bookmarks
             const linkContainer = document.querySelector('.bookmarks-container');
             linkContainer.innerHTML = ''; // Clear the container
+            const savedCommonMarkos = JSON.parse(localStorage.getItem(`common-bookmarks-${uuid}`)) || [];
+            console.log('Common Links:', savedCommonMarkos); // Debug log
             links = savedCommonMarkos; // Initialize links array
             passCheck(); // Render the bookmarks
             detectTheme();
@@ -2833,9 +2827,16 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
 
             // Update UI
             updateUI(uuid);
-            } else {
-                console.warn('No data found in localStorage for key:', localStorageKey);
-            }
+        } else {
+            console.error('UUID not found in common-settings');
+        }
+    } else {
+        console.error('Common-settings array not found or is not an array in fileContent');
+    }
+} catch (error) {
+    console.error('Error parsing JSON:', error.message);
+    // Handle JSON parsing error
+}
         } 
       
 function updateUI(uuid) {
