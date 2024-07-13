@@ -2798,12 +2798,11 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         console.log('File content:', fileContent);
 
         if (fileContent) {
-            const bookmarks = fileContent.content;
+            const bookmarks = fileContent.['content'] || [];
             const commonSettings = fileContent['common-settings'] || [];
 
             // Find UUID from common-settings
-            const uuidSetting = commonSettings.find(setting => setting.name === 'uuid');
-            const uuid = uuidSetting ? uuidSetting.value : 'default';
+           const uuid = fileContent['common-settings'].find(setting => setting.name === 'uuid').value;
            console.log("uuid is: " + uuid);
 
             // Store bookmarks in localStorage
