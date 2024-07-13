@@ -6274,10 +6274,11 @@ async function writeToPublicWritableFile(fileId = '1K2CmmiVwJfqxGmAA9qvBADS9g4El
 
     try {
         // Get the access token
-        initializeGoogleIdentity();
-        const accessToken = localStorage.getItem('accessToken');
-        console.log("blum: " + accessToken);
-
+        //initializeGoogleIdentity();
+        //const accessToken = localStorage.getItem('accessToken');
+        //console.log("blum: " + accessToken);
+        const accessToken = await ensureValidToken();
+        console.log('Using access token:', accessToken);
         // Prepare the file content
         const fileContent = await prepareFileContent();
 
