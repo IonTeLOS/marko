@@ -6346,16 +6346,8 @@ async function writeToPublicWritableFile(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQ
 
 async function prepareFileContent() {
     const contentJson = localStorage.getItem('bookmarks'); 
-    getUserEmailAndStore();
-    const userEmail = localStorage.getItem('userEmail') || '';
-    const uuid = localStorage.getItem('uuid') || generateUUID();
-
-    // Store the UUID for future use
-    localStorage.setItem('uuid', uuid);
-
     const content = JSON.parse(contentJson);
-
-    return { content, userEmail, uuid };
+    return content;
 }
 
 
