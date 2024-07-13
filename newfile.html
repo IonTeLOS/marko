@@ -6347,7 +6347,7 @@ async function writeToPublicWritableFile(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQ
 async function prepareFileContent() {
     const contentJson = localStorage.getItem('bookmarks'); 
     const content = JSON.parse(contentJson);
-    return content;
+    return JSON.stringify(content);
 }
 
 
