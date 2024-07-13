@@ -6289,7 +6289,7 @@ async function writeToPublicWritableFile(fileId = '1eEhtsOYxkXtzkirq9wSJRadPh_Nn
         const response = await fetch(url, {
             method: 'PATCH',
             headers: {
-               // 'Authorization': `Bearer ${accessToken}`,
+                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             },
             body: fileContent
