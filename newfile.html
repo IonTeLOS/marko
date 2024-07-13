@@ -2819,7 +2819,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
             // Process and display bookmarks
             const linkContainer = document.querySelector('.bookmarks-container');
             linkContainer.innerHTML = ''; // Clear the container
-            const savedCommonMarkos = JSON.parse(localStorage.getItem(`common-bookmarks-${uuid}`)) || [];
+            const savedCommonMarkos = localStorage.getItem(`common-bookmarks-${uuid}`) || [];
             console.log('Common Links:', savedCommonMarkos); // Debug log
             links = savedCommonMarkos; // Initialize links array
             passCheck(); // Render the bookmarks
