@@ -6408,7 +6408,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
         const body = JSON.stringify(content);
 
         // Update the file
-        const response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+        const response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media&key=${API_KEY}`, {
             method: 'PATCH',
             headers: new Headers({
                 'Authorization': `Bearer ${accessToken}`,
