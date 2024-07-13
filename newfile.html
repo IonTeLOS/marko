@@ -2780,7 +2780,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
     try {
         initializeGoogleIdentity();
         const accessToken = localStorage.getItem('accessToken');
-        console.log("blum: " + accessToken);
+        console.log("Access Token:", accessToken);
         const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
             method: 'GET',
             headers: new Headers({
@@ -2793,35 +2793,52 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         }
         
         const fileContent = await response.json();
-        console.log('File content:', fileContent);
+        console.log('File content:', JSON.stringify(fileContent, null, 2));
 
-        if (fileContent && fileContent['common-settings'] && Array.isArray(fileContent['common-settings'])) {
-            const uuidSetting = fileContent['common-settings'].find(setting => setting.name === 'uuid');
-            if (uuidSetting) {
-                const uuid = uuidSetting.value;
-                console.log('UUID:', uuid);
-                localStorage.setItem(`common-bookmarks-${uuid}`, JSON.stringify(fileContent.content));
-                
-                const nameSetting = fileContent['common-settings'].find(setting => setting.name === 'userEmail');
-                const name = nameSetting ? nameSetting.value : 'Unknown';
-                alert(`Sync complete. File was last saved by: ${name}`);
-                
-                const linkContainer = document.querySelector('.bookmarks-container');
-                linkContainer.innerHTML = '';
-                const savedCommonMarkos = fileContent.content;
-                console.log('Common Links:', savedCommonMarkos);
-                links = savedCommonMarkos;
-                passCheck();
-                detectTheme();
-                checkConnection();
-                alert("Your common Markos are now in sync. Enjoy!");
-                updateUI(uuid);
-            } else {
-                console.error('UUID not found in common-settings');
+        let uuid, userEmail, bookmarks;
+
+        // Handle common-settings
+        if (fileContent && fileContent['common-settings']) {
+            const commonSettings = fileContent['common-settings'];
+            
+            if (Array.isArray(commonSettings)) {
+                uuid = commonSettings.find(setting => setting.name === 'uuid')?.value;
+                userEmail = commonSettings.find(setting => setting.name === 'userEmail')?.value;
+            } else if (typeof commonSettings === 'object') {
+                uuid = commonSettings.uuid;
+                userEmail = commonSettings.userEmail;
             }
+        }
+
+        // Handle content (bookmarks)
+        if (fileContent && fileContent.content) {
+            if (Array.isArray(fileContent.content)) {
+                bookmarks = fileContent.content;
+            } else if (typeof fileContent.content === 'object') {
+                // If content is an object, convert it to an array of its values
+                bookmarks = Object.values(fileContent.content);
+            }
+        }
+
+        if (uuid && bookmarks) {
+            console.log('UUID:', uuid);
+            localStorage.setItem(`common-bookmarks-${uuid}`, JSON.stringify(bookmarks));
+            
+            alert(`Sync complete. File was last saved by: ${userEmail || 'Unknown'}`);
+            
+            const linkContainer = document.querySelector('.bookmarks-container');
+            linkContainer.innerHTML = '';
+            console.log('Common Links:', bookmarks);
+            links = bookmarks;
+            passCheck();
+            detectTheme();
+            checkConnection();
+            alert("Your common Markos are now in sync. Enjoy!");
+            updateUI(uuid);
         } else {
-            console.error('Common-settings array not found or is not an array in fileContent');
-            console.log('fileContent:', fileContent);
+            if (!uuid) console.error('UUID not found in common-settings');
+            if (!bookmarks) console.error('Bookmarks not found in content');
+            alert('Error: Required data (UUID or bookmarks) not found in the file content.');
         }
     } catch (error) {
         console.error('Error:', error.message);
