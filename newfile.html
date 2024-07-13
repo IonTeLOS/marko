@@ -6246,7 +6246,8 @@ function setFilePublic(accessToken, fileId) {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${storedAccessToken}`,
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+       mode: 'no-cors'
     },
     body: body
   });
