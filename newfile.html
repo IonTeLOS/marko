@@ -6502,7 +6502,7 @@ async function unlockFile(fileId) {
 async function copyToClipboard(fileId) {
     const url = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&commonMarko=true`;
 
-    navigator.clipboard.writeText(fileId).then(() => {
+    navigator.clipboard.writeText(url).then(() => {
         console.log('Shareable link copied to clipboard');
     }).catch(err => {
         console.error('Failed to copy: ', err);
