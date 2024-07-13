@@ -2794,16 +2794,17 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
             throw new Error(`File fetch failed. HTTP status: ${response.status} ${response.statusText}`);
         }
 
-              const fileContent = await response.json();
+        const fileContent = await response.json();
         console.log('File content:', fileContent);
 
-        if (fileContent && Array.isArray(fileContent.content)) {
+        if (fileContent) {
             const bookmarks = fileContent.content;
             const commonSettings = fileContent['common-settings'] || [];
 
             // Find UUID from common-settings
             const uuidSetting = commonSettings.find(setting => setting.name === 'uuid');
             const uuid = uuidSetting ? uuidSetting.value : 'default';
+           console.log("uuid is: " + uuid);
 
             // Store bookmarks in localStorage
             const localStorageKey = `common-bookmarks-${uuid}`;
