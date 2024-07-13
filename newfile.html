@@ -6329,7 +6329,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
 
 function prepareFileContent() {
     const contentJson = localStorage.getItem('bookmarks'); 
-    getUserEmailAndStore()
+    getUserEmailAndStore();
     const userEmail = localStorage.getItem('userEmail') || '';
     const uuid = localStorage.getItem('uuid') || generateUUID();
 
