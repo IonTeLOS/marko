@@ -6226,63 +6226,55 @@ function setFilePublic(accessToken, fileId) {
     });
 }
 
-  async function createNewGoogleSheet(accessToken) {
-  // Retrieve access token from localStorage
-  const storedAccessToken = localStorage.getItem('accessToken');
-  if (!storedAccessToken) {
-    throw new Error('Missing access token');
-  }
+async function createNewGoogleSheet(accessToken) {
+    const url = `https://sheets.googleapis.com/v4/spreadsheets?key=${API_KEY}`;
+    const sheetTitle = "My New Marko Sheet";
 
-  const url = `https://www.googleapis.com/sheets/v4/spreadsheets?key=${API_KEY}`; // Replace with your API key
-  const sheetTitle = "My New Marko Sheet"; // Optional: Set a title for the sheet
+    const body = {
+        properties: {
+            title: sheetTitle
+        }
+    };
 
-  const body = JSON.stringify({
-    properties: {
-      title: sheetTitle
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to create new sheet: ' + response.statusText);
     }
-  });
 
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${storedAccessToken}`,
-      'Content-Type': 'application/json',
-       mode: 'no-cors'
-    },
-    body: body
-  });
-
-  if (!response.ok) {
-    throw new Error('Failed to create new sheet: ' + response.statusText);
-  }
-
-  const data = await response.json();
-  if (!data || !data.spreadsheetId) {
-    throw new Error('Failed to create new sheet: Missing spreadsheet ID');
-  }
-
-  const sheetId = data.spreadsheetId;
-  return sheetId;
+    const data = await response.json();
+    return data.spreadsheetId;
 }
-async function getSheetObject(accessToken, sheetId) {
-  // Replace with your API key
-  const url = `https://www.googleapis.com/sheets/v4/spreadsheets/${sheetId}?key=${API_KEY}`;
 
-  const response = await fetch(url, {
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      mode: 'no-cors'
+async function shareSheetWithEveryone(accessToken, sheetId) {
+    const url = `https://www.googleapis.com/drive/v3/files/${sheetId}/permissions`;
+
+    const body = {
+        role: 'writer',
+        type: 'anyone'
+    };
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to share sheet: ' + response.statusText);
     }
-  });
 
-  if (!response.ok) {
-    throw new Error('Failed to get sheet object: ' + response.statusText);
-  }
-
-  const data = await response.json();
-  const sheet = data.sheets[0]; // Assuming you want the first sheet
-
-  return sheet;
+    return response.json();
 }
 
 async function createCommonMarko() {
@@ -6290,57 +6282,56 @@ async function createCommonMarko() {
         alert("Connect to the Internet to proceed");
         return;
     }
+
     const syncButton = document.getElementById('syncToPublicWritableDrive');
     const syncIcon = document.getElementById('syncToPublicWritableIcon');
     syncButton.disabled = true;
     syncIcon.classList.add('spinning');
 
     if (!confirm("Are you sure you want to update the file on Google Drive?")) {
-        stopSpinning(syncButton, syncIcon);
+        syncButton.disabled = false;
+        syncIcon.classList.remove('spinning');
         return;
     }
 
-        // Get the access token
-        initializeGoogleIdentity();
+    try {
         const accessToken = localStorage.getItem('accessToken');
-        console.log("blum: " + accessToken)
-        // Prepare the file content
+        if (!accessToken) {
+            throw new Error('Missing access token');
+        }
+
+        const sheetId = await createNewGoogleSheet(accessToken);
+        await shareSheetWithEveryone(accessToken, sheetId);
+
         const content = prepareFileContent();
 
-        // Prepare the request body
-        const jsonData = JSON.stringify(content);
-  // Use Sheets API to create a new spreadsheet
-  const sheetId = await createNewGoogleSheet(accessToken);
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1!A1:append?valueInputOption=RAW`;
 
-  // Define column positions (adjust as needed)
-  const linkTypeCol = 1;
-  const websiteUrlCol = 2;
-  const nameCol = 3;
-  const iconUrlCol = 4;
-  const colorCol = 5;
-  const mailRow = 6;  // Row for mail object
-  const uuidRow = 7;  // Row for uuid object
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                values: content
+            })
+        });
 
-  const sheet = await getSheetObject(accessToken, sheetId); // Get sheet object for writing
+        if (!response.ok) {
+            throw new Error('Failed to update sheet: ' + response.statusText);
+        }
 
-  // Write content data
-  const sheetContent = sheetData.content;
-  for (const rowData of sheetContent) {
-    const linkType = rowData[0]; // Assuming link type is the first element
-    const websiteUrl = rowData[1];
-    const name = rowData[2];
-    const iconUrl = rowData[3];
-    const color = rowData[4];
-    await sheet.appendRow([linkType, websiteUrl, name, iconUrl, color]);
-  }
-
-  // Write common settings data (separate rows)
-  const mail = sheetData.common_settings[0].value;
-  const uuid = sheetData.common_settings[1].value;
-  await sheet.appendRow([sheetData.common_settings[0].name, mail]);
-  await sheet.appendRow([sheetData.common_settings[1].name, uuid]);
-
-  console.log("Sheet created with data successfully!");
+        const link = `https://docs.google.com/spreadsheets/d/${sheetId}`;
+        await navigator.clipboard.writeText(link);
+        alert('Sheet created, shared, and link copied to clipboard!');
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+    } finally {
+        syncButton.disabled = false;
+        syncIcon.classList.remove('spinning');
+    }
 }
 
 async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
