@@ -15,6 +15,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js" type="module"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/localforage/1.9.0/localforage.min.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
     <script src="swiped-events.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -6223,6 +6224,44 @@ function setFilePublic(accessToken, fileId) {
         if (!response.ok) throw new Error(`Failed to set file public: ${response.status} ${response.statusText}`);
         return response;
     });
+}
+
+  async function createNewGoogleSheet(accessToken) {
+  // Retrieve access token from localStorage
+  const storedAccessToken = localStorage.getItem('accessToken');
+  if (!storedAccessToken) {
+    throw new Error('Missing access token');
+  }
+
+  const url = `https://www.googleapis.com/sheets/v4/spreadsheets?key=${API_KEY}`; // Replace with your API key
+  const sheetTitle = "My New Marko Sheet"; // Optional: Set a title for the sheet
+
+  const body = JSON.stringify({
+    properties: {
+      title: sheetTitle
+    }
+  });
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${storedAccessToken}`,
+      'Content-Type': 'application/json'
+    },
+    body: body
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to create new sheet: ' + response.statusText);
+  }
+
+  const data = await response.json();
+  if (!data || !data.spreadsheetId) {
+    throw new Error('Failed to create new sheet: Missing spreadsheet ID');
+  }
+
+  const sheetId = data.spreadsheetId;
+  return sheetId;
 }
 
 async function createCommonMarko() {
