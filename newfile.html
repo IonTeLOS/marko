@@ -6499,7 +6499,7 @@ async function unlockFile(fileId) {
     return await response.json();
 }
 
-function copyToClipboard(fileId) {
+async function copyToClipboard(fileId) {
     const url = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&commonMarko=true`;
 
     navigator.clipboard.writeText(text).then(() => {
