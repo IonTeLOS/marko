@@ -5910,28 +5910,6 @@ function authorize() {
     });
 }
 
-
-function isTokenExpired(token) {
-    console.log('Checking token:', token);
-    if (!token || typeof token !== 'string') {
-        console.error('Invalid token provided to isTokenExpired');
-        return true;
-    }
-    const parts = token.split('.');
-    try {
-        const payload = JSON.parse(atob(parts[1]));
-        console.log('Decoded payload:', payload);
-        if (!payload.exp) {
-            console.error('Token does not contain an expiration claim');
-            return true;
-        }
-        return payload.exp < Date.now() / 1000;
-    } catch (error) {
-        console.error('Error decoding token:', error);
-        return true;
-    }
-}
-
 async function refreshToken() {
     return new Promise((resolve, reject) => {
         if (tokenClient) {
@@ -5955,17 +5933,12 @@ async function ensureValidToken() {
   const accessToken = localStorage.getItem('accessToken');
   console.log('Retrieved access token:', accessToken);
 
-  if (!accessToken || isTokenExpired(accessToken)) {
-    console.log('Token expired or not found. Refreshing...');
     try {
       const newAccessToken = await refreshToken();
       return newAccessToken;
     } catch (error) {
       throw error; // Re-throw the error from refreshToken
     }
-  } else {
-    return accessToken;
-  }
 }
 
 
