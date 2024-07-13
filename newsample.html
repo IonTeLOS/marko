@@ -18,6 +18,8 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapi
         var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
         
         var FILE_ID = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3RY'; // Replace with your specific file ID
+                const PROXY_URL = 'https://corsproxy.io/?';
+
 
  let tokenClient;
         let gapiInited = false;
@@ -89,20 +91,28 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapi
             }
         };
 
-        async function getFileContent(fileId) {
+       async function getFileContent(fileId) {
             try {
-                const response = await gapi.client.drive.files.get({
-                    fileId: fileId,
-                    alt: 'media'
+                const response = await fetch(`${PROXY_URL}https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`, {
+                    headers: {
+                        'Authorization': `Bearer ${gapi.client.getToken().access_token}`
+                    }
                 });
-                appendPre('File content:\n' + response.body);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+
+                const data = await response.text();
+                appendPre('File content:\n' + data);
             } catch (err) {
                 appendPre('Error: ' + err.message);
-                if (err.status === 404) {
+                if (err.message.includes('404')) {
                     appendPre('The file was not found. Please check the file ID and sharing settings.');
                 }
             }
         }
+
 
         function appendPre(message) {
             var pre = document.getElementById('content');
