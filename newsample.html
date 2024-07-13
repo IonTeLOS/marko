@@ -18,7 +18,7 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapi
         var DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"];
         
         var FILE_ID = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3RY'; // Replace with your specific file ID
-                const PROXY_URL = 'https://corsproxy.io/?';
+                const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx3gSzouwLlRWZo1bYv_WSpqA13IdInsrwARHNAzQU3dAt72Buk3Ygmh1oivpTFWi3xYA/exec';
 
 
  let tokenClient;
@@ -91,13 +91,9 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapi
             }
         };
 
-       async function getFileContent(fileId) {
+        async function getFileContent(fileId) {
             try {
-                const response = await fetch(`${PROXY_URL}https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`, {
-                    headers: {
-                        'Authorization': `Bearer ${gapi.client.getToken().access_token}`
-                    }
-                });
+                const response = await fetch(`${SCRIPT_URL}?fileId=${fileId}&apiKey=${API_KEY}`);
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
