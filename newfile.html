@@ -6235,7 +6235,8 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
         if (fileData) {
             result = await updateExistingWritableFile(accessToken, fileData.id, fileContent);
         } else {
-            result = await createNewPublicWritableFile(accessToken, fileContent, fileName);
+            const fileNa = "commonMarko.json";
+            result = await createNewPublicWritableFile(accessToken, fileContent, fileNa);
         }
 
         if (!result || !result.id) {
@@ -6248,7 +6249,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
         // Store friend-uuid and fileId in localStorage
         const content = JSON.parse(fileContent);
         
-        alert(`Data saved to Google Drive as ${fileName}\nShareable link copied to clipboard.`);
+        alert(`Data saved to Google Drive as ${fileNa}\nShareable link copied to clipboard.`);
     } catch (error) {
         console.error('Error in saveToGoogleDrivePublicWritable:', error);
         alert('An error occurred: ' + error.message);
@@ -6722,7 +6723,7 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
-<button id="syncToPublicWritableDrive" class="g-button" onclick="writeToPublicWritableFile()">
+<button id="syncToPublicWritableDrive" class="g-button" onclick="saveToGoogleDrivePublicWritable()">
     <span id="syncToPublicWritableIcon" class="material-icons">public</span>
     Make public
 </button>                  
