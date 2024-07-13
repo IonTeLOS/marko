@@ -6290,8 +6290,9 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
 
     try {
         // Get the access token
-        const accessToken = await ensureValidToken();
-
+        initializeGoogleIdentity();
+        const accessToken = localStorage.getItem('accessToken');
+        console.log("blum: " + accessToken)
         // Prepare the file content
         const content = prepareFileContent();
 
