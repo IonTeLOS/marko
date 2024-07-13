@@ -2793,7 +2793,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         }
         
         const fileContent = await response.json();
-        console.log('File content:', JSON.stringify(fileContent, null, 2));
+        console.log('File content:', JSON.stringify(fileContent));
 
         let uuid, userEmail, bookmarks;
 
