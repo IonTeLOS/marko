@@ -5905,11 +5905,6 @@ function initializeGoogleIdentity() {
 function authorize() {
     return new Promise((resolve, reject) => {
         const storedEmail = localStorage.getItem('userEmail');
-        if (storedEmail) {
-            console.log('User already authorized:', storedEmail);
-            resolve({ email: storedEmail });
-            return;
-        }
 
         if (tokenClient) {
             tokenClient.callback = (resp) => {
