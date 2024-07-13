@@ -6235,7 +6235,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
         if (fileData) {
             result = await updateExistingWritableFile(accessToken, fileData.id, fileContent);
         } else {
-            const fileNa = "commonMarko.json";
+            const fileNa = 'commonMarko.json';
             result = await createNewPublicWritableFile(accessToken, fileContent, fileNa);
         }
 
@@ -6248,7 +6248,8 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
 
         // Store friend-uuid and fileId in localStorage
         const content = JSON.parse(fileContent);
-        
+                    const fileNa = 'commonMarko.json';
+
         alert(`Data saved to Google Drive as ${fileNa}\nShareable link copied to clipboard.`);
     } catch (error) {
         console.error('Error in saveToGoogleDrivePublicWritable:', error);
