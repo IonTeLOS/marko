@@ -5917,7 +5917,7 @@ function isTokenExpired(token) {
         console.error('Invalid token provided to isTokenExpired');
         return true;
     }
-
+    const parts = token.split('.');
     try {
         const payload = JSON.parse(atob(parts[1]));
         console.log('Decoded payload:', payload);
