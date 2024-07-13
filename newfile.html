@@ -6412,7 +6412,7 @@ const url = `https://www.googleapis.com/drive/v3/files/${fileId}?key=${API_KEY}`
 const response = await fetch(url, {
   method: 'PATCH',
   headers: {
-    'Authorization': `Bearer ${accessToken}`,
+    //'Authorization': `Bearer ${accessToken}`,
     'Content-Type': 'application/json'
   },
   body: body
