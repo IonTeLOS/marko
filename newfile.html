@@ -3349,10 +3349,10 @@ function getBaseUrl(url) {
     return baseUrl;
 }
     window.onload = function() {
+    initializeGoogleIdentity();
     loadDonationParams();
     loadArrayFromURL();
     toggleBellIcons();
-    initializeGoogleIdentity();
 };   
    // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
     
