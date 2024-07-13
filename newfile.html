@@ -3301,6 +3301,7 @@ console.log("No valid sharing data found.");
     if (commonMarko && isCommon) {
           if (confirm("Do you want to add this friend?")) {
               alert(`${commonMarko}`);
+              syncAndShowCommonMarko(commonMarko);
           }
     }
     
