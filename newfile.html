@@ -6511,7 +6511,7 @@ async function copyToClipboard(fileId) {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: `${text}`,
+                    title: `${fileId}`,
                     text: 'This is my common Marko link!',
                     url: url,
                 });
