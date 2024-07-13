@@ -6252,9 +6252,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
 
         // Store friend-uuid and fileId in localStorage
         const content = JSON.parse(fileContent);
-        const uuid = content['common-settings'].find(setting => setting.name === 'uuid')?.value;
-        localStorage.setItem(uuid, result.id);
-
+        
         alert(`Data saved to Google Drive as ${fileName}\nShareable link copied to clipboard.`);
     } catch (error) {
         console.error('Error in saveToGoogleDrivePublicWritable:', error);
