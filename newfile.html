@@ -6394,7 +6394,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
     }
 }
 
-  async function writeToPublicWritableFile(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3RY') {
+async function writeToPublicWritableFile(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3RY') {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
         return;
@@ -6413,22 +6413,42 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
         // Get the access token
         initializeGoogleIdentity();
         const accessToken = localStorage.getItem('accessToken');
-        console.log("blum: " + accessToken)
+        console.log("blum: " + accessToken);
+
         // Prepare the file content
-        const content = await prepareFileContent();
+        const { content, userEmail, uuid } = await prepareFileContent();
+
+        // Prepare the metadata
+        const metadata = {
+            properties: {
+                userEmail: userEmail,
+                uuid: uuid
+            }
+        };
+
+        // Create a boundary for multipart request
+        const boundary = '-------314159265358979323846';
+        const delimiter = `\r\n--${boundary}\r\n`;
+        const closeDelimiter = `\r\n--${boundary}--`;
 
         // Prepare the request body
-        const body = JSON.stringify(content);
+        const body = delimiter +
+            'Content-Type: application/json\r\n\r\n' +
+            JSON.stringify(metadata) +
+            delimiter +
+            'Content-Type: application/json\r\n\r\n' +
+            JSON.stringify(content) +
+            closeDelimiter;
 
-const url = 'https://www.googleapis.com/upload/drive/v3/files/1k0GHHS1TR5pZA-VxJra7tMRC05hQC3RY?uploadType=multipart'
-const response = await fetch(url, {
-  method: 'PATCH',
-  headers: {
-    'Authorization': `Bearer ${accessToken}`,
-    'Content-Type': 'application/json'
-  },
-  body: body
-});
+        const url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`;
+        const response = await fetch(url, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': `multipart/related; boundary=${boundary}`
+            },
+            body: body
+        });
 
         if (!response.ok) {
             throw new Error(`File update failed. HTTP status: ${response.status} ${response.statusText}`);
@@ -6441,14 +6461,9 @@ const response = await fetch(url, {
         }
 
         // Store uuid and fileId in localStorage if needed
-        if (content['common-settings']) {
-            const uuid = content['common-settings'].find(setting => setting.name === 'uuid')?.value;
-            if (uuid) {
-                localStorage.setItem(uuid, result.id);
-            }
-        }
+        localStorage.setItem(uuid, result.id);
 
-        alert(`File updated on Google Drive successfully.`);
+        alert('File updated on Google Drive successfully.');
     } catch (error) {
         console.error('Error in writeToPublicWritableFile:', error);
         alert('An error occurred: ' + error.message);
@@ -6456,6 +6471,7 @@ const response = await fetch(url, {
         stopSpinning(syncButton, syncIcon);
     }
 }
+
 
 
 async function prepareFileContent() {
@@ -6467,16 +6483,11 @@ async function prepareFileContent() {
     // Store the UUID for future use
     localStorage.setItem('uuid', uuid);
 
-    const fileContent = {
-        content: JSON.parse(contentJson),
-        'common-settings': [
-            { name: 'userEmail', value: userEmail },
-            { name: 'uuid', value: uuid }
-        ]
-    };
+    const content = JSON.parse(contentJson);
 
-    return JSON.stringify(fileContent);
+    return { content, userEmail, uuid };
 }
+
 
 function generateUUID() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
