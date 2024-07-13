@@ -2795,30 +2795,11 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         const fileContent = await response.json();
         console.log('File content:', JSON.stringify(fileContent));
 
-        let uuid, userEmail, bookmarks;
-
-        // Handle common-settings
-        if (fileContent && fileContent['common-settings']) {
-            const commonSettings = fileContent['common-settings'];
-            
-            if (Array.isArray(commonSettings)) {
-                uuid = commonSettings.find(setting => setting.name === 'uuid')?.value;
-                userEmail = commonSettings.find(setting => setting.name === 'userEmail')?.value;
-            } else if (typeof commonSettings === 'object') {
-                uuid = commonSettings.uuid;
-                userEmail = commonSettings.userEmail;
-            }
-        }
-
-        // Handle content (bookmarks)
-        if (fileContent && fileContent.content) {
-            if (Array.isArray(fileContent.content)) {
-                bookmarks = fileContent.content;
-            } else if (typeof fileContent.content === 'object') {
-                // If content is an object, convert it to an array of its values
-                bookmarks = Object.values(fileContent.content);
-            }
-        }
+        // Assuming the fileContent is in this format: 
+        // { "content": [...], "uuid": "...", "userEmail": "..." }
+        const uuid = fileContent.uuid;
+        const userEmail = fileContent.userEmail;
+        const bookmarks = fileContent.content;
 
         if (uuid && bookmarks) {
             console.log('UUID:', uuid);
@@ -2836,8 +2817,8 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
             alert("Your common Markos are now in sync. Enjoy!");
             updateUI(uuid);
         } else {
-            if (!uuid) console.error('UUID not found in common-settings');
-            if (!bookmarks) console.error('Bookmarks not found in content');
+            if (!uuid) console.error('UUID not found in fileContent');
+            if (!bookmarks) console.error('Bookmarks not found in fileContent');
             alert('Error: Required data (UUID or bookmarks) not found in the file content.');
         }
     } catch (error) {
@@ -2847,6 +2828,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         syncButton.disabled = false;
     }
 }
+
       
 function updateUI(uuid) {
     const bookmarkTitle = document.querySelector('.bookmark-title');
