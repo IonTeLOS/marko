@@ -3966,7 +3966,7 @@ const bookmarkElement = document.createElement('div');
             </div>
             <span class="bookmark-title">Home</span>
         </div>
-        <span id="next-icon" class="material-icons next-icon" onclick="syncAndShowCommonMarko(); event.stopPropagation();">arrow_forward_ios</span>
+        <span id="next-icon" class="material-icons next-icon" onclick="writeToPublicWritableFile; event.stopPropagation();">arrow_forward_ios</span>
     </div>
 `
                 linkContainer.appendChild(bookmarkElement);
@@ -6441,6 +6441,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
         alert('An error occurred: ' + error.message);
     } finally {
         stopSpinning(syncButton, syncIcon);
+        syncAndShowCommonMarko();
     }
 }
 
