@@ -6288,7 +6288,7 @@ async function writeToPublicWritableFile(fileId = '1eEhtsOYxkXtzkirq9wSJRadPh_Nn
 const url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`;
 
         const response = await fetch(url, {
-            method: 'PATCH',
+            method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
