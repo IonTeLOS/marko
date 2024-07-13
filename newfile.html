@@ -6290,7 +6290,7 @@ async function writeToPublicWritableFile(fileId = '1eEhtsOYxkXtzkirq9wSJRadPh_Nn
             method: 'PATCH',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': `multipart/related; boundary=${boundary}`
+                'Content-Type': 'application/json'
             },
             body: fileContent
         });
