@@ -6235,7 +6235,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
     try {
         const accessToken = await ensureValidToken();
         const fileData = await findExistingPublicWritableFile(accessToken, fileName);
-        const fileContent = prepareFileContent();
+        const fileContent = await prepareFileContent();
         let result;
         if (fileData) {
             result = await updateExistingWritableFile(accessToken, fileData.id, fileContent);
