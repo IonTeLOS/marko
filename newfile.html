@@ -2798,6 +2798,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         console.log('File content:', fileContent);
 
         if (fileContent && Array.isArray(fileContent.content)) {
+            console.log("reached");
 
             const bookmarks = fileContent.content;
             const commonSettings = fileContent['common-settings'] || [];
