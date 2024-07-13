@@ -2797,7 +2797,7 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         const fileContent = await response.json();
         console.log('File content:', fileContent);
 
-        if (fileContent && Array.isArray(fileContent.content)) {
+        if (fileContent) {
             console.log("reached");
 
             const bookmarks = fileContent.content;
