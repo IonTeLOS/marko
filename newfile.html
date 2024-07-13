@@ -6390,11 +6390,12 @@ async function createNewPublicWritableFile(accessToken, content, fileName) {
     }
 
     const fileData = await response.json();
-    await setFilePublicReadable(accessToken, fileData.id);
+    await setFileUserWritable(accessToken, fileData.id);
+    await setFilePublic(accessToken, fileData.id);
     return fileData;
 }
 
-async function setFilePublicReadable(accessToken, fileId) {
+async function setFileUserWritable(accessToken, fileId) {
     const permission = {
         type: 'user',
         role: 'writer',
