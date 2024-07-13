@@ -2795,9 +2795,8 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         const fileContent = await response.json();
         console.log('File content:', JSON.stringify(fileContent));
 
-        // Assuming the fileContent is in this format:
-        // { "content": [...] }
-        const bookmarks = fileContent.content;
+        // Since the fileContent is the bookmarks array
+        const bookmarks = fileContent;
 
         if (bookmarks) {
             console.log('File ID:', fileId);
@@ -2825,7 +2824,6 @@ async function syncAndShowCommonMarko(fileId = '1k0GHHS1TR5pZA-VxJra7tMRC05hQC3R
         syncButton.disabled = false;
     }
 }
-
 
       
 function updateUI(uuid) {
