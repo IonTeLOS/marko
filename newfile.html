@@ -4941,9 +4941,14 @@ function openAdd() {
       bookmark.addEventListener('touchmove', () => { /* ... */ });
       bookmark.addEventListener('touchcancel', () => { /* ... */ });
     });    
-
+function createContainer() {
+    const container = document.createElement('div');
+    container.id = 'dropdownContainer';
+    document.body.appendChild(container);
+}
       // Function to display contact bookmarks dropdown
         function showContactBookmarksDropdown() {
+          createContainer();
             // Retrieve bookmarks array from localStorage
             const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
@@ -7118,9 +7123,7 @@ The appropriate solution will depend on your specific requirements and the natur
 
     <div class="bookmarks-container" no-select>
 <div>
-    <div id="dropdownContainer">
-        <!-- Dropdown will be inserted here -->
-    </div>
+
 </div>
     </div>
     
