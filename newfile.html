@@ -2604,11 +2604,11 @@ if ( document.getElementById('new-link-url') !== null && document.getElementById
   alertUrl = null; // None of the values are valid
 }           
             if (alertUrl !== null) {
-                const alertStatus = sessionStorage.getItem('alertStatus');
-                if (!alertStatus === 'off') {
-                    alert("Success! You just added a bookmark for " + alertUrl); 
-                    location.reload();  
-                }  
+              const alertStatus = sessionStorage.getItem('alertStatus');
+              if (alertStatus !== 'off') {
+                alert("Success! You just added a bookmark for " + alertUrl);
+                location.reload();
+              }
               sessionStorage.setItem('alertStatus', 'on');
               console.log("added Marko!");
             } else {
