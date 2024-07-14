@@ -4967,6 +4967,14 @@ function createContainer() {
         function showContactBookmarksDropdown() {
           createContainer();
           console.log("All bookmarks in localStorage:", JSON.parse(localStorage.getItem('bookmarks')));
+
+
+            // Retrieve bookmarks array from localStorage
+   console.log("Container created");
+
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    console.log("Bookmarks retrieved:", bookmarks);
+
     const contactBookmarks = bookmarks.filter(bookmark => {
         if (!Array.isArray(bookmark) || bookmark.length < 3) {
             console.error("Invalid bookmark format:", bookmark);
@@ -4974,25 +4982,13 @@ function createContainer() {
         }
         return bookmark[0] === 'contact';
     });
+          console.log("Contact bookmarks:", contactBookmarks);
           if (contactBookmarks.length === 0) {
     const container = document.getElementById('dropdownContainer');
     container.innerHTML = 'No contact bookmarks found.';
     container.style.color = 'red';
     return;
 }
-            // Retrieve bookmarks array from localStorage
-   console.log("Container created");
-
-    const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-    console.log("Bookmarks retrieved:", bookmarks);
-
-    const contactBookmarks = bookmarks.filter(bookmark => bookmark[0] === 'contact');
-    console.log("Contact bookmarks:", contactBookmarks);
-
-    if (contactBookmarks.length === 0) {
-        alert('No contact bookmarks found.');
-        return;
-    }
 
             // Create select element
     const select = document.createElement('select');
