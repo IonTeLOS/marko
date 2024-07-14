@@ -2818,8 +2818,7 @@ async function syncAndShowCommonMarko(fileId, title = 'Shared with me') {
              // Store updated allCommonMarkos array back into localStorage
             localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
             // add a Marko for this common Marko
-            const linkUrl = `https://teloslinux.org/marko/newfile?marko:common-${title}-${fileId}`;
-            createMarko('contact', linkUrl, `${title}`, '', '');
+            createMarko('contact', `${fileId}`, `${title}`, '', '');
           } else { 
            console.log(`Marko ${title} has already been added.`);
         }   
@@ -3096,11 +3095,6 @@ function changeURL(url) {
     // Use random color if not provided
     if (!color) {
         color = getRandomColor();
-    }
-
-    // If type is contact, construct the contact link
-    if (type === 'contact') { 
-        link = link;
     }
 
     // Construct the bookmark array
@@ -4083,7 +4077,29 @@ const bookmarkElement = document.createElement('div');
 `;
                     linkContainer.appendChild(bookmarkElement);
                 hideAdd();      
-                }    
+                }   else if (link[0] === "contact") {
+                // const iconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/download/default/48px.svg';
+                // const proxied = "https://corsproxy.io/?" + link[1];
+                const bookmarkElement = document.createElement('div');
+                bookmarkElement.className = 'bookmark';
+                bookmarkElement.dataset.index = index; // Store the index as a data attribute
+                // TODO: deleting should remove the google drive file, if initiated by owner
+                bookmarkElement.id = `bookmark-${index}`;
+                bookmarkElement.innerHTML = `
+    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('This is a contact, click to view its links!')"
+     onmouseout="hideTooltip()" onclick="openMarko(syncAndShowCommonMarko, '${link[1]}', '${link[2]}')" style="cursor: pointer;">
+        <div class="icon-wrapper">
+            <div class="icon-container" style="--ring-color: ${link[4]};">
+                <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon">
+            </div>
+            <span class="bookmark-title">${link[2]}</span>
+        </div>
+        <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
+    </div>
+`;
+                    linkContainer.appendChild(bookmarkElement);
+                hideAdd();      
+                }     
                 else if (link[0] === "intro") {
                 const iconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/wysiwyg/default/48px.svg';
                 const bookmarkElement = document.createElement('div');
@@ -6501,8 +6517,7 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
     //const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${userFacingName}&commonMarko=true`;
       
     // create a Marko for the newly created file
-    const linkUrl = `https://teloslinux.org/marko/newfile?marko:common-${userFacingName}-${fileId}`;
-    createMarko('contact', linkUrl, `${userFacingName}`, '', '');
+    createMarko('contact', `${fileId}`, `${userFacingName}`, '', '');
     let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     allCommonMarkos.push(fileId);
     // Store updated allCommonMarkos array back into localStorage
