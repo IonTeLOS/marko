@@ -2769,6 +2769,7 @@ async function syncAndShowPublicMarkos() {
 
 // TODO add a default for the cases the commonMarko added has already been deleted by its creator      
 async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjUE', title = 'Shared with me') {
+    const nameWithoutSpaces = title.replace(/\s+/g, '');
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
         return;
@@ -2796,7 +2797,6 @@ async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjU
         
         if (bookmarks) {
             // update the stored common-bookmarks   
-            const nameWithoutSpaces = title.replace(/\s+/g, '');
             localStorage.setItem(`common-bookmarks-${nameWithoutSpaces}-${fileId}`, JSON.stringify(bookmarks));
             console.log('Sync complete');
 
@@ -2818,12 +2818,13 @@ async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjU
              // Store updated allCommonMarkos array back into localStorage
             localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
             // add a Marko for this common Marko
-            createMarko('contact', `marko:common-${nameWithoutSpaces}-${fileId}`, `${nameWithoutSpaces}`, '', '');
+            const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${nameWithoutSpaces}&commonMarko=true`;
+            createMarko('contact', linkUrl, `${fileName}`, '', '');
           } else { 
            console.log(`This Marko ${commonMarko} has already been added.`);
         }   
+            updateUI(fileId, `${title}`);
             alert(`Synced. Showing Markos from ${title}. Enjoy!`);
-            updateUI(fileId, `${nameWithoutSpaces}`);
         } else {
             console.error('Bookmarks not found in fileContent');
             alert('Error: no Markos found in the file content.');
@@ -3098,7 +3099,8 @@ function changeURL(url) {
     }
 
     // If type is contact, construct the contact link
-    if (type === 'contact') {
+    if (type === 'contact') { marko:common-${fileName}-${fileId}
+        const url = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${name}&commonMarko=true`;
         link = `${window.location.origin}/friend/${title}`;
     }
 
@@ -6273,6 +6275,7 @@ async function createUpdateCommonMarko() {
     // Handle user input
     let isUpdate = 'no'; // Default value for isUpdate
     let fileName = 'commonMarko'; // Default value for fileName
+    let extendedFileName = 'commonMarko.json'; // Default value for fileName
 
     if (userInput === null) {
         console.log("User canceled the prompt. Continuing to update..");
@@ -6301,6 +6304,8 @@ async function createUpdateCommonMarko() {
         } else {
             const randomU = generateUUID();
             const commonPFileName = `${fileName}${randomU}.json` || `${COMMON_FILE}${randomU}.json`;
+            //const commonFileNameForStorage = `${fileName}${randomU}.json` || `${COMMON_FILE}${randomU}.json`;
+            sessionStorage.setItem('extendedFileName', commonPFileName); // Store extended fileName in sessionStorage
             result = await createNewPublicWritableFile(accessToken, fileContent, commonPFileName, fileName);
         }
 
@@ -6314,10 +6319,12 @@ async function createUpdateCommonMarko() {
         // Store friend-uuid and fileId in localStorage
         const content = JSON.parse(fileContent);
       
-       
-           createMarko('contact', `marko:common-${nameWithoutSpaces}-${fileId}`, `${nameWithoutSpaces}`, '', '');
+        extendedFileName = sessionStorage.getItem('extendedFileName') || extendedFileName;
+        const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${fileName}&commonMarko=true`;
 
-        alert(`Data saved to Google Drive as ${commonFileName}\nShareable link copied to clipboard.`);
+        createMarko('contact', linkUrl, `${fileName}`, '', '');
+
+        alert(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`);
     } catch (error) {
         console.error('Error in createUpdateCommonMarko:', error);
         alert('An error occurred: ' + error.message);
@@ -6493,7 +6500,8 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
     // currently not implemented - share file with particular user 
     // await setFileUserWritable(accessToken, fileId);
     await setFilePublic(accessToken, fileId);
-    createMarko('contact', `marko:common-${userFacingName}-${fileId}`, `${userFacingName}`, '', '');
+    const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${fileName}&commonMarko=true`;
+    createMarko('contact', linkUrl, `${fileName}`, '', '');
     let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     allCommonMarkos.push(fileId);
     // Store updated allCommonMarkos array back into localStorage
