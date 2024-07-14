@@ -2818,7 +2818,7 @@ async function syncAndShowCommonMarko(fileId, title = 'Shared with me') {
              // Store updated allCommonMarkos array back into localStorage
             localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
             // add a Marko for this common Marko
-            const linkUrl = `marko:common-${title}-${fileId}`;
+            const linkUrl = `https://teloslinux.org/newfile?marko:common-${title}-${fileId}`;
             createMarko('contact', linkUrl, `${title}`, '', '');
           } else { 
            console.log(`This Marko ${commonMarko} has already been added.`);
@@ -4259,7 +4259,7 @@ iframe.srcdoc = `
 
      // function to open bookmark links in new tab. separate behavior for friends' links
         function openLink(url) {
-          const prefix = 'marko:common-';
+          const prefix = 'https://teloslinux.org/newfile?marko:common-';
           if (url.startsWith(prefix)) {
               let restOfString = url.substring(prefix.length);
         
@@ -6501,7 +6501,7 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
     //const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${userFacingName}&commonMarko=true`;
       
     // create a Marko for the newly created file
-    const linkUrl = `marko:common-${userFacingName}-${fileId}`;
+    const linkUrl = `https://teloslinux.org/newfile?marko:common-${userFacingName}-${fileId}`;
     createMarko('contact', linkUrl, `${userFacingName}`, '', '');
     let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     allCommonMarkos.push(fileId);
