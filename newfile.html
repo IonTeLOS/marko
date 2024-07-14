@@ -2821,7 +2821,7 @@ async function syncAndShowCommonMarko(fileId, title = 'Shared with me') {
             const linkUrl = `https://teloslinux.org/marko/newfile?marko:common-${title}-${fileId}`;
             createMarko('contact', linkUrl, `${title}`, '', '');
           } else { 
-           console.log(`This Marko ${commonMarko} has already been added.`);
+           console.log(`Marko ${title} has already been added.`);
         }   
             updateUI(fileId, `${title}`);
             alert(`Synced. Showing Markos from ${title}. Enjoy!`);
