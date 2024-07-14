@@ -1299,7 +1299,10 @@ input:focus {
 .btn:hover {
   background-color: #303f9f;
 }
-
+        #dropdownContainer {
+            position: relative; /* Ensure positioning context for z-index */
+            z-index: 10000; /* Set high z-index */
+        }
   </style>    
 <script type=module>
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
