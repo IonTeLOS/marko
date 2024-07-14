@@ -2841,11 +2841,14 @@ function updateUI(fileId, name) {
     const bookmarkTitle = document.querySelector('.bookmark-title');
     if (bookmarkTitle) {
         bookmarkTitle.textContent = name;
+        bookmarkTitle.style.color = '#0D47A1'; 
+        bookmarkTitle.style.fontSize = '24px'; 
         //bookmarkTitle.dataset.commonName = name;
     }
     const nextIcon = document.getElementById('next-icon');
     nextIcon.innerHTML = 'arrow_back_ios';
     nextIcon.classList.add('material-icons');
+    nextIcon.style.fontSize = '36px'; // Set nextIcon size to 36px
     nextIcon.onclick = function (event) {
         location.reload();
         event.stopPropagation();
@@ -2854,6 +2857,23 @@ function updateUI(fileId, name) {
     mainBookmark.onclick = function() {
         openLink(`https://ntfy.sh/${fileId}`);
     };
+  const myCommons = JSON.parse(localStorage.getItem('myCommons')) || [];
+  const fileIdIsMine = myCommons.includes(fileId);
+  if (!fileIdIsMine) {
+    // Hide all delete-icon elements if fileId not in myCommons = is not a file I am owner of
+    const deleteIcons = document.querySelectorAll('.delete-icon');
+    deleteIcons.forEach(icon => {
+        icon.style.display = 'none';
+    });
+     // Remove swipe event listeners
+    if (isTouchDevice) {
+        wrapper.removeEventListener('touchstart', handleTouchStart);
+        wrapper.removeEventListener('touchend', handleTouchEnd);
+    } else {
+        wrapper.removeEventListener('mousedown', handleMouseDown);
+        wrapper.removeEventListener('mouseup', handleMouseUp);
+    }
+}
 }
 
 // main function to add a new bookmark
@@ -6332,7 +6352,6 @@ async function createUpdateCommonMarko() {
             throw new Error('Failed to save file: No file data returned');
         }
         
-        copyToClipboard(result.id, fileName);
         // Store friend-uuid and fileId in localStorage
         const content = JSON.parse(fileContent);
         localStorage.setItem(result.id, JSON.stringify(content));
@@ -6341,6 +6360,7 @@ async function createUpdateCommonMarko() {
         //const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${fileName}&commonMarko=true`;
 
         alert(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`);
+        copyToClipboard(result.id, fileName);
     } catch (error) {
         console.error('Error in createUpdateCommonMarko:', error);
         alert('An error occurred: ' + error.message);
