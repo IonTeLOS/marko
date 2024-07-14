@@ -1736,8 +1736,9 @@ document.addEventListener('DOMContentLoaded', checkInitialState);
 let linkTypeSelect;
 let iconSourceSelect;
 let currentLink = null; // Global variable to store current link    
-let allCommonMarkos = [];    
-let myCommonMarkos = [];
+let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+let myCommonMarkos = JSON.parse(localStorage.getItem('myCommons')) || [];
+
       
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -2813,7 +2814,7 @@ async function syncAndShowCommonMarko(fileId, title = 'Shared with me') {
             checkConnection();
            // check that this common Marko doesnt exist already
           // Retrieve or initialize commonMarkos array from localStorage
-          allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+          //allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
 
           if (!allCommonMarkos.includes(fileId)) {
              // Add fileId to allCommonMarkos array
@@ -2860,7 +2861,7 @@ function updateUI(fileId, name) {
     mainBookmark.onclick = function() {
         openLink(`https://ntfy.sh/${fileId}`);
     };
-  const myCommons = JSON.parse(localStorage.getItem('myCommons')) || [];
+  myCommons = JSON.parse(localStorage.getItem('myCommons')) || [];
   const fileIdIsMine = myCommons.includes(fileId);
   if (!fileIdIsMine) {
     // Hide all delete-icon elements if fileId not in myCommons = is not a file I am owner of
@@ -3308,12 +3309,12 @@ console.log("No valid sharing data found.");
     }
 
 if (commonMarkoId && isCommon) {
-    allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+    //allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     
     // Check if commonMarko already exists in localStorage
     if (allCommonMarkos.includes(commonMarkoId)) {
         console.log(`A Marko for ${commonName} has already been added.`);
-        alert('You already have this contact!');
+        alert(`You already have ${commonName} as contact!`);
         // TODO: add logic to show with updateUI etc
     } else {
         // Prompt user to confirm adding as a friend
@@ -6558,12 +6559,10 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
     // create a Marko for the newly created file
     createMarko('contact', `${fileId}`, `${userFacingName}`, '', '');
     // add to myCommons in localStorage to updateUI accordingly
-    myCommonMarkos = JSON.parse(localStorage.getItem('myCommons')) || [];
     myCommonMarkos.push(fileId);
-    localStorage.setItem('myCommons', JSON.stringify(allCommonMarkos));
+    localStorage.setItem('myCommons', JSON.stringify(myCommonMarkos));
 
     // add reference to localStorage so that I don't add multiple Markos for same file
-    allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     allCommonMarkos.push(fileId);
     // Store updated allCommonMarkos array back into localStorage
     localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
