@@ -2604,12 +2604,14 @@ if ( document.getElementById('new-link-url') !== null && document.getElementById
   alertUrl = null; // None of the values are valid
 }           
             if (alertUrl !== null) {
-              const alertStatus = sessionStorage.getItem('alertStatus');
-              if (alertStatus !== 'off') {
-                alert("Success! You just added a Marko for " + alertUrl);
-                location.reload();
-              }
-              sessionStorage.setItem('alertStatus', 'on');
+               if (alertStatus === 'off') {
+                // Set alertStatus back to 'on' for future alerts and skip showing the alert
+                sessionStorage.setItem('alertStatus', 'on');
+            } else {
+                // Show the alert
+                alert(`Success! You just added a Marko for ${title}`);
+                location.reload(); 
+            }
               console.log("added Marko!");
             } else {
                 location.reload();
@@ -3140,12 +3142,16 @@ function changeURL(url) {
     bookmarks.push(linkData);
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
     const alertStatus = sessionStorage.getItem('alertStatus');
-    if (alertStatus !== 'off') {
-        alert(`Success! You just added a Marko for ${title}`);
-        // Reload the page
-        window.location.href = window.location.origin + window.location.pathname;
-    }
-    sessionStorage.setItem('alertStatus', 'on');
+    const alertStatus = sessionStorage.getItem('alertStatus');
+
+            if (alertStatus === 'off') {
+                // Set alertStatus back to 'on' for future alerts and skip showing the alert
+                sessionStorage.setItem('alertStatus', 'on');
+            } else {
+                // Show the alert
+                alert(`Success! You just added a Marko for ${title}`);
+                window.location.href = window.location.origin + window.location.pathname;
+            }
     return linkData;
 }
 
