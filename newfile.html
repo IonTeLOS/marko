@@ -2823,7 +2823,7 @@ async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjU
            console.log(`This Marko ${commonMarko} has already been added.`);
         }   
             alert(`Synced. Showing Markos from ${title}. Enjoy!`);
-            updateUI(fileId, ${nameWithoutSpaces});
+            updateUI(fileId, `${nameWithoutSpaces}`);
         } else {
             console.error('Bookmarks not found in fileContent');
             alert('Error: no Markos found in the file content.');
