@@ -2606,7 +2606,7 @@ if ( document.getElementById('new-link-url') !== null && document.getElementById
             if (alertUrl !== null) {
               const alertStatus = sessionStorage.getItem('alertStatus');
               if (alertStatus !== 'off') {
-                alert("Success! You just added a bookmark for " + alertUrl);
+                alert("Success! You just added a Marko for " + alertUrl);
                 location.reload();
               }
               sessionStorage.setItem('alertStatus', 'on');
@@ -3139,13 +3139,11 @@ function changeURL(url) {
     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     bookmarks.push(linkData);
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-
-    // Alert success message
-    alert(`Success! You just added a Marko for ${title}`);
-    
-    // Reload the page
-    window.location.href = window.location.origin + window.location.pathname;
-
+    if (alertStatus !== 'off') {
+        alert(`Success! You just added a Marko for ${title}`);
+        // Reload the page
+        window.location.href = window.location.origin + window.location.pathname;
+    }
     return linkData;
 }
 
@@ -6375,7 +6373,6 @@ async function createUpdateCommonMarko() {
         extendedFileName = sessionStorage.getItem('extendedFileName') || extendedFileName;
         //const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${fileName}&commonMarko=true`;
         alertAndRunCallback(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`, async () => {
-            sessionStorage.setItem('alertStatus', 'off');
             await copyToClipboard(result.id, fileName);
         });
         //alert(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`);
@@ -6574,6 +6571,7 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
     localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
     // store new common bookmarks array  
     localStorage.setItem(fileId, JSON.stringify(fileContent));
+    sessionStorage.setItem('alertStatus', 'off');
     return uploadResult;
     } catch (error) {
         console.error('Error in createNewPublicWritableFile:', error);
