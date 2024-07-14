@@ -6368,9 +6368,11 @@ async function createUpdateCommonMarko() {
 
         extendedFileName = sessionStorage.getItem('extendedFileName') || extendedFileName;
         //const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${fileName}&commonMarko=true`;
-
-        alert(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`);
-        copyToClipboard(result.id, fileName);
+        alertAndRunCallback(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`, async () => {
+            await copyToClipboard(result.id, fileName);
+        });
+        //alert(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`);
+        //copyToClipboard(result.id, fileName);
     } catch (error) {
         console.error('Error in createUpdateCommonMarko:', error);
         alert('An error occurred: ' + error.message);
@@ -6379,6 +6381,11 @@ async function createUpdateCommonMarko() {
     }
 }
 
+// Function to display an alert and then run a callback function
+function alertAndRunCallback(message, callback) {
+    alert(message);
+    setTimeout(callback, 0);
+}
 async function writeToPublicWritableFile(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjUE') {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
