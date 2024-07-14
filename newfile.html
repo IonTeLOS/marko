@@ -6738,7 +6738,6 @@ async function copyToClipboard(fileId, name) {
         }
 
         // Call the function to show contact bookmarks dropdown
-        showContactBookmarksDropdown();  
 function getUserEmailAndStore() {
     return new Promise((resolve, reject) => {
         const storedEmail = localStorage.getItem('userEmail');
@@ -6969,7 +6968,7 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
-<button id="syncToPublicWritableDrive" class="g-button" onclick="createUpdateCommonMarko()">
+<button id="syncToPublicWritableDrive" class="g-button" onclick="showContactBookmarksDropdown()">
     <span id="syncToPublicWritableIcon" class="material-icons">public</span>
     Make public
 </button>                  
