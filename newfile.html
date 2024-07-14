@@ -6540,6 +6540,12 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
       
     // create a Marko for the newly created file
     createMarko('contact', `${fileId}`, `${userFacingName}`, '', '');
+    // add to myCommons in localStorage to updateUI accordingly
+    let myCommonMarkos = JSON.parse(localStorage.getItem('myCommons')) || [];
+    myCommonMarkos.push(fileId);
+    localStorage.setItem('myCommons', JSON.stringify(allCommonMarkos));
+
+    // add reference to localStorage so that I don't add multiple Markos for same file
     let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     allCommonMarkos.push(fileId);
     // Store updated allCommonMarkos array back into localStorage
