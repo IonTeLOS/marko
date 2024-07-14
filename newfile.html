@@ -2768,7 +2768,7 @@ async function syncAndShowPublicMarkos() {
 }
 
 // TODO add a default for the cases the commonMarko added has already been deleted by its creator      
-async function syncAndShowCommonMarko(fileId = '1mU8pqKWYinbaHHFvOYlsuz9-RytEbKwV', title = 'Shared with me') {
+async function syncAndShowCommonMarko(fileId, title = 'Shared with me') {
     const nameWithoutSpaces = title.replace(/\s+/g, '');
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
@@ -2797,7 +2797,7 @@ async function syncAndShowCommonMarko(fileId = '1mU8pqKWYinbaHHFvOYlsuz9-RytEbKw
         
         if (bookmarks) {
             // update the stored common-bookmarks   
-            localStorage.setItem(`common-bookmarks-${nameWithoutSpaces}-${fileId}`, JSON.stringify(bookmarks));
+            localStorage.setItem(fileId, JSON.stringify(bookmarks));
             console.log('Sync complete');
 
             // show the bookmarks of this common Marko
@@ -2818,8 +2818,8 @@ async function syncAndShowCommonMarko(fileId = '1mU8pqKWYinbaHHFvOYlsuz9-RytEbKw
              // Store updated allCommonMarkos array back into localStorage
             localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
             // add a Marko for this common Marko
-            const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${nameWithoutSpaces}&commonMarko=true`;
-            createMarko('contact', linkUrl, `${fileName}`, '', '');
+            const linkUrl = `marko:common-${title}-${fileId}`;
+            createMarko('contact', linkUrl, `${title}`, '', '');
           } else { 
            console.log(`This Marko ${commonMarko} has already been added.`);
         }   
@@ -3290,6 +3290,7 @@ if (commonMarkoId && isCommon) {
     if (allCommonMarkos.includes(commonMarkoId)) {
         console.log(`A Marko for ${commonName} has already been added.`);
         alert('You already have this contact!');
+        // TODO: add logic to show with updateUI etc
     } else {
         // Prompt user to confirm adding as a friend
         if (confirm(`Do you want to add ${params.get('common-name')} as a friend?`)) {
@@ -6286,6 +6287,8 @@ async function createUpdateCommonMarko() {
         fileName = sanitizedInput;
         console.log("Updated fileName:", fileName);
         sessionStorage.setItem('commonFileName', fileName); // Store fileName in sessionStorage
+        isUpdate = 'no'; // Change isUpdate to 'yes' if user cancels
+        sessionStorage.setItem('isUpdate', isUpdate); // Store fileName in sessionStorage
     }
 
     // Retrieve isUpdate and commonFileName values from sessionStorage or use default
@@ -6302,8 +6305,7 @@ async function createUpdateCommonMarko() {
             result = await updateExistingWritableFile(accessToken, fileData.id, fileContent);
         } else {
             const randomU = generateUUID();
-            const commonPFileName = `${fileName}${randomU}.json` || `${COMMON_FILE}${randomU}.json`;
-            //const commonFileNameForStorage = `${fileName}${randomU}.json` || `${COMMON_FILE}${randomU}.json`;
+            const commonPFileName = `${fileName}-${randomU}.json` || `${COMMON_FILE}-${randomU}.json`;
             sessionStorage.setItem('extendedFileName', commonPFileName); // Store extended fileName in sessionStorage
             result = await createNewPublicWritableFile(accessToken, fileContent, commonPFileName, fileName);
         }
@@ -6311,17 +6313,14 @@ async function createUpdateCommonMarko() {
         if (!result || !result.id) {
             throw new Error('Failed to save file: No file data returned');
         }
-
-        //const shareableLink = `https://drive.google.com/file/d/${result.id}/view?usp=sharing`;
         
         copyToClipboard(result.id, fileName);
         // Store friend-uuid and fileId in localStorage
         const content = JSON.parse(fileContent);
-      
-        extendedFileName = sessionStorage.getItem('extendedFileName') || extendedFileName;
-        const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${fileName}&commonMarko=true`;
+        localStorage.setItem(result.id, JSON.stringify(content));
 
-        createMarko('contact', linkUrl, `${fileName}`, '', '');
+        extendedFileName = sessionStorage.getItem('extendedFileName') || extendedFileName;
+        //const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${fileName}&commonMarko=true`;
 
         alert(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`);
     } catch (error) {
@@ -6472,7 +6471,7 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
 
         const createResult = await createResponse.json();
         const fileId = createResult.id;
-
+      
         // Step 2: Upload the file content
         const uploadUrl = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`;
 
@@ -6499,12 +6498,17 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
     // currently not implemented - share file with particular user 
     // await setFileUserWritable(accessToken, fileId);
     await setFilePublic(accessToken, fileId);
-    const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${fileName}&commonMarko=true`;
-    createMarko('contact', linkUrl, `${fileName}`, '', '');
+    //const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${userFacingName}&commonMarko=true`;
+      
+    // create a Marko for the newly created file
+    const linkUrl = `marko:common-${userFacingName}-${result.id}`;
+    createMarko('contact', linkUrl, `${userFacingName}`, '', '');
     let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     allCommonMarkos.push(fileId);
     // Store updated allCommonMarkos array back into localStorage
     localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
+    // store new common bookmarks array  
+    localStorage.setItem(fileId, JSON.stringify(fileContent));
     return uploadResult;
     } catch (error) {
         console.error('Error in createNewPublicWritableFile:', error);
