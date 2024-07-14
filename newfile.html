@@ -2766,21 +2766,18 @@ async function syncAndShowPublicMarkos() {
         alert(errorMessage);
     }
 }
-async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjUE') {
+
+// TODO add a default for the cases the commonMarko added has already been deleted by its creator      
+async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjUE', title = 'Shared with me') {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
         return;
     }
-    const syncButton = document.getElementById('syncToPublicWritableDrive');
-    syncButton.disabled = true;
-    if (!confirm("Are you sure you want to sync and show the common Marko file?")) {
-        syncButton.disabled = false;
-        return;
-    }
     try {
+        // refresh token
         initializeGoogleIdentity();
         const accessToken = localStorage.getItem('accessToken');
-        console.log("Access Token:", accessToken);
+        // get file with given id from Google Drive
         const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`, {
             method: 'GET',
             headers: new Headers({
@@ -2790,46 +2787,61 @@ async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjU
         if (!fileResponse.ok) {
             throw new Error(`File fetch failed. HTTP status: ${fileResponse.status} ${fileResponse.statusText}`);
         }
-
+      
         const fileContent = await fileResponse.json();
         console.log('File content:', JSON.stringify(fileContent));
 
-        // Since the fileContent is the bookmarks array
+        // Since the fileContent is the remote array from the Google Driva file containing the Markos
         const bookmarks = fileContent;
-
+        
         if (bookmarks) {
-            console.log('File ID:', fileId);
-            localStorage.setItem(`common-bookmarks-${fileId}`, JSON.stringify(bookmarks));
-            
-            alert(`Sync complete.`);
+            // update the stored common-bookmarks   
+            const nameWithoutSpaces = title.replace(/\s+/g, '');
+            localStorage.setItem(`common-bookmarks-${nameWithoutSpaces}-${fileId}`, JSON.stringify(bookmarks));
+            console.log('Sync complete');
 
+            // show the bookmarks of this common Marko
             const linkContainer = document.querySelector('.bookmarks-container');
             linkContainer.innerHTML = '';
-            console.log('Common Links:', bookmarks);
+            console.log('Common Markos:', bookmarks);
             links = bookmarks;
             passCheck();
             detectTheme();
             checkConnection();
-            alert("Your common Markos are now in sync. Enjoy!");
-            updateUI(fileId);
+           // check that this common Marko doesnt exist already
+           for (let i = 0; i < localStorage.length; i++) {
+           // Get the key at the current index
+           let key = localStorage.key(i);
+        
+           // Get the value associated with the current key
+           let storedValue = localStorage.getItem(key);
+        
+           // Check if the value matches the expected value, skip adding if exists and directly show
+        if (!storedValue === commonMarko) {
+           console.log(`This Marko "${commonMarko}" has already been added.`);
+          // add a Marko for this common Marko
+           createMarko('contact', `marko:common-${nameWithoutSpaces}-${fileId}`, `${nameWithoutSpaces}`, '', '');
+        }
+            alert(`Synced. Showing Markos from ${title}. Enjoy!`);
+            updateUI(fileId, nameWithoutSpaces);
         } else {
             console.error('Bookmarks not found in fileContent');
-            alert('Error: Required data (bookmarks) not found in the file content.');
+            alert('Error: Required data (Markos) not found in the file content.');
         }
     } catch (error) {
         console.error('Error:', error.message);
         alert('An error occurred: ' + error.message);
     } finally {
-        syncButton.disabled = false;
+        console.log('syncAndShowCommonMarko completed');
     }
 }
 
-      
-function updateUI(uuid) {
+// show the title of common Marko, update clicking action on main bookmark to open the notification page with topic name the fileId        
+function updateUI(fileId, name) {
     const bookmarkTitle = document.querySelector('.bookmark-title');
     if (bookmarkTitle) {
-        bookmarkTitle.textContent = uuid;
-        bookmarkTitle.dataset.uuid = uuid;
+        bookmarkTitle.textContent = name;
+        //bookmarkTitle.dataset.commonName = name;
     }
     const nextIcon = document.getElementById('next-icon');
     nextIcon.innerHTML = 'arrow_back_ios';
@@ -2840,7 +2852,7 @@ function updateUI(uuid) {
     };
     const mainBookmark = document.getElementById('main-bookmark');
     mainBookmark.onclick = function() {
-        openLink(`https://ntfy.sh/${uuid}`);
+        openLink(`https://ntfy.sh/${fileId}`);
     };
 }
 
@@ -3025,6 +3037,8 @@ function changeURL(url) {
             return 'whatsapp';
         } else if (link.startsWith('viber://chat?number=')) {
             return 'viber';
+        } else if (link.startsWith('common-marko')) {
+            return 'contact';
         } else {
             return 'note'; // Default to note if type cannot be inferred
         }
@@ -3046,7 +3060,6 @@ function changeURL(url) {
         if (type === 'website' && url && !url.includes('://')) {
             return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/link/default/48px.svg'; // Invalid URL or domain
         }
-
         return icons[type] || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/link/default/48px.svg';
     }
 
@@ -3102,7 +3115,6 @@ function changeURL(url) {
     // Reload the page
     window.location.href = window.location.origin + window.location.pathname;
 
-   
     return linkData;
 }
 
@@ -3110,12 +3122,14 @@ function handleSharedLink(url, title, text) {
     console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);  
     createMarko('', url, title, '', '');
 }
+      
   function loadArrayFromURL() {
     const params = new URLSearchParams(window.location.search);
     const compressed = params.get('data');
     const isGlobal = params.get('globalMarko');
     const isCommon = params.get('commonMarko');
     const commonMarko = params.get('common-marko');
+    const commonName = params.get('common-name');
     const purelink = params.get('friendlink');
     const sharedTitle = params.get('title');
     const reminder = params.get('uuid');
@@ -3269,9 +3283,8 @@ console.log("No valid sharing data found.");
     }
 
     if (commonMarko && isCommon) {
-          if (confirm("Do you want to add this friend?")) {
-              alert(`${commonMarko}`);
-              syncAndShowCommonMarko(commonMarko);
+          if (confirm("Do you want to add" + params.get('common-name') + as friend?")) {
+              syncAndShowCommonMarko(commonMarko, commonName);
           }
     }
     
@@ -4228,6 +4241,21 @@ iframe.srcdoc = `
 
      // function to open bookmark links in new tab. separate behavior for friends' links
         function openLink(url) {
+          const prefix = 'marko:common-';
+          if (url.startsWith(prefix)) {
+              let restOfString = url.substring(prefix.length);
+        
+               // Find the index of the first '-' character
+               let firstDashIndex = restOfString.indexOf('-');
+        
+               // If there is a '-' character, extract name and link
+         if (firstDashIndex !== -1) {
+            let commonName = restOfString.substring(0, firstDashIndex);
+            let commonId = restOfString.substring(firstDashIndex + 1);
+           console.log(`Title of common: ${commonName}, FileId: ${commonId}`);
+           syncAndShowCommonMarko(commonId, commonName);
+    }
+          }
             if (url.startsWith("friends/")) {
                console.log("friend!!");
                changeURL(url);
@@ -6212,7 +6240,7 @@ function setFilePublic(accessToken, fileId) {
     });
 }
 
-async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
+async function createUpdateCommonMarko(fileName = 'commonMarko.json') {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
         return;
@@ -6252,7 +6280,7 @@ async function saveToGoogleDrivePublicWritable(fileName = 'commonMarko.json') {
 
         alert(`Data saved to Google Drive as ${fileNa}\nShareable link copied to clipboard.`);
     } catch (error) {
-        console.error('Error in saveToGoogleDrivePublicWritable:', error);
+        console.error('Error in createUpdateCommonMarko:', error);
         alert('An error occurred: ' + error.message);
     } finally {
         stopSpinning(syncButton, syncIcon);
