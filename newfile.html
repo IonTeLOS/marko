@@ -6664,10 +6664,10 @@ async function unlockFile(fileId) {
     return await response.json();
 }
 
-async function copyToClipboard(fileId, name = 'Marko') {
+async function copyToClipboard(fileId, name) {
     const url = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${name}&commonMarko=true`;
 
-    navigator.clipboard.writeText(url).then(() => {
+    await navigator.clipboard.writeText(url).then(() => {
         console.log('Shareable link copied to clipboard');
     }).catch(err => {
         console.error('Failed to copy: ', err);
@@ -6684,7 +6684,8 @@ async function copyToClipboard(fileId, name = 'Marko') {
                 console.error('Error sharing:', shareError);
             }
         } else {
-            alert('Share link has been copied to clipboard.');
+            console.log("copied to clipboard");
+            //alert('Share link has been copied to clipboard.');
         }
 }
 
