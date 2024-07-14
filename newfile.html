@@ -2867,6 +2867,7 @@ function updateUI(fileId, name) {
     });
     let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
      // Remove swipe event listeners where it applies
+    let wrapper = document.querySelector('.bookmark-wrapper'); // Replace with your actual wrapper element
     if (isTouchDevice) {
         wrapper.removeEventListener('touchstart', handleTouchStart);
         wrapper.removeEventListener('touchend', handleTouchEnd);
