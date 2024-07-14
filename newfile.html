@@ -2605,13 +2605,13 @@ if ( document.getElementById('new-link-url') !== null && document.getElementById
 }           
             if (alertUrl !== null) {
                const alertStatus = sessionStorage.getItem('alertStatus');
-               if (alertStatus === 'off') {
-                // Set alertStatus back to 'on' for future alerts and skip showing the alert
-                sessionStorage.setItem('alertStatus', 'on');
-            } else {
-                // Show the alert
+               if (alertStatus !== 'off') {
+                  // Show the alert
                 alert(`Success! You just added a Marko for ${title}`);
                 location.reload(); 
+            } else {
+                // Set alertStatus back to 'on' for future alerts and skip showing the alert
+                sessionStorage.setItem('alertStatus', 'on');
             }
               console.log("added Marko!");
             } else {
@@ -3144,13 +3144,13 @@ function changeURL(url) {
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
     const alertStatus = sessionStorage.getItem('alertStatus');
 
-            if (alertStatus === 'off') {
-                // Set alertStatus back to 'on' for future alerts and skip showing the alert
-                sessionStorage.setItem('alertStatus', 'on');
-            } else {
+            if (alertStatus !== 'off') {
                 // Show the alert
                 alert(`Success! You just added a Marko for ${title}`);
                 window.location.href = window.location.origin + window.location.pathname;
+            } else {
+                // Set alertStatus back to 'on' for future alerts and skip showing the alert
+                sessionStorage.setItem('alertStatus', 'on');
             }
     return linkData;
 }
