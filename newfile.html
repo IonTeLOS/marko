@@ -2604,6 +2604,7 @@ if ( document.getElementById('new-link-url') !== null && document.getElementById
   alertUrl = null; // None of the values are valid
 }           
             if (alertUrl !== null) {
+               const alertStatus = sessionStorage.getItem('alertStatus');
                if (alertStatus === 'off') {
                 // Set alertStatus back to 'on' for future alerts and skip showing the alert
                 sessionStorage.setItem('alertStatus', 'on');
@@ -3141,7 +3142,6 @@ function changeURL(url) {
     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     bookmarks.push(linkData);
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-    const alertStatus = sessionStorage.getItem('alertStatus');
     const alertStatus = sessionStorage.getItem('alertStatus');
 
             if (alertStatus === 'off') {
