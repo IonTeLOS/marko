@@ -1299,10 +1299,20 @@ input:focus {
 .btn:hover {
   background-color: #303f9f;
 }
-        #dropdownContainer {
-            position: relative; /* Ensure positioning context for z-index */
-            z-index: 100000; /* Set high z-index */
-        }
+         #dropdownContainer {
+        font-family: Arial, sans-serif;
+    }
+    #contactBookmarks {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        -webkit-appearance: menulist !important;
+        -moz-appearance: menulist !important;
+        appearance: menulist !important;
+    }
+    #contactBookmarks option {
+        display: block !important;
+    }
   </style>   
 
 <script type=module>
@@ -4959,8 +4969,9 @@ function createContainer() {
         minHeight: '100px',
         display: 'flex',
         flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
+        justifyContent: 'flex-start', // Changed from 'center'
+        alignItems: 'stretch', // Changed from 'center'
+        overflow: 'visible' // Ensure dropdown isn't cut off
     });
     document.body.appendChild(container);
     console.log("Container added to body");
@@ -4986,10 +4997,17 @@ function showContactBookmarksDropdown() {
 
     const select = document.createElement('select');
     select.id = 'contactBookmarks';
-    select.style.width = '100%';
-    select.style.padding = '5px';
-    select.style.fontSize = '16px';
-    select.style.backgroundColor = 'yellow'; // Temporary color for visibility
+    Object.assign(select.style, {
+        width: '100%',
+        padding: '10px',
+        fontSize: '16px',
+        backgroundColor: 'yellow', // Keep this for debugging
+        border: '1px solid black',
+        borderRadius: '4px',
+        appearance: 'menulist', // This ensures the dropdown arrow appears
+        display: 'block',
+        marginTop: '10px'
+    });
 
     const defaultOption = document.createElement('option');
     defaultOption.textContent = 'Select a contact bookmark';
@@ -5013,7 +5031,11 @@ function showContactBookmarksDropdown() {
     container.appendChild(select);
     console.log("Dropdown added to container");
     console.log("Select element in DOM:", !!document.getElementById('contactBookmarks'));
-    console.log("Number of options:", select.options.length);
+    console.log("Number of options:", select.options.length);\
+      // Force a redraw of the select element
+    select.style.display = 'none';
+    select.offsetHeight; // This line triggers a reflow
+    select.style.display = 'block';
 }
 // core action to create an html document for the user to share their links - upload the document on a server
 // this also gives the option to create a sharable link with query parameters that stores the links and can it load it in app by a different user    
