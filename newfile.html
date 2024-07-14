@@ -4942,91 +4942,79 @@ function openAdd() {
       bookmark.addEventListener('touchcancel', () => { /* ... */ });
     });    
 function createContainer() {
-    // Create the container
     const container = document.createElement('div');
     container.id = 'dropdownContainer';
-
-    // Apply styles to center and position above other elements
-    container.style.position = 'fixed';
-    container.style.top = '50%';
-    container.style.left = '50%';
-    container.style.transform = 'translate(-50%, -50%)';
-    container.style.zIndex = '10000';
-    container.style.backgroundColor = 'white';
-    container.style.padding = '20px';
-    container.style.border = '1px solid #ccc';
-    container.style.borderRadius = '5px';
-    container.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
- container.style.minWidth = '200px';
-    container.style.minHeight = '50px';
-    container.style.border = '2px solid red'; // Make it very visible for debugging
-    // Append the container to the body
+    Object.assign(container.style, {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        zIndex: '10000',
+        backgroundColor: 'white',
+        padding: '20px',
+        border: '2px solid red',
+        borderRadius: '5px',
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        minWidth: '300px',
+        minHeight: '100px',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+    });
     document.body.appendChild(container);
+    console.log("Container added to body");
 }
-      // Function to display contact bookmarks dropdown
-        function showContactBookmarksDropdown() {
-          createContainer();
-          console.log("All bookmarks in localStorage:", JSON.parse(localStorage.getItem('bookmarks')));
+function showContactBookmarksDropdown() {
+    createContainer();
+    console.log("Container created");
 
-
-            // Retrieve bookmarks array from localStorage
-   console.log("Container created");
+    const container = document.getElementById('dropdownContainer');
+    container.innerHTML = 'Loading...';
 
     const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     console.log("Bookmarks retrieved:", bookmarks);
 
-    const contactBookmarks = bookmarks.filter(bookmark => {
-        if (!Array.isArray(bookmark) || bookmark.length < 3) {
-            console.error("Invalid bookmark format:", bookmark);
-            return false;
-        }
-        return bookmark[0] === 'contact';
-    });
-          console.log("Contact bookmarks:", contactBookmarks);
-          if (contactBookmarks.length === 0) {
-    const container = document.getElementById('dropdownContainer');
-    container.innerHTML = 'No contact bookmarks found.';
-    container.style.color = 'red';
-    return;
-}
+    const contactBookmarks = bookmarks.filter(bookmark => bookmark[0] === 'contact');
+    console.log("Contact bookmarks:", contactBookmarks);
 
-            // Create select element
+    if (contactBookmarks.length === 0) {
+        container.innerHTML = 'No contact bookmarks found.';
+        container.style.color = 'red';
+        return;
+    }
+
     const select = document.createElement('select');
-    select.setAttribute('id', 'contactBookmarks');
+    select.id = 'contactBookmarks';
     select.style.width = '100%';
     select.style.padding = '5px';
     select.style.fontSize = '16px';
-          select.setAttribute('id', 'contactBookmarks');
+    select.style.backgroundColor = 'yellow'; // Temporary color for visibility
 
-            // Create default option
-            const defaultOption = document.createElement('option');
-            defaultOption.textContent = 'Select a contact bookmark';
-            defaultOption.disabled = true;
-            defaultOption.selected = true;
-            select.appendChild(defaultOption);
+    const defaultOption = document.createElement('option');
+    defaultOption.textContent = 'Select a contact bookmark';
+    defaultOption.disabled = true;
+    defaultOption.selected = true;
+    select.appendChild(defaultOption);
 
-            // Populate select with options
-            contactBookmarks.forEach(bookmark => {
-                const option = document.createElement('option');
-                option.textContent = bookmark[2]; // Display bookmark name
-                option.value = bookmark[1]; // Set value as fileId
-                select.appendChild(option);
-            });
+    contactBookmarks.forEach(bookmark => {
+        const option = document.createElement('option');
+        option.textContent = bookmark[2]; // Display bookmark name
+        option.value = bookmark[1]; // Set value as fileId
+        select.appendChild(option);
+    });
 
-            // Event listener for selection
-            select.addEventListener('change', function() {
-                const selectedFileId = this.value;
-                // Further process selected fileId as needed
-                console.log('Selected FileId:', selectedFileId);
-                // Example: Redirect to a page using the fileId
-                // window.location.href = 'https://example.com/' + selectedFileId;
-            });
+    select.addEventListener('change', function() {
+        const selectedFileId = this.value;
+        console.log('Selected FileId:', selectedFileId);
+    });
 
-    const container = document.getElementById('dropdownContainer');
-    container.innerHTML = ''; // Clear previous content
+    container.innerHTML = '';
     container.appendChild(select);
     console.log("Dropdown added to container");
-        }
+    console.log("Select element in DOM:", !!document.getElementById('contactBookmarks'));
+    console.log("Number of options:", select.options.length);
+}
 // core action to create an html document for the user to share their links - upload the document on a server
 // this also gives the option to create a sharable link with query parameters that stores the links and can it load it in app by a different user    
 async function downloadPage() {
