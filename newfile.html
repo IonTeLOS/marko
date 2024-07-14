@@ -2865,16 +2865,7 @@ function updateUI(fileId, name) {
     deleteIcons.forEach(icon => {
         icon.style.display = 'none';
     });
-    let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-     // Remove swipe event listeners where it applies
-    let wrapper = document.querySelector('.bookmark-wrapper'); // Replace with your actual wrapper element
-    if (isTouchDevice) {
-        wrapper.removeEventListener('touchstart', handleTouchStart);
-        wrapper.removeEventListener('touchend', handleTouchEnd);
-    } else {
-        wrapper.removeEventListener('mousedown', handleMouseDown);
-        wrapper.removeEventListener('mouseup', handleMouseUp);
-    }
+    // TODO: add a "viewingNow" sessionStorage item to deactivate swipe while on common or public Marko collections
         // Hide non-relevant context menu items
     const contextMenuItems = [
         'context-delete',
