@@ -2865,7 +2865,8 @@ function updateUI(fileId, name) {
     deleteIcons.forEach(icon => {
         icon.style.display = 'none';
     });
-     // Remove swipe event listeners
+    let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+     // Remove swipe event listeners where it applies
     if (isTouchDevice) {
         wrapper.removeEventListener('touchstart', handleTouchStart);
         wrapper.removeEventListener('touchend', handleTouchEnd);
@@ -2873,6 +2874,20 @@ function updateUI(fileId, name) {
         wrapper.removeEventListener('mousedown', handleMouseDown);
         wrapper.removeEventListener('mouseup', handleMouseUp);
     }
+        // Hide non-relevant context menu items
+    const contextMenuItems = [
+        'context-delete',
+        'context-moveup',
+        'context-movedown',
+        'context-divider',
+        'context-rename'
+    ];
+    contextMenuItems.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.display = 'none';
+        }
+    });
 }
 }
 
@@ -6799,37 +6814,37 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
             <div class="ml-3"></div>
         </div>
         <hr class="my-2 border-gray-300 dark:border-gray-700" />
-        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+        <div id="context-delete" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
             onclick="deleteLink(`${currentIndex}`)">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">delete</span>
             <div class="ml-3">Delete Marko</div>
         </div>
-        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+        <div id="context-moveup" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
             onclick="moveMarkoUp(`${currentIndex}`)">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">arrow_upward</span>
             <div class="ml-3">Move One Up</div>
         </div>
-        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+        <div id="context-movedown" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
             onclick="moveMarkoDown(`${currentIndex}`)">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">vertical_align_bottom</span>
             <div class="ml-3">Move to Bottom</div>
         </div>
-        <hr class="my-2 border-gray-300 dark:border-gray-700" />
-        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center" onclick="constructLinkFromBookmark(`${currentIndex}`, true)">
+        <hr id="context-divider" class="my-2 border-gray-300 dark:border-gray-700" />
+        <div id="context-share" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center" onclick="constructLinkFromBookmark(`${currentIndex}`, true)">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">link</span>
             <div class="ml-3">Share Marko</div>
         </div>
-                <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+          <div id="context-settings" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
             onclick="openSettings()">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">settings</span>
             <div class="ml-3">Settings</div>
         </div>
-              <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+              <div id="context-rename" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
             onclick="renameMarko(`${currentIndex}`)">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">edit</span>
             <div class="ml-3">Rename</div>
         </div>
-        <div class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+        <div id="context-reminder" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
             onclick="addReminderToMarko(`${currentIndex}`)">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">notifications</span>
             <div class="ml-3">Add Reminder</div>
