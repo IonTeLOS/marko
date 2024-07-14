@@ -2768,7 +2768,7 @@ async function syncAndShowPublicMarkos() {
 }
 
 // TODO add a default for the cases the commonMarko added has already been deleted by its creator      
-async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjUE', title = 'Shared with me') {
+async function syncAndShowCommonMarko(fileId = '1mU8pqKWYinbaHHFvOYlsuz9-RytEbKwV', title = 'Shared with me') {
     const nameWithoutSpaces = title.replace(/\s+/g, '');
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
@@ -3129,7 +3129,7 @@ function handleSharedLink(url, title, text) {
     const compressed = params.get('data');
     const isGlobal = params.get('globalMarko');
     const isCommon = params.get('commonMarko');
-    const commonMarko = params.get('common-marko');
+    const commonMarkoId = params.get('common-marko');
     const commonName = params.get('common-name');
     const purelink = params.get('friendlink');
     const sharedTitle = params.get('title');
@@ -3283,21 +3283,21 @@ console.log("No valid sharing data found.");
         }
     }
 
-if (commonMarko && isCommon) {
+if (commonMarkoId && isCommon) {
     let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     
     // Check if commonMarko already exists in localStorage
-    if (allCommonMarkos.includes(commonMarko)) {
-        console.log(`This Marko ${commonMarko} has already been added.`);
+    if (allCommonMarkos.includes(commonMarkoId)) {
+        console.log(`A Marko for ${commonName} has already been added.`);
         alert('You already have this contact!');
     } else {
         // Prompt user to confirm adding as a friend
         if (confirm(`Do you want to add ${params.get('common-name')} as a friend?`)) {
-            allCommonMarkos.push(commonMarko);
+            allCommonMarkos.push(commonMarkoId);
             // Store updated allCommonMarkos array back into localStorage
             localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
             // Call function to sync and show commonMarko
-            syncAndShowCommonMarko(commonMarko, commonName);
+            syncAndShowCommonMarko(commonMarkoId, commonName);
         } else {
             console.log('User rejected friend request.');
         }
