@@ -2775,7 +2775,7 @@ async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjU
     }
     try {
         // refresh token
-        initializeGoogleIdentity();
+        await initializeGoogleIdentity();
         const accessToken = localStorage.getItem('accessToken');
         // get file with given id from Google Drive
         const fileResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${API_KEY}`, {
@@ -2809,24 +2809,24 @@ async function syncAndShowCommonMarko(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjU
             detectTheme();
             checkConnection();
            // check that this common Marko doesnt exist already
-           for (let i = 0; i < localStorage.length; i++) {
-           // Get the key at the current index
-           let key = localStorage.key(i);
-        
-           // Get the value associated with the current key
-           let storedValue = localStorage.getItem(key);
-        
-           // Check if the value matches the expected value, skip adding if exists and directly show
-        if (!storedValue === commonMarko) {
-           console.log(`This Marko "${commonMarko}" has already been added.`);
-          // add a Marko for this common Marko
-           createMarko('contact', `marko:common-${nameWithoutSpaces}-${fileId}`, `${nameWithoutSpaces}`, '', '');
-        }
+          // Retrieve or initialize commonMarkos array from localStorage
+          let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+
+          if (!allCommonMarkos.includes(fileId)) {
+             // Add fileId to allCommonMarkos array
+             allCommonMarkos.push(fileId);
+             // Store updated allCommonMarkos array back into localStorage
+            localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
+            // add a Marko for this common Marko
+            createMarko('contact', `marko:common-${nameWithoutSpaces}-${fileId}`, `${nameWithoutSpaces}`, '', '');
+          } else { 
+           console.log(`This Marko ${commonMarko} has already been added.`);
+        }   
             alert(`Synced. Showing Markos from ${title}. Enjoy!`);
             updateUI(fileId, nameWithoutSpaces);
         } else {
             console.error('Bookmarks not found in fileContent');
-            alert('Error: Required data (Markos) not found in the file content.');
+            alert('Error: no Markos found in the file content.');
         }
     } catch (error) {
         console.error('Error:', error.message);
@@ -3282,11 +3282,27 @@ console.log("No valid sharing data found.");
         }
     }
 
-    if (commonMarko && isCommon) {
-          if (confirm("Do you want to add" + params.get('common-name') + as friend?")) {
-              syncAndShowCommonMarko(commonMarko, commonName);
-          }
+if (commonMarko && isCommon) {
+    let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+    
+    // Check if commonMarko already exists in localStorage
+    if (allCommonMarkos.includes(commonMarko)) {
+        console.log(`This Marko ${commonMarko} has already been added.`);
+        alert('You already have this contact!');
+    } else {
+        // Prompt user to confirm adding as a friend
+        if (confirm(`Do you want to add ${params.get('common-name')} as a friend?`)) {
+            allCommonMarkos.push(commonMarko);
+            // Store updated allCommonMarkos array back into localStorage
+            localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
+            // Call function to sync and show commonMarko
+            syncAndShowCommonMarko(commonMarko, commonName);
+        } else {
+            console.log('User rejected friend request.');
+        }
     }
+}  
+    
     
     if (compressed && isGlobal) {
         try {
@@ -4252,8 +4268,8 @@ iframe.srcdoc = `
          if (firstDashIndex !== -1) {
             let commonName = restOfString.substring(0, firstDashIndex);
             let commonId = restOfString.substring(firstDashIndex + 1);
-           console.log(`Title of common: ${commonName}, FileId: ${commonId}`);
-           syncAndShowCommonMarko(commonId, commonName);
+            syncAndShowCommonMarko(commonId, commonName);
+            console.log(`Title of common Marko: ${commonName}, its FileId: ${commonId}`);
     }
           }
             if (url.startsWith("friends/")) {
@@ -5882,12 +5898,13 @@ const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
 const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
 const FILE_NAME = 'bookmarksMarko.txt';
 const PUBLIC_FILE = 'myMarkos.json';  
+const COMMON_FILE = "commonMarko";  
 const APP_ID = 'marko';
 
 let tokenClient;
 let loggedInUserEmail;
 
-function initializeGoogleIdentity() {
+async function initializeGoogleIdentity() {
     tokenClient = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
@@ -6240,7 +6257,7 @@ function setFilePublic(accessToken, fileId) {
     });
 }
 
-async function createUpdateCommonMarko(fileName = 'commonMarko.json') {
+async function createUpdateCommonMarko() {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
         return;
@@ -6249,36 +6266,58 @@ async function createUpdateCommonMarko(fileName = 'commonMarko.json') {
     const syncIcon = document.getElementById('syncToPublicWritableIcon');
     syncButton.disabled = true;
     syncIcon.classList.add('spinning');
+  
+    // Prompt user to input name of Marko
+    let userInput = prompt("Do you want to save your Markos to Google Drive as a publicly accessible file? If yes, enter a filename:");
 
-    if (!confirm("Are you sure you want to save your Markos to Google Drive as a publicly writable file?")) {
-        stopSpinning(syncButton, syncIcon);
-        return;
+    // Handle user input
+    let isUpdate = 'no'; // Default value for isUpdate
+    let fileName = 'commonMarko'; // Default value for fileName
+
+    if (userInput === null) {
+        console.log("User canceled the prompt. Continuing to update..");
+        isUpdate = 'yes'; // Change isUpdate to 'yes' if user cancels
+        sessionStorage.setItem('isUpdate', isUpdate); // Store fileName in sessionStorage
+        // TODO: Add here selection of current common markos to update 
+    } else {
+        let sanitizedInput = userInput.replace(/[^\w-]/g, '');
+        fileName = sanitizedInput;
+        console.log("Updated fileName:", fileName);
+        sessionStorage.setItem('commonFileName', fileName); // Store fileName in sessionStorage
     }
 
+    // Retrieve isUpdate and commonFileName values from sessionStorage or use default
+    isUpdate = sessionStorage.getItem('isUpdate') || isUpdate;
+    fileName = sessionStorage.getItem('commonFileName') || fileName;
+
+  
     try {
         const accessToken = await ensureValidToken();
         const fileData = await findExistingPublicWritableFile(accessToken, fileName);
         const fileContent = await prepareFileContent();
         let result;
-        if (fileData) {
+        if (fileData && isUpdate === 'yes') {
             result = await updateExistingWritableFile(accessToken, fileData.id, fileContent);
         } else {
-            const fileNa = 'commonMarko.json';
-            result = await createNewPublicWritableFile(accessToken, fileContent, fileNa);
+            const randomU = generateUUID();
+            const commonPFileName = `${fileName}${randomU}.json` || `${COMMON_FILE}${randomU}.json`;
+            result = await createNewPublicWritableFile(accessToken, fileContent, commonPFileName, fileName);
         }
 
         if (!result || !result.id) {
             throw new Error('Failed to save file: No file data returned');
         }
 
-        const shareableLink = `https://drive.google.com/file/d/${result.id}/view?usp=sharing`;
-        copyToClipboard(result.id);
-
+        //const shareableLink = `https://drive.google.com/file/d/${result.id}/view?usp=sharing`;
+        
+        copyToClipboard(result.id, fileName);
         // Store friend-uuid and fileId in localStorage
         const content = JSON.parse(fileContent);
-                    const fileNa = 'commonMarko.json';
+      
+       
+           createMarko('contact', `marko:common-${nameWithoutSpaces}-${fileId}`, `${nameWithoutSpaces}`, '', '');
 
-        alert(`Data saved to Google Drive as ${fileNa}\nShareable link copied to clipboard.`);
+        alert(`Data saved to Google Drive as ${commonFileName}\nShareable link copied to clipboard.`);
     } catch (error) {
         console.error('Error in createUpdateCommonMarko:', error);
         alert('An error occurred: ' + error.message);
@@ -6400,7 +6439,7 @@ async function updateExistingWritableFile(accessToken, fileId, content) {
     }
 }
 
-async function createNewPublicWritableFile(accessToken, fileContent, fileName) {
+async function createNewPublicWritableFile(accessToken, fileContent, fileName, userFacingName) {
     const metadata = {
         name: fileName,
         mimeType: 'application/json'
@@ -6450,13 +6489,20 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName) {
         console.log('File created and content uploaded:', uploadResult);
 
         // Set permissions to make the file publicly writable
-    await setFileUserWritable(accessToken, fileId);
+
+    // currently not implemented - share file with particular user 
+    // await setFileUserWritable(accessToken, fileId);
     await setFilePublic(accessToken, fileId);
-        return uploadResult;
+    createMarko('contact', `marko:common-${userFacingName}-${fileId}`, `${userFacingName}`, '', '');
+    let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+    allCommonMarkos.push(fileId);
+    // Store updated allCommonMarkos array back into localStorage
+    localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
+    return uploadResult;
     } catch (error) {
         console.error('Error in createNewPublicWritableFile:', error);
         throw new Error('An error occurred while creating and uploading the file: ' + error.message);
-    }
+    } 
 }
 
 async function setFileUserWritable(accessToken, fileId) {
@@ -6536,8 +6582,8 @@ async function unlockFile(fileId) {
     return await response.json();
 }
 
-async function copyToClipboard(fileId) {
-    const url = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&commonMarko=true`;
+async function copyToClipboard(fileId, name = 'Marko') {
+    const url = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${name}&commonMarko=true`;
 
     navigator.clipboard.writeText(url).then(() => {
         console.log('Shareable link copied to clipboard');
@@ -6548,7 +6594,7 @@ async function copyToClipboard(fileId) {
         if (navigator.share) {
             try {
                 await navigator.share({
-                    title: `${fileId}`,
+                    title: `${name}`,
                     text: 'This is my common Marko link!',
                     url: url,
                 });
@@ -6788,7 +6834,7 @@ The appropriate solution will depend on your specific requirements and the natur
     <span id="syncToIcon" class="material-icons">arrow_circle_up</span>
     Sync TO Drive
 </button>
-<button id="syncToPublicWritableDrive" class="g-button" onclick="writeToPublicWritableFile()">
+<button id="syncToPublicWritableDrive" class="g-button" onclick="createUpdateCommonMarko()">
     <span id="syncToPublicWritableIcon" class="material-icons">public</span>
     Make public
 </button>                  
