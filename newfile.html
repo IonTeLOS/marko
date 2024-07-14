@@ -3139,11 +3139,13 @@ function changeURL(url) {
     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     bookmarks.push(linkData);
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    const alertStatus = sessionStorage.getItem('alertStatus');
     if (alertStatus !== 'off') {
         alert(`Success! You just added a Marko for ${title}`);
         // Reload the page
         window.location.href = window.location.origin + window.location.pathname;
     }
+    sessionStorage.setItem('alertStatus', 'on');
     return linkData;
 }
 
