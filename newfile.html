@@ -1304,54 +1304,7 @@ input:focus {
             z-index: 100000; /* Set high z-index */
         }
   </style>   
-<script>
-// Function to display contact bookmarks dropdown
-        function showContactBookmarksDropdown() {
-            // Retrieve bookmarks array from localStorage
-            const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
-            // Filter bookmarks of type 'contact'
-            const contactBookmarks = bookmarks.filter(bookmark => bookmark[0] === 'contact');
-
-            if (contactBookmarks.length === 0) {
-                alert('No contact bookmarks found.');
-                return;
-            }
-
-            // Create select element
-            const select = document.createElement('select');
-            select.setAttribute('id', 'contactBookmarks');
-
-            // Create default option
-            const defaultOption = document.createElement('option');
-            defaultOption.textContent = 'Select a contact bookmark';
-            defaultOption.disabled = true;
-            defaultOption.selected = true;
-            select.appendChild(defaultOption);
-
-            // Populate select with options
-            contactBookmarks.forEach(bookmark => {
-                const option = document.createElement('option');
-                option.textContent = bookmark[2]; // Display bookmark name
-                option.value = bookmark[1]; // Set value as fileId
-                select.appendChild(option);
-            });
-
-            // Event listener for selection
-            select.addEventListener('change', function() {
-                const selectedFileId = this.value;
-                // Further process selected fileId as needed
-                console.log('Selected FileId:', selectedFileId);
-                // Example: Redirect to a page using the fileId
-                // window.location.href = 'https://example.com/' + selectedFileId;
-            });
-
-            // Display select dropdown to the user
-            const container = document.getElementById('dropdownContainer');
-            container.innerHTML = ''; // Clear previous content
-            container.appendChild(select);
-        }
-</script>
 <script type=module>
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js';
@@ -5965,7 +5918,52 @@ function openLink(url) {
         alert(`Invalid JSON array. Please enter a valid array. Error: ${error.message}`);
     }
 }
-      
+// Function to display contact bookmarks dropdown
+        function showContactBookmarksDropdown() {
+            // Retrieve bookmarks array from localStorage
+            const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+
+            // Filter bookmarks of type 'contact'
+            const contactBookmarks = bookmarks.filter(bookmark => bookmark[0] === 'contact');
+
+            if (contactBookmarks.length === 0) {
+                alert('No contact bookmarks found.');
+                return;
+            }
+
+            // Create select element
+            const select = document.createElement('select');
+            select.setAttribute('id', 'contactBookmarks');
+
+            // Create default option
+            const defaultOption = document.createElement('option');
+            defaultOption.textContent = 'Select a contact bookmark';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            select.appendChild(defaultOption);
+
+            // Populate select with options
+            contactBookmarks.forEach(bookmark => {
+                const option = document.createElement('option');
+                option.textContent = bookmark[2]; // Display bookmark name
+                option.value = bookmark[1]; // Set value as fileId
+                select.appendChild(option);
+            });
+
+            // Event listener for selection
+            select.addEventListener('change', function() {
+                const selectedFileId = this.value;
+                // Further process selected fileId as needed
+                console.log('Selected FileId:', selectedFileId);
+                // Example: Redirect to a page using the fileId
+                // window.location.href = 'https://example.com/' + selectedFileId;
+            });
+
+            // Display select dropdown to the user
+            const container = document.getElementById('dropdownContainer');
+            container.innerHTML = ''; // Clear previous content
+            container.appendChild(select);
+        }
 </script>
         <script>
         function showPDFLightbox(pdfUrl, title) {
