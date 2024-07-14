@@ -6501,7 +6501,7 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
     //const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${userFacingName}&commonMarko=true`;
       
     // create a Marko for the newly created file
-    const linkUrl = `marko:common-${userFacingName}-${result.id}`;
+    const linkUrl = `marko:common-${userFacingName}-${fileId}`;
     createMarko('contact', linkUrl, `${userFacingName}`, '', '');
     let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     allCommonMarkos.push(fileId);
