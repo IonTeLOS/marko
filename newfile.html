@@ -4305,7 +4305,9 @@ iframe.srcdoc = `
             } else if (action === showWindow) {
                 showWindow(data);
             } else if (action === showPDFLightbox) {
-                showPDFLightbox(data, extras);                
+                showPDFLightbox(data, extras);
+            } else if (action === syncAndShowCommonMarko) {
+                syncAndShowCommonMarko(data, extras);
             } else if (action === downloadFile) {
                 downloadFile(data, extras);
             } else if (action === showPost) {
