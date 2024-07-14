@@ -4957,27 +4957,50 @@ function createContainer() {
     container.style.border = '1px solid #ccc';
     container.style.borderRadius = '5px';
     container.style.boxShadow = '0 4px 6px rgba(0, 0, 0, 0.1)';
-
+ container.style.minWidth = '200px';
+    container.style.minHeight = '50px';
+    container.style.border = '2px solid red'; // Make it very visible for debugging
     // Append the container to the body
     document.body.appendChild(container);
 }
       // Function to display contact bookmarks dropdown
         function showContactBookmarksDropdown() {
           createContainer();
+          console.log("All bookmarks in localStorage:", JSON.parse(localStorage.getItem('bookmarks')));
+    const contactBookmarks = bookmarks.filter(bookmark => {
+        if (!Array.isArray(bookmark) || bookmark.length < 3) {
+            console.error("Invalid bookmark format:", bookmark);
+            return false;
+        }
+        return bookmark[0] === 'contact';
+    });
+          if (contactBookmarks.length === 0) {
+    const container = document.getElementById('dropdownContainer');
+    container.innerHTML = 'No contact bookmarks found.';
+    container.style.color = 'red';
+    return;
+}
             // Retrieve bookmarks array from localStorage
-            const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+   console.log("Container created");
 
-            // Filter bookmarks of type 'contact'
-            const contactBookmarks = bookmarks.filter(bookmark => bookmark[0] === 'contact');
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    console.log("Bookmarks retrieved:", bookmarks);
 
-            if (contactBookmarks.length === 0) {
-                alert('No contact bookmarks found.');
-                return;
-            }
+    const contactBookmarks = bookmarks.filter(bookmark => bookmark[0] === 'contact');
+    console.log("Contact bookmarks:", contactBookmarks);
+
+    if (contactBookmarks.length === 0) {
+        alert('No contact bookmarks found.');
+        return;
+    }
 
             // Create select element
-            const select = document.createElement('select');
-            select.setAttribute('id', 'contactBookmarks');
+    const select = document.createElement('select');
+    select.setAttribute('id', 'contactBookmarks');
+    select.style.width = '100%';
+    select.style.padding = '5px';
+    select.style.fontSize = '16px';
+          select.setAttribute('id', 'contactBookmarks');
 
             // Create default option
             const defaultOption = document.createElement('option');
@@ -5003,10 +5026,10 @@ function createContainer() {
                 // window.location.href = 'https://example.com/' + selectedFileId;
             });
 
-            // Display select dropdown to the user
-            const container = document.getElementById('dropdownContainer');
-            container.innerHTML = ''; // Clear previous content
-            container.appendChild(select);
+    const container = document.getElementById('dropdownContainer');
+    container.innerHTML = ''; // Clear previous content
+    container.appendChild(select);
+    console.log("Dropdown added to container");
         }
 // core action to create an html document for the user to share their links - upload the document on a server
 // this also gives the option to create a sharable link with query parameters that stores the links and can it load it in app by a different user    
