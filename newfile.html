@@ -1736,7 +1736,9 @@ document.addEventListener('DOMContentLoaded', checkInitialState);
 let linkTypeSelect;
 let iconSourceSelect;
 let currentLink = null; // Global variable to store current link    
-let allCommonMarkos = [];      
+let allCommonMarkos = [];    
+let myCommonMarkos = [];
+      
 
 document.addEventListener('DOMContentLoaded', function() {
     // definitions of elements
@@ -2811,7 +2813,7 @@ async function syncAndShowCommonMarko(fileId, title = 'Shared with me') {
             checkConnection();
            // check that this common Marko doesnt exist already
           // Retrieve or initialize commonMarkos array from localStorage
-          let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+          allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
 
           if (!allCommonMarkos.includes(fileId)) {
              // Add fileId to allCommonMarkos array
@@ -3306,7 +3308,7 @@ console.log("No valid sharing data found.");
     }
 
 if (commonMarkoId && isCommon) {
-    let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+    allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     
     // Check if commonMarko already exists in localStorage
     if (allCommonMarkos.includes(commonMarkoId)) {
@@ -6549,12 +6551,12 @@ async function createNewPublicWritableFile(accessToken, fileContent, fileName, u
     // create a Marko for the newly created file
     createMarko('contact', `${fileId}`, `${userFacingName}`, '', '');
     // add to myCommons in localStorage to updateUI accordingly
-    let myCommonMarkos = JSON.parse(localStorage.getItem('myCommons')) || [];
+    myCommonMarkos = JSON.parse(localStorage.getItem('myCommons')) || [];
     myCommonMarkos.push(fileId);
     localStorage.setItem('myCommons', JSON.stringify(allCommonMarkos));
 
     // add reference to localStorage so that I don't add multiple Markos for same file
-    let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+    allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
     allCommonMarkos.push(fileId);
     // Store updated allCommonMarkos array back into localStorage
     localStorage.setItem('commonMarkos', JSON.stringify(allCommonMarkos));
