@@ -4901,14 +4901,17 @@ function sharePage() {
     // Fallback for browsers that do not support Web Share API
     const url = window.location.href;
     const tempInput = document.createElement('input');
-    document.body.appendChild(tempInput);
+    tempInput.style.position = 'absolute';
+    tempInput.style.left = '-9999px';
     tempInput.value = url;
+    document.body.appendChild(tempInput);
     tempInput.select();
     document.execCommand('copy');
     document.body.removeChild(tempInput);
     alert("Link has been copied to your clipboard.");
   }
 }
+
 
 
 function hideInstallBanner(event) {
