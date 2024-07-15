@@ -7585,34 +7585,6 @@ function constructLinkFromBookmark(index, full) {
   }
   return shareLink;
 }
-
-function parseMarkoLink(url) {
-  const parsedUrl = new URL(url);
-  const type = parsedUrl.searchParams.get('type');
-  const action = parsedUrl.searchParams.get('action');
-  const title = parsedUrl.searchParams.get('title');
-  const icon = parsedUrl.searchParams.get('icon');
-  const color = parsedUrl.searchParams.get('color');
-  const extra = parsedUrl.searchParams.get('extra'); // Retrieve extra parameter if it exists
-
-  // If the action contains multiple arguments, split them into an array
-  const actionArgs = action ? action.split(',').map(arg => arg.trim()) : [];
-
-  // Confirm prompt to create Marko
-  if (confirm("Do you want to create Marko with these parameters?")) {
-    // Call createMarkoFunction with parameters
-    createMarko(type, actionArgs, title, icon, color, extra);
-  }
-
-  return {
-    type,
-    action: actionArgs,
-    title,
-    icon,
-    color,
-    extra // Include extra in the returned object just in case to make this extandable
-  };
-}
     
 </script>
 </body>
