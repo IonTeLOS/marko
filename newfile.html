@@ -3191,9 +3191,13 @@ function handleSharedLink(url, title, text) {
     const reminder = params.get('uuid');
     const sharedUrl = params.get('url');
     const sharedText = params.get('text');
-    const createMarko = params.get('createMarko');
 
+    if (createMarko === 'true') {
+      const url = window.location.href;
+      parseMarkoLink(url);
+    }
 
+    /*
     // Subfunction to handle cases with createMarko=true and relevant params
     function handleCreateMarko(params) {
         const { createMarko, type, action, title, icon, color } = params;
@@ -3218,8 +3222,8 @@ function handleSharedLink(url, title, text) {
 
     
     handleCreateMarko(params);
-
-
+*/
+    
 // Case 4: Handling multiple shared parameters
 const seemsLikeShared = (sharedTitle ? 1 : 0) + (sharedUrl ? 1 : 0) + (sharedText ? 1 : 0);
 if (seemsLikeShared >= 2) {
@@ -7559,6 +7563,7 @@ function constructLinkFromBookmark(index, full) {
   url.searchParams.append('title', title);
   url.searchParams.append('icon', icon);
   url.searchParams.append('color', color);
+  url.searchParams.append('createMarko', 'true');
 
   const shareLink = url.toString();
   const shareTitle = "Use Marko to open..";
@@ -7592,23 +7597,31 @@ function constructLinkFromBookmark(index, full) {
   return shareLink;
 }
 
-function parseBookmarkLink(url) {
+function parseMarkoLink(url) {
   const parsedUrl = new URL(url);
   const type = parsedUrl.searchParams.get('type');
   const action = parsedUrl.searchParams.get('action');
   const title = parsedUrl.searchParams.get('title');
   const icon = parsedUrl.searchParams.get('icon');
   const color = parsedUrl.searchParams.get('color');
-  
-  // If the action contains multiple arguments, you might need to split them
+  const extra = parsedUrl.searchParams.get('extra'); // Retrieve extra parameter if it exists
+
+  // If the action contains multiple arguments, split them into an array
   const actionArgs = action ? action.split(',').map(arg => arg.trim()) : [];
+
+  // Confirm prompt to create Marko
+  if (confirm("Do you want to create Marko with these parameters?")) {
+    // Call createMarkoFunction with parameters
+    createMarko(type, actionArgs, title, icon, color, extra);
+  }
 
   return {
     type,
     action: actionArgs,
     title,
     icon,
-    color
+    color,
+    extra // Include extra in the returned object just in case to make this extandable
   };
 }
     
