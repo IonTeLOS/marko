@@ -4027,24 +4027,34 @@ function renderLinks() {
             linkContainer.innerHTML = ''; // Clear the container
             // Add no-select class to prevent text selection
             document.body.classList.add('no-select');
-            const defaultIconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg';  // Replace with an actual default icon URL
+            const defaultIconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg';  // Replace with a better default icon URL
 const bookmarkElement = document.createElement('div');
-                bookmarkElement.className = 'bookmark';
-                bookmarkElement.id = `main-bookmark`;
-                bookmarkElement.innerHTML = `
+bookmarkElement.className = 'bookmark';
+bookmarkElement.id = 'main-bookmark';
+bookmarkElement.innerHTML = `
     <div class="bookmark-wrapper" data-type='website' onmouseover="showTooltip('Welcome!')"
      onmouseout="hideTooltip()" onclick="openMarko(openLink, 'https://teloslinux.org')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: #ff005678;">
-                <img src="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg",
+                <img src="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg"
                 alt="Home" class="bookmark-icon">
             </div>
             <span class="bookmark-title">Home</span>
         </div>
         <span id="next-icon" class="material-icons next-icon" onclick="syncAndShowCommonMarko(); event.stopPropagation();">arrow_forward_ios</span>
     </div>
-`
-                linkContainer.appendChild(bookmarkElement);
+`;
+
+// Apply sticky styles
+bookmarkElement.style.position = '-webkit-sticky'; /* For Safari */
+bookmarkElement.style.position = 'sticky';
+bookmarkElement.style.top = '0';
+bookmarkElement.style.zIndex = '1000';
+bookmarkElement.style.backgroundColor = 'white'; // Ensure it doesn't overlap with background content
+bookmarkElement.style.padding = '10px';
+bookmarkElement.style.borderBottom = '1px solid #ccc'; // Optional: Add a border to separate it visually
+
+linkContainer.appendChild(bookmarkElement);
 
                 links.forEach((link, index) => {
                 if (link[0] === "YouTube") {
