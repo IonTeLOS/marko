@@ -4048,12 +4048,7 @@ bookmarkElement.innerHTML = `
 // Apply sticky styles
 bookmarkElement.style.position = '-webkit-sticky'; /* For Safari */
 bookmarkElement.style.position = 'sticky';
-bookmarkElement.style.top = '0';
 bookmarkElement.style.zIndex = '1000';
-bookmarkElement.style.backgroundColor = 'white'; // Ensure it doesn't overlap with background content
-bookmarkElement.style.padding = '10px';
-bookmarkElement.style.borderBottom = '1px solid #ccc'; // Optional: Add a border to separate it visually
-
 linkContainer.appendChild(bookmarkElement);
 
                 links.forEach((link, index) => {
