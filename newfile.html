@@ -3180,6 +3180,7 @@ function handleSharedLink(url, title, text) {
       
   function loadArrayFromURL() {
     const params = new URLSearchParams(window.location.search);
+    
     const compressed = params.get('data');
     const isGlobal = params.get('globalMarko');
     const isCommon = params.get('commonMarko');
@@ -3190,6 +3191,33 @@ function handleSharedLink(url, title, text) {
     const reminder = params.get('uuid');
     const sharedUrl = params.get('url');
     const sharedText = params.get('text');
+    const createMarko = params.get('createMarko');
+
+
+    // Subfunction to handle cases with createMarko=true and relevant params
+    function handleCreateMarko(params) {
+        const { createMarko, type, action, title, icon, color } = params;
+        let extra = null;
+
+        // Check if createMarko is true and all main parameters are present
+        if (createMarko === "true" && type && action && title && icon && color) {
+            // Find any additional parameter (extra) that is not one of the main parameters
+            for (const key of Object.keys(params)) {
+                if (!['createMarko', 'type', 'action', 'title', 'icon', 'color'].includes(key)) {
+                    extra = params[key];
+                    break;
+                }
+            }
+
+            // Call createMarko function with the main parameters and extra if present
+            createMarko(type, action, title, icon, color, extra);
+        } else {
+            console.log("Not all required parameters for Marko creation are present or createMarko is not true.");
+        }
+    }
+
+    
+    handleCreateMarko(params);
 
 
 // Case 4: Handling multiple shared parameters
