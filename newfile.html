@@ -3194,11 +3194,9 @@ function handleSharedLink(url, title, text) {
     const createMarko = params.get('createMarko');
 
     if (createMarko === 'true') {
-      const url = window.location.href;
-      parseMarkoLink(url);
+        handleCreateMarko(params);
     }
 
-    /*
     // Subfunction to handle cases with createMarko=true and relevant params
     function handleCreateMarko(params) {
         const { createMarko, type, action, title, icon, color } = params;
