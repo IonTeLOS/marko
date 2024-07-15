@@ -6502,9 +6502,7 @@ async function createUpdateCommonMarko() {
 
         extendedFileName = sessionStorage.getItem('extendedFileName') || extendedFileName;
         //const linkUrl = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${fileName}&commonMarko=true`;
-        alertAndRunCallback(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`, async () => {
-            await copyToClipboard(result.id, fileName);
-        });
+        copyToClipboard(result.id, fileName);
         //alert(`Data saved to Google Drive as ${extendedFileName}\nShareable link copied to clipboard.`);
         //copyToClipboard(result.id, fileName);
     } catch (error) {
@@ -6515,11 +6513,6 @@ async function createUpdateCommonMarko() {
     }
 }
 
-// Function to display an alert and then run a callback function
-function alertAndRunCallback(message, callback) {
-    alert(message);
-    setTimeout(callback, 0);
-}
 async function writeToPublicWritableFile(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjUE') {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
@@ -6786,30 +6779,37 @@ async function unlockFile(fileId) {
     return await response.json();
 }
 
-async function copyToClipboard(fileId, name) {
+function copyToClipboard(fileId, name) {
     const url = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${name}&commonMarko=true`;
 
-    await navigator.clipboard.writeText(url).then(() => {
-        console.log('Shareable link copied to clipboard');
-    }).catch(err => {
-        console.error('Failed to copy: ', err);
-    });
-          // Check if Web Share API is supported
-        if (navigator.share) {
-            try {
-                await navigator.share({
-                    title: `${name}`,
-                    text: 'This is my common Marko link!',
-                    url: url,
-                });
-            } catch (shareError) {
-                console.error('Error sharing:', shareError);
-            }
-        } else {
-            console.log("copied to clipboard");
-            //alert('Share link has been copied to clipboard.');
-        }
+    // Check if Web Share API is supported
+    if (navigator.share) {
+        navigator.share({
+            title: `${name}`,
+            text: 'This is my common Marko link!',
+            url: url,
+        })
+        .then(() => {
+            console.log('Shared successfully');
+        })
+        .catch((shareError) => {
+            console.error('Error sharing:', shareError);
+        });
+    } else {
+        // If Web Share API is not supported, copy to clipboard
+        navigator.clipboard.writeText(url)
+        .then(() => {
+            console.log('Shareable link copied to clipboard');
+            alert('Share link has been copied to clipboard.');
+        })
+        .catch((err) => {
+            console.error('Failed to copy: ', err);
+            alert('There was an error. Please try again.');
+        });
+    }
 }
+
+
 
 function getUserEmailAndStore() {
     return new Promise((resolve, reject) => {
