@@ -3198,11 +3198,11 @@ function handleSharedLink(url, title, text) {
     const icon = params.get('icon');
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
-    const actionArgs = action ? action.split(',').map(arg => arg.trim()) : [];
+    const actionArg = actionArgs.length >= 2 ? actionArgs[1] : null;
 
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && action && title && icon && color) {
-        createMarko(type, actionArgs, title, icon, color);
+        createMarko(type, actionArg, title, icon, color);
     } else {
         console.log("Not all required parameters for Marko creation are present or createMarko is not true.");
     }
