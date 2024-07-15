@@ -7367,8 +7367,6 @@ function initSwipeDetection() {
     document.querySelectorAll('.bookmark-wrapper').forEach(wrapper => {
         let touchstartX = 0;
         let touchstartY = 0;
-        let touchendX = 0;
-        let touchendY = 0;
         let isSwipeInProgress = false;
         const bookmarkId = wrapper.closest('.bookmark').getAttribute('data-index');
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -7377,46 +7375,51 @@ function initSwipeDetection() {
             if (isSwipeInProgress) return;
             isSwipeInProgress = true;
             if (isTouchDevice) {
-                touchstartX = e.changedTouches[0].screenX;
-                touchstartY = e.changedTouches[0].screenY;
+                touchstartX = e.touches[0].clientX;
+                touchstartY = e.touches[0].clientY;
             } else {
-                touchstartX = e.screenX;
-                touchstartY = e.screenY;
+                touchstartX = e.clientX;
+                touchstartY = e.clientY;
             }
         };
 
-        const handleSwipeEnd = (e) => {
+        const handleSwipeMove = (e) => {
             if (!isSwipeInProgress) return;
+            
+            let currentX, currentY;
             if (isTouchDevice) {
-                touchendX = e.changedTouches[0].screenX;
-                touchendY = e.changedTouches[0].screenY;
+                currentX = e.touches[0].clientX;
+                currentY = e.touches[0].clientY;
             } else {
-                touchendX = e.screenX;
-                touchendY = e.screenY;
+                currentX = e.clientX;
+                currentY = e.clientY;
             }
-            handleSwipe(wrapper, bookmarkId, touchstartX, touchendX, touchstartY, touchendY);
+
+            handleSwipe(wrapper, bookmarkId, touchstartX, currentX, touchstartY, currentY);
+        };
+
+        const handleSwipeEnd = () => {
             isSwipeInProgress = false;
         };
 
         if (isTouchDevice) {
             wrapper.addEventListener('touchstart', handleSwipeStart, { passive: true });
+            wrapper.addEventListener('touchmove', handleSwipeMove, { passive: true });
             wrapper.addEventListener('touchend', handleSwipeEnd);
         } else {
             wrapper.addEventListener('mousedown', handleSwipeStart);
+            wrapper.addEventListener('mousemove', handleSwipeMove);
             wrapper.addEventListener('mouseup', handleSwipeEnd);
         }
-
-        // Prevent context menu (right-click)
-        wrapper.addEventListener('contextmenu', (e) => e.preventDefault());
     });
 }
 
-function handleSwipe(wrapper, bookmarkId, startX, endX, startY, endY) {
-    const threshold = 50; // Minimum distance to consider a swipe
-    const verticalThreshold = 30; // Maximum vertical movement allowed for horizontal swipe
+function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
+    const threshold = 30; // Reduced threshold for easier swipe detection
+    const verticalThreshold = 50; // Increased vertical threshold for more lenient swipes
 
-    const deltaX = endX - startX;
-    const deltaY = Math.abs(endY - startY);
+    const deltaX = currentX - startX;
+    const deltaY = Math.abs(currentY - startY);
 
     // Ensure the swipe is more horizontal than vertical
     if (deltaY > verticalThreshold) return;
@@ -7437,9 +7440,10 @@ function handleSwipe(wrapper, bookmarkId, startX, endX, startY, endY) {
                 console.error('Error constructing link:', error);
             }
         }
+        // Reset swipe progress to prevent multiple triggers
+        isSwipeInProgress = false;
     }
 }
-
 // Check if the DOM is already loaded for swipe detection initialization
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initSwipeDetection);
