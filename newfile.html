@@ -4889,8 +4889,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-// share link to page - app    
- function sharePage() {
+function sharePage() {
   if (navigator.share) {
     navigator.share({
       title: document.title,
@@ -4900,9 +4899,17 @@ document.addEventListener('DOMContentLoaded', () => {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
+    const url = window.location.href;
+    const tempInput = document.createElement('input');
+    document.body.appendChild(tempInput);
+    tempInput.value = url;
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
     alert("Link has been copied to your clipboard.");
   }
 }
+
 
 function hideInstallBanner(event) {
     event.stopPropagation(); // Prevents event from bubbling up to the parent
@@ -7531,10 +7538,10 @@ function constructLinkFromBookmark(index, full) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
-    alert("Link has been copied to your clipboard.");
+    //alert("Link has been copied to your clipboard.");
   }
 //const parsedBookmark = parseBookmarkLink(shareLink);
-//alert(JSON.stringify(parsedBookmark, null, 2));
+alert(JSON.stringify(parsedBookmark, null, 2));
 return shareLink;
 }
 
