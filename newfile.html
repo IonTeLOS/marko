@@ -7335,43 +7335,48 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
-
+  
 function initSwipeDetection() {
     document.querySelectorAll('.bookmark-wrapper').forEach(wrapper => {
         let touchstartX = 0;
         let touchendX = 0;
         const bookmarkId = wrapper.closest('.bookmark').getAttribute('data-index');
 
-let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-if (isTouchDevice) {
-    wrapper.addEventListener('touchstart', (e) => {
-        touchstartX = e.changedTouches[0].screenX;
-    });
+        const handleSwipeStart = (e) => {
+            touchstartX = isTouchDevice ? e.changedTouches[0].screenX : e.screenX;
+        };
 
-    wrapper.addEventListener('touchend', (e) => {
-        touchendX = e.changedTouches[0].screenX;
-        handleSwipe(wrapper, bookmarkId, touchstartX, touchendX);
-    });
-} else {
-    wrapper.addEventListener('mousedown', (e) => {
-        touchstartX = e.screenX;
-    });
+        const handleSwipeEnd = (e) => {
+            touchendX = isTouchDevice ? e.changedTouches[0].screenX : e.screenX;
+            handleSwipe(wrapper, bookmarkId, touchstartX, touchendX);
+        };
 
-    wrapper.addEventListener('mouseup', (e) => {
-        touchendX = e.screenX;
-        handleSwipe(wrapper, bookmarkId, touchstartX, touchendX);
-    });
-}
+        if (isTouchDevice) {
+            wrapper.addEventListener('touchstart', handleSwipeStart);
+            wrapper.addEventListener('touchend', handleSwipeEnd);
+        } else {
+            wrapper.addEventListener('mousedown', handleSwipeStart);
+            wrapper.addEventListener('mouseup', handleSwipeEnd);
+        }
     });
 }
 
 function handleSwipe(wrapper, bookmarkId, startX, endX) {
     const threshold = 150; // Minimum distance to consider a swipe
     if (startX - endX > threshold) {
-        clearLink(bookmarkId);
+        try {
+            clearLink(bookmarkId);
+        } catch (error) {
+            console.error('Error clearing link:', error);
+        }
     } else if (endX - startX > threshold) {
-        constructLinkFromBookmark(bookmarkId, true);
+        try {
+            constructLinkFromBookmark(bookmarkId, true);
+        } catch (error) {
+            console.error('Error constructing link:', error);
+        }
     }
 }
 
