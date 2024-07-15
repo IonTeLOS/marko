@@ -3198,6 +3198,7 @@ function handleSharedLink(url, title, text) {
     const icon = params.get('icon');
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
+    const actionArgs = action ? action.split(',').map(arg => arg.trim()) : [];
     const actionArg = actionArgs.length >= 2 ? actionArgs[1] : null;
 
     // Check if createMarko=true is present in the URL parameters
