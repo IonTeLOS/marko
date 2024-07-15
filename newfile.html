@@ -7555,7 +7555,8 @@ function constructLinkFromBookmark(index, full) {
         console.error('Error in copying link to clipboard:', error);
       });
   }
-
+  return shareLink;
+}
 
 function parseBookmarkLink(url) {
   const parsedUrl = new URL(url);
