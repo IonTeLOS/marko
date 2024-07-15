@@ -7392,15 +7392,19 @@ function initSwipeDetection() {
 
 function handleSwipe(wrapper, bookmarkId, startX, endX) {
     const threshold = 150; // Minimum distance to consider a swipe
-    if (startX - endX > threshold) {
+    // Track whether the swipe action has been handled
+    let swipeHandled = false;
+    if (startX - endX > threshold && !swipeHandled) {
         try {
             clearLink(bookmarkId);
+            swipeHandled = true; // Mark swipe as handled
         } catch (error) {
             console.error('Error clearing link:', error);
         }
-    } else if (endX - startX > threshold) {
+    } else if (endX - startX > threshold && !swipeHandled) {
         try {
             constructLinkFromBookmark(bookmarkId, true);
+            swipeHandled = true; // Mark swipe as handled
         } catch (error) {
             console.error('Error constructing link:', error);
         }
