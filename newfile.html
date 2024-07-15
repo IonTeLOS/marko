@@ -3310,7 +3310,6 @@ if (sharedText && sharedText.startsWith("http")) {
     const title = baseUrl || "Shared with Marko"; // Use base URL as title or default if not available
     handleSharedLink(sharedText, title, "*");
     window.history.replaceState({}, document.title, "/");
-  alert("2");
     return;
 }
 
@@ -3393,6 +3392,7 @@ if (commonMarkoId && isCommon) {
         }
     }
 }
+      
 // Function to extract base URL from a full URL
 function getBaseUrl(url) {
     const parsedUrl = new URL(url);
