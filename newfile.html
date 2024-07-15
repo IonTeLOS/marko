@@ -3191,33 +3191,19 @@ function handleSharedLink(url, title, text) {
     const reminder = params.get('uuid');
     const sharedUrl = params.get('url');
     const sharedText = params.get('text');
+    
+    const type = params.get('type');
+    const action = params.get('action');
+    const title = params.get('title');
+    const icon = params.get('icon');
+    const color = params.get('color');
     const createMarko = params.get('createMarko');
 
     // Check if createMarko=true is present in the URL parameters
-    if (createMarko === 'true') {
-        handleCreateMarko(params);
-    }
-
-    // Subfunction to handle cases with createMarko=true and relevant params
-    function handleCreateMarko(params) {
-        const { type, action, title, icon, color } = params;
-        let extra = null;
-
-        // Check if all required parameters are present
-        if (type && action && title && icon && color) {
-            // Find any additional parameter (extra) that is not one of the main parameters
-            for (const key of params.keys()) {
-                if (!['createMarko', 'type', 'action', 'title', 'icon', 'color'].includes(key)) {
-                    extra = params.get(key);
-                    break;
-                }
-            }
-
-            // Call your createMarko function with the main parameters and extra if present
-            createMarko(type, action, title, icon, color, extra);
-        } else {
-            console.log("Not all required parameters for Marko creation are present.");
-        }
+    if (createMarko === 'true' && type && action && title && icon && color) {
+        createMarko(type, action, title, icon, color);
+    } else {
+        console.log("Not all required parameters for Marko creation are present or createMarko is not true.");
     }
     
 // Case 4: Handling multiple shared parameters
