@@ -7531,12 +7531,12 @@ function constructLinkFromBookmark(index, full) {
   const shareBody = title;
   const shareIcon = icon;
 
-// this function serves 2 distinct purposes: create a link for a shareable Marko (full=true), or just return values of title and link to create a notification     
+  // This function serves two distinct purposes: create a link for a shareable Marko (full=true), or just return values of title and link to create a notification
   if (!full) {
-        console.log('Retrieved data to construct a notification');
-        return { shareTitle, shareBody, shareIcon}; // Exit the function early
-    }
-    
+    console.log('Retrieved data to construct a notification');
+    return { shareTitle, shareBody, shareIcon }; // Exit the function early
+  }
+
   if (navigator.share) {
     navigator.share({
       title: shareTitle,
@@ -7546,12 +7546,15 @@ function constructLinkFromBookmark(index, full) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
-    //alert("Link has been copied to your clipboard.");
+    navigator.clipboard.writeText(shareLink)
+      .then(() => {
+        console.log('Link copied to clipboard');
+        alert('Link has been copied to your clipboard.');
+      })
+      .catch((error) => {
+        console.error('Error in copying link to clipboard:', error);
+      });
   }
-//const parsedBookmark = parseBookmarkLink(shareLink);
-alert(JSON.stringify(parsedBookmark, null, 2));
-return shareLink;
-}
 
 
 function parseBookmarkLink(url) {
