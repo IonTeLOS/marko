@@ -4033,7 +4033,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         .catch(error => console.error('Error initializing:', error));
 });
 
-       // Function to check if an element is partially visible at the top, considering the main-bookmark
+        // Function to check if an element is partially visible at the top, considering the main-bookmark
         function isPartiallyVisibleAtTop(el, offset) {
             const rect = el.getBoundingClientRect();
             return rect.top < offset && rect.bottom > offset;
@@ -4045,9 +4045,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const mainBookmarkHeight = mainBookmark.getBoundingClientRect().height;
             const bookmarks = document.querySelectorAll('.bookmark');
             bookmarks.forEach(bookmark => {
-                const iconContainer = bookmark.querySelector('.icon-container');
-                if (isPartiallyVisibleAtTop(iconContainer, mainBookmarkHeight)) {
-                    const rect = iconContainer.getBoundingClientRect();
+                const rect = bookmark.getBoundingClientRect();
+                if (isPartiallyVisibleAtTop(bookmark, mainBookmarkHeight)) {
                     const scrollOffset = rect.top - mainBookmarkHeight;
                     window.scrollBy({
                         top: scrollOffset,
