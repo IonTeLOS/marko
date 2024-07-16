@@ -4059,17 +4059,12 @@ function scrollLastBookmarkIntoView() {
     const lastBookmark = bookmarks[bookmarks.length - 1];
     const addBanner = document.getElementById('add-banner');
     
-    if (isPartiallyVisibleAtBottom(lastBookmark, addBanner.offsetHeight)) {
-        const rect = lastBookmark.getBoundingClientRect();
-        const scrollOffset = rect.bottom - (window.innerHeight - addBanner.offsetHeight);
-        window.scrollBy({
-            top: scrollOffset,
-            behavior: 'smooth'
-        });
-        return true; // Indicates scrolling happened
-    }
-    
-    return false; // Indicates no scrolling happened
+    const rect = lastBookmark.getBoundingClientRect();
+    const scrollOffset = rect.bottom - (window.innerHeight - addBanner.offsetHeight);
+    window.scrollBy({
+        top: scrollOffset,
+        behavior: 'smooth'
+    });
 }
 
 // Function to adjust scroll position based on visibility of bookmarks
@@ -4093,15 +4088,16 @@ function adjustScroll() {
         }
     });
 
-    // Scroll the last bookmark into view if not already scrolled and not at the bottom
-    if (!scrolled && !isPartiallyVisibleAtBottom(document.getElementById('add-banner'), 0)) {
-        if (!isPartiallyVisibleAtBottom(bookmarks[bookmarks.length - 1], 100)) {
-            scrollLastBookmarkIntoView();
-        } else {
-            // Deactivate scroll listener when scrolled to bottom
-            window.removeEventListener('scroll', debounce(adjustScroll, 100));
-        }
+    // If not scrolled and at the bottom, scroll the last bookmark fully into view
+    if (!scrolled && isAtBottomOfPage()) {
+        scrollLastBookmarkIntoView();
     }
+}
+
+// Function to check if scrolled to the bottom of the page
+function isAtBottomOfPage() {
+    const addBanner = document.getElementById('add-banner');
+    return window.innerHeight >= document.body.scrollHeight - addBanner.offsetHeight;
 }
 
 // Debounce function to limit the rate at which the adjustScroll function is called
