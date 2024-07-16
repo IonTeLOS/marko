@@ -4040,18 +4040,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         .catch(error => console.error('Error initializing:', error));
 });
 
-     // Function to check if an element is partially visible at the top, considering the main-bookmark
-        function isPartiallyVisibleAtTop(el, offset) {
-            const rect = el.getBoundingClientRect();
-            return rect.top < offset && rect.bottom > offset;
-        }
-
-        // Function to check if an element is partially visible at the bottom, considering the add-banner
-        function isPartiallyVisibleAtBottom(el, offset) {
-            const rect = el.getBoundingClientRect();
-            const windowHeight = window.innerHeight || document.documentElement.clientHeight;
-            return rect.bottom > windowHeight - offset && rect.top < windowHeight;
-        }
         // Function to check if an element is partially visible at the top, considering the main-bookmark
         function isPartiallyVisibleAtTop(el, offset) {
             const rect = el.getBoundingClientRect();
@@ -4071,17 +4059,12 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const lastBookmark = bookmarks[bookmarks.length - 1];
             const addBanner = document.getElementById('add-banner');
             
-            if (isPartiallyVisibleAtBottom(lastBookmark, addBanner.offsetHeight)) {
-                const rect = lastBookmark.getBoundingClientRect();
-                const scrollOffset = rect.bottom - (window.innerHeight - addBanner.offsetHeight);
-                window.scrollBy({
-                    top: scrollOffset,
-                    behavior: 'smooth'
-                });
-                return true; // Indicates scrolling happened
-            }
-            
-            return false; // Indicates no scrolling happened
+            const rect = lastBookmark.getBoundingClientRect();
+            const scrollOffset = rect.bottom - (window.innerHeight - addBanner.offsetHeight);
+            window.scrollBy({
+                top: scrollOffset,
+                behavior: 'smooth'
+            });
         }
 
         // Function to adjust scroll position based on visibility of bookmarks
@@ -4091,8 +4074,16 @@ document.addEventListener('DOMContentLoaded', (event) => {
             const paddingOffset = 10; // Adjust this value to match your bookmark padding
             const bookmarks = document.querySelectorAll('.bookmark');
 
-            // Check if any bookmark near the top needs adjustment
-            let scrolled = false;
+            // Check if scrolled fully to the bottom
+            const scrolledToBottom = isPartiallyVisibleAtBottom(document.getElementById('add-banner'), 0);
+
+            // Scroll the last bookmark into view if scrolled fully to the bottom
+            if (scrolledToBottom) {
+                scrollLastBookmarkIntoView();
+                return; // Exit function early if scrolled to bottom
+            }
+
+            // Scroll the top partially visible bookmark into view
             bookmarks.forEach(bookmark => {
                 const rect = bookmark.getBoundingClientRect();
                 if (isPartiallyVisibleAtTop(bookmark, mainBookmarkHeight + paddingOffset)) {
@@ -4101,14 +4092,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
                         top: scrollOffset,
                         behavior: 'smooth'
                     });
-                    scrolled = true;
                 }
             });
-
-            // If no top bookmarks needed scrolling and not scrolled to bottom, scroll last bookmark into view
-            if (!scrolled && !isPartiallyVisibleAtBottom(document.getElementById('add-banner'), 0)) {
-                scrollLastBookmarkIntoView();
-            }
         }
 
         // Debounce function to limit the rate at which the adjustScroll function is called
