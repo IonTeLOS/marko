@@ -4040,7 +4040,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         .catch(error => console.error('Error initializing:', error));
 });
 
-        // Function to check if an element is partially visible at the top, considering the main-bookmark
+// Function to check if an element is partially visible at the top, considering the main-bookmark
 function isPartiallyVisibleAtTop(el, offset) {
     const rect = el.getBoundingClientRect();
     return rect.top < offset && rect.bottom > offset;
@@ -4094,8 +4094,8 @@ function adjustScroll() {
     });
 
     // Scroll the last bookmark into view if not already scrolled and not at the bottom
-    if (!scrolled) {
-        if (!isPartiallyVisibleAtBottom(document.getElementById('add-banner'), 0)) {
+    if (!scrolled && !isPartiallyVisibleAtBottom(document.getElementById('add-banner'), 0)) {
+        if (!isPartiallyVisibleAtBottom(bookmarks[bookmarks.length - 1], 100)) {
             scrollLastBookmarkIntoView();
         } else {
             // Deactivate scroll listener when scrolled to bottom
