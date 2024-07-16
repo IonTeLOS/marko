@@ -3071,7 +3071,24 @@ function changeURL(url) {
             }
         }
 
-  function createMarko(type, link, title, icon, color) {
+// Function to check if a Marko exists
+function markoExists(type, url, array = "bookmarks") {
+    const data = JSON.parse(localStorage.getItem(array)) || [];
+    for (let i = 0; i < data.length; i++) {
+        if (data[i][0] === type && data[i][1] === url) {
+            // If a similar Marko is found, show the confirmation dialog
+            const confirmation = confirm("You already have a similar Marko, are you sure you want to continue?");
+            return confirmation;
+        }
+    }
+    return true;
+}
+      
+  function createMarko(type, link, title, icon, color, array = "bookmarks") {
+    // Check if a similar Marko exists
+    if (!markoExists(type, link, array)) {
+        return; // Exit the function if the user cancels
+    }
     // Function to get a random color
     function getRandomColor() {
         const letters = '0123456789ABCDEF';
