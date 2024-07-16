@@ -7481,25 +7481,41 @@ function initSwipeDetection() {
     });
 }
 
-function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
-    const threshold = 30; // Reduced threshold for easier swipe detection
-    const verticalThreshold = 50; // Increased vertical threshold for more lenient swipes
+let isSwipeActionInProgress = false;
+let lastSwipeTime = 0;
+const swipeCooldown = 1000; // 1 second cooldown between swipes
 
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, startY, currentY) => {
+    const now = Date.now();
+    if (isSwipeActionInProgress || now - lastSwipeTime < swipeCooldown) {
+        return;
+    }
+
+    const threshold = 30;
+    const verticalThreshold = 50;
     const deltaX = currentX - startX;
     const deltaY = Math.abs(currentY - startY);
 
-    // Ensure the swipe is more horizontal than vertical
     if (deltaY > verticalThreshold) return;
 
     if (Math.abs(deltaX) > threshold) {
+        isSwipeActionInProgress = true;
+
         if (deltaX < 0) {
             // Left swipe
             try {
-              // Confirm deletion
-              const confirmation = confirm("Do you really want to remove this Marko?");
-              if (confirmation) {
-                clearLink(bookmarkId);
-              }  
+                const confirmation = confirm("Do you really want to remove this Marko?");
+                if (confirmation) {
+                    clearLink(bookmarkId);
+                }
             } catch (error) {
                 console.error('Error clearing link:', error);
             }
@@ -7511,10 +7527,18 @@ function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
                 console.error('Error constructing link:', error);
             }
         }
-        // Reset swipe progress to prevent multiple triggers
-        isSwipeInProgress = false;
+
+        lastSwipeTime = now;
+        setTimeout(() => {
+            isSwipeActionInProgress = false;
+        }, 500); // Reset the flag after 500ms
     }
+}, 250); // Debounce for 250ms
+
+function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
+    debouncedHandleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY);
 }
+  
 // Check if the DOM is already loaded for swipe detection initialization
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initSwipeDetection);
