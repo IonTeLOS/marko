@@ -4061,7 +4061,7 @@ function adjustScroll() {
     });
 }
 
-// Debounce function to limit the rate at which the adjustScroll function is called
+// Debounce function to limit the rate at which a function is called
 function debounce(func, wait) {
     let timeout;
     return function (...args) {
@@ -4074,24 +4074,24 @@ function debounce(func, wait) {
     };
 }
 
-// Variable to track if we're at the bottom of the page
-let isAtBottom = false;
+// Variable to track if we're at the end of the document
+let isAtEnd = false;
 
-// Function to check if we're at the bottom of the page
-function checkIfAtBottom() {
-    return (window.innerHeight + window.scrollY) >= document.documentElement.scrollHeight;
+// Function to check if we're at the end of the document
+function isAtDocumentEnd() {
+    return (window.innerHeight + Math.round(window.pageYOffset)) >= document.documentElement.offsetHeight - 1;
 }
 
 // Modified scroll event handler
 function handleScroll() {
-    if (checkIfAtBottom()) {
-        if (!isAtBottom) {
-            isAtBottom = true;
+    if (isAtDocumentEnd()) {
+        if (!isAtEnd) {
+            isAtEnd = true;
             window.removeEventListener('scroll', debouncedHandleScroll);
         }
     } else {
-        if (isAtBottom) {
-            isAtBottom = false;
+        if (isAtEnd) {
+            isAtEnd = false;
             window.addEventListener('scroll', debouncedHandleScroll);
         }
         adjustScroll();
