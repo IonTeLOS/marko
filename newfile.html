@@ -2393,7 +2393,7 @@ function saveBookmark(linkData, array = "bookmarks") {
         return;
     }
     // Check if a similar Marko exists
-    if (!markoExists(linkData[0], linkData[1], array)) {
+    if (!markoExists(linkData[0], linkData[1], linkData[2], array)) {
         return; // Exit the function if the user cancels
     }
     // save the new bookmark in the local storage as an array in a larger array of potentially several bookmarks
@@ -3074,22 +3074,29 @@ function changeURL(url) {
             }
         }
 
-// Function to check if a Marko exists
-function markoExists(type, url, array = "bookmarks") {
+// Function to check if a Marko exists with extended checks
+function markoExists(type, url, title, array = "bookmarks") {
     const data = JSON.parse(localStorage.getItem(array)) || [];
     for (let i = 0; i < data.length; i++) {
-        if (data[i][0] === type && data[i][1] === url) {
+        const storedType = data[i][0];
+        const storedUrl = data[i][1];
+        const storedTitle = data[i][2];
+
+        // Check if type and URL are the same, or URL and title are the same
+        if ((storedType === type && storedUrl === url) ||
+            (storedUrl === url && storedTitle === title)) {
             // If a similar Marko is found, show the confirmation dialog
             const confirmation = confirm("You already have a similar Marko, are you sure you want to continue?");
             return confirmation;
         }
     }
-    return true;
+    return true; // Return true if no similar Marko found
 }
+
       
   function createMarko(type, link, title, icon, color, array = "bookmarks") {
     // Check if a similar Marko exists
-    if (!markoExists(type, link, array)) {
+    if (!markoExists(type, link, title, array)) {
         return; // Exit the function if the user cancels
     }
     // Function to get a random color
