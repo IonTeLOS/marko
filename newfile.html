@@ -7371,49 +7371,44 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         function positionMenu(e) {
-            const menu = document.getElementById('contextMenu');
-            const linkPlace = document.getElementById('current-link');
-
-            // Ensure the menu element exists
-            if (!menu) {
-                console.error('Menu element not found');
-                return;
-            }
-
-            // Update the menu element with the currentLink text
-            if (linkPlace) {
-                linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
-            }
-
-            let clickCoords = getPosition(e);
-            let clickCoordsX = clickCoords.x;
-            let clickCoordsY = clickCoords.y;
-
-            let menuWidth = menu.offsetWidth + 4;
-            let menuHeight = menu.offsetHeight + 4;
-
-            let windowWidth = window.innerWidth;
-            let windowHeight = window.innerHeight;
-            let bottomOffset = 80; // Ensure at least 80px from the bottom
-
-            // Adjust horizontal position
-            if (windowWidth - clickCoordsX < menuWidth) {
-                menu.style.left = windowWidth - menuWidth + "px";
-            } else {
-                menu.style.left = clickCoordsX + "px";
-            }
-
-            // Adjust vertical position
-            let adjustedTop = clickCoordsY;
-            if (windowHeight - clickCoordsY < menuHeight + bottomOffset) {
-                adjustedTop = windowHeight - menuHeight - bottomOffset;
-            } else {
-                if (windowHeight - clickCoordsY - menuHeight < bottomOffset) {
-                    adjustedTop = windowHeight - menuHeight - bottomOffset;
-                }
-            }
-            menu.style.top = adjustedTop + "px";
-        }
+    const menu = document.getElementById('contextMenu');
+    const linkPlace = document.getElementById('current-link');
+    
+    // Ensure the menu element exists
+    if (!menu) {
+        console.error('Menu element not found');
+        return;
+    }
+    
+    // Update the menu element with the currentLink text
+    if (linkPlace) {
+        linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
+    }
+    
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    // Get menu dimensions
+    const menuWidth = menu.offsetWidth;
+    const menuHeight = menu.offsetHeight;
+    
+    // Calculate centered position
+    const left = (viewportWidth - menuWidth) / 2;
+    const top = (viewportHeight - menuHeight) / 2;
+    
+    // Set menu position
+    menu.style.left = `${Math.max(0, left)}px`;
+    menu.style.top = `${Math.max(0, top)}px`;
+    
+    // Ensure the menu is within viewport bounds
+    if (left < 0) {
+        menu.style.width = `${viewportWidth}px`;
+    }
+    if (top < 0) {
+        menu.style.height = `${viewportHeight}px`;
+    }
+}
   
     document.addEventListener("click", (e) => {
         var button = e.which || e.button;
