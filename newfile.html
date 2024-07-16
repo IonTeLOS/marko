@@ -4041,68 +4041,44 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 // Function to check if an element is partially visible at the top, considering the main-bookmark
-function isPartiallyVisibleAtTop(el, offset) {
-    const rect = el.getBoundingClientRect();
-    return rect.top < offset && rect.bottom > offset;
-}
-
-// Function to scroll the element into view
-function adjustScroll() {
-    const mainBookmark = document.getElementById('main-bookmark');
-    const mainBookmarkHeight = mainBookmark.getBoundingClientRect().height;
-    const paddingOffset = 10; // Adjust this value to match your bookmark padding
-    const bookmarks = document.querySelectorAll('.bookmark');
-    bookmarks.forEach(bookmark => {
-        const rect = bookmark.getBoundingClientRect();
-        if (isPartiallyVisibleAtTop(bookmark, mainBookmarkHeight + paddingOffset)) {
-            const scrollOffset = rect.top - (mainBookmarkHeight + paddingOffset);
-            window.scrollBy({ top: scrollOffset, behavior: 'smooth' });
+        function isPartiallyVisibleAtTop(el, offset) {
+            const rect = el.getBoundingClientRect();
+            return rect.top < offset && rect.bottom > offset;
         }
-    });
-}
 
-// Debounce function to limit the rate at which a function is called
-function debounce(func, wait) {
-    let timeout;
-    return function (...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
-}
-
-// Variable to track if we're at the end of the document
-let isAtEnd = false;
-
-// Function to check if we're at the end of the document
-function isAtDocumentEnd() {
-    return (window.innerHeight + Math.round(window.pageYOffset)) >= document.documentElement.offsetHeight - 1;
-}
-
-// Modified scroll event handler
-function handleScroll() {
-    if (isAtDocumentEnd()) {
-        if (!isAtEnd) {
-            isAtEnd = true;
-            window.removeEventListener('scroll', debouncedHandleScroll);
+        // Function to scroll the element into view
+        function adjustScroll() {
+            const mainBookmark = document.getElementById('main-bookmark');
+            const mainBookmarkHeight = mainBookmark.getBoundingClientRect().height;
+            const paddingOffset = 10; // Adjust this value to match your bookmark padding
+            const bookmarks = document.querySelectorAll('.bookmark');
+            bookmarks.forEach(bookmark => {
+                const rect = bookmark.getBoundingClientRect();
+                if (isPartiallyVisibleAtTop(bookmark, mainBookmarkHeight + paddingOffset)) {
+                    const scrollOffset = rect.top - (mainBookmarkHeight + paddingOffset);
+                    window.scrollBy({
+                        top: scrollOffset,
+                        behavior: 'smooth'
+                    });
+                }
+            });
         }
-    } else {
-        if (isAtEnd) {
-            isAtEnd = false;
-            window.addEventListener('scroll', debouncedHandleScroll);
+
+        // Debounce function to limit the rate at which the adjustScroll function is called
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
         }
-        adjustScroll();
-    }
-}
 
-// Create a debounced version of handleScroll
-const debouncedHandleScroll = debounce(handleScroll, 100);
-
-// Add initial scroll event listener
-window.addEventListener('scroll', debouncedHandleScroll);
+        // Add scroll event listener with debounce
+        window.addEventListener('scroll', debounce(adjustScroll, 100));
       
 // Function to find and click bookmark with matching UUID
 function openReminder(uuid) {
