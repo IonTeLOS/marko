@@ -807,7 +807,15 @@ input:focus {
 .material-btn .material-icon {
   font-size: 42px; /* Change the icon size to 48x48 */
 }
-      
+  
+.material-btn:focus {
+  outline: none;
+}
+
+.material-btn:focus-visible {
+  outline: none; /* or customize it */
+  /* Example: outline: 2px solid #333333; */
+}      
 
    /* The overlay for the modal */
         .modal {
@@ -7062,6 +7070,11 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
             onclick="moveMarkoDown(`${currentIndex}`)">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">vertical_align_bottom</span>
             <div class="ml-3">Move to Bottom</div>
+        </div>
+              <div id="context-movepublic" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="moveMarkoTo(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">publish</span>
+            <div class="ml-3">Move to Common</div>
         </div>
         <hr id="context-divider" class="my-2 border-gray-300 dark:border-gray-700" />
         <div id="context-share" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center" onclick="constructLinkFromBookmark(`${currentIndex}`, true)">
