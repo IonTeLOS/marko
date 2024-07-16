@@ -2386,15 +2386,18 @@ function saveBookmark(linkData) {
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
 }
 */
-function saveBookmark(linkData) {
+function saveBookmark(linkData, array = "bookmarks") {
     // basic validation of linkData before saving
     if (!linkData[1] || !linkData[2] || !linkData[3]) {
         console.error('Invalid bookmark data:', linkData);
         return;
     }
-
+    // Check if a similar Marko exists
+    if (!markoExists(linkData[0], linkData[1], array)) {
+        return; // Exit the function if the user cancels
+    }
     // save the new bookmark in the local storage as an array in a larger array of potentially several bookmarks
-    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    let bookmarks = JSON.parse(localStorage.getItem(array)) || [];
     bookmarks.push(linkData);
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
     console.log('Bookmarks saved:', bookmarks);  // Debug log
