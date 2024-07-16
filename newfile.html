@@ -3471,11 +3471,6 @@ function getBaseUrl(url) {
     
         function clearLink(index) {
               removeBookmark(index);
-              // Confirm deletion
-              const confirmation = confirm("Marko removed. Undo?");
-              if (confirmation) {
-              location.reload();
-              }  
               links.splice(index, 1);
               localStorage.setItem('bookmarks', JSON.stringify(links));
               saveLinks();
@@ -7500,7 +7495,11 @@ function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
         if (deltaX < 0) {
             // Left swipe
             try {
+              // Confirm deletion
+              const confirmation = confirm("Do you really want to remove this Marko?");
+              if (confirmation) {
                 clearLink(bookmarkId);
+              }  
             } catch (error) {
                 console.error('Error clearing link:', error);
             }
