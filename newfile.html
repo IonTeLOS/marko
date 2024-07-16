@@ -7502,7 +7502,7 @@ function initSwipeDetection() {
 }
 
 function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
-    const threshold = 50; // Reduced threshold for easier swipe detection
+    const threshold = 35; // Reduced threshold for easier swipe detection
     const verticalThreshold = 50; // Increased vertical threshold for more lenient swipes
 
     const deltaX = currentX - startX;
