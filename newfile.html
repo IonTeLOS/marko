@@ -4032,7 +4032,37 @@ document.addEventListener('DOMContentLoaded', (event) => {
         .then(() => window.requestNotificationPermission())
         .catch(error => console.error('Error initializing:', error));
 });
-    
+
+ document.addEventListener("scroll", function() {
+    adjustScrollPosition();
+});
+
+function adjustScrollPosition() {
+    const bookmarks = document.querySelectorAll(".bookmark");
+    const mainBookmark = document.getElementById("main-bookmark");
+    const mainBookmarkHeight = mainBookmark.offsetHeight;
+    const viewportHeight = window.innerHeight;
+
+    bookmarks.forEach(bookmark => {
+        const rect = bookmark.getBoundingClientRect();
+
+        // Check if the bookmark is partially visible
+        const isPartiallyVisible = (rect.top < mainBookmarkHeight && rect.bottom > mainBookmarkHeight) || 
+                                   (rect.top < viewportHeight && rect.bottom > viewportHeight);
+
+        if (isPartiallyVisible) {
+            // If the top part of the bookmark is obscured by the sticky main bookmark
+            if (rect.top < mainBookmarkHeight) {
+                window.scrollBy(0, rect.top - mainBookmarkHeight);
+            }
+            // If the bottom part of the bookmark is outside the viewport
+            else if (rect.bottom > viewportHeight) {
+                window.scrollBy(0, rect.bottom - viewportHeight);
+            }
+        }
+    });
+}
+     
 // Function to find and click bookmark with matching UUID
 function openReminder(uuid) {
     console.log("checking..");
