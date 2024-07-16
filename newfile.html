@@ -333,7 +333,13 @@ background-color: #1f1b24;
   background-color: #333; /* Darker background on hover */
 }
 
-
+.context-menu {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 1000;
+}
+  
 input {
   padding-right: 30px; /* Space for the clear button */
   font-size: 16px;
@@ -7034,7 +7040,7 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
   </div>
     </div>
 <!-- Context Menu -->
-<div id="contextMenu" class="hidden absolute bg-white shadow-lg rounded-lg p-4">
+<div id="contextMenu" class="context-menu">
     <div class="bg-white dark:bg-gray-800 w-64 border border-gray-300 dark:border-gray-700 rounded-lg flex flex-col text-sm py-4 px-2 text-gray-700 dark:text-gray-300 shadow-lg">
         <div id="current-link" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">cancel</span>
