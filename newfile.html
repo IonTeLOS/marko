@@ -3471,6 +3471,11 @@ function getBaseUrl(url) {
     
         function clearLink(index) {
               removeBookmark(index);
+              // Confirm deletion
+              const confirmation = confirm("Marko removed. Undo?");
+              if (confirmation) {
+              location.reload();
+              }  
               links.splice(index, 1);
               localStorage.setItem('bookmarks', JSON.stringify(links));
               saveLinks();
