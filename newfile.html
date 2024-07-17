@@ -3519,10 +3519,10 @@ function getBaseUrl(url) {
               removeBookmark(index);
               currentLinks.splice(index, 1);
               localStorage.setItem(nowPlaying, JSON.stringify(currentLinks));
-        }
+            }
     }
     
-        function clearLink(index, array = 'bookmarks') {
+        function clearLink(index) {
               removeBookmark(index);
               links.splice(index, 1);
               localStorage.setItem(array, JSON.stringify(links));
