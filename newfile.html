@@ -3511,7 +3511,7 @@ function getBaseUrl(url) {
    // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
     
     // delete a bookmark from local storage and remove it from now shown (the later by calling removeBookmark function) TODO: maybe merge to 1 with clearLink()
-    function deleteLink(index) {
+    function deleteLink(index, array = 'bookmarks') {
             // nowPlaying is the bunch of Markos currently shown
             const nowPlaying = sessionStorage.getItem('now-showing') || 'bookmarks';
             const currentLinks = JSON.parse(localStorage.getItem(nowPlaying)) || [];
@@ -3519,6 +3519,9 @@ function getBaseUrl(url) {
               removeBookmark(index);
               currentLinks.splice(index, 1);
               localStorage.setItem(nowPlaying, JSON.stringify(currentLinks));
+            }
+            if (nowPlaying !== 'bookmarks') {
+              syncAndShowCommonMarko(nowPlaying);
             }
     }
     
