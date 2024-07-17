@@ -2946,15 +2946,20 @@ function moveMarkoTo() {
 
         if (match) {
             const [, firstArg, secondArg] = match;
-            const index = bookmarkParent.getAttribute('data-index');
+            const index = parseInt(bookmarkParent.getAttribute('data-index'));
 
             bookmark.onclick = function(event) {
                 event.preventDefault();
                 if (confirm(`Do you want to copy chosen Marko to ${secondArg}?`)) {
-                    const storedData = JSON.parse(localStorage.getItem(firstArg) || '[]');
-                    storedData.push(parseInt(index));
-                    localStorage.setItem(firstArg, JSON.stringify(storedData));
-                    syncAndShowCommonMarko(firstArg, secondArg);
+                    const allBookmarks = JSON.parse(localStorage.getItem('bookmarks') || '[]');
+                    const targetBookmark = allBookmarks[index];
+
+                    if (targetBookmark) {
+                        const targetArray = JSON.parse(localStorage.getItem(firstArg) || '[]');
+                        targetArray.push(targetBookmark);
+                        localStorage.setItem(firstArg, JSON.stringify(targetArray));
+                        syncAndShowCommonMarko(firstArg, secondArg);
+                    }
                 }
             };
         }
