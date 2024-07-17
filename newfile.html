@@ -6677,11 +6677,13 @@ async function updateMarko(fileId) {
         }
         if (!result || !result.id) {
           throw new Error('Failed to save file: No file data returned');
+        } else {
+          // Store updated friend-uuid and fileId in localStorage, TODO: evaluate if necessary, we already have it
+          const content = JSON.parse(fileContent);
+          localStorage.setItem(result.id, JSON.stringify(content));
+          alert('Success!);
+          location.reload();      
         }
-        
-        // Store updated friend-uuid and fileId in localStorage, TODO: evaluate if necessary, we already have it
-        const content = JSON.parse(fileContent);
-        localStorage.setItem(result.id, JSON.stringify(content));
     } catch (error) {
         console.error('Error in updateMarko:', error);
         alert('An error occurred: ' + error.message);
