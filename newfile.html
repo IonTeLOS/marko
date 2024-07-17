@@ -2929,6 +2929,35 @@ function updateUI(fileId, name) {
 }
 }
 
+function moveMarkoTo() {
+    const bookmarkContainer = document.querySelector('.bookmark-container');
+    const bookmarks = bookmarkContainer.querySelectorAll('[onclick^="openMarko(syncAndShowCommonMarko,"]');
+
+    // Hide all bookmarks
+    bookmarkContainer.querySelectorAll('*').forEach(el => el.style.display = 'none');
+
+    // Show and modify only the matching bookmarks
+    bookmarks.forEach((bookmark, index) => {
+        bookmark.style.display = 'block';
+
+        const onclickValue = bookmark.getAttribute('onclick');
+        const match = onclickValue.match(/openMarko\(syncAndShowCommonMarko,\s*(\w+),\s*'([^']+)'\)/);
+
+        if (match) {
+            const [, firstArg, secondArg] = match;
+
+            bookmark.onclick = function(event) {
+                event.preventDefault();
+                if (confirm(`Do you want to copy chosen Marko to ${secondArg}?`)) {
+                    const storedData = JSON.parse(localStorage.getItem(firstArg) || '[]');
+                    storedData.push(index);
+                    localStorage.setItem(firstArg, JSON.stringify(storedData));
+                    syncAndShowCommonMarko(firstArg, secondArg);
+                }
+            };
+        }
+    });
+}      
 // main function to add a new bookmark
 function addLink() {
     const urlInput = document.getElementById('new-link-url');
