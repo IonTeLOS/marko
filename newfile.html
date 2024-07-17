@@ -6656,6 +6656,40 @@ async function createUpdateCommonMarko() {
     }
 }
 
+async function updateMarko(fileId) {
+    if (!navigator.onLine) {
+        alert("Connect to the Internet to proceed");
+        return;
+    }
+        console.log("Adding to fileId:", fileId);
+
+    try {
+        const accessToken = await ensureValidToken();
+        const fileContent = await prepareFileContent(fileId);
+        let result;
+        if (fileId) {
+            result = await updateExistingWritableFile(accessToken, fileId, fileContent);
+        } else {
+            console.log("something went wrong..");
+        }
+        if (!fileId) {
+          throw new Error("No fileId provided");
+        }
+        if (!result || !result.id) {
+          throw new Error('Failed to save file: No file data returned');
+        }
+        
+        // Store updated friend-uuid and fileId in localStorage, TODO: evaluate if necessary, we already have it
+        const content = JSON.parse(fileContent);
+        localStorage.setItem(result.id, JSON.stringify(content));
+    } catch (error) {
+        console.error('Error in updateMarko:', error);
+        alert('An error occurred: ' + error.message);
+    } finally {
+        console.log("leaving updateMarko..");
+    }
+}
+  
 async function writeToPublicWritableFile(fileId = '1UvMaQ5qr7DSJV9ovFmaZQkV751_XnjUE') {
     if (!navigator.onLine) {
         alert("Connect to the Internet to proceed");
@@ -6716,9 +6750,7 @@ const url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadTy
     }
 }
 
-
-
-async function prepareFileContent() {
+async function prepareFileContent(array = 'bookmarks') {
     const contentJson = localStorage.getItem('bookmarks'); 
     const content = JSON.parse(contentJson);
     return JSON.stringify(content);
