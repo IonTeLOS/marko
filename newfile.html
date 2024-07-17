@@ -2958,7 +2958,7 @@ function moveMarkoTo() {
                         const targetArray = JSON.parse(localStorage.getItem(firstArg) || '[]');
                         targetArray.push(targetBookmark);
                         localStorage.setItem(firstArg, JSON.stringify(targetArray));
-                        syncAndShowCommonMarko(firstArg, secondArg);
+                        updateMarko(firstArg);
                     }
                 }
             };
