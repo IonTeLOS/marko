@@ -2870,6 +2870,8 @@ async function syncAndShowCommonMarko(fileId, title = 'Shared with me') {
         }   
             updateUI(fileId, `${title}`);
             alert(`Synced. Showing Markos from ${title}. Enjoy!`);
+            sessionStorage.setItem('now-showing', fileId);
+            console.log('now showing Markos from:' + fileId);
         } else {
             console.error('Bookmarks not found in fileContent');
             alert('Error: no Markos found in the file content.');
@@ -3508,20 +3510,22 @@ function getBaseUrl(url) {
 };   
    // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
     
-    // delete a bookmark from local storage and remove it from now shown (the later by calling removeBookmark function)
+    // delete a bookmark from local storage and remove it from now shown (the later by calling removeBookmark function) TODO: maybe merge to 1 with clearLink()
     function deleteLink(index) {
+            // nowPlaying is the bunch of Markos currently shown
+            const nowPlaying = sessionStorage.getItem('now-showing') || 'bookmarks';
+            const currentLinks = JSON.parse(localStorage.getItem(nowPlaying)) || [];
             if (confirm('Are you sure you want to delete this bookmark?')) {
               removeBookmark(index);
-              links.splice(index, 1);
-              localStorage.setItem('bookmarks', JSON.stringify(links));
-              saveLinks();
+              currentLinks.splice(index, 1);
+              localStorage.setItem(nowPlaying, JSON.stringify(currentLinks));
         }
     }
     
-        function clearLink(index) {
+        function clearLink(index, array = 'bookmarks') {
               removeBookmark(index);
               links.splice(index, 1);
-              localStorage.setItem('bookmarks', JSON.stringify(links));
+              localStorage.setItem(array, JSON.stringify(links));
               saveLinks();
     }
     
@@ -6661,6 +6665,7 @@ async function updateMarko(fileId) {
         alert("Connect to the Internet to proceed");
         return;
     }
+  
         console.log("Adding to fileId:", fileId);
 
     try {
@@ -6678,9 +6683,6 @@ async function updateMarko(fileId) {
         if (!result || !result.id) {
           throw new Error('Failed to save file: No file data returned');
         } else {
-          // Store updated friend-uuid and fileId in localStorage, TODO: evaluate if necessary, we already have it
-          const content = JSON.parse(fileContent);
-          localStorage.setItem(result.id, JSON.stringify(content));
           alert('Success!);
           location.reload();      
         }
