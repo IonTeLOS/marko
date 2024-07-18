@@ -1802,6 +1802,10 @@ const markoTypes = ['website', 'email', 'phone', 'window'];
 const markoIconTypes = ['Default', 'Website icon', 'Let me choose'];
 
 function chooseMarkoType() {
+      const linkContainer = document.querySelector('.bookmarks-container');
+    if (linkContainer) {
+        linkContainer.style.display = 'none';
+    }
     const form = document.getElementById('markoTypeForm');
     const select = document.getElementById('markoType');
     const continueButton = document.getElementById('continueTo2Button');
