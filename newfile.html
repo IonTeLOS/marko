@@ -1352,23 +1352,30 @@ input:focus {
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   }
   
-  .form-group {
-    margin-bottom: 20px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
-  select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background-color: white;
-    font-size: 16px;
-  }
+.form-group {
+    margin-bottom: 20px; /* Ensures space below each form group */
+    padding: 10px;       /* Adds padding inside the form group for better spacing */
+    background-color: #f9f9f9; /* Light background color for better visibility */
+    border: 1px solid #ddd; /* Adds a light border around the form group */
+    border-radius: 4px; /* Rounds the corners of the border */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adds a subtle shadow for a lifted effect */
+}
+
+.form-group label {
+    display: block; /* Ensures the label takes up the full width and is on its own line */
+    margin-bottom: 5px; /* Adds space between the label and the input */
+    font-weight: bold; /* Makes the label text bold for better readability */
+}
+
+.form-group select, 
+.form-group input[type="text"] {
+    width: 100%; /* Ensures the input fields stretch to fill the form group */
+    padding: 8px; /* Adds padding inside the input fields */
+    border: 1px solid #ccc; /* Adds a border around the input fields */
+    border-radius: 4px; /* Rounds the corners of the input fields */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+}
+
   
   button {
     background-color: #4CAF50;
