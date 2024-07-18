@@ -1376,7 +1376,22 @@ input:focus {
     box-sizing: border-box; /* Includes padding and border in the element's total width and height */
 }
 
-  
+  select {
+    display: inline-block;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white; /* Ensure background color is not blending with options */
+    color: #000; /* Ensure text color is visible */
+}
+
+option {
+    padding: 5px;
+    background-color: white; /* Ensure background color is visible */
+    color: #000; /* Ensure text color is visible */
+}
+
   button {
     background-color: #4CAF50;
     color: white;
