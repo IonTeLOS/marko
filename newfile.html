@@ -1811,6 +1811,192 @@ function checkInitialState() {
 }
 
 
+// Call this when the page loads
+document.addEventListener('DOMContentLoaded', checkInitialState);
+
+         function toggleButtonContainerVisibility() {
+            const newLinkForm = document.getElementById('new-link-form');
+            const buttonContainer = document.getElementById('menu-container');
+            if (newLinkForm.style.display === 'block') {
+                buttonContainer.classList.remove('hidden');
+                buttonContainer.classList.add('visible');
+            } else {
+                buttonContainer.classList.remove('visible');
+                buttonContainer.classList.add('hidden');
+            }
+        }
+
+  // Ensure this function runs when the DOM content is fully loaded
+  document.addEventListener('DOMContentLoaded', () => {
+    toggleButtonContainerVisibility();
+
+    // Add an event listener to monitor changes to the visibility of new-link-form
+  const observer = new MutationObserver(() => {
+    toggleButtonContainerVisibility();
+    });
+
+  observer.observe(document.getElementById('new-link-form'), { attributes: true, attributeFilter: ['style'] });
+  });
+
+    
+  
+let linkTypeSelect;
+let iconSourceSelect;
+let currentLink = null; // Global variable to store current link    
+let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
+let myCommonMarkos = JSON.parse(localStorage.getItem('myCommons')) || [];
+
+      
+
+document.addEventListener('DOMContentLoaded', function() {
+    // definitions of elements
+    const linkTypeSelect = document.getElementById('link-type');
+    const iconSourceSelect = document.getElementById('icon-source');
+    const iconSelectionContainer = document.getElementById('icon-selection-container');
+    const cardPanel = document.querySelector('.card-panel');
+    const additionalFields = document.getElementById('additional-fields');
+    const iconSourceContainer = document.getElementById('icon-source-container');
+    const noteField = document.getElementById('note-field');
+    const introField = document.getElementById('intro-field');
+    const urlField = document.getElementById('url-field');
+    const phoneNumberField = document.getElementById('phone-number-field');
+    const easyMDE = new EasyMDE({
+    element: document.getElementById('intro-content'),
+    autoDownloadFontAwesome: true,
+    scrollbarStyle: null,
+    promptURLs: true,
+    toolbar: [
+      "bold", "italic", "heading", "|",
+      "unordered-list", "table", "horizontal-rule", "|",
+      "link", "image", "preview"
+    ],
+    placeholder: "Write your post here... (max 10000 characters)",
+    maxLength: 10000
+  });
+
+  var urlInput = document.getElementById('new-link-url');
+  var uclearBtn = document.getElementById('u-clear-btn');
+  var wclearBtn = document.getElementById('w-clear-btn');
+  var textInput = document.getElementById('new-link-name');
+  var phoneInput = document.getElementById('phone-number-field');
+  var tclearBtn = document.getElementById('t-clear-btn');
+  var pclearBtn = document.getElementById('p-clear-btn');
+  var winInput = document.getElementById('window-url');
+    
+  // text clear buttons for the text input fields
+    urlInput.addEventListener('input', function() {
+    uclearBtn.style.display = this.value ? 'block' : 'none';
+  });
+  
+    winInput.addEventListener('input', function() {
+    wclearBtn.style.display = this.value ? 'block' : 'none';
+  });
+  
+    textInput.addEventListener('input', function() {
+    tclearBtn.style.display = this.value ? 'block' : 'none';
+  });
+  
+    phoneInput.addEventListener('input', function() {
+    pclearBtn.style.display = this.value ? 'block' : 'none';
+  });
+
+  tclearBtn.addEventListener('click', function() {
+    textInput.value = '';
+    this.style.display = 'none';
+    textInput.focus();
+  });
+  
+  wclearBtn.addEventListener('click', function() {
+    winInput.value = '';
+    this.style.display = 'none';
+    winInput.focus();
+  });
+  
+    pclearBtn.addEventListener('click', function() {
+    phoneInput.value = '';
+    this.style.display = 'none';
+    phoneInput.focus();
+  });
+  
+    uclearBtn.addEventListener('click', function() {
+    urlInput.value = '';
+    this.style.display = 'none';
+    urlInput.focus();
+  });
+
+    
+    function handleLinkTypeChange() {
+        const linkType = linkTypeSelect.value;
+        console.log(`Link type changed to: ${linkType}`);  // Debug log
+        // clear text input fields' text when link type changes by user selection
+        clearForm();
+        // show the text input fields that apply to the selected link type
+        showFields(linkType);
+    }
+
+    
+    document.addEventListener('click', function(event) {
+    if (!iconDropdown.contains(event.target)) {
+        // Hide the link type dropdown if clicked outside 
+        iconDropdown.style.display = 'none';
+    }
+});
+
+    document.addEventListener('click', function(event) {
+    if (iconSelect.contains(event.target)) {
+        // Hide the icon dropdown if clicked outside 
+        iconDropdown.style.display = 'block';
+    }
+});
+    
+
+  
+
+    function showIconSelectionPanel() {
+      iconSelectionContainer.style.display = 'block';
+      // style the icon selection card panel TODO move this to the style part    
+      cardPanel.style.display = 'block';
+      cardPanel.style.fontSize = '16px';
+      cardPanel.style.padding = '10px';
+      cardPanel.style.border = '1px solid #ccc';
+      cardPanel.style.borderRadius = '4px';
+      cardPanel.style.outline = 'none';
+      cardPanel.style.maxWidth = '500px';
+      cardPanel.style.margin = '0 auto';
+      cardPanel.style.backgroundColor = 'lightgrey';
+      cardPanel.style.boxShadow = 'none';
+    }
+
+    function hideIconSelectionPanel() {
+      iconSelectionContainer.style.display = 'none';
+      cardPanel.style.display = 'none';
+    }
+
+    // Modify the handleIconSourceChange function
+    function handleIconSourceChange() {
+      const iconSource = iconSourceSelect.value;
+      console.log(`Icon source changed to: ${iconSource}`);  // Debug log
+      const newLinkIcon = document.getElementById('new-link-icon');
+      
+      if (!newLinkIcon) {
+        return;
+      }
+      
+      newLinkIcon.style.display = 'none';
+      hideIconSelectionPanel(); // Hide by default the card panel
+
+      if (iconSource === 'selection') {
+        newLinkIcon.style.display = 'block';
+        showIconSelectionPanel(); // Show the card panel only when "Select an icon" is chosen
+      }
+    }
+
+    // Add event listener to iconSourceSelect
+    iconSourceSelect.addEventListener('change', handleIconSourceChange);
+
+
+
+
 
 
 
@@ -1967,194 +2153,7 @@ const type = sessionStorage.getItem('temp-marko-type') || 'website';
 
 
 
-
-
-
-
-
-      
-// Call this when the page loads
-document.addEventListener('DOMContentLoaded', checkInitialState);
-
-         function toggleButtonContainerVisibility() {
-            const newLinkForm = document.getElementById('new-link-form');
-            const buttonContainer = document.getElementById('menu-container');
-            if (newLinkForm.style.display === 'block') {
-                buttonContainer.classList.remove('hidden');
-                buttonContainer.classList.add('visible');
-            } else {
-                buttonContainer.classList.remove('visible');
-                buttonContainer.classList.add('hidden');
-            }
-        }
-
-  // Ensure this function runs when the DOM content is fully loaded
-  document.addEventListener('DOMContentLoaded', () => {
-    toggleButtonContainerVisibility();
-
-    // Add an event listener to monitor changes to the visibility of new-link-form
-  const observer = new MutationObserver(() => {
-    toggleButtonContainerVisibility();
-    });
-
-  observer.observe(document.getElementById('new-link-form'), { attributes: true, attributeFilter: ['style'] });
-  });
-
-    
   
-let linkTypeSelect;
-let iconSourceSelect;
-let currentLink = null; // Global variable to store current link    
-let allCommonMarkos = JSON.parse(localStorage.getItem('commonMarkos')) || [];
-let myCommonMarkos = JSON.parse(localStorage.getItem('myCommons')) || [];
-
-      
-
-document.addEventListener('DOMContentLoaded', function() {
-    // definitions of elements
-    const linkTypeSelect = document.getElementById('link-type');
-    const iconSourceSelect = document.getElementById('icon-source');
-    const iconSelectionContainer = document.getElementById('icon-selection-container');
-    const cardPanel = document.querySelector('.card-panel');
-    const additionalFields = document.getElementById('additional-fields');
-    const iconSourceContainer = document.getElementById('icon-source-container');
-    const noteField = document.getElementById('note-field');
-    const introField = document.getElementById('intro-field');
-    const urlField = document.getElementById('url-field');
-    const phoneNumberField = document.getElementById('phone-number-field');
-    const easyMDE = new EasyMDE({
-    element: document.getElementById('intro-content'),
-    autoDownloadFontAwesome: true,
-    scrollbarStyle: null,
-    promptURLs: true,
-    toolbar: [
-      "bold", "italic", "heading", "|",
-      "unordered-list", "table", "horizontal-rule", "|",
-      "link", "image", "preview"
-    ],
-    placeholder: "Write your post here... (max 10000 characters)",
-    maxLength: 10000
-  });
-
-  var urlInput = document.getElementById('new-link-url');
-  var uclearBtn = document.getElementById('u-clear-btn');
-  var wclearBtn = document.getElementById('w-clear-btn');
-  var textInput = document.getElementById('new-link-name');
-  var phoneInput = document.getElementById('phone-number-field');
-  var tclearBtn = document.getElementById('t-clear-btn');
-  var pclearBtn = document.getElementById('p-clear-btn');
-  var winInput = document.getElementById('window-url');
-    
-  // text clear buttons for the text input fields
-    urlInput.addEventListener('input', function() {
-    uclearBtn.style.display = this.value ? 'block' : 'none';
-  });
-  
-    winInput.addEventListener('input', function() {
-    wclearBtn.style.display = this.value ? 'block' : 'none';
-  });
-  
-    textInput.addEventListener('input', function() {
-    tclearBtn.style.display = this.value ? 'block' : 'none';
-  });
-  
-    phoneInput.addEventListener('input', function() {
-    pclearBtn.style.display = this.value ? 'block' : 'none';
-  });
-
-  tclearBtn.addEventListener('click', function() {
-    textInput.value = '';
-    this.style.display = 'none';
-    textInput.focus();
-  });
-  
-  wclearBtn.addEventListener('click', function() {
-    winInput.value = '';
-    this.style.display = 'none';
-    winInput.focus();
-  });
-  
-    pclearBtn.addEventListener('click', function() {
-    phoneInput.value = '';
-    this.style.display = 'none';
-    phoneInput.focus();
-  });
-  
-    uclearBtn.addEventListener('click', function() {
-    urlInput.value = '';
-    this.style.display = 'none';
-    urlInput.focus();
-  });
-
-    
-    function handleLinkTypeChange() {
-        const linkType = linkTypeSelect.value;
-        console.log(`Link type changed to: ${linkType}`);  // Debug log
-        // clear text input fields' text when link type changes by user selection
-        clearForm();
-        // show the text input fields that apply to the selected link type
-        showFields(linkType);
-    }
-
-    
-    document.addEventListener('click', function(event) {
-    if (!iconDropdown.contains(event.target)) {
-        // Hide the link type dropdown if clicked outside 
-        iconDropdown.style.display = 'none';
-    }
-});
-
-    document.addEventListener('click', function(event) {
-    if (iconSelect.contains(event.target)) {
-        // Hide the icon dropdown if clicked outside 
-        iconDropdown.style.display = 'block';
-    }
-});
-    
- 
-
-    function showIconSelectionPanel() {
-      iconSelectionContainer.style.display = 'block';
-      // style the icon selection card panel TODO move this to the style part    
-      cardPanel.style.display = 'block';
-      cardPanel.style.fontSize = '16px';
-      cardPanel.style.padding = '10px';
-      cardPanel.style.border = '1px solid #ccc';
-      cardPanel.style.borderRadius = '4px';
-      cardPanel.style.outline = 'none';
-      cardPanel.style.maxWidth = '500px';
-      cardPanel.style.margin = '0 auto';
-      cardPanel.style.backgroundColor = 'lightgrey';
-      cardPanel.style.boxShadow = 'none';
-    }
-
-    function hideIconSelectionPanel() {
-      iconSelectionContainer.style.display = 'none';
-      cardPanel.style.display = 'none';
-    }
-
-    // Modify the handleIconSourceChange function
-    function handleIconSourceChange() {
-      const iconSource = iconSourceSelect.value;
-      console.log(`Icon source changed to: ${iconSource}`);  // Debug log
-      const newLinkIcon = document.getElementById('new-link-icon');
-      
-      if (!newLinkIcon) {
-        return;
-      }
-      
-      newLinkIcon.style.display = 'none';
-      hideIconSelectionPanel(); // Hide by default the card panel
-
-      if (iconSource === 'selection') {
-        newLinkIcon.style.display = 'block';
-        showIconSelectionPanel(); // Show the card panel only when "Select an icon" is chosen
-      }
-    }
-
-    // Add event listener to iconSourceSelect
-    iconSourceSelect.addEventListener('change', handleIconSourceChange);
-
     function hideAllFields() {
         additionalFields.style.display = 'none';
         iconSourceContainer.style.display = 'none';
