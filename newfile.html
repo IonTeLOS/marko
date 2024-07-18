@@ -1406,149 +1406,7 @@ option {
     background-color: #45a049;
   }
   </style>   
-<script>
-const markoTypes = ['website', 'email', 'phone', 'window'];
-const markoIconTypes = ['Default', 'Website icon', 'Let me choose'];
 
-function chooseMarkoType() {
-      const linkContainer = document.querySelector('.bookmarks-container');
-    if (linkContainer) {
-        linkContainer.style.display = 'none';
-    }
-    const form = document.getElementById('markoTypeForm');
-    const select = document.getElementById('markoType');
-    const continueButton = document.getElementById('continueTo2Button');
-    
-    // Clear existing options
-    select.innerHTML = '<option value="">Choose a type</option>';
-    
-    // Add options dynamically
-    markoTypes.forEach((type, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = type;
-        select.appendChild(option);
-    });
-    
-    // Show the form
-    form.style.display = 'block';
-    
-    // Handle form submission
-    continueButton.onclick = function() {
-        const selectedIndex = select.value;
-        if (selectedIndex !== '') {
-            form.style.display = 'none';
-            chooseMarkoName(markoTypes[selectedIndex]);
-        } else {
-            Notiflix.Notify.warning('Select the type of your Marko');
-        }
-    };
-}
-
-function chooseMarkoName(type = 'website') {
-sessionStorage.setItem('temp-marko-type', type);
-    Notiflix.Confirm.prompt(
-        'Creating a Marko.. (2/5)',
-        'Give your Marko a name',
-        '',
-        'Continue',
-        'Cancel',
-        (clientAnswer) => {
-            setTimeout(() => chooseMarkoLink(clientAnswer), 500); 
-        },
-        () => {
-            Notiflix.Notify.info('You chose to stop Marko creation. Byee!');
-            sessionStorage.removeItem('temp-marko-type');
-        },
-        {}
-    );
-}
-
-function chooseMarkoLink(name = 'Marko') {
-sessionStorage.setItem('temp-marko-name', name);
-    Notiflix.Confirm.prompt(
-        'Creating a Marko.. (3/5)',
-        'What is the link of your Marko?',
-        '',
-        'Continue',
-        'Cancel',
-        (clientAnswer) => {
-            setTimeout(() => chooseMarkoIcon(clientAnswer), 500);
-        },
-        () => {
-            Notiflix.Notify.info('Process aborted');
-            sessionStorage.removeItem('temp-marko-type');
-            sessionStorage.removeItem('temp-marko-name');
-        },
-        {}
-    );
-}
-
-function chooseMarkoIcon(url = 'https://teloslinux.org') {
-sessionStorage.setItem('temp-marko-url', url);
-
-    const form = document.getElementById('markoIconTypeForm');
-    const select = document.getElementById('markoIconType');
-    const continueButton = document.getElementById('continueTo5Button');
-    
-    // Clear existing options
-    select.innerHTML = '<option value="">Choose a type</option>';
-    
-    // Add options dynamically
-    markoIconTypes.forEach((type, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = type;
-        select.appendChild(option);
-    });
-    
-    // Show the form
-    form.style.display = 'block';
-    
-    // Handle form submission
-    continueButton.onclick = function() {
-        const selectedIndex = select.value;
-        if (selectedIndex !== '') {
-            form.style.display = 'none';
-            setTimeout(() => stepFinalMarkoCreate(markoIconTypes[selectedIndex]), 500);
-        } else {
-            Notiflix.Notify.warning('Select the icon type for your Marko');
-        }
-    };
-}    
-
-
-
-function stepFinalMarkoCreate(icon) {
-showIconSelectionPanel();
-  sessionStorage.setItem('temp-marko-icon', icon);
-const url = sessionStorage.getItem('temp-marko-url') || 'https://teloslinux.org';
-const name = sessionStorage.getItem('temp-marko-name') || 'Marko';
-const type = sessionStorage.getItem('temp-marko-type') || 'website';
-/*
-  Notiflix.Confirm.show(
-        'Creating a Marko.. (5/5)',
-        `Confirm Marko of type ${type} with details:\nName: ${name}\nURL: ${url}\nICON: ${icon}`,
-        'Create',
-        'Cancel',
-        () => {
-            Notiflix.Notify.success('Marko created successfully!');
-            // Here you would typically send the data to your server
-        },
-        () => {
-            Notiflix.Notify.info('Marko creation cancelled');
-            sessionStorage.removeItem('temp-marko-type');
-            sessionStorage.removeItem('temp-marko-name');
-            sessionStorage.removeItem('temp-marko-url');
-            sessionStorage.removeItem('temp-marko-icon');
-        }
-    );
-    */
-}
-
-
-
-  </script>
 <script type=module>
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js';
@@ -6427,6 +6285,149 @@ function openLink(url) {
 }
 
 </script>
+  <script>
+const markoTypes = ['website', 'email', 'phone', 'window'];
+const markoIconTypes = ['Default', 'Website icon', 'Let me choose'];
+
+function chooseMarkoType() {
+      const linkContainer = document.querySelector('.bookmarks-container');
+    if (linkContainer) {
+        linkContainer.style.display = 'none';
+    }
+    const form = document.getElementById('markoTypeForm');
+    const select = document.getElementById('markoType');
+    const continueButton = document.getElementById('continueTo2Button');
+    
+    // Clear existing options
+    select.innerHTML = '<option value="">Choose a type</option>';
+    
+    // Add options dynamically
+    markoTypes.forEach((type, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = type;
+        select.appendChild(option);
+    });
+    
+    // Show the form
+    form.style.display = 'block';
+    
+    // Handle form submission
+    continueButton.onclick = function() {
+        const selectedIndex = select.value;
+        if (selectedIndex !== '') {
+            form.style.display = 'none';
+            chooseMarkoName(markoTypes[selectedIndex]);
+        } else {
+            Notiflix.Notify.warning('Select the type of your Marko');
+        }
+    };
+}
+
+function chooseMarkoName(type = 'website') {
+sessionStorage.setItem('temp-marko-type', type);
+    Notiflix.Confirm.prompt(
+        'Creating a Marko.. (2/5)',
+        'Give your Marko a name',
+        '',
+        'Continue',
+        'Cancel',
+        (clientAnswer) => {
+            setTimeout(() => chooseMarkoLink(clientAnswer), 500); 
+        },
+        () => {
+            Notiflix.Notify.info('You chose to stop Marko creation. Byee!');
+            sessionStorage.removeItem('temp-marko-type');
+        },
+        {}
+    );
+}
+
+function chooseMarkoLink(name = 'Marko') {
+sessionStorage.setItem('temp-marko-name', name);
+    Notiflix.Confirm.prompt(
+        'Creating a Marko.. (3/5)',
+        'What is the link of your Marko?',
+        '',
+        'Continue',
+        'Cancel',
+        (clientAnswer) => {
+            setTimeout(() => chooseMarkoIcon(clientAnswer), 500);
+        },
+        () => {
+            Notiflix.Notify.info('Process aborted');
+            sessionStorage.removeItem('temp-marko-type');
+            sessionStorage.removeItem('temp-marko-name');
+        },
+        {}
+    );
+}
+
+function chooseMarkoIcon(url = 'https://teloslinux.org') {
+sessionStorage.setItem('temp-marko-url', url);
+
+    const form = document.getElementById('markoIconTypeForm');
+    const select = document.getElementById('markoIconType');
+    const continueButton = document.getElementById('continueTo5Button');
+    
+    // Clear existing options
+    select.innerHTML = '<option value="">Choose a type</option>';
+    
+    // Add options dynamically
+    markoIconTypes.forEach((type, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = type;
+        select.appendChild(option);
+    });
+    
+    // Show the form
+    form.style.display = 'block';
+    
+    // Handle form submission
+    continueButton.onclick = function() {
+        const selectedIndex = select.value;
+        if (selectedIndex !== '') {
+            form.style.display = 'none';
+            setTimeout(() => stepFinalMarkoCreate(markoIconTypes[selectedIndex]), 500);
+        } else {
+            Notiflix.Notify.warning('Select the icon type for your Marko');
+        }
+    };
+}    
+
+
+
+function stepFinalMarkoCreate(icon) {
+showIconSelectionPanel();
+  sessionStorage.setItem('temp-marko-icon', icon);
+const url = sessionStorage.getItem('temp-marko-url') || 'https://teloslinux.org';
+const name = sessionStorage.getItem('temp-marko-name') || 'Marko';
+const type = sessionStorage.getItem('temp-marko-type') || 'website';
+/*
+  Notiflix.Confirm.show(
+        'Creating a Marko.. (5/5)',
+        `Confirm Marko of type ${type} with details:\nName: ${name}\nURL: ${url}\nICON: ${icon}`,
+        'Create',
+        'Cancel',
+        () => {
+            Notiflix.Notify.success('Marko created successfully!');
+            // Here you would typically send the data to your server
+        },
+        () => {
+            Notiflix.Notify.info('Marko creation cancelled');
+            sessionStorage.removeItem('temp-marko-type');
+            sessionStorage.removeItem('temp-marko-name');
+            sessionStorage.removeItem('temp-marko-url');
+            sessionStorage.removeItem('temp-marko-icon');
+        }
+    );
+    */
+}
+
+
+
+  </script>
         <script>
         function showPDFLightbox(pdfUrl, title) {
             const adobeDCView = new AdobeDC.View({
