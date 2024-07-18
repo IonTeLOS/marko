@@ -1934,14 +1934,13 @@ sessionStorage.setItem('temp-marko-url', url);
 
 
 function stepFinalMarkoCreate(icon) {
-if (icon === 'Let me choose') {
-   showIconSelectionPanel();
-}  
+     showIconSelectionPanel();
 sessionStorage.setItem('temp-marko-icon', icon);
 const url = sessionStorage.getItem('temp-marko-url') || 'https://teloslinux.org';
 const name = sessionStorage.getItem('temp-marko-name') || 'Marko';
 const type = sessionStorage.getItem('temp-marko-type') || 'website';
-Notiflix.Confirm.show(
+/*
+  Notiflix.Confirm.show(
         'Creating a Marko.. (5/5)',
         `Confirm Marko of type ${type} with details:\nName: ${name}\nURL: ${url}\nICON: ${icon}`,
         'Create',
@@ -1958,6 +1957,7 @@ Notiflix.Confirm.show(
             sessionStorage.removeItem('temp-marko-icon');
         }
     );
+    */
 }
 
 
