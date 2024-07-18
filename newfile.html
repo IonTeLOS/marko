@@ -1520,18 +1520,7 @@ sessionStorage.setItem('temp-marko-url', url);
 
 
 function stepFinalMarkoCreate(icon) {
- iconSelectionContainer.style.display = 'block';
-      // style the icon selection card panel TODO move this to the style part    
-      cardPanel.style.display = 'block';
-      cardPanel.style.fontSize = '16px';
-      cardPanel.style.padding = '10px';
-      cardPanel.style.border = '1px solid #ccc';
-      cardPanel.style.borderRadius = '4px';
-      cardPanel.style.outline = 'none';
-      cardPanel.style.maxWidth = '500px';
-      cardPanel.style.margin = '0 auto';
-      cardPanel.style.backgroundColor = 'lightgrey';
-      cardPanel.style.boxShadow = 'none';
+showIconSelectionPanel();
   sessionStorage.setItem('temp-marko-icon', icon);
 const url = sessionStorage.getItem('temp-marko-url') || 'https://teloslinux.org';
 const name = sessionStorage.getItem('temp-marko-name') || 'Marko';
