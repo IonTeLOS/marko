@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Google CSE</title>
+    <title>Customized Google CSE</title>
     <style>
         body, html {
             margin: 0;
@@ -18,7 +18,30 @@
         }
         .gcse-search {
             width: 80%;
-            max-width: 600px;
+            max-width: 800px;
+        }
+        /* Material Design Styles */
+        input.gsc-input, .gsc-control-cse .gsc-table-result {
+            font-size: 18px; /* Increase font size */
+            padding: 10px; /* Add padding */
+            border: none;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            outline: none;
+            transition: box-shadow 0.3s;
+        }
+        input.gsc-input:focus, .gsc-control-cse .gsc-table-result:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .gsc-control-cse .gsc-webResult.gsc-result, .gsc-control-cse .gsc-imageResult.gsc-result {
+            border: none;
+            padding: 16px;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: box-shadow 0.3s;
+        }
+        .gsc-control-cse .gsc-webResult.gsc-result:hover, .gsc-control-cse .gsc-imageResult.gsc-result:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
     </style>
 </head>
