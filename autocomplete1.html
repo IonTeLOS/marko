@@ -26,7 +26,6 @@
         }
         .gcse-search {
             width: 100%;
-            margin-bottom: 20px;
         }
         .url-button {
             width: 100%;
@@ -42,6 +41,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            margin-top: 10px; /* Space above button */
+        }
+        .url-button.hidden {
+            display: none;
         }
         .url-button:hover {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
@@ -55,45 +58,56 @@
 <body>
     <div class="search-container">
         <div class="gcse-search"></div>
+        <button class="url-button hidden" id="urlButton">
+            <span class="material-icons">send</span> Go to URL
+        </button>
     </div>
     <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
     <script>
         window.onload = function() {
-            const searchContainer = document.querySelector('.search-container');
-            let searchBox;
-
-            // Function to dynamically create and style the button
-            function createButton() {
-                const urlButton = document.createElement('button');
-                urlButton.className = 'url-button';
-                urlButton.id = 'urlButton';
-                urlButton.innerHTML = '<span class="material-icons">send</span>Go to URL';
-                searchContainer.appendChild(urlButton);
-
-                urlButton.addEventListener('click', () => {
-                    if (searchBox) {
-                        const query = searchBox.value.trim();
-                        if (isURL(query)) {
-                            let url = query;
-                            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                                url = 'https://' + url;
-                            }
-                            window.location.href = url;
-                        }
-                    }
-                });
-            }
-
-            const intervalId = setInterval(() => {
+            let searchBox, urlButton;
+            
+            // Check for the Google CSE search input and adjust its size
+            function initializeSearchBox() {
                 searchBox = document.querySelector('.gsc-input');
                 if (searchBox) {
                     searchBox.style.fontSize = '20px';
                     searchBox.style.height = '50px';
-                    clearInterval(intervalId);
-                    createButton(); // Create the button after the search box is found
+                    searchBox.style.boxSizing = 'border-box';
+                    
+                    // Update the button width to match the search box
+                    urlButton = document.getElementById('urlButton');
+                    if (urlButton) {
+                        urlButton.style.width = `${searchBox.offsetWidth}px`;
+                    }
                 }
-            }, 100);
+            }
 
+            // Create a function to hide/show the button based on search results visibility
+            function toggleButtonVisibility() {
+                const searchResults = document.querySelector('.gsc-results');
+                if (searchResults) {
+                    urlButton.classList.add('hidden');
+                } else {
+                    urlButton.classList.remove('hidden');
+                }
+            }
+
+            // Function to navigate to URL from the search box value
+            function handleUrlButtonClick() {
+                if (searchBox) {
+                    const query = searchBox.value.trim();
+                    if (isURL(query)) {
+                        let url = query;
+                        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                            url = 'https://' + url;
+                        }
+                        window.location.href = url;
+                    }
+                }
+            }
+
+            // URL validation function
             function isURL(str) {
                 const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
                     '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
@@ -103,6 +117,30 @@
                     '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
                 return pattern.test(str);
             }
+
+            // Initialize the Google Custom Search Engine
+            function init() {
+                google.search.cse.element.render({
+                    div: "gcse-search",
+                    tag: 'searchresults-only'
+                });
+                initializeSearchBox(); // Initialize the search box and button
+            }
+
+            // Add event listener for the URL button
+            document.addEventListener('click', (event) => {
+                if (event.target && event.target.id === 'urlButton') {
+                    handleUrlButtonClick();
+                }
+            });
+
+            // Monitor changes to search results
+            const observer = new MutationObserver(toggleButtonVisibility);
+            observer.observe(document.body, { childList: true, subtree: true });
+
+            window.__gcse = {
+                callback: init
+            };
         }
     </script>
 </body>
