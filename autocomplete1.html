@@ -58,26 +58,20 @@
     </div>
     <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
     <script>
-        // Wait until the Google CSE script is fully loaded
         window.onload = function() {
             const searchContainer = document.querySelector('.search-container');
             let searchBox;
-            
-            const intervalId = setInterval(() => {
-                searchBox = document.querySelector('.gsc-input');
-                if (searchBox) {
-                    searchBox.style.fontSize = '20px';
-                    searchBox.style.height = '50px';
 
-                    // Create the button dynamically
-                    const urlButton = document.createElement('button');
-                    urlButton.className = 'url-button';
-                    urlButton.id = 'urlButton';
-                    urlButton.innerHTML = '<span class="material-icons">send</span>Go to URL';
-                    urlButton.style.width = `${searchBox.offsetWidth}px`;
-                    searchContainer.appendChild(urlButton);
+            // Function to dynamically create and style the button
+            function createButton() {
+                const urlButton = document.createElement('button');
+                urlButton.className = 'url-button';
+                urlButton.id = 'urlButton';
+                urlButton.innerHTML = '<span class="material-icons">send</span>Go to URL';
+                searchContainer.appendChild(urlButton);
 
-                    urlButton.addEventListener('click', () => {
+                urlButton.addEventListener('click', () => {
+                    if (searchBox) {
                         const query = searchBox.value.trim();
                         if (isURL(query)) {
                             let url = query;
@@ -86,9 +80,17 @@
                             }
                             window.location.href = url;
                         }
-                    });
+                    }
+                });
+            }
 
+            const intervalId = setInterval(() => {
+                searchBox = document.querySelector('.gsc-input');
+                if (searchBox) {
+                    searchBox.style.fontSize = '20px';
+                    searchBox.style.height = '50px';
                     clearInterval(intervalId);
+                    createButton(); // Create the button after the search box is found
                 }
             }, 100);
 
