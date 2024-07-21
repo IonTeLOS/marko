@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Material Search Box with CSE</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .search-container {
+            position: relative;
+            width: 100%;
+            padding: 10px;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .search-box {
+            width: 300px;
+            padding: 12px 40px 12px 12px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            outline: none;
+            transition: box-shadow 0.3s;
+        }
+        .search-box:focus {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .search-icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #757575;
+            cursor: pointer;
+        }
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border-radius: 0 0 4px 4px;
+            display: none;
+            z-index: 1;
+        }
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+        .iframe-container {
+            flex: 1;
+            display: flex;
+        }
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="search-container">
+        <input type="text" class="search-box" id="searchBox" placeholder="Search or enter URL">
+        <span class="material-icons search-icon" id="searchIcon">arrow_drop_down</span>
+        <div class="dropdown" id="dropdown"></div>
+    </div>
+    <div class="iframe-container">
+        <iframe src="https://cse.google.com/cse?cx=50cbca12fd52442e0" frameborder="0"></iframe>
+    </div>
+
+    <script>
+        const searchBox = document.getElementById('searchBox');
+        const searchIcon = document.getElementById('searchIcon');
+        const dropdown = document.getElementById('dropdown');
+        let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
+
+        searchBox.addEventListener('input', () => {
+            searchIcon.textContent = searchBox.value ? 'close' : 'arrow_drop_down';
+            if (searchBox.value) {
+                fetchSuggestions(searchBox.value);
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        searchBox.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        searchIcon.addEventListener('click', () => {
+            if (searchBox.value === '') {
+                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+            } else {
+                searchBox.value = '';
+                searchIcon.textContent = 'arrow_drop_down';
+            }
+        });
+
+        dropdown.addEventListener('click', (e) => {
+            if (e.target.classList.contains('dropdown-item')) {
+                searchBox.value = e.target.textContent;
+                dropdown.style.display = 'none';
+                performSearch();
+            }
+        });
+
+        async function fetchSuggestions(query) {
+            const url = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            displaySuggestions(data[1]);
+        }
+
+        function displaySuggestions(items) {
+            dropdown.innerHTML = '';
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'dropdown-item';
+                div.textContent = item;
+                dropdown.appendChild(div);
+            });
+            dropdown.style.display = items.length ? 'block' : 'none';
+        }
+
+        function performSearch() {
+            let query = searchBox.value.trim();
+            if (!query) return;
+
+            query = query.replace(/\.\s+/g, '.');
+
+            if (isURL(query)) {
+                if (!query.startsWith('http://') && !query.startsWith('https://')) {
+                    query = 'https://' + query;
+                }
+                window.location.href = query;
+                return;
+            }
+
+            if (isEmail(query)) {
+                window.location.href = `mailto:${query}`;
+                return;
+            }
+
+            if (query.startsWith('tel:')) {
+                window.location.href = query;
+                return;
+            }
+
+            let searchUrl;
+            switch (selectedEngine) {
+                case 'google':
+                    searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'duckduckgo':
+                    searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'bing':
+                    searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'yahoo':
+                    searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
+                    break;
+                case 'yandex':
+                    searchUrl = `https://yandex.ru/search/?text=${encodeURIComponent(query)}`;
+                    break;
+                case 'baidu':
+                    searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+                    break;
+                case 'local':
+                    searchLocal(query);
+                    return;
+            }
+
+            window.location.href = searchUrl;
+        }
+
+        function isURL(str) {
+            const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+            return pattern.test(str);
+        }
+
+        function isEmail(str) {
+            const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return pattern.test(str);
+        }
+
+        function searchLocal(query) {
+            alert(`Performing local search for: ${query}`);
+        }
+    </script>
+</body>
+</html>
