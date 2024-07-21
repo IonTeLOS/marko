@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custom Search with Dropdown</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body, html {
             margin: 0;
@@ -17,45 +18,174 @@
             font-family: Arial, sans-serif;
         }
         .search-container {
-            width: 80%;
-            max-width: 800px;
+            width: 100%;
+            max-width: 600px;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .search-input-container {
+            display: flex;
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            align-items: center;
         }
         .custom-search-input {
-            width: 100%;
-            font-size: 20px;
+            flex: 1;
+            font-size: 18px;
             padding: 12px 20px;
+            padding-right: 80px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             outline: none;
             transition: box-shadow 0.3s;
+            margin: 0 10px;
+            min-width: 200px;
         }
         .custom-search-input:focus {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
+        .custom-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: box-shadow 0.3s;
+            font-size: 18px;
+            min-width: 48px;
+            margin: 0 5px;
+        }
+        .custom-button:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .custom-button .material-icons {
+            font-size: 24px;
+        }
+        .clear-button {
+            position: absolute;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: none;
+            color: #999;
+            padding: 5px;
+        }
+        .clear-button:hover {
+            color: #333;
+        }
+        .engine-select-button {
+            position: absolute;
+            right: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #999;
+            padding: 5px;
+        }
+        .engine-select-button:hover {
+            color: #333;
+        }
         .dropdown {
             display: none;
             position: absolute;
-            width: 100%;
+            z-index: 1000;
             border: 1px solid #ccc;
             border-top: none;
             background: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            width: calc(100% - 20px);
+            border-radius: 4px;
         }
         .dropdown-item {
             padding: 12px;
             cursor: pointer;
+            font-size: 16px;
         }
         .dropdown-item:hover {
             background-color: #f0f0f0;
+        }
+        .dropdown-top {
+            bottom: calc(100% + 10px);
+        }
+        .dropdown-bottom {
+            top: calc(100% + 10px);
+        }
+        .engine-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+        .engine-option {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .engine-option:hover {
+            background-color: #f0f0f0;
+        }
+        .engine-option.selected {
+            background-color: #e0e0e0;
+        }
+        @media (max-width: 600px) {
+            .custom-search-input {
+                font-size: 16px;
+            }
+            .custom-button {
+                font-size: 16px;
+            }
+            .dropdown-item {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="search-container">
-        <input type="text" id="searchInput" class="custom-search-input" placeholder="Search...">
+        <div class="search-input-container">
+            <button class="custom-button" id="sendButton">
+                <span class="material-icons">send</span>
+            </button>
+            <input type="text" id="searchInput" class="custom-search-input" placeholder="Search with Google or enter a URL">
+            <button class="clear-button" id="clearButton">
+                <span class="material-icons">clear</span>
+            </button>
+            <button class="engine-select-button" id="engineSelectButton">
+                <span class="material-icons">arrow_drop_down</span>
+            </button>
+            <div class="engine-dropdown" id="engineDropdown">
+                <div class="engine-option" data-engine="google">Google</div>
+                <div class="engine-option" data-engine="duckduckgo">DuckDuckGo</div>
+                <div class="engine-option" data-engine="bing">Bing</div>
+                <div class="engine-option" data-engine="yahoo">Yahoo</div>
+                <div class="engine-option" data-engine="yandex">Yandex</div>
+                <div class="engine-option" data-engine="baidu">Baidu</div>
+                <div class="engine-option" data-engine="local">Local</div>
+            </div>
+            <button class="custom-button" id="searchButton">
+                <span class="material-icons">search</span>
+            </button>
+        </div>
         <div id="dropdown" class="dropdown"></div>
     </div>
     
@@ -65,8 +195,15 @@
 
         const searchInput = document.getElementById('searchInput');
         const dropdown = document.getElementById('dropdown');
+        const sendButton = document.getElementById('sendButton');
+        const searchButton = document.getElementById('searchButton');
+        const clearButton = document.getElementById('clearButton');
+        const engineSelectButton = document.getElementById('engineSelectButton');
+        const engineDropdown = document.getElementById('engineDropdown');
+        
+        let firstUrlInDropdown = '';
+        let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
 
-        // Fetch search results from Google Custom Search API
         function fetchSearchResults(query) {
             const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${API_KEY}&cx=${CX}`;
             fetch(url)
@@ -79,9 +216,11 @@
                 .catch(error => console.error('Error fetching search results:', error));
         }
 
-        // Display search results in dropdown
         function showResults(results) {
             dropdown.innerHTML = '';
+            if (results.length > 0) {
+                firstUrlInDropdown = results[0].link;
+            }
             results.forEach(result => {
                 const item = document.createElement('div');
                 item.className = 'dropdown-item';
@@ -92,10 +231,10 @@
                 });
                 dropdown.appendChild(item);
             });
+            adjustDropdownPosition();
             dropdown.style.display = results.length ? 'block' : 'none';
         }
 
-        // Handle dropdown item click
         function handleResultClick(result) {
             const url = result.link;
             if (isValidURL(url)) {
@@ -105,7 +244,48 @@
             }
         }
 
-        // Validate if URL is properly formed
+        function handleUrlButtonClick() {
+            const query = searchInput.value.trim();
+            if (isValidURL(query)) {
+                let url = query;
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                window.location.href = url;
+            } else if (query.includes('.')) {
+                window.location.href = firstUrlInDropdown || 'https://www.google.com/search?q=' + encodeURIComponent(searchInput.value);
+            } else {
+                alert('The input does not look like a valid URL.');
+            }
+        }
+
+        function handleEnterKey(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                const query = searchInput.value.trim();
+                if (isValidURL(query)) {
+                    let url = query;
+                    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                        url = 'https://' + url;
+                    }
+                    window.location.href = url;
+                } else {
+                    const searchUrl = getSearchUrl(query);
+                    if (searchUrl) {
+                        window.open(searchUrl, '_blank');
+                    }
+                }
+            }
+        }
+        
+        function handleSearchButtonClick() {
+            const query = searchInput.value.trim();
+            const searchUrl = getSearchUrl(query);
+            if (searchUrl) {
+                window.open(searchUrl, '_blank');
+            }
+        }
+
         function isValidURL(url) {
             const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
                 '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
@@ -116,21 +296,147 @@
             return pattern.test(url);
         }
 
-        // Handle input changes
+        function adjustDropdownPosition() {
+            const searchBox = document.querySelector('.custom-search-input');
+            const searchBoxRect = searchBox.getBoundingClientRect();
+            const dropdownRect = dropdown.getBoundingClientRect();
+
+            dropdown.style.width = `${searchBoxRect.width}px`;
+
+            if (window.innerHeight - searchBoxRect.bottom > dropdownRect.height) {
+                dropdown.classList.remove('dropdown-top');
+                dropdown.classList.add('dropdown-bottom');
+            } else {
+                dropdown.classList.remove('dropdown-bottom');
+                dropdown.classList.add('dropdown-top');
+            }
+        }
+
+        function toggleClearButton() {
+            const hasText = searchInput.value.length > 0;
+            clearButton.style.display = hasText ? 'block' : 'none';
+            engineSelectButton.style.display = hasText ? 'none' : 'block';
+        }
+
+        function clearSearch() {
+            searchInput.value = '';
+            toggleClearButton();
+            dropdown.style.display = 'none';
+            firstUrlInDropdown = '';
+        }
+
+        function toggleEngineDropdown() {
+            engineDropdown.style.display = engineDropdown.style.display === 'none' ? 'block' : 'none';
+            dropdown.style.display = 'none'; // Close main dropdown when engine dropdown is toggled
+        }
+
+        function selectEngine(engine) {
+            selectedEngine = engine;
+            localStorage.setItem('selectedEngine', engine);
+            updateEngineDropdown();
+        }
+
+        function updateEngineDropdown() {
+            const options = engineDropdown.querySelectorAll('.engine-option');
+            options.forEach(option => {
+                if (option.dataset.engine === selectedEngine) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        }
+
+        function getSearchUrl(query) {
+            let searchUrl;
+            switch (selectedEngine) {
+                case 'google':
+                    searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'duckduckgo':
+                    searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'bing':
+                    searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                    break;
+                case 'yahoo':
+                    searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
+                    break;
+                case 'yandex':
+                    searchUrl = `https://yandex.ru/search/?text=${encodeURIComponent(query)}`;
+                    break;
+                case 'baidu':
+                    searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+                    break;
+                case 'local':
+                    searchLocal(query);
+                    return;
+                default:
+                    searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+            }
+            return searchUrl;
+        }
+        
+        function updatePlaceholder() {
+            const engineNames = {
+                'google': 'Google',
+                'duckduckgo': 'DuckDuckGo',
+                'bing': 'Bing',
+                'yahoo': 'Yahoo',
+                'yandex': 'Yandex',
+                'baidu': 'Baidu',
+                'local': 'Local'
+            };
+            const engineName = engineNames[selectedEngine] || 'Google';
+            searchInput.placeholder = `Search with ${engineName} or enter a URL`;
+        }
+
+        function selectEngine(engine) {
+            selectedEngine = engine;
+            localStorage.setItem('selectedEngine', engine);
+            updateEngineDropdown();
+            updatePlaceholder();
+        }
+
+        function searchLocal(query) {
+            // Implement local search functionality here
+            console.log('Performing local search for:', query);
+        }
+
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.trim();
             if (query.length > 0) {
                 fetchSearchResults(query);
             } else {
                 dropdown.style.display = 'none';
+                firstUrlInDropdown = '';
+            }
+            toggleClearButton();
+        });
+        
+        searchInput.addEventListener('keydown', handleEnterKey);
+        sendButton.addEventListener('click', handleUrlButtonClick);
+        searchButton.addEventListener('click', handleSearchButtonClick);
+        clearButton.addEventListener('click', clearSearch);
+        engineSelectButton.addEventListener('click', toggleEngineDropdown);
+
+        engineDropdown.addEventListener('click', (event) => {
+            if (event.target.classList.contains('engine-option')) {
+                selectEngine(event.target.dataset.engine);
+                toggleEngineDropdown();
             }
         });
 
-        // Close dropdown when clicking outside
+        // Initial setup
+        updateEngineDropdown();
+        updatePlaceholder();
+        toggleClearButton();
+
         document.addEventListener('click', (event) => {
             if (!event.target.closest('.search-container')) {
                 dropdown.style.display = 'none';
-            }
+                engineDropdown.style.display = 'none';
+                }
         });
     </script>
 </body>
