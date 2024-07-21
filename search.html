@@ -64,7 +64,7 @@ body, html {
 
 .dropdown-button, .clear-button, .engine-select-button {
     position: absolute;
-    right: 60px;
+    right: 75px;
     top: 50%;
     transform: translateY(-50%);
     background: none;
@@ -140,10 +140,9 @@ body, html {
     }
     .dropdown {
         bottom: calc(100% + 5px);
-        left: 0;
-        right: 0;
+        margin-left: 60px;
+        margin-right: 60px;
         width: calc(100% - 120px); /* Full width minus buttons */
-        margin-left: 60px; /* Align with search box */
     }
     .dropdown-item {
         padding: 8px;
@@ -164,7 +163,8 @@ body, html {
 @media (min-width: 601px) {
     .dropdown {
         top: calc(100% + 5px); /* Positioned below search box */
-        left: 60px; /* Start after left button */
+        margin-left: 60px; 
+        margin-right: 60px;
         width: calc(100% - 120px); /* Full width minus left and right buttons */
     }
     .engine-dropdown {
