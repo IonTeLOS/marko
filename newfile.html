@@ -7274,7 +7274,7 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 </script>
 
 <script>
-    const API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
+    const SEARCH_API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
     const CX = '50cbca12fd52442e0'; // Replace with your Custom Search Engine ID
 
     const searchInput = document.getElementById('searchInput');
@@ -7289,7 +7289,7 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
     let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
 
     function fetchSearchResults(query) {
-        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${API_KEY}&cx=${CX}`;
+        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${SEARCH_API_KEY}&cx=${CX}`;
         fetch(url)
             .then(response => response.json())
             .then(data => {
