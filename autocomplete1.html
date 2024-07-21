@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customized Google CSE</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0;
-            font-family: Arial, sans-serif;
-        }
-        .search-container {
-            width: 80%;
-            max-width: 800px;
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .custom-search-input {
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customized Google CSE</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    .search-container {
+      width: 80%;
+      max-width: 800px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .custom-search-input {
             font-size: 20px;
             padding: 12px 20px;
             border: 1px solid #ccc;
@@ -34,78 +36,62 @@
             transition: box-shadow 0.3s, padding 0.3s;
             flex: 1;
             margin-right: 10px;
+            display: none;
         }
         .custom-search-input:focus {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .custom-search-button, .url-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #4285F4;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: box-shadow 0.3s;
-            font-size: 20px;
-        }
+
+    /* Custom search button styles */
+    .url-button{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #4285F4; /* Same color as Google search button */
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      transition: box-shadow 0.3s;
+      font-size: 20px;
+      margin-right: 10px; /* Add margin for spacing */
+    }
         .custom-search-button:hover, .url-button:hover {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .custom-search-button .material-icons, .url-button .material-icons {
             font-size: 24px;
         }
-        .gsc-control-cse {
-            display: none !important;
-        }
-    </style>
+    /* Keep this line to avoid interfering with Google CSE styles */
+    .gsc-control-cse {
+      display: block;
+    }
+
+.gsc-control-cse .gsc-search-box {
+  background-color: #fff; /* Replace with your desired background color */
+  border: 1px solid #ccc; /* Replace with your desired border color */
+  border-radius: 4px; /* Adjust border radius if needed */
+  padding: 12px 20px; /* Adjust padding if needed */
+  /* Other styles based on your inspection */
+}
+  </style>
 </head>
 <body>
-    <div class="search-container">
-        <button class="url-button" id="urlButton">
-            <span class="material-icons">send</span>
-        </button>
-        <input type="text" id="gsc-input-box" class="custom-search-input" placeholder="Search or enter a URL">
-        <button class="custom-search-button" id="searchButton">
-            <span class="material-icons">search</span>
-        </button>
-    </div>
-    <div class="gcse-searchresults-only" id="searchResults"></div>
-    <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
-    <script>
-        let searchElementInitialized = false;
-
-        // Initialize Google Custom Search Engine
-        function initCSE() {
-            if (window.google && google.search && google.search.cse) {
-                google.search.cse.element.render({
-                    div: 'searchResults',
-                    tag: 'searchresults-only'
-                });
-                searchElementInitialized = true;
-                console.log('Google CSE element initialized.');
-            } else {
-                console.error('Google CSE object is not available yet.');
-                setTimeout(initCSE, 100); // Retry after 100ms
-            }
-        }
-
-        // Ensure the Google CSE script is loaded and then initialize
-        function loadCSE() {
-            if (window.__gcse && window.__gcse.callback) {
-                initCSE();
-            } else {
-                setTimeout(loadCSE, 100); // Retry after 100ms
-            }
-        }
-
-        window.__gcse = {
-            callback: initCSE
-        };
-        loadCSE(); // Start the process
+  <div class="search-container">
+    <button class="url-button" id="urlButton">
+      <span class="material-icons">send</span> Go to URL
+    </button>
+    <input type="text" id="gsc-input-box" class="custom-search-input" placeholder="Search or enter a URL">
+    <button class="custom-search-button" id="searchButton">
+      <span class="material-icons">search</span>
+    </button>
+  </div>
+  <div class="gcse-searchresults-only" id="searchResults"></div>
+  <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
+  <script>
+            let searchElement;
 
         // Redirect to URL if valid
         document.getElementById('urlButton').addEventListener('click', () => {
@@ -121,14 +107,9 @@
 
         // Perform search using Google CSE
         document.getElementById('searchButton').addEventListener('click', () => {
-            if (searchElementInitialized) {
-                const query = document.getElementById('gsc-input-box').value.trim();
-                const searchElement = google.search.cse.element.getElement('searchResults');
-                if (searchElement) {
-                    searchElement.execute(query);
-                } else {
-                    console.error('Google CSE search element is not found.');
-                }
+            const query = document.getElementById('gsc-input-box').value.trim();
+            if (searchElement) {
+                searchElement.execute(query);
             } else {
                 console.error('Google CSE search element is not initialized.');
             }
@@ -144,6 +125,28 @@
                 '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
             return pattern.test(str);
         }
-    </script>
+
+        // Initialize Google Custom Search Engine
+        function init() {
+            try {
+                searchElement = google.search.cse.element.getElement('searchResults');
+                if (searchElement) {
+                    searchElement.render({
+                        div: "searchResults",
+                        tag: 'searchresults-only'
+                    });
+                } else {
+                    console.error('Failed to get Google CSE search element.');
+                }
+            } catch (error) {
+                console.error('Error initializing Google CSE:', error);
+            }
+        }
+
+        // Execute the initialization function when Google CSE script is loaded
+        window.__gcse = {
+            callback: init
+        };
+  </script>
 </body>
 </html>
