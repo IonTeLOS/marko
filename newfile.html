@@ -7288,17 +7288,6 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
     let firstUrlInDropdown = '';
     let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
 
-    function fetchSearchResults(query) {
-        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${SEARCH_API_KEY}&cx=${CX}`;
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (data.items) {
-                    showResults(data.items);
-                }
-            })
-            .catch(error => console.error('Error fetching search results:', error));
-    }
 
 function showResults(results) {
     dropdown.innerHTML = '';
@@ -7346,22 +7335,7 @@ function showResults(results) {
         }
     }
 
-    function handleEnterKey(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            handleSearchButtonClick();
-        }
-    }
 
-    function isValidURL(url) {
-        const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-        return pattern.test(url);
-    }
 
     function adjustDropdownPosition() {
         const searchBox = document.querySelector('.custom-search-input');
@@ -7379,32 +7353,7 @@ function showResults(results) {
         }
     }
 
-    function toggleClearButton() {
-        const hasText = searchInput.value.length > 0;
-        clearButton.style.display = hasText ? 'block' : 'none';
-        engineSelectButton.style.display = hasText ? 'none' : 'block';
-    }
 
-    function clearSearch() {
-        searchInput.value = '';
-        toggleClearButton();
-        dropdown.style.display = 'none';
-        firstUrlInDropdown = '';
-        buttonIcon.textContent = 'search';
-        removeHighlight();
-    }
-
-    function toggleEngineDropdown() {
-        engineDropdown.style.display = engineDropdown.style.display === 'none' ? 'block' : 'none';
-        dropdown.style.display = 'none'; // Close main dropdown when engine dropdown is toggled
-    }
-
-    function selectEngine(engine) {
-        selectedEngine = engine;
-        localStorage.setItem('selectedEngine', engine);
-        updateEngineDropdown();
-        updatePlaceholder();
-    }
 
     function updateEngineDropdown() {
         const options = engineDropdown.querySelectorAll('.engine-option');
@@ -7612,6 +7561,14 @@ function removeHighlight() {
     }
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('searchBoxInput');
+    const searchButton = document.getElementById('searchButton');
+    const clearButton = document.getElementById('clearButton');
+    const engineSelectButton = document.getElementById('engineSelectButton');
+    const engineDropdown = document.getElementById('engineDropdown');
+    const buttonIcon = document.getElementById('buttonIcon');
+    const dropdown = document.getElementById('dropdown');
+    let firstUrlInDropdown = ''; // Define it as a global variable or use it as needed
+
     if (searchInput) {
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.trim();
@@ -7625,17 +7582,79 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             toggleClearButton();
         });
-          searchInput.addEventListener('keydown', handleEnterKey);
-          searchButton.addEventListener('click', handleSearchButtonClick);
-    clearButton.addEventListener('click', clearSearch);
-    engineSelectButton.addEventListener('click', toggleEngineDropdown);
 
-    engineDropdown.addEventListener('click', (event) => {
-        if (event.target.classList.contains('engine-option')) {
-            selectEngine(event.target.dataset.engine);
-            toggleEngineDropdown();
+        searchInput.addEventListener('keydown', handleEnterKey);
+        searchButton.addEventListener('click', handleSearchButtonClick);
+        clearButton.addEventListener('click', clearSearch);
+        engineSelectButton.addEventListener('click', toggleEngineDropdown);
+
+        engineDropdown.addEventListener('click', (event) => {
+            if (event.target.classList.contains('engine-option')) {
+                selectEngine(event.target.dataset.engine);
+                toggleEngineDropdown();
+            }
+        });
+    }
+
+        function handleEnterKey(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleSearchButtonClick();
         }
-    });
+    }
+
+    function isValidURL(url) {
+        const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return pattern.test(url);
+    }
+
+    function clearSearch() {
+        searchInput.value = '';
+        dropdown.style.display = 'none';
+        buttonIcon.textContent = 'search';
+        toggleClearButton();
+    }
+    function toggleClearButton() {
+        const hasText = searchInput.value.length > 0;
+        clearButton.style.display = hasText ? 'block' : 'none';
+        engineSelectButton.style.display = hasText ? 'none' : 'block';
+    }
+
+    function clearSearch() {
+        searchInput.value = '';
+        toggleClearButton();
+        dropdown.style.display = 'none';
+        firstUrlInDropdown = '';
+        buttonIcon.textContent = 'search';
+        removeHighlight();
+    }
+
+    function toggleEngineDropdown() {
+        engineDropdown.style.display = engineDropdown.style.display === 'none' ? 'block' : 'none';
+        dropdown.style.display = 'none'; // Close main dropdown when engine dropdown is toggled
+    }
+
+    function selectEngine(engine) {
+        selectedEngine = engine;
+        localStorage.setItem('selectedEngine', engine);
+        updateEngineDropdown();
+        updatePlaceholder();
+    }
+    function fetchSearchResults(query) {
+        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${SEARCH_API_KEY}&cx=${CX}`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.items) {
+                    showResults(data.items);
+                }
+            })
+            .catch(error => console.error('Error fetching search results:', error));
     }
 });
     
