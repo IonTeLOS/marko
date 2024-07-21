@@ -7277,7 +7277,7 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
     const SEARCH_API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
     const CX = '50cbca12fd52442e0'; // Replace with your Custom Search Engine ID
 
-    const searchInput = document.getElementById('searchInput');
+    const searchInput = document.getElementById('searchBoxInput');
     const dropdown = document.getElementById('dropdown');
     const searchButton = document.getElementById('searchButton');
     const clearButton = document.getElementById('clearButton');
@@ -7480,7 +7480,7 @@ function showResults(results) {
     
 document.addEventListener('DOMContentLoaded', () => {
     // Define the search input element
-    const searchInput = document.getElementById('searchInput'); // Make sure this matches your HTML
+    const searchInput = document.getElementById('searchBoxInput'); // Make sure this matches your HTML
 
     // Define the search engines and their names
     const engineNames = {
@@ -7676,7 +7676,7 @@ function removeHighlight() {
         <button class="custom-button" id="markoButton">
             <span class="material-icons">add_circle</span> <!-- Use an appropriate icon -->
         </button>
-            <input type="text" id="searchInput" class="custom-search-input" placeholder="Search Google or enter url">
+            <input type="text" id="searchBoxInput" class="custom-search-input" placeholder="Search Google or enter url">
             <button class="custom-button" id="searchButton">
                 <span class="material-icons" id="buttonIcon">search</span>
             </button>
