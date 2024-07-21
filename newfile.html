@@ -1420,12 +1420,16 @@ input:focus {
     outline: none;
 }
 .dropdown-button:focus,
-.engine-select-button:focus {
-    border-color: #2196F3 !important;
-    box-shadow: 0 0 8px rgba(33, 150, 243, 0.5) !important;
+.engine-select-button:focus,
+.engine-select-button:active {
+    border-color: transparent; /* Ensure no border color */
+    box-shadow: 0 0 8px rgba(33, 150, 243, 0.5); /* Optional: Add your custom focus shadow */
     outline: none !important; /* Ensure no default outline is shown */
+    color: #2196F3 !important; /* Material Design blue color or any other color you prefer */
 }
-
+.engine-select-button:focus {
+    color: #2196F3; /* Material Design blue color or any other color you prefer */
+}
 .dropdown {
     display: none;
     position: absolute;
