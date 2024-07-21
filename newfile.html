@@ -1351,9 +1351,7 @@ input:focus {
     flex-direction: column;
     align-items: center;
     z-index: 2000;
-    background-color: darkgrey;
-    padding: 20px;
-    border-radius: 10px;
+    background-color: white;
     opacity: 0;
     transition: transform 0.5s ease, opacity 0.5s ease;
 }
@@ -7714,7 +7712,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
 </head>
 <body data-swipe-threshold="100" data-swipe-timeout="300">   
-  
+  <div id="overlay" class="overlay"></div>
  <div class="search-container">
         <div class="search-input-container">
         <button class="custom-button" id="markoButton">
