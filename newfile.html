@@ -7274,7 +7274,19 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 </script>
 
 <script>
-    const SEARCH_API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
+
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchBoxInput');
+    const searchButton = document.getElementById('searchButton');
+    const clearButton = document.getElementById('clearButton');
+    const engineSelectButton = document.getElementById('engineSelectButton');
+    const engineDropdown = document.getElementById('engineDropdown');
+    const buttonIcon = document.getElementById('buttonIcon');
+    const dropdown = document.getElementById('dropdown');
+    let firstUrlInDropdown = ''; // Define it as a global variable or use it as needed
+
+    if (searchInput) {
+          const SEARCH_API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
     const CX = '50cbca12fd52442e0'; // Replace with your Custom Search Engine ID
 
     const searchInput = document.getElementById('searchBoxInput');
@@ -7423,17 +7435,6 @@ function removeHighlight() {
        searchInput.value = url; // Set the URL to the text input
        document.getElementById('markoButton').click(); // Trigger the left button click
     }
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchBoxInput');
-    const searchButton = document.getElementById('searchButton');
-    const clearButton = document.getElementById('clearButton');
-    const engineSelectButton = document.getElementById('engineSelectButton');
-    const engineDropdown = document.getElementById('engineDropdown');
-    const buttonIcon = document.getElementById('buttonIcon');
-    const dropdown = document.getElementById('dropdown');
-    let firstUrlInDropdown = ''; // Define it as a global variable or use it as needed
-
-    if (searchInput) {
         searchInput.addEventListener('input', () => {
             const query = searchInput.value.trim();
             if (query.length > 0) {
