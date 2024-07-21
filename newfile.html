@@ -7610,22 +7610,25 @@ function removeHighlight() {
        searchInput.value = url; // Set the URL to the text input
        document.getElementById('markoButton').click(); // Trigger the left button click
     }
-
-   
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim();
-        if (query.length > 0) {
-            fetchSearchResults(query);
-            buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
-        } else {
-            dropdown.style.display = 'none';
-            firstUrlInDropdown = '';
-            buttonIcon.textContent = 'search';
-        }
-        toggleClearButton();
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchBoxInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            if (query.length > 0) {
+                fetchSearchResults(query);
+                buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
+            } else {
+                dropdown.style.display = 'none';
+                firstUrlInDropdown = '';
+                buttonIcon.textContent = 'search';
+            }
+            toggleClearButton();
+        });
+          searchInput.addEventListener('keydown', handleEnterKey);
+    }
+});
     
-    searchInput.addEventListener('keydown', handleEnterKey);
     searchButton.addEventListener('click', handleSearchButtonClick);
     clearButton.addEventListener('click', clearSearch);
     engineSelectButton.addEventListener('click', toggleEngineDropdown);
