@@ -22,6 +22,7 @@
             max-width: 800px;
             display: flex;
             align-items: center;
+            margin-bottom: 20px;
         }
         .custom-search-input {
             font-size: 20px;
@@ -59,10 +60,13 @@
         }
         /* Hide default Google CSE elements */
         .gsc-control-cse {
-            visibility: hidden; /* Hide the default Google CSE control element */
+            display: none !important; /* Hides the default search box */
         }
         .gsc-webResult.gsc-result, .gsc-imageResult.gsc-result {
-            visibility: hidden; /* Hide default search results */
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            margin: 0;
         }
     </style>
 </head>
@@ -116,14 +120,18 @@
 
         // Initialize Google Custom Search Engine
         function init() {
-            searchElement = google.search.cse.element.getElement('searchResults');
-            if (searchElement) {
-                searchElement.render({
-                    div: "searchResults",
-                    tag: 'searchresults-only'
-                });
-            } else {
-                console.error('Failed to initialize Google CSE search element.');
+            try {
+                searchElement = google.search.cse.element.getElement('searchResults');
+                if (searchElement) {
+                    searchElement.render({
+                        div: "searchResults",
+                        tag: 'searchresults-only'
+                    });
+                } else {
+                    console.error('Failed to get Google CSE search element.');
+                }
+            } catch (error) {
+                console.error('Error initializing Google CSE:', error);
             }
         }
 
