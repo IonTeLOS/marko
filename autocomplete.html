@@ -18,7 +18,7 @@
             font-family: Arial, sans-serif;
         }
         .search-container {
-            width: 100%;
+            width: 90%;
             max-width: 600px;
             position: relative;
             display: flex;
@@ -28,22 +28,20 @@
         .search-input-container {
             display: flex;
             width: 100%;
-            max-width: 600px;
             position: relative;
-            align-items: center;
+            align-items: stretch;
         }
         .custom-search-input {
             flex: 1;
-            font-size: 18px;
-            padding: 12px 20px;
-            padding-right: 80px;
+            font-size: 16px;
+            padding: 10px 40px 10px 10px;
             border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 4px 0 0 4px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             outline: none;
             transition: box-shadow 0.3s;
-            margin: 0 10px;
-            min-width: 200px;
+            margin: 0;
+            min-width: 0;
         }
         .custom-search-input:focus {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
@@ -55,39 +53,24 @@
             background-color: #4285F4;
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 4px;
+            padding: 10px;
+            border-radius: 0 4px 4px 0;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: box-shadow 0.3s;
-            font-size: 18px;
-            min-width: 48px;
-            margin: 0 5px;
+            font-size: 16px;
+            min-width: 40px;
+            border-left: 1px solid #ccc;
         }
         .custom-button:hover {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .custom-button .material-icons {
-            font-size: 24px;
+            font-size: 20px;
         }
-        .clear-button {
+        .clear-button, .engine-select-button {
             position: absolute;
-            right: 80px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: none;
-            color: #999;
-            padding: 5px;
-        }
-        .clear-button:hover {
-            color: #333;
-        }
-        .engine-select-button {
-            position: absolute;
-            right: 80px;
+            right: 40px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
@@ -96,7 +79,7 @@
             color: #999;
             padding: 5px;
         }
-        .engine-select-button:hover {
+        .clear-button:hover, .engine-select-button:hover {
             color: #333;
         }
         .dropdown {
@@ -104,27 +87,22 @@
             position: absolute;
             z-index: 1000;
             border: 1px solid #ccc;
-            border-top: none;
             background: white;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             max-height: 200px;
             overflow-y: auto;
-            width: calc(100% - 20px);
+            width: calc(100% - 40px); /* Adjust width to match search input */
             border-radius: 4px;
+            bottom: calc(100% + 5px); /* Position above search box with 5px gap */
+            left: 0;
         }
         .dropdown-item {
-            padding: 12px;
+            padding: 10px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 14px;
         }
         .dropdown-item:hover {
             background-color: #f0f0f0;
-        }
-        .dropdown-top {
-            bottom: calc(100% + 10px);
-        }
-        .dropdown-bottom {
-            top: calc(100% + 10px);
         }
         .engine-dropdown {
             position: absolute;
@@ -136,10 +114,12 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             display: none;
             z-index: 1000;
+            width: 120px;
         }
         .engine-option {
             padding: 10px;
             cursor: pointer;
+            font-size: 14px;
         }
         .engine-option:hover {
             background-color: #f0f0f0;
@@ -147,15 +127,35 @@
         .engine-option.selected {
             background-color: #e0e0e0;
         }
-        @media (max-width: 600px) {
+
+        @media (min-width: 600px) {
             .custom-search-input {
-                font-size: 16px;
+                font-size: 18px;
+                padding: 12px 80px 12px 20px;
+                height: 24px;
             }
             .custom-button {
-                font-size: 16px;
+                font-size: 18px;
+                min-width: 48px;
+                height: 50px;
+            }
+            .custom-button .material-icons {
+                font-size: 24px;
             }
             .dropdown-item {
-                font-size: 14px;
+                font-size: 16px;
+                padding: 12px;
+            }
+            .engine-option {
+                font-size: 16px;
+            }
+            .clear-button, .engine-select-button {
+                right: 60px;
+            }
+            .dropdown {
+                top: calc(100% + 5px); /* Position below search box with 5px gap for desktop */
+                bottom: auto;
+                width: calc(100% - 48px); /* Adjust width to exclude button on desktop */
             }
         }
     </style>
@@ -163,10 +163,10 @@
 <body>
     <div class="search-container">
         <div class="search-input-container">
-            <button class="custom-button" id="sendButton">
-                <span class="material-icons">send</span>
-            </button>
             <input type="text" id="searchInput" class="custom-search-input" placeholder="Search with Google or enter a URL">
+            <button class="custom-button" id="searchButton">
+                <span class="material-icons" id="buttonIcon">search</span>
+            </button>
             <button class="clear-button" id="clearButton">
                 <span class="material-icons">clear</span>
             </button>
@@ -182,9 +182,6 @@
                 <div class="engine-option" data-engine="baidu">Baidu</div>
                 <div class="engine-option" data-engine="local">Local</div>
             </div>
-            <button class="custom-button" id="searchButton">
-                <span class="material-icons">search</span>
-            </button>
         </div>
         <div id="dropdown" class="dropdown"></div>
     </div>
@@ -195,11 +192,11 @@
 
         const searchInput = document.getElementById('searchInput');
         const dropdown = document.getElementById('dropdown');
-        const sendButton = document.getElementById('sendButton');
         const searchButton = document.getElementById('searchButton');
         const clearButton = document.getElementById('clearButton');
         const engineSelectButton = document.getElementById('engineSelectButton');
         const engineDropdown = document.getElementById('engineDropdown');
+        const buttonIcon = document.getElementById('buttonIcon');
         
         let firstUrlInDropdown = '';
         let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
@@ -323,6 +320,7 @@
             toggleClearButton();
             dropdown.style.display = 'none';
             firstUrlInDropdown = '';
+            buttonIcon.textContent = 'search';
         }
 
         function toggleEngineDropdown() {
@@ -334,6 +332,7 @@
             selectedEngine = engine;
             localStorage.setItem('selectedEngine', engine);
             updateEngineDropdown();
+            updatePlaceholder();
         }
 
         function updateEngineDropdown() {
@@ -407,15 +406,16 @@
             const query = searchInput.value.trim();
             if (query.length > 0) {
                 fetchSearchResults(query);
+                buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
             } else {
                 dropdown.style.display = 'none';
                 firstUrlInDropdown = '';
+                buttonIcon.textContent = 'search';
             }
             toggleClearButton();
         });
         
         searchInput.addEventListener('keydown', handleEnterKey);
-        sendButton.addEventListener('click', handleUrlButtonClick);
         searchButton.addEventListener('click', handleSearchButtonClick);
         clearButton.addEventListener('click', clearSearch);
         engineSelectButton.addEventListener('click', toggleEngineDropdown);
@@ -436,7 +436,7 @@
             if (!event.target.closest('.search-container')) {
                 dropdown.style.display = 'none';
                 engineDropdown.style.display = 'none';
-                }
+            }
         });
     </script>
 </body>
