@@ -7446,9 +7446,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = searchInput.value.trim();
         if (text) {
             if (isValidURL(text)) {
-                alert(`Marko for URL ${text} created`);
+                createMarko('website', text, 'Marko from search', `https://www.google.com/s2/favicons?domain=${text}&sz=32`, '#0D47A1');
             } else {
-                alert(`Marko for note ${text} created`);
+                createMarko('note', text, 'Marko Note', , '#0D47A1');
             }
         } else {
             alert('Add some text or url to create a Marko from it.');
