@@ -7692,7 +7692,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = event.target.dataset.title; // Get the title from the data attribute
         const url = event.target.dataset.url; // Get the URL from the data attribute
         searchInput.value = url; // Set the URL to the text input
-        createMarko('website', url, title, `https://www.google.com/s2/favicons?domain=${text}&sz=32`, '#0D47A1');
+        createMarko('website', url, title, `https://www.google.com/s2/favicons?domain=${url}&sz=32`, '#0D47A1');
         // markoButton.click(); // Trigger the left button click
     }
 
