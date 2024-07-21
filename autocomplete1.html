@@ -12,7 +12,7 @@
             width: 100%;
             height: 100%;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
@@ -23,6 +23,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            margin-top: 20px;
         }
         .gcse-search {
             width: 100%;
@@ -41,7 +42,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 10px; /* Space above button */
+            margin-top: 10px;
         }
         .url-button.hidden {
             display: none;
@@ -53,6 +54,10 @@
             font-size: 24px;
             margin-right: 8px;
         }
+        .results-container {
+            width: 100%;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -62,12 +67,15 @@
             <span class="material-icons">send</span> Go to URL
         </button>
     </div>
+    <div class="results-container">
+        <div class="gcse-searchresults-only" id="searchResults"></div>
+    </div>
     <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
     <script>
         window.onload = function() {
             let searchBox, urlButton;
 
-            // Check for the Google CSE search input and adjust its size
+            // Function to check for and initialize the search box
             function initializeSearchBox() {
                 searchBox = document.querySelector('.gsc-input');
                 if (searchBox) {
@@ -84,18 +92,22 @@
                 }
             }
 
-            // Create a function to hide/show the button based on search results visibility
+            // Function to hide/show the button based on search results visibility
             function toggleButtonVisibility() {
                 const searchResults = document.querySelector('.gsc-results');
-                if (searchResults && searchResults.style.display !== 'none') {
-                    urlButton.classList.add('hidden');
-                } else {
-                    urlButton.classList.remove('hidden');
+                urlButton = document.getElementById('urlButton');
+                if (urlButton && searchResults) {
+                    if (searchResults.style.display !== 'none') {
+                        urlButton.classList.add('hidden');
+                    } else {
+                        urlButton.classList.remove('hidden');
+                    }
                 }
             }
 
             // Function to navigate to URL from the search box value
             function handleUrlButtonClick() {
+                searchBox = document.querySelector('.gsc-input');
                 if (searchBox) {
                     const query = searchBox.value.trim();
                     if (isURL(query)) {
@@ -122,10 +134,10 @@
             // Initialize the Google Custom Search Engine
             function init() {
                 google.search.cse.element.render({
-                    div: "gcse-search",
-                    tag: 'search'
+                    div: "searchResults",
+                    tag: 'searchresults-only'
                 });
-                initializeSearchBox(); // Initialize the search box and button
+                initializeSearchBox();
             }
 
             // Add event listener for the URL button
@@ -138,6 +150,9 @@
             window.__gcse = {
                 callback: init
             };
+
+            // Initial call to initialize the search box
+            initializeSearchBox();
         }
     </script>
 </body>
