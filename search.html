@@ -46,16 +46,8 @@ body, html {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: box-shadow 0.3s;
     font-size: 1.5rem;
-    width: 50px;
-    height: 50px;
-}
-
-.custom-button.left {
-    border-radius: 4px 0 0 4px;
-}
-
-.custom-button.right {
-    border-radius: 0 4px 4px 0;
+    width: 60px;
+    height: 60px;
 }
 
 .custom-search-input {
@@ -66,7 +58,7 @@ body, html {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     outline: none;
     transition: box-shadow 0.3s;
-    height: 50px;
+    height: 60px;
     box-sizing: border-box;
 }
 
@@ -93,7 +85,7 @@ body, html {
     max-height: 350px;
     overflow-y: auto;
     border-radius: 4px;
-    width: calc(95% - 100px); /* Full width minus buttons */
+    width: calc(100% - 120px); /* Full width minus buttons */
 }
 
 .dropdown-item {
@@ -116,7 +108,7 @@ body, html {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     display: none;
     z-index: 1000;
-    width: 160px; /* Increased size */
+    width: 200px; /* Increased size */
 }
 
 .engine-option {
@@ -172,8 +164,8 @@ body, html {
 @media (min-width: 601px) {
     .dropdown {
         top: calc(100% + 5px); /* Positioned below search box */
-        left: 50px; /* Start after left button */
-        width: calc(100% - 100px); /* Full width minus left and right buttons */
+        left: 60px; /* Start after left button */
+        width: calc(100% - 120px); /* Full width minus left and right buttons */
     }
     .engine-dropdown {
         width: 160px; /* Increased size for desktop */
