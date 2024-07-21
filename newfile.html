@@ -4384,7 +4384,7 @@ bookmarkElement.className = 'bookmark';
 bookmarkElement.id = 'main-bookmark';
 bookmarkElement.innerHTML = `
     <div class="bookmark-wrapper" data-type='website' onmouseover="showTooltip('Welcome!')"
-     onmouseout="hideTooltip()" onclick="openMarko(openLink, 'https://teloslinux.org')" style="cursor: pointer;">
+     onmouseout="hideTooltip()" onclick="toggleSeachContainer()" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: #ff005678;">
                 <img src="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg"
@@ -7299,6 +7299,41 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 </script>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
+    const searchContainer = document.querySelector('.search-container');
+    const overlay = document.getElementById('overlay');
+    const searchToggle = document.getElementById('main-bookmark');
+
+
+    // Show the search container with animation
+    function showSearchContainer() {
+        searchContainer.classList.add('show');
+        searchContainer.classList.remove('hide');
+        overlay.style.display = 'block';
+    }
+
+    // Hide the search container with animation
+    function hideSearchContainer() {
+        searchContainer.classList.add('hide');
+        searchContainer.classList.remove('show');
+        overlay.style.display = 'none';
+    }
+
+    // Example function to toggle the search container visibility
+    function toggleSearchContainer() {
+        if (searchContainer.classList.contains('show')) {
+            hideSearchContainer();
+        } else {
+            showSearchContainer();
+        }
+    }
+
+    // Event listeners
+    // Close search container when clicking outside of it
+    searchToggle.addEventListener('click', showSearchContainer);
+    overlay.addEventListener('click', hideSearchContainer);
+});
+  
 document.addEventListener('DOMContentLoaded', () => {
     // Define constants
     const SEARCH_API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
