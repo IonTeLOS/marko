@@ -1329,6 +1329,168 @@ input:focus {
     #contactBookmarks option {
         display: block !important;
     }
+
+
+
+
+  .search-container {
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2000;
+}
+
+.search-input-container {
+    display: flex;
+    width: 100%;
+    position: relative;
+    align-items: center;
+    max-width: 100%; /* Prevent horizontal scrolling */
+}
+
+.custom-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0D47A1;
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s;
+    font-size: 1.5rem;
+    width: 60px;
+    height: 60px;
+}
+
+.custom-search-input {
+    flex: 1;
+    font-size: 1.5rem;
+    padding: 0 50px 0 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    outline: none;
+    transition: box-shadow 0.3s;
+    height: 60px;
+    box-sizing: border-box;
+}
+
+.dropdown-button, .clear-button, .engine-select-button {
+    position: absolute;
+    right: 75px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    padding: 5px;
+    z-index: 1;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    border: 1px solid #ccc;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    max-height: 350px;
+    overflow-y: auto;
+    border-radius: 4px;
+    width: calc(100% - 120px); /* Full width minus buttons */
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+.engine-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: none;
+    z-index: 1000;
+    width: 180px; /* Increased size */
+}
+
+.engine-option {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.engine-option:hover {
+    background-color: #f0f0f0;
+}
+
+.engine-option.selected {
+    background-color: #e0e0e0;
+}
+
+@media (max-width: 600px) {
+    .custom-button, .custom-search-input, .dropdown, .dropdown-item {
+        font-size: 1.2rem;
+    }
+    .custom-button {
+        width: 14vw;
+        height: 14vw;
+        font-size: 1.2rem;
+    }
+    .custom-search-input {
+        height: 14vw;
+        padding: 0 38px 0 10px;
+        width: 72vw;
+    }
+    .dropdown {
+        bottom: calc(100% + 5px);
+        margin-left: 14vw;
+        margin-right: 14vw;
+        width: 72vw; /* Full width minus buttons */
+    }
+    .dropdown-item {
+        padding: 8px;
+    }
+    .dropdown-button, .clear-button, .engine-select-button {
+        right: 16vw;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #999;
+        padding: 5px;
+        z-index: 1;
+    }
+}
+
+@media (min-width: 601px) {
+    .dropdown {
+        top: calc(100% + 5px); /* Positioned below search box */
+        margin-left: 60px; 
+        margin-right: 60px;
+        width: calc(100% - 120px); /* Full width minus left and right buttons */
+    }
+    .engine-dropdown {
+        width: 200px; /* Increased size for desktop */
+    }
+}
+
+
+
   </style>   
 
 <script type=module>
@@ -7110,10 +7272,436 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
   
  
 </script>
+
+<script>
+    const API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
+    const CX = '50cbca12fd52442e0'; // Replace with your Custom Search Engine ID
+
+    const searchInput = document.getElementById('searchInput');
+    const dropdown = document.getElementById('dropdown');
+    const searchButton = document.getElementById('searchButton');
+    const clearButton = document.getElementById('clearButton');
+    const engineSelectButton = document.getElementById('engineSelectButton');
+    const engineDropdown = document.getElementById('engineDropdown');
+    const buttonIcon = document.getElementById('buttonIcon');
+    
+    let firstUrlInDropdown = '';
+    let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
+
+    function fetchSearchResults(query) {
+        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${API_KEY}&cx=${CX}`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.items) {
+                    showResults(data.items);
+                }
+            })
+            .catch(error => console.error('Error fetching search results:', error));
+    }
+
+function showResults(results) {
+    dropdown.innerHTML = '';
+    if (results.length > 0) {
+        firstUrlInDropdown = results[0].link;
+    }
+    results.forEach(result => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.textContent = result.title;
+        item.dataset.url = result.link;
+        item.addEventListener('click', () => {
+            handleResultClick(result);
+        });
+        item.addEventListener('contextmenu', handleRightClick); // Add right-click event listener
+        dropdown.appendChild(item);
+    });
+    adjustDropdownPosition();
+    dropdown.style.display = results.length ? 'block' : 'none';
+}
+
+
+    function handleResultClick(result) {
+        const url = result.link;
+        if (isValidURL(url)) {
+            window.location.href = url;
+        } else {
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchInput.value)}`, '_blank');
+        }
+    }
+
+    function handleSearchButtonClick() {
+        const query = searchInput.value.trim();
+        if (isValidURL(query)) {
+            let url = query;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            window.location.href = url;
+        } else {
+            const searchUrl = getSearchUrl(query);
+            if (searchUrl) {
+                window.open(searchUrl, '_blank');
+            }
+        }
+    }
+
+    function handleEnterKey(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleSearchButtonClick();
+        }
+    }
+
+    function isValidURL(url) {
+        const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return pattern.test(url);
+    }
+
+    function adjustDropdownPosition() {
+        const searchBox = document.querySelector('.custom-search-input');
+        const searchBoxRect = searchBox.getBoundingClientRect();
+        const dropdownRect = dropdown.getBoundingClientRect();
+
+        dropdown.style.width = `${searchBoxRect.width}px`;
+
+        if (window.innerHeight - searchBoxRect.bottom > dropdownRect.height) {
+            dropdown.classList.remove('dropdown-top');
+            dropdown.classList.add('dropdown-bottom');
+        } else {
+            dropdown.classList.remove('dropdown-bottom');
+            dropdown.classList.add('dropdown-top');
+        }
+    }
+
+    function toggleClearButton() {
+        const hasText = searchInput.value.length > 0;
+        clearButton.style.display = hasText ? 'block' : 'none';
+        engineSelectButton.style.display = hasText ? 'none' : 'block';
+    }
+
+    function clearSearch() {
+        searchInput.value = '';
+        toggleClearButton();
+        dropdown.style.display = 'none';
+        firstUrlInDropdown = '';
+        buttonIcon.textContent = 'search';
+        removeHighlight();
+    }
+
+    function toggleEngineDropdown() {
+        engineDropdown.style.display = engineDropdown.style.display === 'none' ? 'block' : 'none';
+        dropdown.style.display = 'none'; // Close main dropdown when engine dropdown is toggled
+    }
+
+    function selectEngine(engine) {
+        selectedEngine = engine;
+        localStorage.setItem('selectedEngine', engine);
+        updateEngineDropdown();
+        updatePlaceholder();
+    }
+
+    function updateEngineDropdown() {
+        const options = engineDropdown.querySelectorAll('.engine-option');
+        options.forEach(option => {
+            if (option.dataset.engine === selectedEngine) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        });
+    }
+
+    function getSearchUrl(query) {
+        let searchUrl;
+        switch (selectedEngine) {
+            case 'google':
+                searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                break;
+            case 'duckduckgo':
+                searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+                break;
+            case 'bing':
+                searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                break;
+            case 'yahoo':
+                searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
+                break;
+            case 'yandex':
+                searchUrl = `https://yandex.ru/search/?text=${encodeURIComponent(query)}`;
+                break;
+            case 'baidu':
+                searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+                break;
+            case 'naver':
+                searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`;
+                break; 
+            case 'youtube':
+                searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+                break;  
+            case 'wikipedia':
+                searchUrl = `https://wikipedia.org/wiki/${encodeURIComponent(query)}`;
+                break; 
+            case 'searx':
+                searchUrl = `https://searxng.site/searxng/search?q=${encodeURIComponent(query)}`;
+                break;         
+            case 'local':
+                searchLocal(query);
+                return;
+            default:
+                searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        }
+        return searchUrl;
+    }
+    
+    function updatePlaceholder() {
+        const engineNames = {
+            'google': 'Google',
+            'duckduckgo': 'DDG',
+            'bing': 'Bing',
+            'yahoo': 'Yahoo',
+            'yandex': 'Yandex',
+            'baidu': 'Baidu',
+            'naver': 'Naver',
+            'youtube': 'YouTube',
+            'wikipedia': 'Wiki',
+            'searx': 'searX',
+            'local': 'Local'
+        };
+        const engineName = engineNames[selectedEngine] || 'Google';
+        searchInput.placeholder = `${engineName} is now in use`;
+        return searchInput.placeholder;
+    }
+    
+document.addEventListener('DOMContentLoaded', () => {
+    // Define the search input element
+    const searchInput = document.getElementById('searchInput'); // Make sure this matches your HTML
+
+    // Define the search engines and their names
+    const engineNames = {
+        'google': 'Google',
+        'duckduckgo': 'DDG',
+        'bing': 'Bing',
+        'yahoo': 'Yahoo',
+        'yandex': 'Yandex',
+        'baidu': 'Baidu',
+        'naver': 'Naver',
+        'youtube': 'YouTube',
+        'wikipedia': 'Wiki',
+        'searx': 'searX',
+        'local': 'Local'
+    };
+
+    // Retrieve the selected engine from localStorage
+    const selectedEngine = localStorage.getItem('selectedEngine') || 'google'; // Default to 'google' if none is set
+    const engineName = engineNames[selectedEngine] || 'Google';
+    searchInput.placeholder = `Search ${engineName}..`;
+
+    // Define the rotating placeholders
+    const rotatingPlaceholders = [
+        '..or enter url',
+        'type here',
+        'click search results..',
+        '..or right click them',
+        'How can I help you?'
+    ];
+
+    let index = 0;
+
+    function updateRotatingPlaceholder() {
+        // Check if the initial placeholder is the search engine one
+        if (searchInput.placeholder.startsWith(`Search ${engineName}`)) {
+            setTimeout(() => {
+                searchInput.placeholder = rotatingPlaceholders[index];
+                index = (index + 1) % rotatingPlaceholders.length;
+                // Rotate placeholders every 3 seconds
+                setInterval(() => {
+                    searchInput.placeholder = rotatingPlaceholders[index];
+                    index = (index + 1) % rotatingPlaceholders.length;
+                }, 3000);
+            }, 3000); // Delay before starting rotation
+        }
+    }
+
+    // Start rotating placeholders
+    updateRotatingPlaceholder();
+});
+
+
+    function searchLocal(searchText) {
+        if (!searchText) return;
+            console.log('Performing local search for:', searchText);
+            // Add CSS for highlighting
+            const existingStyle = document.querySelector('style.highlight');
+        if (!existingStyle) {
+            const style = document.createElement('style');
+            style.className = 'highlight';
+            style.textContent = `
+                .highlight {
+                background-color: yellow;
+                color: black;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Escape special characters in searchText for use in a regular expression
+    const escapedText = searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    
+    // Create a regular expression to find all instances of the search text
+    const regex = new RegExp(escapedText, 'gi');
+    
+    // Function to wrap text nodes with a span
+    function wrapText(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            // If the text node contains the search text
+            if (regex.test(node.nodeValue)) {
+                const newHTML = node.nodeValue.replace(regex, (match) => `<span class="highlight">${match}</span>`);
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = newHTML;
+                while (tempDiv.firstChild) {
+                    node.parentNode.insertBefore(tempDiv.firstChild, node);
+                }
+                node.parentNode.removeChild(node);
+            }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // Recursively search child nodes
+            Array.from(node.childNodes).forEach(wrapText);
+        }
+    }
+
+    // Start wrapping from the body element
+    wrapText(document.body);
+}
+
+function removeHighlight() {
+    // Remove the highlighting style
+    const style = document.querySelector('style.highlight');
+    if (style) {
+        style.remove();
+    }
+
+    // Function to unwrap highlighted text
+    function unwrapText(node) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.classList.contains('highlight')) {
+                // Replace the highlighted span with its text content
+                const textNode = document.createTextNode(node.textContent);
+                node.parentNode.replaceChild(textNode, node);
+            } else {
+                // Recursively search child nodes
+                Array.from(node.childNodes).forEach(unwrapText);
+            }
+        }
+    }
+
+    // Start unwrapping from the body element
+    unwrapText(document.body);
+}
+
+    function handleRightClick(event) {
+       event.preventDefault(); // Prevent the default context menu
+       const url = event.target.dataset.url; // Get the URL from the data attribute
+       searchInput.value = url; // Set the URL to the text input
+       document.getElementById('markoButton').click(); // Trigger the left button click
+    }
+
+   
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        if (query.length > 0) {
+            fetchSearchResults(query);
+            buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
+        } else {
+            dropdown.style.display = 'none';
+            firstUrlInDropdown = '';
+            buttonIcon.textContent = 'search';
+        }
+        toggleClearButton();
+    });
+    
+    searchInput.addEventListener('keydown', handleEnterKey);
+    searchButton.addEventListener('click', handleSearchButtonClick);
+    clearButton.addEventListener('click', clearSearch);
+    engineSelectButton.addEventListener('click', toggleEngineDropdown);
+
+    engineDropdown.addEventListener('click', (event) => {
+        if (event.target.classList.contains('engine-option')) {
+            selectEngine(event.target.dataset.engine);
+            toggleEngineDropdown();
+        }
+    });
+
+    // Initial setup
+    updateEngineDropdown();
+    updatePlaceholder();
+    toggleClearButton();
+
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.search-container')) {
+            dropdown.style.display = 'none';
+            engineDropdown.style.display = 'none';
+        }
+    });
+    
+    document.getElementById('markoButton').addEventListener('click', () => {
+    const text = searchInput.value.trim();
+    if (text) {
+        if (isValidURL(text)) {
+            alert(`Marko for URL ${text} created`);
+        } else {
+            alert(`Marko for note ${text} created`);
+        }
+    } else {
+        alert('Add some text or url to create a Marko from it..');
+    }
+});
+
+</script>
+
+
+
+
+  
 </head>
 <body data-swipe-threshold="100" data-swipe-timeout="300">   
   
-  
+ <div class="search-container">
+        <div class="search-input-container">
+        <button class="custom-button" id="markoButton">
+            <span class="material-icons">add_circle</span> <!-- Use an appropriate icon -->
+        </button>
+            <input type="text" id="searchInput" class="custom-search-input" placeholder="Search Google or enter url">
+            <button class="custom-button" id="searchButton">
+                <span class="material-icons" id="buttonIcon">search</span>
+            </button>
+            <button class="clear-button" id="clearButton">
+                <span class="material-icons">clear</span>
+            </button>
+            <button class="engine-select-button" id="engineSelectButton">
+                <span class="material-icons">arrow_drop_down</span>
+            </button>
+            <div class="engine-dropdown" id="engineDropdown">
+                <div class="engine-option" data-engine="google">Google</div>
+                <div class="engine-option" data-engine="duckduckgo">DuckDuckGo</div>
+                <div class="engine-option" data-engine="bing">Bing</div>
+                <div class="engine-option" data-engine="yahoo">Yahoo</div>
+                <div class="engine-option" data-engine="yandex">Yandex</div>
+                <div class="engine-option" data-engine="baidu">Baidu</div>
+                <div class="engine-option" data-engine="naver">Naver</div>
+                <div class="engine-option" data-engine="youtube">YouTube</div>
+                <div class="engine-option" data-engine="wikipedia">Wikipedia</div>
+                <div class="engine-option" data-engine="searx">searX</div>
+                <div class="engine-option" data-engine="local">Local</div>
+            </div>
+        </div>
+        <div id="dropdown" class="dropdown"></div>
+    </div> 
   
   
   <div id="markoTypeForm" style="display: none;">
