@@ -7657,14 +7657,15 @@ function showResults(results) {
             })
             .catch(error => console.error('Error fetching search results:', error));
     }
+      // Initial setup
+    updateEngineDropdown();
+    updatePlaceholder();
+    toggleClearButton();
 });
     
 
 
-    // Initial setup
-    updateEngineDropdown();
-    updatePlaceholder();
-    toggleClearButton();
+
 
     document.addEventListener('click', (event) => {
         if (!event.target.closest('.search-container')) {
