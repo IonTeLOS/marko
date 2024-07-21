@@ -411,19 +411,75 @@ function showResults(results) {
             'local': 'Local'
         };
         const engineName = engineNames[selectedEngine] || 'Google';
-        searchInput.placeholder = `Search ${engineName} or enter url`;
+        searchInput.placeholder = `${engineName} is now in use`;
+        return searchInput.placeholder;
+    }
+    
+document.addEventListener('DOMContentLoaded', () => {
+    // Define the search input element
+    const searchInput = document.getElementById('searchInput'); // Make sure this matches your HTML
+
+    // Define the search engines and their names
+    const engineNames = {
+        'google': 'Google',
+        'duckduckgo': 'DDG',
+        'bing': 'Bing',
+        'yahoo': 'Yahoo',
+        'yandex': 'Yandex',
+        'baidu': 'Baidu',
+        'naver': 'Naver',
+        'youtube': 'YouTube',
+        'wikipedia': 'Wiki',
+        'searx': 'searX',
+        'local': 'Local'
+    };
+
+    // Retrieve the selected engine from localStorage
+    const selectedEngine = localStorage.getItem('selectedEngine') || 'google'; // Default to 'google' if none is set
+    const engineName = engineNames[selectedEngine] || 'Google';
+    searchInput.placeholder = `Search ${engineName}..`;
+
+    // Define the rotating placeholders
+    const rotatingPlaceholders = [
+        '..or enter url',
+        'type here',
+        'click search results..',
+        '..or right click them',
+        'How can I help you?'
+    ];
+
+    let index = 0;
+
+    function updateRotatingPlaceholder() {
+        // Check if the initial placeholder is the search engine one
+        if (searchInput.placeholder.startsWith(`Search ${engineName}`)) {
+            setTimeout(() => {
+                searchInput.placeholder = rotatingPlaceholders[index];
+                index = (index + 1) % rotatingPlaceholders.length;
+                // Rotate placeholders every 3 seconds
+                setInterval(() => {
+                    searchInput.placeholder = rotatingPlaceholders[index];
+                    index = (index + 1) % rotatingPlaceholders.length;
+                }, 3000);
+            }, 3000); // Delay before starting rotation
+        }
     }
 
-function searchLocal(searchText) {
-    if (!searchText) return;
-    console.log('Performing local search for:', searchText);
-    // Add CSS for highlighting
-    const existingStyle = document.querySelector('style.highlight');
-    if (!existingStyle) {
-        const style = document.createElement('style');
-        style.className = 'highlight';
-        style.textContent = `
-            .highlight {
+    // Start rotating placeholders
+    updateRotatingPlaceholder();
+});
+
+
+    function searchLocal(searchText) {
+        if (!searchText) return;
+            console.log('Performing local search for:', searchText);
+            // Add CSS for highlighting
+            const existingStyle = document.querySelector('style.highlight');
+        if (!existingStyle) {
+            const style = document.createElement('style');
+            style.className = 'highlight';
+            style.textContent = `
+                .highlight {
                 background-color: yellow;
                 color: black;
             }
