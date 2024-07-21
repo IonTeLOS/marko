@@ -7289,143 +7289,7 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
     let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
 
 
-function showResults(results) {
-    dropdown.innerHTML = '';
-    if (results.length > 0) {
-        firstUrlInDropdown = results[0].link;
-    }
-    results.forEach(result => {
-        const item = document.createElement('div');
-        item.className = 'dropdown-item';
-        item.textContent = result.title;
-        item.dataset.url = result.link;
-        item.addEventListener('click', () => {
-            handleResultClick(result);
-        });
-        item.addEventListener('contextmenu', handleRightClick); // Add right-click event listener
-        dropdown.appendChild(item);
-    });
-    adjustDropdownPosition();
-    dropdown.style.display = results.length ? 'block' : 'none';
-}
 
-
-    function handleResultClick(result) {
-        const url = result.link;
-        if (isValidURL(url)) {
-            window.location.href = url;
-        } else {
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchInput.value)}`, '_blank');
-        }
-    }
-
-    function handleSearchButtonClick() {
-        const query = searchInput.value.trim();
-        if (isValidURL(query)) {
-            let url = query;
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = 'https://' + url;
-            }
-            window.location.href = url;
-        } else {
-            const searchUrl = getSearchUrl(query);
-            if (searchUrl) {
-                window.open(searchUrl, '_blank');
-            }
-        }
-    }
-
-
-
-    function adjustDropdownPosition() {
-        const searchBox = document.querySelector('.custom-search-input');
-        const searchBoxRect = searchBox.getBoundingClientRect();
-        const dropdownRect = dropdown.getBoundingClientRect();
-
-        dropdown.style.width = `${searchBoxRect.width}px`;
-
-        if (window.innerHeight - searchBoxRect.bottom > dropdownRect.height) {
-            dropdown.classList.remove('dropdown-top');
-            dropdown.classList.add('dropdown-bottom');
-        } else {
-            dropdown.classList.remove('dropdown-bottom');
-            dropdown.classList.add('dropdown-top');
-        }
-    }
-
-
-
-    function updateEngineDropdown() {
-        const options = engineDropdown.querySelectorAll('.engine-option');
-        options.forEach(option => {
-            if (option.dataset.engine === selectedEngine) {
-                option.classList.add('selected');
-            } else {
-                option.classList.remove('selected');
-            }
-        });
-    }
-
-    function getSearchUrl(query) {
-        let searchUrl;
-        switch (selectedEngine) {
-            case 'google':
-                searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-                break;
-            case 'duckduckgo':
-                searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-                break;
-            case 'bing':
-                searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
-                break;
-            case 'yahoo':
-                searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
-                break;
-            case 'yandex':
-                searchUrl = `https://yandex.ru/search/?text=${encodeURIComponent(query)}`;
-                break;
-            case 'baidu':
-                searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
-                break;
-            case 'naver':
-                searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`;
-                break; 
-            case 'youtube':
-                searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
-                break;  
-            case 'wikipedia':
-                searchUrl = `https://wikipedia.org/wiki/${encodeURIComponent(query)}`;
-                break; 
-            case 'searx':
-                searchUrl = `https://searxng.site/searxng/search?q=${encodeURIComponent(query)}`;
-                break;         
-            case 'local':
-                searchLocal(query);
-                return;
-            default:
-                searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-        }
-        return searchUrl;
-    }
-    
-    function updatePlaceholder() {
-        const engineNames = {
-            'google': 'Google',
-            'duckduckgo': 'DDG',
-            'bing': 'Bing',
-            'yahoo': 'Yahoo',
-            'yandex': 'Yandex',
-            'baidu': 'Baidu',
-            'naver': 'Naver',
-            'youtube': 'YouTube',
-            'wikipedia': 'Wiki',
-            'searx': 'searX',
-            'local': 'Local'
-        };
-        const engineName = engineNames[selectedEngine] || 'Google';
-        searchInput.placeholder = `${engineName} is now in use`;
-        return searchInput.placeholder;
-    }
     
 document.addEventListener('DOMContentLoaded', () => {
     // Define the search input element
@@ -7612,7 +7476,143 @@ document.addEventListener('DOMContentLoaded', () => {
             '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
         return pattern.test(url);
     }
+function showResults(results) {
+    dropdown.innerHTML = '';
+    if (results.length > 0) {
+        firstUrlInDropdown = results[0].link;
+    }
+    results.forEach(result => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.textContent = result.title;
+        item.dataset.url = result.link;
+        item.addEventListener('click', () => {
+            handleResultClick(result);
+        });
+        item.addEventListener('contextmenu', handleRightClick); // Add right-click event listener
+        dropdown.appendChild(item);
+    });
+    adjustDropdownPosition();
+    dropdown.style.display = results.length ? 'block' : 'none';
+}
 
+
+    function handleResultClick(result) {
+        const url = result.link;
+        if (isValidURL(url)) {
+            window.location.href = url;
+        } else {
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchInput.value)}`, '_blank');
+        }
+    }
+
+    function handleSearchButtonClick() {
+        const query = searchInput.value.trim();
+        if (isValidURL(query)) {
+            let url = query;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            window.location.href = url;
+        } else {
+            const searchUrl = getSearchUrl(query);
+            if (searchUrl) {
+                window.open(searchUrl, '_blank');
+            }
+        }
+    }
+
+
+
+    function adjustDropdownPosition() {
+        const searchBox = document.querySelector('.custom-search-input');
+        const searchBoxRect = searchBox.getBoundingClientRect();
+        const dropdownRect = dropdown.getBoundingClientRect();
+
+        dropdown.style.width = `${searchBoxRect.width}px`;
+
+        if (window.innerHeight - searchBoxRect.bottom > dropdownRect.height) {
+            dropdown.classList.remove('dropdown-top');
+            dropdown.classList.add('dropdown-bottom');
+        } else {
+            dropdown.classList.remove('dropdown-bottom');
+            dropdown.classList.add('dropdown-top');
+        }
+    }
+
+
+
+    function updateEngineDropdown() {
+        const options = engineDropdown.querySelectorAll('.engine-option');
+        options.forEach(option => {
+            if (option.dataset.engine === selectedEngine) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        });
+    }
+
+    function getSearchUrl(query) {
+        let searchUrl;
+        switch (selectedEngine) {
+            case 'google':
+                searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                break;
+            case 'duckduckgo':
+                searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+                break;
+            case 'bing':
+                searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                break;
+            case 'yahoo':
+                searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
+                break;
+            case 'yandex':
+                searchUrl = `https://yandex.ru/search/?text=${encodeURIComponent(query)}`;
+                break;
+            case 'baidu':
+                searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+                break;
+            case 'naver':
+                searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`;
+                break; 
+            case 'youtube':
+                searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+                break;  
+            case 'wikipedia':
+                searchUrl = `https://wikipedia.org/wiki/${encodeURIComponent(query)}`;
+                break; 
+            case 'searx':
+                searchUrl = `https://searxng.site/searxng/search?q=${encodeURIComponent(query)}`;
+                break;         
+            case 'local':
+                searchLocal(query);
+                return;
+            default:
+                searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        }
+        return searchUrl;
+    }
+    
+    function updatePlaceholder() {
+        const engineNames = {
+            'google': 'Google',
+            'duckduckgo': 'DDG',
+            'bing': 'Bing',
+            'yahoo': 'Yahoo',
+            'yandex': 'Yandex',
+            'baidu': 'Baidu',
+            'naver': 'Naver',
+            'youtube': 'YouTube',
+            'wikipedia': 'Wiki',
+            'searx': 'searX',
+            'local': 'Local'
+        };
+        const engineName = engineNames[selectedEngine] || 'Google';
+        searchInput.placeholder = `${engineName} is now in use`;
+        return searchInput.placeholder;
+    }
     function clearSearch() {
         searchInput.value = '';
         dropdown.style.display = 'none';
