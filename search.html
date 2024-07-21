@@ -19,7 +19,7 @@ body, html {
 }
 
 .search-container {
-    width: 95%;
+    width: 100%;
     max-width: 600px;
     position: relative;
     display: flex;
@@ -138,26 +138,26 @@ body, html {
         font-size: 1.2rem;
     }
     .custom-button {
-        width: 40px;
-        height: 40px;
+        width: 60px;
+        height: 60px;
         font-size: 1.2rem;
     }
     .custom-search-input {
-        height: 40px;
+        height: 60px;
         padding: 0 40px 0 10px;
     }
     .dropdown {
         bottom: calc(100% + 5px);
         left: 0;
         right: 0;
-        width: calc(100% - 80px); /* Full width minus buttons */
-        margin-left: 40px; /* Align with search box */
+        width: calc(100% - 120px); /* Full width minus buttons */
+        margin-left: 60px; /* Align with search box */
     }
     .dropdown-item {
         padding: 8px;
     }
     .dropdown-button, .clear-button, .engine-select-button {
-        right: 40px;
+        right: 65px;
         top: 50%;
         transform: translateY(-50%);
         background: none;
@@ -207,6 +207,10 @@ body, html {
                 <div class="engine-option" data-engine="yahoo">Yahoo</div>
                 <div class="engine-option" data-engine="yandex">Yandex</div>
                 <div class="engine-option" data-engine="baidu">Baidu</div>
+                <div class="engine-option" data-engine="naver">Naver</div>
+                <div class="engine-option" data-engine="youtube">YouTube</div>
+                <div class="engine-option" data-engine="wikipedia">Wikipedia</div>
+                <div class="engine-option" data-engine="searx">searX</div>
                 <div class="engine-option" data-engine="local">Local</div>
             </div>
         </div>
@@ -331,6 +335,7 @@ function showResults(results) {
         dropdown.style.display = 'none';
         firstUrlInDropdown = '';
         buttonIcon.textContent = 'search';
+        removeHighlight();
     }
 
     function toggleEngineDropdown() {
@@ -377,6 +382,18 @@ function showResults(results) {
             case 'baidu':
                 searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
                 break;
+            case 'naver':
+                searchUrl = `https://search.naver.com/search.naver?query=${encodeURIComponent(query)}`;
+                break; 
+            case 'youtube':
+                searchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`;
+                break;  
+            case 'wikipedia':
+                searchUrl = `https://wikipedia.org/wiki/${encodeURIComponent(query)}`;
+                break; 
+            case 'searx':
+                searchUrl = `https://searxng.site/searxng/search?q=${encodeURIComponent(query)}`;
+                break;         
             case 'local':
                 searchLocal(query);
                 return;
@@ -394,12 +411,86 @@ function showResults(results) {
             'yahoo': 'Yahoo',
             'yandex': 'Yandex',
             'baidu': 'Baidu',
+            'naver': 'Naver',
+            'youtube': 'YouTube',
+            'wikipedia': 'Wikipedia',
+            'searx': 'searX',
             'local': 'Local'
         };
         const engineName = engineNames[selectedEngine] || 'Google';
         searchInput.placeholder = `Search ${engineName} or enter url`;
     }
 
+function searchLocal(searchText) {
+    if (!searchText) return;
+    console.log('Performing local search for:', searchText);
+    // Add CSS for highlighting
+    const existingStyle = document.querySelector('style.highlight');
+    if (!existingStyle) {
+        const style = document.createElement('style');
+        style.className = 'highlight';
+        style.textContent = `
+            .highlight {
+                background-color: yellow;
+                color: black;
+            }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // Escape special characters in searchText for use in a regular expression
+    const escapedText = searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    
+    // Create a regular expression to find all instances of the search text
+    const regex = new RegExp(escapedText, 'gi');
+    
+    // Function to wrap text nodes with a span
+    function wrapText(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            // If the text node contains the search text
+            if (regex.test(node.nodeValue)) {
+                const newHTML = node.nodeValue.replace(regex, (match) => `<span class="highlight">${match}</span>`);
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = newHTML;
+                while (tempDiv.firstChild) {
+                    node.parentNode.insertBefore(tempDiv.firstChild, node);
+                }
+                node.parentNode.removeChild(node);
+            }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // Recursively search child nodes
+            Array.from(node.childNodes).forEach(wrapText);
+        }
+    }
+
+    // Start wrapping from the body element
+    wrapText(document.body);
+}
+
+function removeHighlight() {
+    // Remove the highlighting style
+    const style = document.querySelector('style.highlight');
+    if (style) {
+        style.remove();
+    }
+
+    // Function to unwrap highlighted text
+    function unwrapText(node) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            if (node.classList.contains('highlight')) {
+                // Replace the highlighted span with its text content
+                const textNode = document.createTextNode(node.textContent);
+                node.parentNode.replaceChild(textNode, node);
+            } else {
+                // Recursively search child nodes
+                Array.from(node.childNodes).forEach(unwrapText);
+            }
+        }
+    }
+
+    // Start unwrapping from the body element
+    unwrapText(document.body);
+}
 
     function handleRightClick(event) {
        event.preventDefault(); // Prevent the default context menu
@@ -408,11 +499,7 @@ function showResults(results) {
        document.getElementById('markoButton').click(); // Trigger the left button click
     }
 
-    function searchLocal(query) {
-        // Implement local search functionality here
-        console.log('Performing local search for:', query);
-    }
-
+   
     searchInput.addEventListener('input', () => {
         const query = searchInput.value.trim();
         if (query.length > 0) {
