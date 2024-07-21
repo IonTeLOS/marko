@@ -23,66 +23,74 @@
             display: flex;
             align-items: center;
         }
-        .search-container input.gsc-input {
-            font-size: 20px; /* Increase font size */
-            padding: 12px 20px; /* Add more padding */
-            border: 1px solid #ccc; /* Single border */
+        .custom-search-input {
+            font-size: 20px;
+            padding: 12px 20px;
+            border: 1px solid #ccc;
             border-radius: 4px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             outline: none;
             transition: box-shadow 0.3s, padding 0.3s;
             flex: 1;
+            margin-right: 10px;
         }
-        .search-container input.gsc-input:focus {
+        .custom-search-input:focus {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .search-button {
+        .custom-search-button, .url-button {
             display: flex;
             align-items: center;
             justify-content: center;
             background-color: #4285F4;
             color: white;
             border: none;
-            padding: 12px 20px; /* Match padding with search box */
+            padding: 12px 20px;
             border-radius: 4px;
-            margin-left: 10px;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: box-shadow 0.3s;
             font-size: 20px;
         }
-        .search-button:hover {
+        .custom-search-button:hover, .url-button:hover {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .search-button .material-icons {
+        .custom-search-button .material-icons, .url-button .material-icons {
             font-size: 24px;
         }
-        .gcse-search {
-            flex: 1;
+        .gsc-control-cse {
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
         }
-        .gsc-control-cse .gsc-webResult.gsc-result, .gsc-control-cse .gsc-imageResult.gsc-result {
-            border: none;
-            padding: 16px;
-            border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            transition: box-shadow 0.3s;
-        }
-        .gsc-control-cse .gsc-webResult.gsc-result:hover, .gsc-control-cse .gsc-imageResult.gsc-result:hover {
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        .gsc-webResult.gsc-result, .gsc-imageResult.gsc-result {
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
         }
     </style>
 </head>
 <body>
-    <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
     <div class="search-container">
-        <button class="search-button" id="urlButton">
+        <button class="url-button" id="urlButton">
             <span class="material-icons">send</span>
         </button>
-        <div class="gcse-search"></div>
+        <input type="text" id="gsc-input-box" class="custom-search-input" placeholder="Search or enter a URL">
+        <button class="custom-search-button" id="searchButton">
+            <span class="material-icons">search</span>
+        </button>
     </div>
+    <div class="gcse-searchresults-only" id="searchResults"></div>
+    <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
     <script>
+        // Redirect to URL if valid
         document.getElementById('urlButton').addEventListener('click', () => {
-            const query = document.querySelector('.gsc-input').value.trim();
+            const query = document.getElementById('gsc-input-box').value.trim();
             if (isURL(query)) {
                 let url = query;
                 if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -92,6 +100,13 @@
             }
         });
 
+        // Perform search using Google CSE
+        document.getElementById('searchButton').addEventListener('click', () => {
+            const query = document.getElementById('gsc-input-box').value.trim();
+            google.search.cse.element.getElement('searchResults').execute(query);
+        });
+
+        // Check if the input is a URL
         function isURL(str) {
             const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
                 '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
@@ -101,6 +116,19 @@
                 '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
             return pattern.test(str);
         }
+
+        // Initialize Google Custom Search Engine
+        function init() {
+            google.search.cse.element.render({
+                div: "searchResults",
+                tag: 'searchresults-only'
+            });
+        }
+
+        // Execute the initialization function when Google CSE script is loaded
+        window.__gcse = {
+            callback: init
+        };
     </script>
 </body>
 </html>
