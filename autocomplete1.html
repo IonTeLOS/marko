@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"> 
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customized Google CSE</title>
+    <title>Custom Search with Dropdown</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body, html {
@@ -12,7 +12,7 @@
             width: 100%;
             height: 100%;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
@@ -20,140 +20,180 @@
         .search-container {
             width: 80%;
             max-width: 800px;
+            position: relative;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            margin-top: 20px;
         }
-        .gcse-search {
+        .custom-search-input {
             width: 100%;
-        }
-        .url-button {
-            width: 100%;
-            padding: 12px 20px;
             font-size: 20px;
+            padding: 12px 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            outline: none;
+            transition: box-shadow 0.3s;
+        }
+        .custom-search-input:focus {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .custom-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             background-color: #4285F4;
             color: white;
             border: none;
+            padding: 12px;
             border-radius: 4px;
             cursor: pointer;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             transition: box-shadow 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 10px;
+            font-size: 20px;
+            margin: 0 5px;
         }
-        .url-button.hidden {
-            display: none;
-        }
-        .url-button:hover {
+        .custom-button:hover {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .url-button .material-icons {
+        .custom-button .material-icons {
             font-size: 24px;
-            margin-right: 8px;
         }
-        .results-container {
+        .dropdown {
+            display: none;
+            position: absolute;
             width: 100%;
-            margin-top: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+        .dropdown-item {
+            padding: 12px;
+            cursor: pointer;
+        }
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
         }
     </style>
 </head>
 <body>
     <div class="search-container">
-        <div class="gcse-search"></div>
-        <button class="url-button hidden" id="urlButton">
-            <span class="material-icons">send</span> Go to URL
+        <button class="custom-button" id="sendButton">
+            <span class="material-icons">send</span>
         </button>
+        <input type="text" id="searchInput" class="custom-search-input" placeholder="Search or enter a URL">
+        <button class="custom-button" id="searchButton">
+            <span class="material-icons">search</span>
+        </button>
+        <div id="dropdown" class="dropdown"></div>
     </div>
-    <div class="results-container">
-        <div class="gcse-searchresults-only" id="searchResults"></div>
-    </div>
-    <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
+    
     <script>
-        window.onload = function() {
-            let searchBox, urlButton;
+        const API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
+        const CX = '50cbca12fd52442e0'; // Replace with your Custom Search Engine ID
 
-            // Function to check for and initialize the search box
-            function initializeSearchBox() {
-                searchBox = document.querySelector('.gsc-input');
-                if (searchBox) {
-                    searchBox.style.fontSize = '20px';
-                    searchBox.style.height = '50px';
-                    searchBox.style.boxSizing = 'border-box';
+        const searchInput = document.getElementById('searchInput');
+        const dropdown = document.getElementById('dropdown');
+        const sendButton = document.getElementById('sendButton');
+        const searchButton = document.getElementById('searchButton');
+        
+        let firstUrlInDropdown = '';
 
-                    // Update the button width to match the search box
-                    urlButton = document.getElementById('urlButton');
-                    if (urlButton) {
-                        urlButton.style.width = `${searchBox.offsetWidth}px`;
-                        urlButton.classList.remove('hidden');
+        // Fetch search results from Google Custom Search API
+        function fetchSearchResults(query) {
+            const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${API_KEY}&cx=${CX}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.items) {
+                        showResults(data.items);
                     }
-                }
-            }
-
-            // Function to hide/show the button based on search results visibility
-            function toggleButtonVisibility() {
-                const searchResults = document.querySelector('.gsc-results');
-                urlButton = document.getElementById('urlButton');
-                if (urlButton && searchResults) {
-                    if (searchResults.style.display !== 'none') {
-                        urlButton.classList.add('hidden');
-                    } else {
-                        urlButton.classList.remove('hidden');
-                    }
-                }
-            }
-
-            // Function to navigate to URL from the search box value
-            function handleUrlButtonClick() {
-                searchBox = document.querySelector('.gsc-input');
-                if (searchBox) {
-                    const query = searchBox.value.trim();
-                    if (isURL(query)) {
-                        let url = query;
-                        if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                            url = 'https://' + url;
-                        }
-                        window.location.href = url;
-                    }
-                }
-            }
-
-            // URL validation function
-            function isURL(str) {
-                const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-                    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-                    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-                    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-                    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-                    '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-                return pattern.test(str);
-            }
-
-            // Initialize the Google Custom Search Engine
-            function init() {
-                google.search.cse.element.render({
-                    div: "searchResults",
-                    tag: 'searchresults-only'
-                });
-                initializeSearchBox();
-            }
-
-            // Add event listener for the URL button
-            document.getElementById('urlButton').addEventListener('click', handleUrlButtonClick);
-
-            // Monitor changes to search results
-            const observer = new MutationObserver(toggleButtonVisibility);
-            observer.observe(document.body, { childList: true, subtree: true });
-
-            window.__gcse = {
-                callback: init
-            };
-
-            // Initial call to initialize the search box
-            initializeSearchBox();
+                })
+                .catch(error => console.error('Error fetching search results:', error));
         }
+
+        // Display search results in dropdown
+        function showResults(results) {
+            dropdown.innerHTML = '';
+            if (results.length > 0) {
+                firstUrlInDropdown = results[0].link; // Save the first URL for navigation
+            }
+            results.forEach(result => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.textContent = result.title;
+                item.dataset.url = result.link;
+                item.addEventListener('click', () => {
+                    handleResultClick(result);
+                });
+                dropdown.appendChild(item);
+            });
+            dropdown.style.display = results.length ? 'block' : 'none';
+        }
+
+        // Handle dropdown item click
+        function handleResultClick(result) {
+            const url = result.link;
+            if (isValidURL(url)) {
+                window.location.href = url;
+            } else {
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(searchInput.value)}`, '_blank');
+            }
+        }
+
+        // Handle URL button click
+        function handleUrlButtonClick() {
+            const query = searchInput.value.trim();
+            if (isValidURL(query)) {
+                let url = query;
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                window.location.href = url;
+            } else {
+                window.location.href = firstUrlInDropdown || 'https://www.google.com/search?q=' + encodeURIComponent(searchInput.value);
+            }
+        }
+
+        // Handle Search button click
+        function handleSearchButtonClick() {
+            const query = searchInput.value.trim();
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+        }
+
+        // Validate if URL is properly formed
+        function isValidURL(url) {
+            const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+            return pattern.test(url);
+        }
+
+        // Handle input changes
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            if (query.length > 0) {
+                fetchSearchResults(query);
+            } else {
+                dropdown.style.display = 'none';
+                firstUrlInDropdown = '';
+            }
+        });
+
+        // Handle button clicks
+        sendButton.addEventListener('click', handleUrlButtonClick);
+        searchButton.addEventListener('click', handleSearchButtonClick);
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.search-container')) {
+                dropdown.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
