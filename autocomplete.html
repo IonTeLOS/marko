@@ -3,212 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Material Search Box with CSE</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Custom Search with Dropdown</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        body, html {
             margin: 0;
             padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        .search-container {
-            position: relative;
             width: 100%;
-            padding: 10px;
-            background-color: #f0f0f0;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
         }
-        .search-box {
-            width: 300px;
-            padding: 12px 40px 12px 12px;
-            font-size: 16px;
-            border: none;
+        .search-container {
+            width: 80%;
+            max-width: 800px;
+            position: relative;
+        }
+        .custom-search-input {
+            width: 100%;
+            font-size: 20px;
+            padding: 12px 20px;
+            border: 1px solid #ccc;
             border-radius: 4px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             outline: none;
             transition: box-shadow 0.3s;
         }
-        .search-box:focus {
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-        .search-icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #757575;
-            cursor: pointer;
+        .custom-search-input:focus {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .dropdown {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            width: 100%;
-            background-color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-            border-radius: 0 0 4px 4px;
             display: none;
-            z-index: 1;
+            position: absolute;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-top: none;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 1000;
         }
         .dropdown-item {
-            padding: 10px;
+            padding: 12px;
             cursor: pointer;
         }
         .dropdown-item:hover {
             background-color: #f0f0f0;
         }
-        .iframe-container {
-            flex: 1;
-            display: flex;
-        }
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
     </style>
 </head>
 <body>
     <div class="search-container">
-        <input type="text" class="search-box" id="searchBox" placeholder="Search or enter URL">
-        <span class="material-icons search-icon" id="searchIcon">arrow_drop_down</span>
-        <div class="dropdown" id="dropdown"></div>
+        <input type="text" id="searchInput" class="custom-search-input" placeholder="Search...">
+        <div id="dropdown" class="dropdown"></div>
     </div>
-    <div class="iframe-container">
-        <iframe src="https://cse.google.com/cse?cx=50cbca12fd52442e0" frameborder="0"></iframe>
-    </div>
-
+    
     <script>
-        const searchBox = document.getElementById('searchBox');
-        const searchIcon = document.getElementById('searchIcon');
+        const API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
+        const CX = '50cbca12fd52442e0'; // Replace with your Custom Search Engine ID
+
+        const searchInput = document.getElementById('searchInput');
         const dropdown = document.getElementById('dropdown');
-        let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
 
-        searchBox.addEventListener('input', () => {
-            searchIcon.textContent = searchBox.value ? 'close' : 'arrow_drop_down';
-            if (searchBox.value) {
-                fetchSuggestions(searchBox.value);
-            } else {
-                dropdown.style.display = 'none';
-            }
-        });
-
-        searchBox.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-
-        searchIcon.addEventListener('click', () => {
-            if (searchBox.value === '') {
-                dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
-            } else {
-                searchBox.value = '';
-                searchIcon.textContent = 'arrow_drop_down';
-            }
-        });
-
-        dropdown.addEventListener('click', (e) => {
-            if (e.target.classList.contains('dropdown-item')) {
-                searchBox.value = e.target.textContent;
-                dropdown.style.display = 'none';
-                performSearch();
-            }
-        });
-
-        async function fetchSuggestions(query) {
-            const url = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            displaySuggestions(data[1]);
+        // Fetch search results from Google Custom Search API
+        function fetchSearchResults(query) {
+            const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${API_KEY}&cx=${CX}`;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.items) {
+                        showResults(data.items);
+                    }
+                })
+                .catch(error => console.error('Error fetching search results:', error));
         }
 
-        function displaySuggestions(items) {
+        // Display search results in dropdown
+        function showResults(results) {
             dropdown.innerHTML = '';
-            items.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'dropdown-item';
-                div.textContent = item;
-                dropdown.appendChild(div);
+            results.forEach(result => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.textContent = result.title;
+                item.dataset.url = result.link;
+                item.addEventListener('click', () => {
+                    handleResultClick(result);
+                });
+                dropdown.appendChild(item);
             });
-            dropdown.style.display = items.length ? 'block' : 'none';
+            dropdown.style.display = results.length ? 'block' : 'none';
         }
 
-        function performSearch() {
-            let query = searchBox.value.trim();
-            if (!query) return;
-
-            query = query.replace(/\.\s+/g, '.');
-
-            if (isURL(query)) {
-                if (!query.startsWith('http://') && !query.startsWith('https://')) {
-                    query = 'https://' + query;
-                }
-                window.location.href = query;
-                return;
+        // Handle dropdown item click
+        function handleResultClick(result) {
+            const url = result.link;
+            if (isValidURL(url)) {
+                window.location.href = url;
+            } else {
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(searchInput.value)}`, '_blank');
             }
-
-            if (isEmail(query)) {
-                window.location.href = `mailto:${query}`;
-                return;
-            }
-
-            if (query.startsWith('tel:')) {
-                window.location.href = query;
-                return;
-            }
-
-            let searchUrl;
-            switch (selectedEngine) {
-                case 'google':
-                    searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-                    break;
-                case 'duckduckgo':
-                    searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
-                    break;
-                case 'bing':
-                    searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
-                    break;
-                case 'yahoo':
-                    searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
-                    break;
-                case 'yandex':
-                    searchUrl = `https://yandex.ru/search/?text=${encodeURIComponent(query)}`;
-                    break;
-                case 'baidu':
-                    searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
-                    break;
-                case 'local':
-                    searchLocal(query);
-                    return;
-            }
-
-            window.location.href = searchUrl;
         }
 
-        function isURL(str) {
+        // Validate if URL is properly formed
+        function isValidURL(url) {
             const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
                 '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
                 '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
                 '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
                 '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
                 '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-            return pattern.test(str);
+            return pattern.test(url);
         }
 
-        function isEmail(str) {
-            const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            return pattern.test(str);
-        }
+        // Handle input changes
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.trim();
+            if (query.length > 0) {
+                fetchSearchResults(query);
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
 
-        function searchLocal(query) {
-            alert(`Performing local search for: ${query}`);
-        }
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!event.target.closest('.search-container')) {
+                dropdown.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
