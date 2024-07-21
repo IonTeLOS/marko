@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Custom Search with Dropdown</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0;
+    font-family: Roboto, sans-serif;
+}
+
+.search-container {
+    width: 95%;
+    max-width: 600px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.search-input-container {
+    display: flex;
+    width: 100%;
+    position: relative;
+    align-items: center;
+    max-width: 100%; /* Prevent horizontal scrolling */
+}
+
+.custom-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0D47A1;
+    color: white;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: box-shadow 0.3s;
+    font-size: 1.5rem;
+    width: 50px;
+    height: 50px;
+}
+
+.custom-button.left {
+    border-radius: 4px 0 0 4px;
+}
+
+.custom-button.right {
+    border-radius: 0 4px 4px 0;
+}
+
+.custom-search-input {
+    flex: 1;
+    font-size: 1.5rem;
+    padding: 0 50px 0 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    outline: none;
+    transition: box-shadow 0.3s;
+    height: 50px;
+    box-sizing: border-box;
+}
+
+.dropdown-button, .clear-button, .engine-select-button {
+    position: absolute;
+    right: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    padding: 5px;
+    z-index: 1;
+}
+
+.dropdown {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    border: 1px solid #ccc;
+    background: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    max-height: 350px;
+    overflow-y: auto;
+    border-radius: 4px;
+    width: calc(95% - 100px); /* Full width minus buttons */
+}
+
+.dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+.engine-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: none;
+    z-index: 1000;
+    width: 160px; /* Increased size */
+}
+
+.engine-option {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.engine-option:hover {
+    background-color: #f0f0f0;
+}
+
+.engine-option.selected {
+    background-color: #e0e0e0;
+}
+
+@media (max-width: 600px) {
+    .custom-button, .custom-search-input, .dropdown, .dropdown-item {
+        font-size: 1.2rem;
+    }
+    .custom-button {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+    .custom-search-input {
+        height: 40px;
+        padding: 0 40px 0 10px;
+    }
+    .dropdown {
+        bottom: calc(100% + 5px);
+        left: 0;
+        right: 0;
+        width: calc(100% - 80px); /* Full width minus buttons */
+        margin-left: 40px; /* Align with search box */
+    }
+    .dropdown-item {
+        padding: 8px;
+    }
+    .dropdown-button, .clear-button, .engine-select-button {
+        right: 40px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #999;
+        padding: 5px;
+        z-index: 1;
+    }
+}
+
+@media (min-width: 601px) {
+    .dropdown {
+        top: calc(100% + 5px); /* Positioned below search box */
+        left: 50px; /* Start after left button */
+        width: calc(100% - 100px); /* Full width minus left and right buttons */
+    }
+    .engine-dropdown {
+        width: 160px; /* Increased size for desktop */
+    }
+}
+
+
+
+</style>
+</head>
+<body>
+    <div class="search-container">
+        <div class="search-input-container">
+        <button class="custom-button" id="markoButton">
+            <span class="material-icons">add_circle</span> <!-- Use an appropriate icon -->
+        </button>
+            <input type="text" id="searchInput" class="custom-search-input" placeholder="Search Google or enter url">
+            <button class="custom-button" id="searchButton">
+                <span class="material-icons" id="buttonIcon">search</span>
+            </button>
+            <button class="clear-button" id="clearButton">
+                <span class="material-icons">clear</span>
+            </button>
+            <button class="engine-select-button" id="engineSelectButton">
+                <span class="material-icons">arrow_drop_down</span>
+            </button>
+            <div class="engine-dropdown" id="engineDropdown">
+                <div class="engine-option" data-engine="google">Google</div>
+                <div class="engine-option" data-engine="duckduckgo">DuckDuckGo</div>
+                <div class="engine-option" data-engine="bing">Bing</div>
+                <div class="engine-option" data-engine="yahoo">Yahoo</div>
+                <div class="engine-option" data-engine="yandex">Yandex</div>
+                <div class="engine-option" data-engine="baidu">Baidu</div>
+                <div class="engine-option" data-engine="local">Local</div>
+            </div>
+        </div>
+        <div id="dropdown" class="dropdown"></div>
+    </div>
+    
+<script>
+    const API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
+    const CX = '50cbca12fd52442e0'; // Replace with your Custom Search Engine ID
+
+    const searchInput = document.getElementById('searchInput');
+    const dropdown = document.getElementById('dropdown');
+    const searchButton = document.getElementById('searchButton');
+    const clearButton = document.getElementById('clearButton');
+    const engineSelectButton = document.getElementById('engineSelectButton');
+    const engineDropdown = document.getElementById('engineDropdown');
+    const buttonIcon = document.getElementById('buttonIcon');
+    
+    let firstUrlInDropdown = '';
+    let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
+
+    function fetchSearchResults(query) {
+        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${API_KEY}&cx=${CX}`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.items) {
+                    showResults(data.items);
+                }
+            })
+            .catch(error => console.error('Error fetching search results:', error));
+    }
+
+function showResults(results) {
+    dropdown.innerHTML = '';
+    if (results.length > 0) {
+        firstUrlInDropdown = results[0].link;
+    }
+    results.forEach(result => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.textContent = result.title;
+        item.dataset.url = result.link;
+        item.addEventListener('click', () => {
+            handleResultClick(result);
+        });
+        item.addEventListener('contextmenu', handleRightClick); // Add right-click event listener
+        dropdown.appendChild(item);
+    });
+    adjustDropdownPosition();
+    dropdown.style.display = results.length ? 'block' : 'none';
+}
+
+
+    function handleResultClick(result) {
+        const url = result.link;
+        if (isValidURL(url)) {
+            window.location.href = url;
+        } else {
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchInput.value)}`, '_blank');
+        }
+    }
+
+    function handleSearchButtonClick() {
+        const query = searchInput.value.trim();
+        if (isValidURL(query)) {
+            let url = query;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            window.location.href = url;
+        } else {
+            const searchUrl = getSearchUrl(query);
+            if (searchUrl) {
+                window.open(searchUrl, '_blank');
+            }
+        }
+    }
+
+    function handleEnterKey(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleSearchButtonClick();
+        }
+    }
+
+    function isValidURL(url) {
+        const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return pattern.test(url);
+    }
+
+    function adjustDropdownPosition() {
+        const searchBox = document.querySelector('.custom-search-input');
+        const searchBoxRect = searchBox.getBoundingClientRect();
+        const dropdownRect = dropdown.getBoundingClientRect();
+
+        dropdown.style.width = `${searchBoxRect.width}px`;
+
+        if (window.innerHeight - searchBoxRect.bottom > dropdownRect.height) {
+            dropdown.classList.remove('dropdown-top');
+            dropdown.classList.add('dropdown-bottom');
+        } else {
+            dropdown.classList.remove('dropdown-bottom');
+            dropdown.classList.add('dropdown-top');
+        }
+    }
+
+    function toggleClearButton() {
+        const hasText = searchInput.value.length > 0;
+        clearButton.style.display = hasText ? 'block' : 'none';
+        engineSelectButton.style.display = hasText ? 'none' : 'block';
+    }
+
+    function clearSearch() {
+        searchInput.value = '';
+        toggleClearButton();
+        dropdown.style.display = 'none';
+        firstUrlInDropdown = '';
+        buttonIcon.textContent = 'search';
+    }
+
+    function toggleEngineDropdown() {
+        engineDropdown.style.display = engineDropdown.style.display === 'none' ? 'block' : 'none';
+        dropdown.style.display = 'none'; // Close main dropdown when engine dropdown is toggled
+    }
+
+    function selectEngine(engine) {
+        selectedEngine = engine;
+        localStorage.setItem('selectedEngine', engine);
+        updateEngineDropdown();
+        updatePlaceholder();
+    }
+
+    function updateEngineDropdown() {
+        const options = engineDropdown.querySelectorAll('.engine-option');
+        options.forEach(option => {
+            if (option.dataset.engine === selectedEngine) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+        });
+    }
+
+    function getSearchUrl(query) {
+        let searchUrl;
+        switch (selectedEngine) {
+            case 'google':
+                searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+                break;
+            case 'duckduckgo':
+                searchUrl = `https://duckduckgo.com/?q=${encodeURIComponent(query)}`;
+                break;
+            case 'bing':
+                searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(query)}`;
+                break;
+            case 'yahoo':
+                searchUrl = `https://search.yahoo.com/search?p=${encodeURIComponent(query)}`;
+                break;
+            case 'yandex':
+                searchUrl = `https://yandex.ru/search/?text=${encodeURIComponent(query)}`;
+                break;
+            case 'baidu':
+                searchUrl = `https://www.baidu.com/s?wd=${encodeURIComponent(query)}`;
+                break;
+            case 'local':
+                searchLocal(query);
+                return;
+            default:
+                searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        }
+        return searchUrl;
+    }
+    
+    function updatePlaceholder() {
+        const engineNames = {
+            'google': 'Google',
+            'duckduckgo': 'DuckDuckGo',
+            'bing': 'Bing',
+            'yahoo': 'Yahoo',
+            'yandex': 'Yandex',
+            'baidu': 'Baidu',
+            'local': 'Local'
+        };
+        const engineName = engineNames[selectedEngine] || 'Google';
+        searchInput.placeholder = `Search ${engineName} or enter url`;
+    }
+
+
+    function handleRightClick(event) {
+       event.preventDefault(); // Prevent the default context menu
+       const url = event.target.dataset.url; // Get the URL from the data attribute
+       searchInput.value = url; // Set the URL to the text input
+       document.getElementById('markoButton').click(); // Trigger the left button click
+    }
+
+    function searchLocal(query) {
+        // Implement local search functionality here
+        console.log('Performing local search for:', query);
+    }
+
+    searchInput.addEventListener('input', () => {
+        const query = searchInput.value.trim();
+        if (query.length > 0) {
+            fetchSearchResults(query);
+            buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
+        } else {
+            dropdown.style.display = 'none';
+            firstUrlInDropdown = '';
+            buttonIcon.textContent = 'search';
+        }
+        toggleClearButton();
+    });
+    
+    searchInput.addEventListener('keydown', handleEnterKey);
+    searchButton.addEventListener('click', handleSearchButtonClick);
+    clearButton.addEventListener('click', clearSearch);
+    engineSelectButton.addEventListener('click', toggleEngineDropdown);
+
+    engineDropdown.addEventListener('click', (event) => {
+        if (event.target.classList.contains('engine-option')) {
+            selectEngine(event.target.dataset.engine);
+            toggleEngineDropdown();
+        }
+    });
+
+    // Initial setup
+    updateEngineDropdown();
+    updatePlaceholder();
+    toggleClearButton();
+
+    document.addEventListener('click', (event) => {
+        if (!event.target.closest('.search-container')) {
+            dropdown.style.display = 'none';
+            engineDropdown.style.display = 'none';
+        }
+    });
+    
+    document.getElementById('markoButton').addEventListener('click', () => {
+    const text = searchInput.value.trim();
+    if (text) {
+        if (isValidURL(text)) {
+            alert(`Marko for URL ${text} created`);
+        } else {
+            alert(`Marko for note ${text} created`);
+        }
+    } else {
+        alert('Add some text or url to create a Marko from it..');
+    }
+});
+
+</script>
+</body>
+</html>
