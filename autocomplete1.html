@@ -81,7 +81,7 @@
         </button>
     </div>
     <div class="gcse-searchresults-only" id="searchResults"></div>
-    <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
+    <script async src="https://cse.google.com/cse.js?cx=YOUR_CX_HERE"></script>
     <script>
         let searchElement;
 
@@ -135,10 +135,16 @@
             }
         }
 
-        // Execute the initialization function when Google CSE script is loaded
-        window.__gcse = {
-            callback: init
-        };
+        // Wait for Google CSE script to load and then initialize
+        function loadCSE() {
+            if (window.google && google.search && google.search.cse) {
+                init();
+            } else {
+                setTimeout(loadCSE, 100);
+            }
+        }
+        
+        loadCSE(); // Start the process
     </script>
 </body>
 </html>
