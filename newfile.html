@@ -7633,22 +7633,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const engineName = engineNames[selectedEngine] || 'Google';
 
         function rotate() {
-            if (searchInput.placeholder.startsWith(`Search ${engineName}`)) {
+            if (searchInput.placeholder.startsWith(`${engineName} is now in use`)) {
                 setTimeout(() => {
                     searchInput.placeholder = rotatingPlaceholders[index];
                     index = (index + 1) % rotatingPlaceholders.length;
-                    setInterval(() => {
-                        searchInput.placeholder = rotatingPlaceholders[index];
-                        index = (index + 1) % rotatingPlaceholders.length;
-                    }, 3000);
                 }, 3000);
             }
         }
 
         rotate();
+        setInterval(rotate, 3000); // Move setInterval out to keep rotating indefinitely
     }
 });
 </script>
+
 
 
 
