@@ -1394,17 +1394,17 @@ input:focus {
     padding: 0 50px 0 20px;
     border: 1px solid #ccc;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    outline: none;
-    transition: box-shadow 0.3s;
+    transition: border-color 0.3s, box-shadow 0.3s; /* Added border-color transition */
     height: 60px;
-    padding: 10px;
     box-sizing: border-box;
+    outline: none; /* Removes the default focus outline */
 }
+
 .custom-search-input:focus {
     border-color: #2196F3; /* Material Design blue color */
     box-shadow: 0 0 8px rgba(33, 150, 243, 0.5);
-    outline: none;
 }
+
 .dropdown-button, .clear-button, .engine-select-button {
     position: absolute;
     right: 75px;
@@ -1416,12 +1416,12 @@ input:focus {
     color: #999;
     padding: 5px;
     z-index: 1;
+    outline: none; /* Removes the default focus outline */
 }
 .dropdown-button:focus,
 .engine-select-button:focus {
     border-color: #2196F3; /* Material Design blue color */
     box-shadow: 0 0 8px rgba(33, 150, 243, 0.5);
-    outline: none;
 }
 .dropdown {
     display: none;
