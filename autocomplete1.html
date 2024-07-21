@@ -58,15 +58,8 @@
         .custom-search-button .material-icons, .url-button .material-icons {
             font-size: 24px;
         }
-        /* Hide default Google CSE elements */
         .gsc-control-cse {
-            display: none !important; /* Hides the default search box */
-        }
-        .gsc-webResult.gsc-result, .gsc-imageResult.gsc-result {
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            margin: 0;
+            display: none !important;
         }
     </style>
 </head>
@@ -83,7 +76,36 @@
     <div class="gcse-searchresults-only" id="searchResults"></div>
     <script async src="https://cse.google.com/cse.js?cx=YOUR_CX_HERE"></script>
     <script>
-        let searchElement;
+        let searchElementInitialized = false;
+
+        // Initialize Google Custom Search Engine
+        function initCSE() {
+            if (window.google && google.search && google.search.cse) {
+                google.search.cse.element.render({
+                    div: 'searchResults',
+                    tag: 'searchresults-only'
+                });
+                searchElementInitialized = true;
+                console.log('Google CSE element initialized.');
+            } else {
+                console.error('Google CSE object is not available yet.');
+                setTimeout(initCSE, 100); // Retry after 100ms
+            }
+        }
+
+        // Ensure the Google CSE script is loaded and then initialize
+        function loadCSE() {
+            if (window.__gcse && window.__gcse.callback) {
+                initCSE();
+            } else {
+                setTimeout(loadCSE, 100); // Retry after 100ms
+            }
+        }
+
+        window.__gcse = {
+            callback: initCSE
+        };
+        loadCSE(); // Start the process
 
         // Redirect to URL if valid
         document.getElementById('urlButton').addEventListener('click', () => {
@@ -99,9 +121,14 @@
 
         // Perform search using Google CSE
         document.getElementById('searchButton').addEventListener('click', () => {
-            const query = document.getElementById('gsc-input-box').value.trim();
-            if (searchElement) {
-                searchElement.execute(query);
+            if (searchElementInitialized) {
+                const query = document.getElementById('gsc-input-box').value.trim();
+                const searchElement = google.search.cse.element.getElement('searchResults');
+                if (searchElement) {
+                    searchElement.execute(query);
+                } else {
+                    console.error('Google CSE search element is not found.');
+                }
             } else {
                 console.error('Google CSE search element is not initialized.');
             }
@@ -117,34 +144,6 @@
                 '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
             return pattern.test(str);
         }
-
-        // Initialize Google Custom Search Engine
-        function init() {
-            try {
-                searchElement = google.search.cse.element.getElement('searchResults');
-                if (searchElement) {
-                    searchElement.render({
-                        div: "searchResults",
-                        tag: 'searchresults-only'
-                    });
-                } else {
-                    console.error('Failed to get Google CSE search element.');
-                }
-            } catch (error) {
-                console.error('Error initializing Google CSE:', error);
-            }
-        }
-
-        // Wait for Google CSE script to load and then initialize
-        function loadCSE() {
-            if (window.google && google.search && google.search.cse) {
-                init();
-            } else {
-                setTimeout(loadCSE, 100);
-            }
-        }
-        
-        loadCSE(); // Start the process
     </script>
 </body>
 </html>
