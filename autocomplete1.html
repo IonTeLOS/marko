@@ -77,8 +77,10 @@
         </button>
     </div>
     <div class="gcse-searchresults-only" id="searchResults"></div>
-    <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
+    <script async src="https://cse.google.com/cse.js?cx=YOUR_CX_HERE"></script>
     <script>
+        let searchElement;
+
         // Redirect to URL if valid
         document.getElementById('urlButton').addEventListener('click', () => {
             const query = document.getElementById('gsc-input-box').value.trim();
@@ -94,7 +96,11 @@
         // Perform search using Google CSE
         document.getElementById('searchButton').addEventListener('click', () => {
             const query = document.getElementById('gsc-input-box').value.trim();
-            google.search.cse.element.getElement('searchResults').execute(query);
+            if (searchElement) {
+                searchElement.execute(query);
+            } else {
+                console.error('Google CSE search element is not initialized.');
+            }
         });
 
         // Check if the input is a URL
@@ -110,10 +116,15 @@
 
         // Initialize Google Custom Search Engine
         function init() {
-            google.search.cse.element.render({
-                div: "searchResults",
-                tag: 'searchresults-only'
-            });
+            searchElement = google.search.cse.element.getElement('searchResults');
+            if (searchElement) {
+                searchElement.render({
+                    div: "searchResults",
+                    tag: 'searchresults-only'
+                });
+            } else {
+                console.error('Failed to initialize Google CSE search element.');
+            }
         }
 
         // Execute the initialization function when Google CSE script is loaded
