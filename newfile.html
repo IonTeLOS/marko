@@ -7275,6 +7275,7 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 </script>
 
 <script>
+<script>
 document.addEventListener('DOMContentLoaded', () => {
     // Define constants
     const SEARCH_API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
@@ -7313,7 +7314,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateEngineDropdown();
     updatePlaceholder();
     toggleClearButton();
-    updateRotatingPlaceholder();
+    startRotatingPlaceholder();
 
     // Event Listeners
     searchInput.addEventListener('input', handleInput);
@@ -7621,7 +7622,7 @@ document.addEventListener('DOMContentLoaded', () => {
         markoButton.click(); // Trigger the left button click
     }
 
-    function updateRotatingPlaceholder() {
+    function startRotatingPlaceholder() {
         const rotatingPlaceholders = [
             '..or enter url',
             'type here',
@@ -7631,19 +7632,18 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
 
         let index = 0;
-        const engineName = engineNames[selectedEngine] || 'Google';
-
-        function rotate() {
+        function rotatePlaceholder() {
+            const engineName = engineNames[selectedEngine] || 'Google';
             if (searchInput.placeholder.startsWith(`${engineName} is now in use`)) {
-                setTimeout(() => {
-                    searchInput.placeholder = rotatingPlaceholders[index];
-                    index = (index + 1) % rotatingPlaceholders.length;
-                }, 3000);
+                searchInput.placeholder = rotatingPlaceholders[index];
+                index = (index + 1) % rotatingPlaceholders.length;
+            } else {
+                searchInput.placeholder = rotatingPlaceholders[index];
+                index = (index + 1) % rotatingPlaceholders.length;
             }
         }
 
-        rotate();
-        setInterval(rotate, 3000); // Move setInterval out to keep rotating indefinitely
+        setInterval(rotatePlaceholder, 3000);
     }
 });
 </script>
