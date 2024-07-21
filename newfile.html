@@ -8292,7 +8292,7 @@ if (document.readyState === "loading") {
         const iconName = document.getElementById('icon-name');
         const iconDropdown = document.getElementById('icon-dropdown');
         const iconGrid = document.getElementById('icon-grid');
-        const searchInput = document.getElementById('search');
+        const iconSearchInput = document.getElementById('search');
         const colorSelect = document.getElementById('color-select');
 
         function setSelectedIcon(icon) {
@@ -8343,14 +8343,14 @@ if (document.readyState === "loading") {
             div.innerHTML = `<span class="material-icons-outlined">${icon}</span>`;
             div.onclick = () => {
                 setSelectedIcon(icon);
-                searchInput.value = icon;
+                iconSearchInput.value = icon;
                 filterIcons(icon);
             };
             iconGrid.appendChild(div);
         });
 
         // Filter icons as user types
-        searchInput.addEventListener('input', function() {
+        iconSearchInput.addEventListener('input', function() {
             filterIcons(this.value);
         });
 
@@ -8364,7 +8364,7 @@ if (document.readyState === "loading") {
         };
         
         // Add this instead
-searchInput.addEventListener('input', function() {
+iconSearchInput.addEventListener('input', function() {
   const query = this.value.trim();
   if (query) {
     showDropdown();
