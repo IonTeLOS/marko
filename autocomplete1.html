@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customized Google CSE</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body, html {
             margin: 0;
@@ -16,12 +17,13 @@
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
         }
-        .gcse-search {
+        .search-container {
             width: 80%;
             max-width: 800px;
+            display: flex;
+            align-items: center;
         }
-        /* Material Design Styles */
-        input.gsc-input, .gsc-control-cse .gsc-table-result {
+        .search-container input.gsc-input {
             font-size: 20px; /* Increase font size */
             padding: 12px 20px; /* Add more padding */
             border: 1px solid #ccc; /* Single border */
@@ -29,9 +31,34 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
             outline: none;
             transition: box-shadow 0.3s, padding 0.3s;
+            flex: 1;
         }
-        input.gsc-input:focus, .gsc-control-cse .gsc-table-result:hover {
+        .search-container input.gsc-input:focus {
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .search-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #4285F4;
+            color: white;
+            border: none;
+            padding: 12px 20px; /* Match padding with search box */
+            border-radius: 4px;
+            margin-left: 10px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: box-shadow 0.3s;
+            font-size: 20px;
+        }
+        .search-button:hover {
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .search-button .material-icons {
+            font-size: 24px;
+        }
+        .gcse-search {
+            flex: 1;
         }
         .gsc-control-cse .gsc-webResult.gsc-result, .gsc-control-cse .gsc-imageResult.gsc-result {
             border: none;
@@ -47,6 +74,33 @@
 </head>
 <body>
     <script async src="https://cse.google.com/cse.js?cx=50cbca12fd52442e0"></script>
-    <div class="gcse-search"></div>
+    <div class="search-container">
+        <button class="search-button" id="urlButton">
+            <span class="material-icons">send</span>
+        </button>
+        <div class="gcse-search"></div>
+    </div>
+    <script>
+        document.getElementById('urlButton').addEventListener('click', () => {
+            const query = document.querySelector('.gsc-input').value.trim();
+            if (isURL(query)) {
+                let url = query;
+                if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                    url = 'https://' + url;
+                }
+                window.location.href = url;
+            }
+        });
+
+        function isURL(str) {
+            const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+            return pattern.test(str);
+        }
+    </script>
 </body>
 </html>
