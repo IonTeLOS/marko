@@ -7626,10 +7626,7 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleClearButton();
         });
           searchInput.addEventListener('keydown', handleEnterKey);
-    }
-});
-    
-    searchButton.addEventListener('click', handleSearchButtonClick);
+          searchButton.addEventListener('click', handleSearchButtonClick);
     clearButton.addEventListener('click', clearSearch);
     engineSelectButton.addEventListener('click', toggleEngineDropdown);
 
@@ -7639,6 +7636,10 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleEngineDropdown();
         }
     });
+    }
+});
+    
+
 
     // Initial setup
     updateEngineDropdown();
