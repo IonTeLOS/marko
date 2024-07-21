@@ -7274,40 +7274,26 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 </script>
 
 <script>
-
 document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchBoxInput');
-    const searchButton = document.getElementById('searchButton');
-    const clearButton = document.getElementById('clearButton');
-    const engineSelectButton = document.getElementById('engineSelectButton');
-    const engineDropdown = document.getElementById('engineDropdown');
-    const buttonIcon = document.getElementById('buttonIcon');
-    const dropdown = document.getElementById('dropdown');
-    let firstUrlInDropdown = ''; // Define it as a global variable or use it as needed
-
-    if (searchInput) {
-          const SEARCH_API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
+    // Define constants
+    const SEARCH_API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
     const CX = '50cbca12fd52442e0'; // Replace with your Custom Search Engine ID
 
+    // Define elements
     const searchInput = document.getElementById('searchBoxInput');
-    const dropdown = document.getElementById('dropdown');
     const searchButton = document.getElementById('searchButton');
     const clearButton = document.getElementById('clearButton');
     const engineSelectButton = document.getElementById('engineSelectButton');
     const engineDropdown = document.getElementById('engineDropdown');
     const buttonIcon = document.getElementById('buttonIcon');
-    
+    const dropdown = document.getElementById('dropdown');
+    const markoButton = document.getElementById('markoButton');
+
+    // Initialize variables
     let firstUrlInDropdown = '';
     let selectedEngine = localStorage.getItem('selectedEngine') || 'google';
-
-
-
     
-document.addEventListener('DOMContentLoaded', () => {
-    // Define the search input element
-    const searchInput = document.getElementById('searchBoxInput'); // Make sure this matches your HTML
-
-    // Define the search engines and their names
+    // Define engine names
     const engineNames = {
         'google': 'Google',
         'duckduckgo': 'DDG',
@@ -7322,188 +7308,40 @@ document.addEventListener('DOMContentLoaded', () => {
         'local': 'Local'
     };
 
-    // Retrieve the selected engine from localStorage
-    const selectedEngine = localStorage.getItem('selectedEngine') || 'google'; // Default to 'google' if none is set
-    const engineName = engineNames[selectedEngine] || 'Google';
-    searchInput.placeholder = `Search ${engineName}..`;
-
-    // Define the rotating placeholders
-    const rotatingPlaceholders = [
-        '..or enter url',
-        'type here',
-        'click search results..',
-        '..or right click them',
-        'How can I help you?'
-    ];
-
-    let index = 0;
-
-    function updateRotatingPlaceholder() {
-        // Check if the initial placeholder is the search engine one
-        if (searchInput.placeholder.startsWith(`Search ${engineName}`)) {
-            setTimeout(() => {
-                searchInput.placeholder = rotatingPlaceholders[index];
-                index = (index + 1) % rotatingPlaceholders.length;
-                // Rotate placeholders every 3 seconds
-                setInterval(() => {
-                    searchInput.placeholder = rotatingPlaceholders[index];
-                    index = (index + 1) % rotatingPlaceholders.length;
-                }, 3000);
-            }, 3000); // Delay before starting rotation
-        }
-    }
-
-    // Start rotating placeholders
+    // Initial setup
+    updateEngineDropdown();
+    updatePlaceholder();
+    toggleClearButton();
     updateRotatingPlaceholder();
-});
 
+    // Event Listeners
+    searchInput.addEventListener('input', handleInput);
+    searchInput.addEventListener('keydown', handleEnterKey);
+    searchButton.addEventListener('click', handleSearchButtonClick);
+    clearButton.addEventListener('click', clearSearch);
+    engineSelectButton.addEventListener('click', toggleEngineDropdown);
+    engineDropdown.addEventListener('click', handleEngineSelect);
+    markoButton.addEventListener('click', handleMarkoButtonClick);
+    document.addEventListener('click', closeDropdowns);
 
-    function searchLocal(searchText) {
-        if (!searchText) return;
-            console.log('Performing local search for:', searchText);
-            // Add CSS for highlighting
-            const existingStyle = document.querySelector('style.highlight');
-        if (!existingStyle) {
-            const style = document.createElement('style');
-            style.className = 'highlight';
-            style.textContent = `
-                .highlight {
-                background-color: yellow;
-                color: black;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    // Escape special characters in searchText for use in a regular expression
-    const escapedText = searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-    
-    // Create a regular expression to find all instances of the search text
-    const regex = new RegExp(escapedText, 'gi');
-    
-    // Function to wrap text nodes with a span
-    function wrapText(node) {
-        if (node.nodeType === Node.TEXT_NODE) {
-            // If the text node contains the search text
-            if (regex.test(node.nodeValue)) {
-                const newHTML = node.nodeValue.replace(regex, (match) => `<span class="highlight">${match}</span>`);
-                const tempDiv = document.createElement('div');
-                tempDiv.innerHTML = newHTML;
-                while (tempDiv.firstChild) {
-                    node.parentNode.insertBefore(tempDiv.firstChild, node);
-                }
-                node.parentNode.removeChild(node);
-            }
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-            // Recursively search child nodes
-            Array.from(node.childNodes).forEach(wrapText);
+    // Event Handler Functions
+    function handleInput() {
+        const query = searchInput.value.trim();
+        if (query.length > 0) {
+            fetchSearchResults(query);
+            buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
+        } else {
+            dropdown.style.display = 'none';
+            firstUrlInDropdown = '';
+            buttonIcon.textContent = 'search';
         }
+        toggleClearButton();
     }
 
-    // Start wrapping from the body element
-    wrapText(document.body);
-}
-
-function removeHighlight() {
-    // Remove the highlighting style
-    const style = document.querySelector('style.highlight');
-    if (style) {
-        style.remove();
-    }
-
-    // Function to unwrap highlighted text
-    function unwrapText(node) {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-            if (node.classList.contains('highlight')) {
-                // Replace the highlighted span with its text content
-                const textNode = document.createTextNode(node.textContent);
-                node.parentNode.replaceChild(textNode, node);
-            } else {
-                // Recursively search child nodes
-                Array.from(node.childNodes).forEach(unwrapText);
-            }
-        }
-    }
-
-    // Start unwrapping from the body element
-    unwrapText(document.body);
-}
-
-    function handleRightClick(event) {
-       event.preventDefault(); // Prevent the default context menu
-       const url = event.target.dataset.url; // Get the URL from the data attribute
-       searchInput.value = url; // Set the URL to the text input
-       document.getElementById('markoButton').click(); // Trigger the left button click
-    }
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.trim();
-            if (query.length > 0) {
-                fetchSearchResults(query);
-                buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
-            } else {
-                dropdown.style.display = 'none';
-                firstUrlInDropdown = '';
-                buttonIcon.textContent = 'search';
-            }
-            toggleClearButton();
-        });
-
-        searchInput.addEventListener('keydown', handleEnterKey);
-        searchButton.addEventListener('click', handleSearchButtonClick);
-        clearButton.addEventListener('click', clearSearch);
-        engineSelectButton.addEventListener('click', toggleEngineDropdown);
-
-        engineDropdown.addEventListener('click', (event) => {
-            if (event.target.classList.contains('engine-option')) {
-                selectEngine(event.target.dataset.engine);
-                toggleEngineDropdown();
-            }
-        });
-    }
-
-        function handleEnterKey(event) {
+    function handleEnterKey(event) {
         if (event.key === 'Enter') {
             event.preventDefault();
             handleSearchButtonClick();
-        }
-    }
-
-    function isValidURL(url) {
-        const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-        return pattern.test(url);
-    }
-function showResults(results) {
-    dropdown.innerHTML = '';
-    if (results.length > 0) {
-        firstUrlInDropdown = results[0].link;
-    }
-    results.forEach(result => {
-        const item = document.createElement('div');
-        item.className = 'dropdown-item';
-        item.textContent = result.title;
-        item.dataset.url = result.link;
-        item.addEventListener('click', () => {
-            handleResultClick(result);
-        });
-        item.addEventListener('contextmenu', handleRightClick); // Add right-click event listener
-        dropdown.appendChild(item);
-    });
-    adjustDropdownPosition();
-    dropdown.style.display = results.length ? 'block' : 'none';
-}
-
-
-    function handleResultClick(result) {
-        const url = result.link;
-        if (isValidURL(url)) {
-            window.location.href = url;
-        } else {
-            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchInput.value)}`, '_blank');
         }
     }
 
@@ -7523,7 +7361,84 @@ function showResults(results) {
         }
     }
 
+    function handleEngineSelect(event) {
+        if (event.target.classList.contains('engine-option')) {
+            selectEngine(event.target.dataset.engine);
+            toggleEngineDropdown();
+        }
+    }
 
+    function handleMarkoButtonClick() {
+        const text = searchInput.value.trim();
+        if (text) {
+            if (isValidURL(text)) {
+                alert(`Marko for URL ${text} created`);
+            } else {
+                alert(`Marko for note ${text} created`);
+            }
+        } else {
+            alert('Add some text or url to create a Marko from it.');
+        }
+    }
+
+    function closeDropdowns(event) {
+        if (!event.target.closest('.search-container')) {
+            dropdown.style.display = 'none';
+            engineDropdown.style.display = 'none';
+        }
+    }
+
+    // Helper Functions
+    function fetchSearchResults(query) {
+        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${SEARCH_API_KEY}&cx=${CX}`;
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.items) {
+                    showResults(data.items);
+                }
+            })
+            .catch(error => console.error('Error fetching search results:', error));
+    }
+
+    function isValidURL(url) {
+        const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+        return pattern.test(url);
+    }
+
+    function showResults(results) {
+        dropdown.innerHTML = '';
+        if (results.length > 0) {
+            firstUrlInDropdown = results[0].link;
+        }
+        results.forEach(result => {
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            item.textContent = result.title;
+            item.dataset.url = result.link;
+            item.addEventListener('click', () => {
+                handleResultClick(result);
+            });
+            item.addEventListener('contextmenu', handleRightClick); // Add right-click event listener
+            dropdown.appendChild(item);
+        });
+        adjustDropdownPosition();
+        dropdown.style.display = results.length ? 'block' : 'none';
+    }
+
+    function handleResultClick(result) {
+        const url = result.link;
+        if (isValidURL(url)) {
+            window.location.href = url;
+        } else {
+            window.open(`https://www.google.com/search?q=${encodeURIComponent(searchInput.value)}`, '_blank');
+        }
+    }
 
     function adjustDropdownPosition() {
         const searchBox = document.querySelector('.custom-search-input');
@@ -7540,8 +7455,6 @@ function showResults(results) {
             dropdown.classList.add('dropdown-top');
         }
     }
-
-
 
     function updateEngineDropdown() {
         const options = engineDropdown.querySelectorAll('.engine-option');
@@ -7595,35 +7508,10 @@ function showResults(results) {
         }
         return searchUrl;
     }
-    
+
     function updatePlaceholder() {
-        const engineNames = {
-            'google': 'Google',
-            'duckduckgo': 'DDG',
-            'bing': 'Bing',
-            'yahoo': 'Yahoo',
-            'yandex': 'Yandex',
-            'baidu': 'Baidu',
-            'naver': 'Naver',
-            'youtube': 'YouTube',
-            'wikipedia': 'Wiki',
-            'searx': 'searX',
-            'local': 'Local'
-        };
         const engineName = engineNames[selectedEngine] || 'Google';
         searchInput.placeholder = `${engineName} is now in use`;
-        return searchInput.placeholder;
-    }
-    function clearSearch() {
-        searchInput.value = '';
-        dropdown.style.display = 'none';
-        buttonIcon.textContent = 'search';
-        toggleClearButton();
-    }
-    function toggleClearButton() {
-        const hasText = searchInput.value.length > 0;
-        clearButton.style.display = hasText ? 'block' : 'none';
-        engineSelectButton.style.display = hasText ? 'none' : 'block';
     }
 
     function clearSearch() {
@@ -7633,6 +7521,12 @@ function showResults(results) {
         firstUrlInDropdown = '';
         buttonIcon.textContent = 'search';
         removeHighlight();
+    }
+
+    function toggleClearButton() {
+        const hasText = searchInput.value.length > 0;
+        clearButton.style.display = hasText ? 'block' : 'none';
+        engineSelectButton.style.display = hasText ? 'none' : 'block';
     }
 
     function toggleEngineDropdown() {
@@ -7646,48 +7540,116 @@ function showResults(results) {
         updateEngineDropdown();
         updatePlaceholder();
     }
-    function fetchSearchResults(query) {
-        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${SEARCH_API_KEY}&cx=${CX}`;
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (data.items) {
-                    showResults(data.items);
+
+    function searchLocal(searchText) {
+        if (!searchText) return;
+        console.log('Performing local search for:', searchText);
+
+        // Add CSS for highlighting
+        const existingStyle = document.querySelector('style.highlight');
+        if (!existingStyle) {
+            const style = document.createElement('style');
+            style.className = 'highlight';
+            style.textContent = `
+                .highlight {
+                    background-color: yellow;
+                    color: black;
                 }
-            })
-            .catch(error => console.error('Error fetching search results:', error));
-    }
-      // Initial setup
-    updateEngineDropdown();
-    updatePlaceholder();
-    toggleClearButton();
-});
-    
-
-
-
-
-    document.addEventListener('click', (event) => {
-        if (!event.target.closest('.search-container')) {
-            dropdown.style.display = 'none';
-            engineDropdown.style.display = 'none';
+            `;
+            document.head.appendChild(style);
         }
-    });
-    
-    document.getElementById('markoButton').addEventListener('click', () => {
-    const text = searchInput.value.trim();
-    if (text) {
-        if (isValidURL(text)) {
-            alert(`Marko for URL ${text} created`);
-        } else {
-            alert(`Marko for note ${text} created`);
+
+        // Escape special characters in searchText for use in a regular expression
+        const escapedText = searchText.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+        
+        // Create a regular expression to find all instances of the search text
+        const regex = new RegExp(escapedText, 'gi');
+        
+        // Function to wrap text nodes with a span
+        function wrapText(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                // If the text node contains the search text
+                if (regex.test(node.nodeValue)) {
+                    const newHTML = node.nodeValue.replace(regex, (match) => `<span class="highlight">${match}</span>`);
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = newHTML;
+                    while (tempDiv.firstChild) {
+                        node.parentNode.insertBefore(tempDiv.firstChild, node);
+                    }
+                    node.parentNode.removeChild(node);
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                // Recursively search child nodes
+                Array.from(node.childNodes).forEach(wrapText);
+            }
         }
-    } else {
-        alert('Add some text or url to create a Marko from it..');
+
+        // Start wrapping from the body element
+        wrapText(document.body);
+    }
+
+    function removeHighlight() {
+        // Remove the highlighting style
+        const style = document.querySelector('style.highlight');
+        if (style) {
+            style.remove();
+        }
+
+        // Function to unwrap highlighted text
+        function unwrapText(node) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                if (node.classList.contains('highlight')) {
+                    // Replace the highlighted span with its text content
+                    const textNode = document.createTextNode(node.textContent);
+                    node.parentNode.replaceChild(textNode, node);
+                } else {
+                    // Recursively search child nodes
+                    Array.from(node.childNodes).forEach(unwrapText);
+                }
+            }
+        }
+
+        // Start unwrapping from the body element
+        unwrapText(document.body);
+    }
+
+    function handleRightClick(event) {
+        event.preventDefault(); // Prevent the default context menu
+        const url = event.target.dataset.url; // Get the URL from the data attribute
+        searchInput.value = url; // Set the URL to the text input
+        markoButton.click(); // Trigger the left button click
+    }
+
+    function updateRotatingPlaceholder() {
+        const rotatingPlaceholders = [
+            '..or enter url',
+            'type here',
+            'click search results..',
+            '..or right click them',
+            'How can I help you?'
+        ];
+
+        let index = 0;
+        const engineName = engineNames[selectedEngine] || 'Google';
+
+        function rotate() {
+            if (searchInput.placeholder.startsWith(`Search ${engineName}`)) {
+                setTimeout(() => {
+                    searchInput.placeholder = rotatingPlaceholders[index];
+                    index = (index + 1) % rotatingPlaceholders.length;
+                    setInterval(() => {
+                        searchInput.placeholder = rotatingPlaceholders[index];
+                        index = (index + 1) % rotatingPlaceholders.length;
+                    }, 3000);
+                }, 3000);
+            }
+        }
+
+        rotate();
     }
 });
-
 </script>
+
 
 
 
