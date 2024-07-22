@@ -1311,7 +1311,7 @@ function constructShareLink() {
     const url = new URL('https://teloslinux.org/marko/newfile');
     url.searchParams.append('createMarko', 'true');
     
-    // Append common parameters
+    // Append common parameters with proper encoding
     if (type) url.searchParams.append('type', type);
     if (title) url.searchParams.append('title', title);
     if (icon) url.searchParams.append('icon', icon);
@@ -1347,15 +1347,13 @@ function constructShareLink() {
             break;
     }
     
-    // Encode the action parameter
-    const encodedAction = encodeURIComponent(action);
-    
-    // Append action parameter
-    url.searchParams.append('action', encodedAction);
+    // Append action parameter with proper encoding
+    url.searchParams.append('action', action);
     
     // Return the constructed shareable link
     return url.toString();
 }
+
 
         
 function sendToMarko() {
