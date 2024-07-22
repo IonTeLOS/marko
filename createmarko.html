@@ -1347,13 +1347,15 @@ function constructShareLink() {
             break;
     }
     
+    // Encode the action parameter
+    const encodedAction = encodeURIComponent(action);
+    
     // Append action parameter
-    url.searchParams.append('action', action);
+    url.searchParams.append('action', encodedAction);
     
     // Return the constructed shareable link
     return url.toString();
 }
-
 
         
 function sendToMarko() {
