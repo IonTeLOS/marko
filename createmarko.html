@@ -1287,6 +1287,7 @@ async function chooseMarkoType() {
                 } finally {
                     // Reset the form for next selection
                     reportMarkoCreation();
+                    
                     select.value = '0';
                 }
             } else {
@@ -1296,6 +1297,35 @@ async function chooseMarkoType() {
         };
     });
 }
+
+// Function to check if a query parameter exists
+function hasQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.has(param);
+}
+
+function sendToMarko() {
+    document.addEventListener('DOMContentLoaded', () => {
+        // Code to run when the DOM is fully loaded
+        if (hasQueryParam('internal')) {
+            console.log('Page opened with "internal" parameter');
+
+            alert('The "internal" parameter is present in the URL.');
+        }
+    });
+}
+
+// Call the function to set up the listener
+setupDOMContentLoadedListener();
+// Check if the 'internal' parameter exists
+document.addEventListener('DOMContentLoaded', () => {
+    if (hasQueryParam('internal')) {
+        console.log('Page opened with "internal" parameter');
+        // Add your logic here
+        // For example, show a message or handle the internal logic
+        alert('The "internal" parameter is present in the URL.');
+    }
+});
 
 
 
