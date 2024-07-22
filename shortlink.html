@@ -90,7 +90,23 @@
                         handleClipboardAndSharing(responseData.short_url);
 
                         // Hide submit button
-                        document.getElementById('submit-button').style.display = 'none';
+                        const submitButton = document.getElementById('submit-button');
+                        submitButton.style.display = 'none';
+
+                        // Show submit button again after 15 seconds
+                        // Show submit button again after 15 seconds
+setTimeout(() => {
+    const submitButton = document.getElementById('submit-button');
+    submitButton.style.display = 'block';
+
+    // Clear the input fields
+    document.getElementById('url').value = '';
+    document.getElementById('alias').value = '';
+    
+    // Optionally reset checkbox state
+    document.getElementById('max-clicks-checkbox').checked = false;
+
+}, 15000); // 15000 milliseconds = 15 seconds
                     } else {
                         throw new Error('Invalid response data');
                     }
@@ -115,7 +131,13 @@
                                     handleClipboardAndSharing(responseData.short_url);
 
                                     // Hide submit button
-                                    document.getElementById('submit-button').style.display = 'none';
+                                    const submitButton = document.getElementById('submit-button');
+                                    submitButton.style.display = 'none';
+
+                                    // Show submit button again after 15 seconds
+                                    setTimeout(() => {
+                                        submitButton.style.display = 'block';
+                                    }, 15000); // 15000 milliseconds = 15 seconds
                                 } else {
                                     throw new Error('Invalid response data');
                                 }
