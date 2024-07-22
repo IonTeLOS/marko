@@ -3649,17 +3649,17 @@ function handleSharedLink(url, title, text) {
     const icon = params.get('icon');
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
-    const actionArgs = action ? action.split(',').map(arg => arg.trim()) : [];
-    const actionArg = actionArgs.length >= 2 ? actionArgs[1] : null;
+    const actionArgs = action ? decodeURIComponent(action).match(/openMarko\((.+?)\)/) : [];
+    const link = actionArgs.length > 1 ? actionArgs[1].split(',')[1].trim().replace(/'/g, '') : null;
 
     // Check if createMarko=true is present in the URL parameters
-    if (isNewMarko === 'true' && type && action && title && icon && color) {
+    if (isNewMarko === 'true' && type && link && title && icon && color) {
         if (confirm(`Do you want to add a Marko for ${title}?`)) {
             console.log("User is adding a Marko.");
-            createMarko(type, actionArg, title, icon, color);
+            createMarko(type, link, title, icon, color);
         } else {
-            console.log("User does not want to add a Marko.");        
-        } 
+            console.log("User does not want to add a Marko.");
+        }
     } else {
         console.log("Not all required parameters for Marko creation are present or createMarko is not true.");
     }
