@@ -1347,7 +1347,7 @@ function constructShareLink() {
             break;
     }
     
-    // Encode the action parameter properly
+    // Encode the action parameter
     const encodedAction = encodeURIComponent(action);
     
     // Append action parameter
@@ -1356,7 +1356,6 @@ function constructShareLink() {
     // Return the constructed shareable link
     return url.toString();
 }
-
 
         
 function sendToMarko() {
