@@ -48,7 +48,7 @@
                     M.toast({html: `Alias was too long and has been shortened to: ${storedAlias.substring(0, 11)}`});
                     storedAlias = storedAlias.substring(0, 11);
                 }
-                storedAlias = storedAlias.replace(/\s+/g, '-'); // Replace spaces with hyphens
+                storedAlias = storedAlias.replace(/\s+/g, '_'); // Replace spaces with underscores
             }
 
             return { storedLongLink, storedAlias, isOneTime };
@@ -58,7 +58,7 @@
         function sendShortlinkCreationRequest(url, alias, maxClicks) {
             const data = new URLSearchParams();
             data.append('url', url);
-            if (alias) data.append('alias', alias);
+            if (alias && alias.trim() !== '') data.append('alias', alias); // Only append alias if not empty
             if (maxClicks) data.append('max-clicks', '1');
 
             return fetch('https://spoo.me/', {
@@ -167,7 +167,7 @@
 
         // Function to validate alias characters
         function validateAliasCharacters(alias) {
-            const validPattern = /^[a-zA-Z0-9_-]+$/; // Allows letters, numbers, hyphens, and underscores
+            const validPattern = /^[a-zA-Z0-9 _-]+$/; // Allows letters, numbers, hyphens, underscores, and spaces
             return validPattern.test(alias);
         }
 
@@ -197,12 +197,12 @@
             alias = alias.replace(/\s+/g, '_'); 
 
             // Validate alias characters
-            if (!validateAliasCharacters(alias)) {
-                M.toast({html: 'Alias can only contain letters, numbers, hyphens, and underscores.'});
+            if (alias && !validateAliasCharacters(alias)) {
+                M.toast({html: 'Alias can only contain letters, numbers, hyphens, underscores, and spaces.'});
                 return;
             }
 
-            processShortlinkCreationResponse(url, alias, maxClicks);
+            processShortlinkCreationResponse(url, alias || '', maxClicks); // Pass empty alias if not set
         }
 
         // Bind the handleFormSubmission function to the form's submit event
