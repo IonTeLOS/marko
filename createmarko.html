@@ -1288,6 +1288,7 @@ async function chooseMarkoType() {
                     // Reset the form for next selection
                     reportMarkoCreation();
                     
+                    sendToMarko();
                     select.value = '0';
                 }
             } else {
@@ -1298,6 +1299,64 @@ async function chooseMarkoType() {
     });
 }
 
+
+function constructShareLink() {
+    // Retrieve values from sessionStorage
+    const type = sessionStorage.getItem('temp-marko-type');
+    const title = sessionStorage.getItem('temp-marko-name');
+    const icon = sessionStorage.getItem('temp-marko-icon');
+    const color = sessionStorage.getItem('temp-marko-color');
+    const link = sessionStorage.getItem('temp-marko-link');
+    
+    // Base URL for the shareable link
+    const url = new URL('https://teloslinux.org/marko/newfile');
+    url.searchParams.append('createMarko', 'true');
+    
+    // Append common parameters
+    if (type) url.searchParams.append('type', type);
+    if (title) url.searchParams.append('title', title);
+    if (icon) url.searchParams.append('icon', icon);
+    if (color) url.searchParams.append('color', color);
+    
+    // Determine action based on type
+    let action = '';
+    switch (type) {
+        case 'youtube':
+            action = `openMarko(loadVideo, '${link}')`;
+            break;
+        case 'window':
+            action = `openMarko(showWindow, '${link}')`;
+            break;
+        case 'pdf':
+            const proxied = `https://corsproxy.io/?${link}`;
+            action = `openMarko(showPDFLightbox, '${proxied}')`;
+            break;
+        case 'download':
+            action = `openMarko(downloadFile, '${link}', '${title}')`;
+            break;
+        case 'contact':
+            action = `openMarko(syncAndShowCommonMarko, '${link}', '${title}')`;
+            break;
+        case 'post':
+            action = `openMarko(showPost, ${JSON.stringify({ link })})`;
+            break;
+        case 'note':
+            action = `openMarko(showShareNote, '${title}', '${link}')`;
+            break;
+        default:
+            action = `openMarko(openLink, '${link}')`;
+            break;
+    }
+    
+    // Append action parameter
+    url.searchParams.append('action', action);
+    
+    // Return the constructed shareable link
+    return url.toString();
+}
+
+
+        
 // Function to check if a query parameter exists
 function hasQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -1310,11 +1369,25 @@ function sendToMarko() {
         if (hasQueryParam('internal')) {
             console.log('Page opened with "internal" parameter');
 
-            alert('The "internal" parameter is present in the URL.');
+            // alert('The "internal" parameter is present in the URL.');
+            // Call the function to open the share link
+            backToMarko();
+            
         }
     });
 }
 
+
+
+
+function backToMarko() {
+    const shareLink = constructShareLink();
+    // Log the link for debugging
+    console.log('Constructed Share Link:', shareLink);
+    
+    // Navigate to the constructed URL in the same tab
+    window.location.href = shareLink;
+}
 
 
 
