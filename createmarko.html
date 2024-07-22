@@ -1315,21 +1315,6 @@ function sendToMarko() {
     });
 }
 
-sendToMarko();        
-// Call the function to set up the listener
-setupDOMContentLoadedListener();
-// Check if the 'internal' parameter exists
-document.addEventListener('DOMContentLoaded', () => {
-    if (hasQueryParam('internal')) {
-        console.log('Page opened with "internal" parameter');
-        // Add your logic here
-        // For example, show a message or handle the internal logic
-        alert('The "internal" parameter is present in the URL.');
-    }
-});
-
-
-
 
 
 
