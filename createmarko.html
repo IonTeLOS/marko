@@ -1286,8 +1286,8 @@ async function chooseMarkoType() {
                     reject(error); // Reject on error
                 } finally {
                     // Reset the form for next selection
-                    reportMarkoCreation();
                     sendToMarko();
+                    reportMarkoCreation();
                     select.value = '0';
                 }
             } else {
@@ -1356,25 +1356,20 @@ function constructShareLink() {
 
 
         
-// Function to check if a query parameter exists
-function hasQueryParam(param) {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.has(param);
-}
-
 function sendToMarko() {
-    document.addEventListener('DOMContentLoaded', () => {
-        // Code to run when the DOM is fully loaded
-        if (hasQueryParam('internal')) {
-            console.log('Page opened with "internal" parameter');
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    if (urlParams.has('internal')) {
+        console.log('Page opened with "internal" parameter');
 
-            // alert('The "internal" parameter is present in the URL.');
-            // Call the function to open the share link
-            backToMarko();
-            
-        }
-    });
+        // Uncomment this line if you want an alert
+        // alert('The "internal" parameter is present in the URL.');
+
+        // Call the function to open the share link
+        backToMarko();  // Ensure this function is defined elsewhere in your code
+    }
 }
+
 
 
 
