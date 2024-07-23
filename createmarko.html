@@ -1359,7 +1359,7 @@ function constructShareLink() {
             action = `openMarko(showPost, '${encodedLink}')`;
             break;
         case 'note':
-            action = `openMarko(showShareNote, '${encodedLink}', '${title}')`;
+            action = `openMarko(showShareNote, ${encodedLink}, ${title})`;
             break;
         default:
             action = `openMarko(openLink, '${link}')`;
