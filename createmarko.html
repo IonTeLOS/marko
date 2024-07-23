@@ -863,7 +863,7 @@ function sanitizeAndValidateEmail(email) {
     if (!validateEmail(cleanedEmail)) {
         throw new Error("Invalid email address format");
     }
-    let mailtoLink = `mailto:${cleanedEmail}`;
+    let mailToLink = `mailto:${cleanedEmail}`;
 
     return mailToLink;
 }
