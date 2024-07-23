@@ -887,7 +887,7 @@ async function processPhoneNumber(phone) {
         
         // Remove any 'tel:' prefix if the user added it
         phone = phone.replace(/^tel:/, '');
-        let phonetoLink = `tel:${phone}`;
+        let phoneToLink = `tel:${phone}`;
 
         return phoneToLink;
     }
