@@ -863,8 +863,9 @@ function sanitizeAndValidateEmail(email) {
     if (!validateEmail(cleanedEmail)) {
         throw new Error("Invalid email address format");
     }
+    let mailtoLink = `mailto:${cleanedEmail}`;
 
-    return cleanedEmail;
+    return mailToLink;
 }
 
 async function processPhoneNumber(phone) {
@@ -886,8 +887,9 @@ async function processPhoneNumber(phone) {
         
         // Remove any 'tel:' prefix if the user added it
         phone = phone.replace(/^tel:/, '');
-        
-        return phone;
+        let phonetoLink = `tel:${phone}`;
+
+        return phoneToLink;
     }
 
     // Helper function to validate the phone number
@@ -1362,12 +1364,10 @@ function constructShareLink() {
             mLink = '${encodedLink}';
             break;
         case 'phone':
-            const prefixed = `tel:${link}`;
-            mLink = '${prefixed}';
+            mLink = '${link}';
             break;
         case 'email':
-            const prefixedMail = `mailto:${link}`;
-            mLink = '${prefixedMail}';
+            mLink = '${link}';
             break;    
         default:
             mLink = '${link}';
