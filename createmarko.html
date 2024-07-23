@@ -1218,7 +1218,7 @@ async function chooseMarkoType() {
                         postField.style.display = 'block';
                         postContent.style.display = 'block';
                         post = await processPost(name);
-                        sessionStorage.setItem('temp-marko-link', JSON.stringify(post));
+                        sessionStorage.setItem('temp-marko-link', post);
                         //iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
                         //console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', post:', post, ', icon and icon color:', iconAndColor);
                         //resolve(); // Resolve to continue the process
