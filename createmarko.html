@@ -915,24 +915,6 @@ function formatPhoneNumber(phone) {
     return phone.replace(/\D/g, '');
 }
 
-// Example usage
-let phone = "+1 (234) 567-8901";
-
-// Format the phone number
-phone = formatPhoneNumber(phone);
-
-// Validate the formatted phone number
-const validation = validatePhone(phone);
-
-if (!validation.isValid) {
-    // If the phone number is invalid, return the error message
-    console.error(validation.errorMessage);
-    throw new Error(validation.errorMessage);
-}
-
-// If valid, return the formatted phone number
-console.log(phone); // Output: 12345678901
-}
         
 // get the 11-character long ID from a youtu.be or youtube.com link    
 function getYouTubeId(url) {
