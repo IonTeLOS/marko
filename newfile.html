@@ -3659,13 +3659,10 @@ function handleSharedLink(url, title, text) {
 const decodedAction = decodeURIComponent(action || '');
 
 // Match the `openMarko` function format and extract parameters
-const actionArgs = decodedAction.match(/openMarko\(([^)]+)\)/) || [];
+const actionArgs = decodedAction.match(/openMarko\((.+?)\)/) : [];
 
 // Extract only the first argument
-const encodedLink = actionArgs[1]?.split(',')[0]?.trim().replace(/^'|'$/g, '') || '';
-
-// Decode the link if it is URL-encoded
-const link = decodeURIComponent(encodedLink);
+const encodedLink = actionArgs.length > 1 ? actionArgs[1].split(',')[1].trim().replace(/'/g, '') : null;
 
 console.log('Decoded Link:', link);
 
