@@ -1317,27 +1317,11 @@ function constructShareLink() {
     const title = sessionStorage.getItem('temp-marko-name');
     const icon = sessionStorage.getItem('temp-marko-icon');
     const color = sessionStorage.getItem('temp-marko-color');
-// Function to parse HTML content
-const parseHtmlContent = (content) => {
-    return JSON.parse(content);
-};
+    // Retrieve possibly HTML content from sessionStorage
+    const link = sessionStorage.getItem('temp-marko-link');
 
-// Mapping object for different types
-const typeHandlers = {
-    'note': parseHtmlContent,
-    'post': parseHtmlContent
-};
-
-// Default handler for unknown types (returns the content as is)
-const defaultHandler = (content) => content;
-
-// Function to get the handler based on type
-const getHandler = (type) => typeHandlers[type] || defaultHandler;
-
-// Retrieving the HTML content from sessionStorage
-const storedHtml = sessionStorage.getItem('temp-marko-link');
-const handler = getHandler(type); // Get the appropriate handler based on the type
-const link = storedHtml ? handler(storedHtml) : '';
+    // Encode the HTML content to be used in a URL parameter
+    const encodedLink = encodeURIComponent(link);
 
 console.log(link); // Check the result
 
@@ -1372,10 +1356,10 @@ console.log(link); // Check the result
             action = `openMarko(syncAndShowCommonMarko, '${link}', '${title}')`;
             break;
         case 'post':
-            action = `openMarko(showPost, ${JSON.stringify({ link })})`;
+            action = `openMarko(showPost, ${JSON.stringify({ encodedLink })})`;
             break;
         case 'note':
-            action = `openMarko(showShareNote, '${link}', '${title}')`;
+            action = `openMarko(showShareNote, '${encodedLink}', '${title}')`;
             break;
         default:
             action = `openMarko(openLink, '${link}')`;
@@ -1489,7 +1473,7 @@ function showPostFieldAndWait(name) {
       const htmlContent = converter.makeHtml(markdownContent);
       
       // Store the HTML content in sessionStorage
-      sessionStorage.setItem('temp-marko-link', JSON.stringify(htmlContent));      
+      sessionStorage.setItem('temp-marko-link', htmlContent);      
       // Resolve the promise with the HTML content
       resolve(htmlContent);
 
