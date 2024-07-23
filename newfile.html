@@ -2172,7 +2172,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 additionalFields.style.display = 'block';
                 document.getElementById('new-link-url').style.display = 'none';
               break;
-            case "intro":
+            case "post":
                 introField.style.display = 'block';
                 additionalFields.style.display = 'block';
                 document.getElementById('new-link-url').style.display = 'none';
@@ -2274,7 +2274,7 @@ function getIconData() {
         case 'pdf':
           return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/picture_as_pdf/default/48px.svg';
         case 'note':
-        case 'intro':
+        case 'post':
           return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/note/default/48px.svg';
         case 'download':
           return 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/download_2/default/48px.svg';            
@@ -2745,7 +2745,7 @@ if (!noteContent || !/\S/.test(noteContent)) {
                 name = getTextValue('new-link-name', 30) || "Note"; 
                 linkData = [linkType, noteContent, name, "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/short_text/default/48px.svg", getRandomColor()];
                 break;
-        case "intro":
+        case "post":
            const introContent = easyMDE.value().trim();
            if (introContent.length > 10000) {
            alert("Intro content exceeds 10000 characters") 
@@ -4683,7 +4683,7 @@ linkContainer.appendChild(bookmarkElement);
                     linkContainer.appendChild(bookmarkElement);
                 hideAdd();      
                 }     
-                else if (link[0] === "intro") {
+                else if (link[0] === "post") {
                 const iconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/wysiwyg/default/48px.svg';
                 const bookmarkElement = document.createElement('div');
                 bookmarkElement.className = 'bookmark';
@@ -8155,7 +8155,7 @@ The appropriate solution will depend on your specific requirements and the natur
         <option value="whatsapp">WhatsApp Chat</option>
         <option value="viber">Viber Chat</option>
         <option value="note">Note</option>
-        <option value="intro">Post</option>
+        <option value="post">Post</option>
         <option value="window">Window (embed a webpage)</option>
         <option value="pdf">PDF document</option>
         <option value="download">Download</option>
