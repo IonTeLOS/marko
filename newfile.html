@@ -3650,10 +3650,10 @@ function handleSharedLink(url, title, text) {
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
     const actionArgs = action ? action.split(',').map(arg => arg.trim()) : [];
-    const actionArg = actionArgs.length >= 2 ? actionArgs[1] : null;
+    const link = actionArgs.length >= 2 ? actionArgs[1] : null;
 
     // Check if createMarko=true is present in the URL parameters
-    if (isNewMarko === 'true' && type && link && title && icon && color) {
+    if (isNewMarko === 'true' && type && action && title && icon && color) {
         if (confirm(`Do you want to add a Marko for ${title}?`)) {
             console.log("User is adding a Marko.");
             createMarko(type, link, title, icon, color);
