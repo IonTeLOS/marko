@@ -3661,11 +3661,13 @@ const decodedAction = decodeURIComponent(action || '');
 // Match the `openMarko` function format and extract parameters
 const actionArgs = decodedAction.match(/openMarko\(([^)]+)\)/) || [];
 
-// Safely extract parameters using array destructuring and trimming
-const [encodedLink = '', title = ''] = actionArgs[1]?.split(',').map(param => param.trim().replace(/^'|'$/g, '')) || [];
+// Extract only the first argument
+const encodedLink = actionArgs[1]?.split(',')[0]?.trim().replace(/^'|'$/g, '') || '';
 
 // Decode the link if it is URL-encoded
 const link = decodeURIComponent(encodedLink);
+
+console.log('Decoded Link:', link);
 
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
