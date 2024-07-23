@@ -1206,17 +1206,17 @@ async function chooseMarkoType() {
                         noteField.style.display = 'block';
                         noteContent.style.display = 'block';
                         note = await processNote(name);
-                        iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
-                        console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', note:', note, ', icon and icon color:', iconAndColor);
-                        resolve(); // Resolve to continue the process
+                        //iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
+                        //console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', note:', note, ', icon and icon color:', iconAndColor);
+                        //resolve(); // Resolve to continue the process
                     } else if (selectedType === 'post') {
                         postField.style.display = 'block';
                         postContent.style.display = 'block';
                         post = await processPost(name);
-                        iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
-                        console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', post:', post, ', icon and icon color:', iconAndColor);
-                        resolve(); // Resolve to continue the process
-                    } else {
+                        //iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
+                        //console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', post:', post, ', icon and icon color:', iconAndColor);
+                        //resolve(); // Resolve to continue the process
+                    } 
                         // Default handling for other types (e.g., 'link')
                         console.log('Calling chooseMarkoIconType');
                         const iconTypeIndex = await chooseMarkoIconType(selectedType);
@@ -1285,7 +1285,7 @@ async function chooseMarkoType() {
                                 reject('Invalid icon type selected');
                                 return; // Ensure we don't resolve twice
                             }
-                        }
+                        
                         resolve(); // Resolve to continue the process
                 } catch (error) {
                     console.error('Error in Marko creation:', error);
