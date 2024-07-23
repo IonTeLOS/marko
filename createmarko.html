@@ -1466,8 +1466,7 @@ function showPostFieldAndWait(name) {
       const htmlContent = converter.makeHtml(markdownContent);
       
       // Store the HTML content in sessionStorage
-      sessionStorage.setItem('temp-marko-link', htmlContent);
-      
+      sessionStorage.setItem('temp-marko-link', JSON.stringify(htmlContent));      
       // Resolve the promise with the HTML content
       resolve(htmlContent);
 
