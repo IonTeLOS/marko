@@ -1337,37 +1337,41 @@ function constructShareLink() {
     if (color) url.searchParams.append('color', color);
     
     // Determine action based on type
-    let action = '';
+    let link = '';
     switch (type) {
         case 'youtube':
-            action = `openMarko(loadVideo, '${link}')`;
+            link = '${link}';
             break;
         case 'window':
-            action = `openMarko(showWindow, '${link}')`;
+            link = '${link}';
             break;
         case 'pdf':
             const proxied = `https://corsproxy.io/?${link}`;
-            action = `openMarko(showPDFLightbox, '${proxied}')`;
+            link = '${proxied}';
             break;
         case 'download':
-            action = `openMarko(downloadFile, '${link}', '${title}')`;
+            link = '${link}';
             break;
         case 'contact':
-            action = `openMarko(syncAndShowCommonMarko, '${link}', '${title}')`;
+            link = '${link}';
             break;
         case 'post':
-            action = `openMarko(showPost, '${encodedLink}')`;
+            link = '${encodedLink}';
             break;
         case 'note':
-            action = `openMarko(showShareNote, ${encodedLink}, ${title})`;
+            link = '${encodedLink}';
+            break;
+        case 'phone':
+            const prefixed = `tel:${link}`;
+            link = '${prefixed}';
             break;
         default:
-            action = `openMarko(openLink, '${link}')`;
+            link = '${link}';
             break;
     }
     
     // Append action parameter with proper encoding
-    url.searchParams.append('action', action);
+    url.searchParams.append('link', link);
     
     // Return the constructed shareable link
     return url.toString();
