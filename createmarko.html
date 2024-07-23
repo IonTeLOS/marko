@@ -1337,36 +1337,36 @@ function constructShareLink() {
     if (color) url.searchParams.append('color', color);
     
     // Determine action based on type
-    let link = '';
+    let mLink = '';
     switch (type) {
         case 'youtube':
-            link = '${link}';
+            mLink = '${link}';
             break;
         case 'window':
-            link = '${link}';
+            mLink = '${link}';
             break;
         case 'pdf':
             const proxied = `https://corsproxy.io/?${link}`;
-            link = '${proxied}';
+            mLink = '${proxied}';
             break;
         case 'download':
-            link = '${link}';
+            mLink = '${link}';
             break;
         case 'contact':
-            link = '${link}';
+            mLink = '${link}';
             break;
         case 'post':
-            link = '${encodedLink}';
+            mLink = '${encodedLink}';
             break;
         case 'note':
             link = '${encodedLink}';
             break;
         case 'phone':
             const prefixed = `tel:${link}`;
-            link = '${prefixed}';
+            mLink = '${prefixed}';
             break;
         default:
-            link = '${link}';
+            mLink = '${link}';
             break;
     }
     
