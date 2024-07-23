@@ -1365,6 +1365,10 @@ function constructShareLink() {
             const prefixed = `tel:${link}`;
             mLink = '${prefixed}';
             break;
+        case 'email':
+            const prefixedMail = `mailto:${link}`;
+            mLink = '${prefixedMail}';
+            break;    
         default:
             mLink = '${link}';
             break;
