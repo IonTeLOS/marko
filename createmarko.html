@@ -1199,6 +1199,10 @@ async function chooseMarkoType() {
                     let note, post, iconAndColor;
 
                     if (selectedType === 'note') {
+                        // Delay before calling chooseMarkoName
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        console.log('Calling chooseMarkoName');
+                        const name = await chooseMarkoName(selectedType, ' ');
                         noteField.style.display = 'block';
                         noteContent.style.display = 'block';
                         note = await processNote(name);
