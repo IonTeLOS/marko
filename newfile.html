@@ -3650,7 +3650,7 @@ function handleSharedLink(url, title, text) {
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
     // Decode the action parameter
-    const link = decodeURIComponent(theLink || '');
+    const link = decodeURIComponent(theLink || '').replace(/\n/g, '<br>');
 
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
