@@ -1073,13 +1073,15 @@ async function chooseMarkoLink(type = 'website') {
                     if (type === 'Viber') {
                     	const formattedPhone = await processPhoneNumber(chosenLink);
                     	const bareNumber = formattedPhone.replace(/^\+/, '');  // Remove '+' for Viber
-                        const viberNumber = `viber://chat?number=${bareNumber}`
+                        const bareNoTelNumber = formattedPhone.replace(/tel:/g, '');
+                        const viberNumber = `viber://chat?number=${bareNoTelNumber}`
                     	sessionStorage.setItem('temp-marko-link', viberNumber);
                     	resolve(viberNumber);
                     }
                     if (type === 'WhatsApp') {
                     	const formattedPhone = await processPhoneNumber(chosenLink);
-                    	const bareNumber = formattedPhone.replace(/^\+/, '');  // Remove '+' for Viber
+                    	const bareNumber = formattedPhone.replace(/tel:/g, '');
+
                         const waNumber = `https://wa.me/${bareNumber}`
                     	sessionStorage.setItem('temp-marko-link', waNumber);
                     	resolve(waNumber);
