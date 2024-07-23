@@ -1182,6 +1182,7 @@ async function chooseMarkoType() {
                 form.style.display = 'none';
 
                 try {
+                    if (selectedType !== 'note' && selectedType !== 'post') {
                     // Delay before calling chooseMarkoLink
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     console.log('Calling chooseMarkoLink');
@@ -1193,7 +1194,8 @@ async function chooseMarkoType() {
                     console.log('Calling chooseMarkoName');
                     const name = await chooseMarkoName(selectedType, link);
                     console.log('Name chosen:', name);
-
+                    }
+                    
                     let note, post, iconAndColor;
 
                     if (selectedType === 'note') {
