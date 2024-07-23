@@ -892,34 +892,48 @@ async function processPhoneNumber(phone) {
         return phoneToLink;
     }
 
-    // Helper function to validate the phone number
-    function validatePhone(phone) {
-        // Check for blank phone number
-        if (!phone || phone.trim() === "") {
-            return { isValid: false, errorMessage: "Please enter a phone number" };
-        }
-
-        // Regular expression for phone number format (allows + sign and numbers)
-        const re = /^\+?[0-9]+$/;
-        return { isValid: re.test(phone), errorMessage: "Invalid phone number format" };
+// Helper function to validate the phone number
+function validatePhone(phone) {
+    // Check for blank phone number
+    if (!phone || phone.trim() === "") {
+        return { isValid: false, errorMessage: "Please enter a phone number" };
     }
 
-    // Format the phone number
-    phone = formatPhoneNumber(phone);
+    // Regular expression for a more flexible phone number format
+    // This allows optional +, spaces, dashes, parentheses, and numbers
+    const re = /^\+?\d{1,4}?[-.\s]?\(?\d{1,5}?\)?[-.\s]?\d{1,5}[-.\s]?\d{1,9}$/;
 
-    // Validate the formatted phone number
-    const validation = validatePhone(phone);
+    // Test the phone number format
+    const isValid = re.test(phone);
 
-    if (!validation.isValid) {
-        // If the phone number is invalid, return the error message
-        console.error(validation.errorMessage);
-        throw new Error(validation.errorMessage);
-    }
-
-    // If valid, return the formatted phone number
-    return phone;
+    return { isValid, errorMessage: isValid ? "" : "Invalid phone number format" };
 }
 
+// Function to format the phone number (assuming you have a formatting function)
+function formatPhoneNumber(phone) {
+    // Example implementation: remove non-digit characters
+    return phone.replace(/\D/g, '');
+}
+
+// Example usage
+let phone = "+1 (234) 567-8901";
+
+// Format the phone number
+phone = formatPhoneNumber(phone);
+
+// Validate the formatted phone number
+const validation = validatePhone(phone);
+
+if (!validation.isValid) {
+    // If the phone number is invalid, return the error message
+    console.error(validation.errorMessage);
+    throw new Error(validation.errorMessage);
+}
+
+// If valid, return the formatted phone number
+console.log(phone); // Output: 12345678901
+}
+        
 // get the 11-character long ID from a youtu.be or youtube.com link    
 function getYouTubeId(url) {
     console.log(url);
