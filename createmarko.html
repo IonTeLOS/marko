@@ -748,7 +748,7 @@ function stripProtocolFromUrl(url) {
   }
 }
         
-async function chooseMarkoName(type = 'website', link) {
+async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('temp-marko-link')) {
     sessionStorage.setItem('temp-marko-type', type);
     return new Promise((resolve, reject) => {
         Notiflix.Confirm.prompt(
