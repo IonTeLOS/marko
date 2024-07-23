@@ -631,7 +631,7 @@
 
 
     <script>
-        localStorage.setItem('temp-marko-link', 'tanea.gr');
+        //localStorage.setItem('temp-marko-link', 'tanea.gr'); TODO remove
 const markoTypes = [
     'Choose Marko type',  // Index 0
     'website',            // Index 1
@@ -1408,7 +1408,7 @@ function showNoteFieldAndWait(name) {
     function handleSubmitNote() {
       // Get note content
       const noteText = noteContent.value;
-      //sessionStorage.setItem('temp-marko-link', noteText);
+      sessionStorage.setItem('temp-marko-link', noteText);
       // Resolve the promise with note content
       resolve(noteText);
 
