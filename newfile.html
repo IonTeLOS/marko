@@ -3644,25 +3644,14 @@ function handleSharedLink(url, title, text) {
     const sharedText = params.get('text');
     
     const type = params.get('type');
-    const action = params.get('action');
+    const theLink = params.get('link');
     const title = params.get('title');
     const icon = params.get('icon');
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
     // Decode the action parameter
-const decodedAction = decodeURIComponent(action || '');
+    const link = decodeURIComponent(theLink || '');
 
-// Extract arguments from the action parameter using regex
-const actionArgs = decodedAction.match(/openMarko\(([^)]+)\)/);
-
-// Split and process arguments safely
-const args = (actionArgs ? actionArgs[1].split(',').map(arg => arg.trim().replace(/^'|'$/g, '')) : []);
-
-// Extract individual arguments with default values
-const [encodedLink = '', name = ''] = args;
-
-// Decode URL-encoded link if necessary
-const link = decodeURIComponent(encodedLink);
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
         if (confirm(`Do you want to add a Marko for ${title}?`)) {
@@ -8631,7 +8620,7 @@ function constructLinkFromBookmark(index, full) {
   // Extract the required values
   const onclickValue = bookmarkWrapper.getAttribute('onclick');
   const actionMatch = onclickValue ? onclickValue.match(/openMarko\((.+?)\)/) : null;
-  const action = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
+  const actionLink = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
   const type = bookmarkWrapper.getAttribute('data-type') || '';
   const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
   const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
@@ -8640,7 +8629,7 @@ function constructLinkFromBookmark(index, full) {
   // Construct the URL for the shareable link
   const url = new URL('https://teloslinux.org/marko/newfile');
   url.searchParams.append('type', type);
-  url.searchParams.append('action', action);
+  url.searchParams.append('link', actionLink);
   url.searchParams.append('title', title);
   url.searchParams.append('icon', icon);
   url.searchParams.append('color', color);
