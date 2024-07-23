@@ -3649,8 +3649,23 @@ function handleSharedLink(url, title, text) {
     const icon = params.get('icon');
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
+    /*
     const actionArgs = action ? decodeURIComponent(action).match(/openMarko\((.+?)\)/) : [];
     const link = actionArgs.length > 1 ? actionArgs[1].split(',')[1].trim().replace(/'/g, '') : null;
+    */
+
+
+// Decode the `action` parameter
+const decodedAction = decodeURIComponent(action || '');
+
+// Match the `openMarko` function format and extract parameters
+const actionArgs = decodedAction.match(/openMarko\(([^)]+)\)/) || [];
+
+// Safely extract parameters using array destructuring and trimming
+const [encodedLink = '', title = ''] = actionArgs[1]?.split(',').map(param => param.trim().replace(/^'|'$/g, '')) || [];
+
+// Decode the link if it is URL-encoded
+const link = decodeURIComponent(encodedLink);
 
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
