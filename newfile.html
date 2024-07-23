@@ -3657,7 +3657,7 @@ function handleSharedLink(url, title, text) {
 const args = (actionArgs[1] || '').split(',').map(param => param.trim().replace(/^'|'$/g, ''));
 
 // Extract individual arguments with defaults
-const [encodedLink = '', title = ''] = args;
+const [encodedLink = '', name = ''] = args;
 
 // Decode URL-encoded link if necessary
 const link = decodeURIComponent(encodedLink);
