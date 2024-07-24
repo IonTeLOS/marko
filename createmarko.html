@@ -1065,13 +1065,13 @@ async function chooseMarkoLink(type = 'website') {
     return new Promise((resolve, reject) => {
       console.log('Showing Notiflix prompt for link');
     const guideTexts = {
-    'phone': 'Add a phone number for your Marko - For Viber/WhatsApp add the international code too',
-    'Viber': 'Add a phone number for your Marko - For Viber/WhatsApp add the international code too',
-    'WhatsApp': 'Add a phone number for your Marko - For Viber/WhatsApp add the international code too',
-    'email': 'Add an email address for your Marko',
+    'phone': 'Add the phone number for your Marko',
+    'Viber': 'Add the phone number including international code for your Marko',
+    'WhatsApp': 'Add the phone number including international code for your Marko',
+    'email': 'Add the email address for your Marko',
     };
 
-    const guideText = guideTexts[type] || 'Add a link for your Marko';
+    const guideText = guideTexts[type] || 'Add the link for your Marko';
 
           
         Notiflix.Confirm.prompt(
