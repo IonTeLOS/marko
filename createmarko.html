@@ -734,8 +734,8 @@ Notiflix.Confirm.init({
                         console.log('Report closed');
                         const shareLink = constructShareLink();
                         // Log the link for debugging
+                        const alias = showAliasPrompt();
                         console.log('Constructed Share Link:', shareLink);
-                        initializeShortlinkWithTempMarkoLink(shareLink);
                     }
                 );
             } else {
@@ -1459,6 +1459,62 @@ function sendToMarko() {
     }
 }
 
+// Function to show the Notiflix prompt and store the alias in sessionStorage
+async function showAliasPrompt(inputType = 'text') { // default to 'text'
+    return new Promise((resolve) => {
+        Notiflix.Report.custom(
+            'Enter Alias',
+            `
+            <input type="${inputType}" id="aliasInput" class="notiflix-input">
+            <br>
+            <label for="onetimeCheckbox">
+                <input type="checkbox" id="onetimeCheckbox">
+                One-time action
+            </label>
+            `,
+            'Submit',
+            function () {
+                const alias = document.getElementById('aliasInput').value;
+                const onetimeChecked = document.getElementById('onetimeCheckbox').checked;
+
+                if (alias) {
+                    sessionStorage.setItem('temp-marko-alias', alias);
+                    if (onetimeChecked) {
+                        sessionStorage.setItem('temp-onetime', 'true');
+                    }
+                    Notiflix.Notify.success('Alias and options saved successfully!');
+                    initializeShortlinkWithTempMarkoLink(shareLink);
+                    resolve(alias);
+                } else {
+                    Notiflix.Notify.failure('Alias cannot be empty.');
+                    showAliasPrompt(inputType).then(resolve); // Show prompt again if input is empty
+                }
+            },
+            {
+                width: '400px',
+                borderRadius: '8px',
+            }
+        );
+
+        // Style the input box and checkbox
+        const style = document.createElement('style');
+        style.innerHTML = `
+            .notiflix-input {
+                width: 90%;
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+            }
+            #onetimeCheckbox {
+                margin-left: 10px;
+            }
+        `;
+        document.head.appendChild(style);
+    });
+}
+        
+
 function saveToStorage() {
     const type = sessionStorage.getItem('temp-marko-type');
     const link = sessionStorage.getItem('temp-marko-link');
@@ -1630,8 +1686,8 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
 // Function to retrieve and process localStorage values
         function retrieveAndProcessStorage() {
             const storedLongLink = localStorage.getItem('temp-long-link');
-            let storedAlias = localStorage.getItem('temp-alias');
-            const isOneTime = localStorage.getItem('temp-onetime') === 'true';
+            let storedAlias = localStorage.getItem('temp-alias') || sessionStorage.getItem('temp-marko-alias');
+            const isOneTime = localStorage.getItem('temp-onetime') === 'true' || sessionStorage.getItem('temp-onetime') === 'true';
 
             if (storedAlias) {
                 // Handle alias length and spaces
