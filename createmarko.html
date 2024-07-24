@@ -782,7 +782,7 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
                 resolve(chosenName);
             },
             () => {
-                Notiflix.Notify.info('You chose to stop Marko creation. Byee!');
+                Notiflix.Notify.info('Marko creation aborted. Bye!');
                 sessionStorage.removeItem('temp-marko-type');
                 reject(new Error('User cancelled'));
             },
@@ -1143,7 +1143,7 @@ async function chooseMarkoLink(type = 'website') {
             },
             () => {
                 console.log('User cancelled link input');
-                Notiflix.Notify.info('You chose to stop Marko creation. Byee!');
+                Notiflix.Notify.info('Marko creation aborted. Bye!');
                 sessionStorage.removeItem('temp-marko-name');
                 reject(new Error('User cancelled'));
             },
@@ -5839,12 +5839,12 @@ document.getElementsByClassName('close-help2')[0].onclick = function() {
 }
 // Handle cancel button click
 document.getElementById('cancelCreationButton').onclick = function() {
-            Notiflix.Notify.info('You chose to stop Marko creation. Byee!');
+            Notiflix.Notify.info('Marko creation aborted. Bye!');
             document.getElementById('markoTypeForm').style.display = 'none';
 }
 // Handle cancel button click
 document.getElementById('cancelCreation2Button').onclick = function() {
-            Notiflix.Notify.info('You chose to stop Marko creation. Byee!');
+            Notiflix.Notify.info('Marko creation aborted. Bye!');
             document.getElementById('markoIconTypeForm').style.display = 'none';
 }
 window.onclick = function(event) {
