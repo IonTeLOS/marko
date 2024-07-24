@@ -1342,7 +1342,8 @@ async function chooseMarkoType() {
                             } else if (iconTypeIndex === '3') {
                                 randomColor = getRandomColor();
                                 sessionStorage.setItem('temp-marko-color', randomColor);
-                                const favicon = `https://www.google.com/s2/favicons?domain=${link}&sz=32`
+                                const chosenLink = sessionStorage.getItem('temp-marko-link');
+                                const favicon = `https://www.google.com/s2/favicons?domain=${chosenLink}&sz=32`
                                 sessionStorage.setItem('temp-marko-icon', favicon);
                             } else {
                                 Notiflix.Notify.warning('Invalid icon type selected');
@@ -1449,11 +1450,22 @@ function sendToMarko() {
         // alert('The "internal" parameter is present in the URL.');
 
         // Call the function to open the share link
-        backToMarko();  // Ensure this function is defined elsewhere in your code
+        // backToMarko();  // this is to send a url with params to main app
+        saveToStorage();
     }
 }
 
+function saveToStorage() {
+    const type = sessionStorage.getItem('temp-marko-type');
+    const link = sessionStorage.getItem('temp-marko-link');
 
+    const linkData = [type, link, title, icon, color];
+    // Save the bookmark to local storage
+    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    bookmarks.push(linkData);
+    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+
+}
 
 
 
@@ -1610,6 +1622,158 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
     });
 }
 
+
+// Function to retrieve and process localStorage values
+        function retrieveAndProcessStorage() {
+            const storedLongLink = localStorage.getItem('temp-long-link');
+            let storedAlias = localStorage.getItem('temp-alias');
+            const isOneTime = localStorage.getItem('temp-onetime') === 'true';
+
+            if (storedAlias) {
+                // Handle alias length and spaces
+                if (storedAlias.length > 11) {
+                    M.toast({html: `Alias was too long and has been shortened to: ${storedAlias.substring(0, 11)}`});
+                    storedAlias = storedAlias.substring(0, 11);
+                }
+                storedAlias = storedAlias.replace(/\s+/g, '_'); // Replace spaces with underscores
+            }
+
+            return { storedLongLink, storedAlias, isOneTime };
+        }
+
+        // Function to send a request to create a shortlink
+        function sendShortlinkCreationRequest(url, alias, maxClicks) {
+            const data = new URLSearchParams();
+            data.append('url', url);
+            if (alias && alias.trim() !== '') data.append('alias', alias); // Only append alias if not empty
+            if (maxClicks) data.append('max-clicks', '1');
+
+            return fetch('https://spoo.me/', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                },
+                body: data.toString()
+            })
+            .then(response => response.json());
+        }
+
+        // Function to process the shortlink creation response
+        function processShortlinkCreationResponse(url, alias, maxClicks) {
+            sendShortlinkCreationRequest(url, alias, maxClicks)
+                .then(responseData => {
+                    console.log('Parsed API response:', responseData);
+
+                    if (responseData.short_url) {
+                        M.toast({html: 'Shortlink created successfully!'});
+
+                        // Store the shortlink in localStorage
+                        localStorage.setItem('short-link', responseData.short_url);
+
+                        // Handle clipboard copy and sharing
+                        handleClipboardAndSharing(responseData.short_url);
+                    } else {
+                        throw new Error('Invalid response data');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error.message);
+                    if (alias) {
+                        // Retry shortlink creation without alias
+                        sendShortlinkCreationRequest(url, '', maxClicks)
+                            .then(responseData => {
+                                console.log('Parsed API response:', responseData);
+
+                                if (responseData.short_url) {
+                                    M.toast({html: 'Custom alias unavailable. Shortlink created without alias.'});
+
+                                    // Store the shortlink in localStorage
+                                    localStorage.setItem('short-link', responseData.short_url);
+
+                                    // Handle clipboard copy and sharing
+                                    handleClipboardAndSharing(responseData.short_url);
+                                } else {
+                                    throw new Error('Invalid response data');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error.message);
+                                M.toast({html: 'Error occurred while creating shortlink'});
+                            });
+                    } else {
+                        M.toast({html: 'Error occurred while creating shortlink'});
+                    }
+                });
+        }
+
+        // Function to copy shortlink to clipboard and share it
+        function handleClipboardAndSharing(shortlink) {
+            navigator.clipboard.writeText(shortlink)
+                .then(() => {
+                    console.log('Shortlink copied to clipboard!');
+                    // Clear localStorage
+                    localStorage.removeItem('temp-long-link');
+                    localStorage.removeItem('temp-alias');
+                    localStorage.removeItem('temp-onetime');
+                    localStorage.removeItem('temp-marko-link');
+                })
+                .catch(err => {
+                    console.error('Error copying to clipboard:', err);
+                    M.toast({html: 'Failed to copy shortlink to clipboard.'});
+                });
+
+            // Share link if Web Share API is available
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Shortlink',
+                    text: 'Check out this shortlink:',
+                    url: shortlink
+                })
+                .then(() => {
+                    M.toast({html: 'Shortlink shared successfully!'});
+                })
+                .catch(err => {
+                    console.error('Error sharing shortlink:', err);
+                    M.toast({html: 'Failed to share shortlink.'});
+                });
+            } else {
+                M.toast({html: 'Web Share API not supported in this browser.'});
+            }
+        }
+
+        // Function to validate alias characters
+        function validateAliasCharacters(alias) {
+            const validPattern = /^[a-zA-Z0-9 _-]+$/; // Allows letters, numbers, hyphens, underscores, and spaces
+            return validPattern.test(alias);
+        }
+
+      
+        // Function to set temp-marko-link and initiate shortlink creation
+        function initializeShortlinkWithTempMarkoLink(link) {
+            if (link && link.trim() !== '') {
+                // Automatically prepend https:// if the link does not start with http:// or https://
+                if (!link.startsWith('http://') && !link.startsWith('https://')) {
+                    link = 'https://' + link;
+                }
+                
+                localStorage.setItem('temp-marko-link', link);
+
+                // Handle shortlink creation using stored values
+                const { storedAlias, isOneTime } = retrieveAndProcessStorage();
+                processShortlinkCreationResponse(link, storedAlias, isOneTime);
+            }
+        }
+
+        // Automatically initialize shortlink creation if temp-marko-link is set in localStorage
+        const savedLink = localStorage.getItem('temp-marko-link');
+        if (savedLink) {
+            initializeShortlinkWithTempMarkoLink(savedLink);
+        }
+
+
+
+        
 
 
 
