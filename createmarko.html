@@ -1458,7 +1458,6 @@ function sendToMarko() {
         saveToStorage();
     }
 }
-
 // Function to show the Notiflix prompt and store the alias in sessionStorage
 async function showAliasPrompt(inputType = 'text', shareLink) { // default to 'text'
     return new Promise((resolve) => {
@@ -1484,7 +1483,8 @@ async function showAliasPrompt(inputType = 'text', shareLink) { // default to 't
                         sessionStorage.setItem('temp-onetime', 'true');
                     }
                     Notiflix.Notify.success('Alias and options saved successfully!');
-                    initializeShortlinkWithTempMarkoLink(shareLink);
+                                        initializeShortlinkWithTempMarkoLink(shareLink);
+
                     resolve(alias);
                 } else {
                     Notiflix.Notify.failure('Alias cannot be empty.');
@@ -1518,7 +1518,6 @@ async function showAliasPrompt(inputType = 'text', shareLink) { // default to 't
         document.head.appendChild(style);
     });
 }
-
         
 
 function saveToStorage() {
