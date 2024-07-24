@@ -1282,9 +1282,9 @@ async function chooseMarkoType() {
     // Set up the Default button click handler
     document.getElementById('defaultButton').onclick = function() {
         //form.style.display = 'none';
-        hideForm('markoTypeForm');
         select.value = '1'; // Set to "Default"
         select.dispatchEvent(new Event('change')); // Trigger the change event
+        hideForm('markoTypeForm');
     };
     // Use a Promise to ensure the dropdown is ready
     await new Promise(resolve => setTimeout(resolve, 0));
