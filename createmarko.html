@@ -107,10 +107,13 @@
         .create-buttons {
             background-color: #4CAF50;
             color: white;
+            max-width: 150px;
+            max-height: 40px;
             padding: 10px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            padding: 9px 5px;
             font-size: 16px;
             display: inline-block;
             margin: 10px;
@@ -152,8 +155,9 @@
         #markoTypeForm, #markoIconTypeForm {
             position: relative; /* Add this to make the form relative for the absolute positioning of the button */
             display: none;
+            text-align: center;
             font-family: Roboto, sans-serif;
-            max-width: 400px;
+            max-width: 360px;
             margin: 20px auto;
             padding: 20px;
             border-radius: 8px;
@@ -510,7 +514,10 @@
   outline: none;
   box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.5); /* Add focus ring */
 }
-
+#line-separator {
+    border-top: 1px solid #d3d3d3; 
+    margin: 20px 0;
+}
     </style>
 </head>
 <body>
@@ -567,25 +574,26 @@
   </button>
 </div>
 
-    <div id="markoIconTypeForm">
-        <h2>Creating a Marko..</h2>
-        <p>Choose the icon type for your Marko:</p>
-        <div class="form-group">
-            <select id="markoIconType" name="markoIconType">
-                <option value="0">Select Marko icon type</option>
-                <option value="1">Default</option>
-                <option value="2">Let me choose</option>
-                <option value="3">Website icon</option>
-            </select>
-        </div>
-        <div id="form-buttons">
-            <button class="create-buttons" id="default2Button">Default</button>
-            <button class="create-buttons" id="cancelCreation2Button">Cancel</button>
-        </div>
-        <button id="help2Button" class="material-close-help2-button">
-            <span class="material-icons">help_outline</span>
-        </button>
+<div id="markoIconTypeForm">
+    <h2>Creating a Marko..</h2>
+    <div id="line-separator"></div>
+    <p>Choose the icon type for your Marko:</p>
+    <div class="form-group">
+        <select id="markoIconType" name="markoIconType">
+            <option value="0">Select Marko icon type</option>
+            <option value="1">Default</option>
+            <option value="2">Let me choose</option>
+            <option value="3">Website icon</option>
+        </select>
     </div>
+    <div id="form-buttons">
+        <button class="create-buttons" id="default2Button">Default</button>
+        <button class="create-buttons" id="cancelCreation2Button">Cancel</button>
+    </div>
+    <button id="help2Button" class="material-close-help2-button">
+        <span class="material-icons">help_outline</span>
+    </button>
+</div>
 
 <!-- Info Modal -->
 <div id="infoModal" class="help-modal">
