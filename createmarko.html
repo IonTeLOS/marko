@@ -548,20 +548,23 @@
     }
 }
 
-
 /* Apply the animation when showing */
 #chooseMarkoType.show-form,
 #chooseMarkoIconType.show-form {
-    display: block;
+    display: block; 
     animation: confirm-animation-zoom 300ms ease-in-out;
+    opacity: 1;
+    transform: scale(1);
 }
-
 
 /* Apply the animation when hiding */
 #chooseMarkoType.hide-form,
 #chooseMarkoIconType.hide-form {
     animation: confirm-animation-zoom-out 300ms ease-in-out;
+    opacity: 0;
+    transform: scale(0.9);
 }
+
 
         
 *, *::before, *::after {
@@ -1240,21 +1243,24 @@ function showForm(formId) {
     }
 }
 
-// Hide form by ID
 function hideForm(formId) {
-    const element = document.getElementById(formId);
-    if (element) {
-        element.classList.add('hide-form'); // Start the zoom-out animation
+    var form = document.getElementById(formId);
 
-        // Wait for the animation to finish before setting display to none
-        element.addEventListener('animationend', () => {
-            if (element.classList.contains('hide-form')) {
-                element.style.display = 'none'; // Hide the form after the animation ends
-                element.classList.remove('hide-form'); // Clean up
-            }
+    if (form) {
+        // Remove the show-form class to trigger hide animation
+        form.classList.remove('show-form');
+        form.classList.add('hide-form');
+
+        // Wait for the animation to complete before setting display to none
+        form.addEventListener('animationend', function() {
+            form.style.display = 'none';
+            form.classList.remove('hide-form'); // Clean up class
         }, { once: true });
+    } else {
+        console.error('Form with ID "' + formId + '" not found.');
     }
 }
+
         
 async function chooseMarkoType() {
     const form = document.getElementById('markoTypeForm');
