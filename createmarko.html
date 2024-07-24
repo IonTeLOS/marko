@@ -1216,7 +1216,8 @@ function showForm(formId) {
 }
 
 function hideForm(formId) {
-    formId.style.display = 'none';
+    var form = document.getElementById(formId);
+    form.style.display = 'none';
 }
 
         
