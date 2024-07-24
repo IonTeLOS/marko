@@ -700,7 +700,9 @@ Notiflix.Confirm.init({
         // Event listener for DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
             // Hide Notiflix Loading
-            Notiflix.Loading.remove();
+            setTimeout(() => {
+                Notiflix.Loading.Remove();
+            }, 1500);
             chooseMarkoType();
         });
         Notiflix.Report.init({
