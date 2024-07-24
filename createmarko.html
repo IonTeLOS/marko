@@ -558,13 +558,15 @@
     transform: scale(1);
 }
 
+
 /* Apply the animation when hiding */
 #chooseMarkoType.hide-form,
 #chooseMarkoIconType.hide-form {
     animation: confirm-animation-zoom-out 300ms ease-in-out;
     opacity: 0;
     transform: scale(0.9);
-} 
+}
+
         
 *, *::before, *::after {
     box-sizing: border-box;
@@ -1237,6 +1239,33 @@ function getRandomColor() {
     return color;
 }
 
+// Show form by ID
+function showForm(formId) {
+    const element = document.getElementById(formId);
+    if (element) {
+        element.style.display = 'block'; // Make sure the element is visible
+        requestAnimationFrame(() => {
+            element.classList.add('show-form'); // Start the zoom-in animation
+        });
+    }
+}
+
+// Hide form by ID
+function hideForm(formId) {
+    const element = document.getElementById(formId);
+    if (element) {
+        element.classList.add('hide-form'); // Start the zoom-out animation
+
+        // Wait for the animation to finish before setting display to none
+        element.addEventListener('animationend', () => {
+            if (element.classList.contains('hide-form')) {
+                element.style.display = 'none'; // Hide the form after the animation ends
+                element.classList.remove('hide-form'); // Clean up
+            }
+        }, { once: true });
+    }
+}
+        
 async function chooseMarkoType() {
     const form = document.getElementById('markoTypeForm');
     const select = document.getElementById('markoType');
@@ -1258,13 +1287,13 @@ async function chooseMarkoType() {
     populateDropdown();
     select.value = '0';
     // Show the form
-    form.classList.add('show-form');
+    showForm(form);
     //form.style.display = 'block';
 
     // Set up the Default button click handler
     document.getElementById('defaultButton').onclick = function() {
         //form.style.display = 'none';
-        form.classList.add('hide-form');
+        hideForm(form);
         select.value = '1'; // Set to "Default"
         select.dispatchEvent(new Event('change')); // Trigger the change event
     };
@@ -1282,7 +1311,7 @@ async function chooseMarkoType() {
 
             if (selectedIndex > 0 && selectedIndex < markoTypes.length) {
                 //form.style.display = 'none';
-                form.classList.add('hide-form');
+                hideForm(form);
 
                 try {
                     if (selectedType !== 'note' && selectedType !== 'post') {
