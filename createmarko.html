@@ -732,6 +732,10 @@ Notiflix.Confirm.init({
                     function() {
                         // Optional callback function after the report is closed
                         console.log('Report closed');
+                        const shareLink = constructShareLink();
+                        // Log the link for debugging
+                        console.log('Constructed Share Link:', shareLink);
+                        initializeShortlinkWithTempMarkoLink(shareLink);
                     }
                 );
             } else {
@@ -1757,7 +1761,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                     link = 'https://' + link;
                 }
                 
-                localStorage.setItem('temp-marko-link', link);
+                localStorage.setItem('created-temp-marko-link', link);
 
                 // Handle shortlink creation using stored values
                 const { storedAlias, isOneTime } = retrieveAndProcessStorage();
@@ -1766,7 +1770,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
         }
 
         // Automatically initialize shortlink creation if temp-marko-link is set in localStorage
-        const savedLink = localStorage.getItem('temp-marko-link');
+        const savedLink = localStorage.getItem('created-temp-marko-link');
         if (savedLink) {
             initializeShortlinkWithTempMarkoLink(savedLink);
         }
