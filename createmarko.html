@@ -734,7 +734,7 @@ Notiflix.Confirm.init({
                         console.log('Report closed');
                         const shareLink = constructShareLink();
                         // Log the link for debugging
-                        showAliasPrompt(shareLink);
+                        showAliasPrompt('text', shareLink);
                         console.log('Constructed Share Link:', shareLink);
                     }
                 );
@@ -1460,7 +1460,7 @@ function sendToMarko() {
 }
 
 // Function to show the Notiflix prompt and store the alias in sessionStorage
-async function showAliasPrompt(shareLink, inputType = 'text') { // default to 'text'
+async function showAliasPrompt(inputType = 'text', shareLink) { // default to 'text'
     return new Promise((resolve) => {
         Notiflix.Report.custom(
             'Enter Alias',
