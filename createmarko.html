@@ -1220,12 +1220,19 @@ function getRandomColor() {
 
 // Show form by ID
 function showForm(formId) {
-    const element = document.getElementById(formId);
-    if (element) {
-        element.style.display = 'block'; // Make sure the element is visible
-        requestAnimationFrame(() => {
-            element.classList.add('show-form'); // Start the zoom-in animation
-        });
+    var form = document.getElementById(formId);
+
+    if (form) {
+        // Ensure the form is hidden initially
+        form.style.display = 'none';
+        
+        // Use setTimeout to apply the show-form class after a short delay
+        setTimeout(function() {
+            form.style.display = 'block';
+            form.classList.add('show-form');
+        }, 400); // Delay can be adjusted as needed
+    } else {
+        console.error('Form with ID "' + formId + '" not found.');
     }
 }
 
