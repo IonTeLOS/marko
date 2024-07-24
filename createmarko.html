@@ -1218,19 +1218,23 @@ function getRandomColor() {
     return color;
 }
 
-// Show form by ID
 function showForm(formId) {
     var form = document.getElementById(formId);
 
     if (form) {
-        // Ensure the form is hidden initially
+        // Make sure the form is initially hidden
         form.style.display = 'none';
-        
-        // Use setTimeout to apply the show-form class after a short delay
+        form.style.opacity = 0;
+        form.style.transform = 'scale(0.9)';
+
+        // Force reflow to ensure the styles are applied
+        form.offsetHeight; // Trigger a reflow
+
+        // Use setTimeout to apply the show-form class after a slight delay
         setTimeout(function() {
-            form.style.display = 'block';
-            form.classList.add('show-form');
-        }, 400); // Delay can be adjusted as needed
+            form.style.display = 'block'; // Make the form visible
+            form.classList.add('show-form'); // Add class for animation
+        }, 10); // Delay to ensure transition is applied
     } else {
         console.error('Form with ID "' + formId + '" not found.');
     }
