@@ -522,28 +522,31 @@
     border-top: 1px solid #d3d3d3; 
     margin: 20px 0;
 }
-/* For showing the form */
-.show-form {
-    animation: confirm-animation-zoom 300ms ease-in-out;
-    display: block; /* Ensure the element is visible */
-}
-
-/* For hiding the form */
-.hide-form {
-    animation: confirm-animation-zoom 300ms ease-in-out reverse;
-    display: block; /* Ensure the element is visible during animation */
-    opacity: 0; /* Ensure element is invisible after animation */
-}
+/* Keyframes for zoom-in and zoom-out */
 @keyframes confirm-animation-zoom {
     0% {
-        transform: scale(0.9); /* Start slightly smaller */
-        opacity: 0; /* Start invisible */
+        transform: scale(0.9);
+        opacity: 0;
     }
     100% {
-        transform: scale(1); /* End at normal size */
-        opacity: 1; /* End fully visible */
+        transform: scale(1);
+        opacity: 1;
     }
-}        
+}
+
+/* Apply the animation when showing */
+.show-form {
+    animation: confirm-animation-zoom 300ms ease-in-out;
+    display: block;
+}
+
+/* Apply the animation when hiding */
+.hide-form {
+    animation: confirm-animation-zoom 300ms ease-in-out reverse;
+    display: block;
+    opacity: 0; /* Ensures element is invisible after animation */
+}
+
     </style>
 </head>
 <body>
