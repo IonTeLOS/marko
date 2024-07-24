@@ -1458,16 +1458,16 @@ function sendToMarko() {
 function saveToStorage() {
     const type = sessionStorage.getItem('temp-marko-type');
     const link = sessionStorage.getItem('temp-marko-link');
-
+    const title = sessionStorage.getItem('temp-marko-title');
+    const icon = sessionStorage.getItem('temp-marko-icon');
+    const color = sessionStorage.getItem('temp-marko-color');
     const linkData = [type, link, title, icon, color];
     // Save the bookmark to local storage
     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     bookmarks.push(linkData);
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-
+    window.location.href = 'https://teloslinux.org/marko/newfile';
 }
-
-
 
 function backToMarko() {
     const shareLink = constructShareLink();
