@@ -1282,7 +1282,7 @@ async function chooseMarkoType() {
     // Set up the Default button click handler
     document.getElementById('defaultButton').onclick = function() {
         //form.style.display = 'none';
-        hideForm(form);
+        hideForm('markoTypeForm');
         select.value = '1'; // Set to "Default"
         select.dispatchEvent(new Event('change')); // Trigger the change event
     };
@@ -1300,7 +1300,7 @@ async function chooseMarkoType() {
 
             if (selectedIndex > 0 && selectedIndex < markoTypes.length) {
                 //form.style.display = 'none';
-                hideForm(form);
+                hideForm('markoTypeForm');
 
                 try {
                     if (selectedType !== 'note' && selectedType !== 'post') {
@@ -1648,11 +1648,14 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
 }
         select.value = '0';
         // Show the form
-        form.style.display = 'block';
+        //form.style.display = 'block';
+        showForm('markoIconTypeForm');
+
 
          // Set up the Default button click handler
          document.getElementById('default2Button').onclick = function() {
-             form.style.display = 'none';
+             //form.style.display = 'none';
+             hideForm('markoIconTypeForm'); 
              select.value = '1'; // Set to "Default"
              select.dispatchEvent(new Event('change')); // Trigger the change event
     };
@@ -1662,7 +1665,8 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
             const selectedIndex = select.value;
 
             if (selectedIndex !== '') {
-                form.style.display = 'none'; // Hide the form after selection
+                //form.style.display = 'none'; // Hide the form after selection
+                hideForm('markoIconTypeForm');
                 resolve(selectedIndex); // Return only the selected index
             }
         };
