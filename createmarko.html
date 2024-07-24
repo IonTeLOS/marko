@@ -534,32 +534,12 @@
     }
 }
 
-@keyframes confirm-animation-zoom-out {
-    from {
-        opacity: 1;
-        transform: scale(1);
-    }
-    to {
-        opacity: 0;
-        transform: scale(0.9);
-    }
-}
-
 /* Apply the animation when showing */
 #chooseMarkoType.show-form,
 #chooseMarkoIconType.show-form {
     display: block !important;
     animation: confirm-animation-zoom 300ms ease-in-out !important;
 }
-
-/* Apply the animation when hiding */
-#chooseMarkoType.hide-form,
-#chooseMarkoIconType.hide-form {
-    animation: confirm-animation-zoom-out 300ms ease-in-out;
-    opacity: 0;
-    transform: scale(0.9);
-}
-
 
         
 *, *::before, *::after {
@@ -1237,21 +1217,7 @@ function showForm(formId) {
 }
 
 function hideForm(formId) {
-    var form = document.getElementById(formId);
-
-    if (form) {
-        // Remove the show-form class to trigger hide animation
-        form.classList.remove('show-form');
-        form.classList.add('hide-form');
-
-        // Wait for the animation to complete before setting display to none
-        form.addEventListener('animationend', function() {
-            form.style.display = 'none';
-            form.classList.remove('hide-form'); // Clean up class
-        }, { once: true });
-    } else {
-        console.error('Form with ID "' + formId + '" not found.');
-    }
+    form.style.display = 'none';
 }
 
         
