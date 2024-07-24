@@ -702,8 +702,8 @@ Notiflix.Confirm.init({
             // Hide Notiflix Loading
             setTimeout(() => {
                 Notiflix.Loading.remove();
+                chooseMarkoType();
             }, 1500);
-            chooseMarkoType();
         });
         Notiflix.Report.init({
             backOverlayClickToClose: true,
