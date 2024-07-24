@@ -159,7 +159,6 @@
         #markoTypeForm, #markoIconTypeForm {
             position: relative; /* Add this to make the form relative for the absolute positioning of the button */
             top: 10px;
-            display: none;
             text-align: center;
             font-family: Roboto, sans-serif;
             max-width: 90vw;
@@ -168,8 +167,9 @@
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             background-color: white;
             opacity: 0;
-            visibility: hidden;
-            transition: opacity 300ms ease-in-out, visibility 300ms ease-in-out;
+            transform: scale(0.9);
+            transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+            display: none; /* Initially hidden */
         }
 
         /* Ensure the dropdown is visible */
