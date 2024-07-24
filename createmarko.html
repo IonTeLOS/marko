@@ -1196,6 +1196,7 @@ async function chooseMarkoType() {
     document.getElementById('defaultButton').onclick = function() {
         form.style.display = 'none';
         select.value = '1'; // Set to "Default"
+        select.dispatchEvent(new Event('change')); // Trigger the change event
     };
     // Use a Promise to ensure the dropdown is ready
     await new Promise(resolve => setTimeout(resolve, 0));
@@ -1564,6 +1565,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
          document.getElementById('default2Button').onclick = function() {
              form.style.display = 'none';
              select.value = '1'; // Set to "Default"
+             select.dispatchEvent(new Event('change')); // Trigger the change event
     };
 
         // Function to handle selection change
