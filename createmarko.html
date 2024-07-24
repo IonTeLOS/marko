@@ -1462,7 +1462,7 @@ function sendToMarko() {
 // Function to show the Notiflix prompt and store the alias in sessionStorage
 async function showAliasPrompt(inputType = 'text', shareLink) { // default to 'text'
     return new Promise((resolve) => {
-        Notiflix.Report.custom(
+        Notiflix.Confirm.show(
             'Enter Alias',
             `
             <input type="${inputType}" id="aliasInput" class="notiflix-input">
@@ -1473,6 +1473,7 @@ async function showAliasPrompt(inputType = 'text', shareLink) { // default to 't
             </label>
             `,
             'Submit',
+            'Cancel',
             function () {
                 const alias = document.getElementById('aliasInput').value;
                 const onetimeChecked = document.getElementById('onetimeCheckbox').checked;
@@ -1490,9 +1491,13 @@ async function showAliasPrompt(inputType = 'text', shareLink) { // default to 't
                     showAliasPrompt(inputType).then(resolve); // Show prompt again if input is empty
                 }
             },
+            function () {
+                Notiflix.Notify.failure('Prompt canceled.');
+            },
             {
                 width: '400px',
                 borderRadius: '8px',
+                messageMaxLength: 500,
             }
         );
 
@@ -1513,6 +1518,7 @@ async function showAliasPrompt(inputType = 'text', shareLink) { // default to 't
         document.head.appendChild(style);
     });
 }
+
         
 
 function saveToStorage() {
