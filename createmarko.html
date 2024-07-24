@@ -5839,7 +5839,6 @@ document.getElementById('helpButton').onclick = function() {
 document.getElementById('help2Button').onclick = function() {
     document.getElementById('info2Modal').style.display = 'block';
 }
-
 document.getElementsByClassName('close-help')[0].onclick = function() {
     document.getElementById('infoModal').style.display = 'none';
 }
@@ -5861,6 +5860,11 @@ window.onclick = function(event) {
         document.getElementById('infoModal').style.display = 'none';
     }
 }
+window.onclick = function(event) {
+    if (event.target == document.getElementById('infoModal2')) {
+        document.getElementById('infoModal2').style.display = 'none';
+    }
+}        
 </script>
 </body>
 </html>
