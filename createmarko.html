@@ -711,6 +711,7 @@ Notiflix.Confirm.init({
         document.addEventListener('DOMContentLoaded', function () {
             // Hide Notiflix Loading
             Notiflix.Loading.remove();
+            chooseMarkoType();
         });
         Notiflix.Report.init({
             backOverlayClickToClose: true,
@@ -5864,9 +5865,7 @@ window.onclick = function(event) {
     if (event.target == document.getElementById('infoModal2')) {
         document.getElementById('infoModal2').style.display = 'none';
     }
-} 
-chooseMarkoType();
-        
+}         
 </script>
 </body>
 </html>
