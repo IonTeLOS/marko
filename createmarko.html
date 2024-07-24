@@ -695,13 +695,13 @@ Notiflix.Confirm.init({
             messageFontSize: '20px',
         });
 
-        Notiflix.Loading.custom('Marko is coming...');
+        Notiflix.Loading.custom('Marko is coming..');
 
         // Event listener for DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
             // Hide Notiflix Loading
             setTimeout(() => {
-                Notiflix.Loading.custom.Remove();
+                Notiflix.Loading.Remove();
             }, 1500);
             chooseMarkoType();
         });
