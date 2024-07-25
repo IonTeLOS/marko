@@ -1642,8 +1642,7 @@ function showNoteFieldAndWait(name) {
         document.addEventListener('click', function(event) {
             const help1Element = document.getElementById('help1');
             if (help1Element && !help1Element.contains(event.target)) {
-               const modal1 = document.getElementById(infoModal);
-               modal1.style.display = 'none';   
+               document.getElementById(infoModal).style.display = 'none';   
             }
         });
             // Event listener to detect clicks outside the element with ID 'help1'
