@@ -1642,7 +1642,7 @@ function showNoteFieldAndWait(name) {
         document.addEventListener('click', function(event) {
             const help1Element = document.getElementById('help1');
             if (help1Element && !help1Element.contains(event.target)) {
-               const modal1 = document.getElementById();
+               const modal1 = document.getElementById(infoModal);
                modal1.style.display = 'none';   
             }
         });
@@ -1650,7 +1650,7 @@ function showNoteFieldAndWait(name) {
         document.addEventListener('click', function(event) {
             const help2Element = document.getElementById('help2');
             if (help2Element && !help2Element.contains(event.target)) {
-               const modal2 = document.getElementById();
+               const modal2 = document.getElementById(info2Modal);
                modal2.style.display = 'none';   
             }
         });
@@ -1658,7 +1658,7 @@ function showNoteFieldAndWait(name) {
         document.addEventListener('click', function(event) {
             const help3Element = document.getElementById('help3');
             if (help3Element && !help3Element.contains(event.target)) {
-               const modal3 = document.getElementById();
+               const modal3 = document.getElementById(info3Modal);
                modal3.style.display = 'none';   
             }
         });
