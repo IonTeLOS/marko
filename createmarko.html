@@ -606,12 +606,16 @@
 </div>
 
 <!-- Custom Alias Form (initially hidden) -->
-<div id="aliasForm" class="notiflix-prompt-custom-content" style="display: none; width: 400px; background: #f8f8f8; animation-duration: 300ms; border-radius: 8px; padding: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
-    <h5 style="color: #000000; font-size: 20px;">Enter Alias</h5>
+<div id="aliasForm" class="notiflix-prompt-custom-content" style="animation-duration: 300ms; transform: translate(-50%, -50%);">
+    <h2>Creating a Marko..</h2>
+    <div id="line-separator"></div>
+    <p>Choose the name of your shortlink or leave blank</p> 
+    <p>check box to create one-time link</p> 
+    <p>Cancel to use the default looong link</p>    
     <input type="text" id="aliasInput" class="notiflix-input chooseMarkoType" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
     <label for="onetimeCheckbox" style="display: block; margin-top: 10px;">
         <input type="checkbox" id="onetimeCheckbox" class="chooseMarkoType" style="margin-left: 10px;">
-        One-time action
+        One-time link
     </label>
     <div style="margin-top: 20px;">
         <button id="aliasSubmit" class="notiflix-confirm-button-ok chooseMarkoType" style="color: #f8f8f8; background: #0D47A1; font-size: 15px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Submit</button>
