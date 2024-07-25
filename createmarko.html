@@ -648,9 +648,9 @@
 <div id="aliasForm" class="notiflix-prompt-custom-content">
     <h2>Creating a Marko..</h2>
     <div id="line-separator"></div>
-    <p>Choose name of shortlink or leave blank</p> 
-    <p>Check the box to create a one-time link</p> 
-    <p>Click Cancel to use the default long link</p>    
+    <p>Add name of shortlink or leave blank</p> 
+    <p>Check the box to get a one-time link</p> 
+    <p>Cancel to use the default long link</p>    
     <input type="text" id="aliasInput" class="notiflix-input chooseMarkoType" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
     <label for="onetimeCheckbox" style="display: block; margin-top: 10px;">
         <input type="checkbox" id="onetimeCheckbox" class="chooseMarkoType" style="margin-left: 10px;">
@@ -1850,7 +1850,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                     Notiflix.Notify.failure('Failed to share shortlink.'); // Show Notiflix notification
                 });
             } else {
-                Notiflix.Notify.failure('Web SHARE API not available in this browser.'); // Show Notiflix notification
+                Notiflix.Notify.success('Shortlink copied to clipboard!'); // Show Notiflix notification
             }
         }
 
