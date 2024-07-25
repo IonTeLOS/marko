@@ -152,28 +152,67 @@
         }
 
         /* Marko creation Forms */
-        #markoTypeForm, #markoIconTypeForm, #aliasForm {
-            all: unset; /* Reset all inherited styles */
-            position: relative; /* Add this to make the form relative for the absolute positioning of the button */
-            top: 10px;
-            margin-left: 10px;
-            margin-right: 10px;
-            text-align: center;
-            max-width: 100%;
-            max-height: 96vh;
-            overflow-x: hidden;
-            overflow-y: auto;
-            font-family: Roboto, sans-serif;
-            padding: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            background-color: white;
-            font-size: 15px;
-            z-index: 4001;
-            display: none; /* Hide by default */
-        }
+#aliasForm, #markoTypeForm, #markoIconTypeForm {
+    position: relative; /* Make the form relative for absolute positioning of elements */
+    top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
+    max-width: 100%;
+    max-height: 96vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-family: Roboto, sans-serif;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: white;
+    font-size: 16px;
+    z-index: 4001;
+    display: none; /* Hide by default */
+}
 
-        /* Ensure the dropdown is visible */
+/* Optional: Add additional styles for form elements */
+#aliasForm h2 {
+    margin: 0 0 10px 0;
+}
+
+#aliasForm p {
+    margin: 5px 0;
+}
+
+#aliasForm #line-separator {
+    height: 1px;
+    background: #ddd;
+    margin: 10px 0;
+}
+
+#aliasForm input[type="text"], #aliasForm input[type="checkbox"] {
+    margin-bottom: 10px;
+}
+
+#aliasForm button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+}
+
+#aliasForm button:hover {
+    opacity: 0.8;
+}
+
+#aliasFormOverlay {
+    display: none; /* Hide by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+ /* Ensure the dropdown is visible */
         select {
             all: unset; /* Reset all inherited styles */
             width: 85%; /* Large width to ensure it's easily clickable */
@@ -606,12 +645,12 @@
 </div>
 
 <!-- Custom Alias Form (initially hidden) -->
-<div id="aliasForm" class="notiflix-prompt-custom-content" style="animation-duration: 300ms; transform: translate(-50%, -50%);">
+<div id="aliasForm" class="notiflix-prompt-custom-content">
     <h2>Creating a Marko..</h2>
     <div id="line-separator"></div>
     <p>Choose the name of your shortlink or leave blank</p> 
-    <p>check box to create one-time link</p> 
-    <p>Cancel to use the default looong link</p>    
+    <p>Check the box to create a one-time link</p> 
+    <p>Click Cancel to use the default long link</p>    
     <input type="text" id="aliasInput" class="notiflix-input chooseMarkoType" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
     <label for="onetimeCheckbox" style="display: block; margin-top: 10px;">
         <input type="checkbox" id="onetimeCheckbox" class="chooseMarkoType" style="margin-left: 10px;">
@@ -623,7 +662,7 @@
     </div>
 </div>
 <div id="aliasFormOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-    
+
 <!-- Info Modal -->
 <div id="infoModal" class="help-modal">
     <div class="help-modal-content">
@@ -1522,8 +1561,7 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
             document.getElementById('aliasCancel').removeEventListener('click', handleCancel);
         }
     });
-}
-        
+}  
 
 function saveToStorage() {
     const type = sessionStorage.getItem('temp-marko-type');
