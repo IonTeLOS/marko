@@ -636,11 +636,11 @@
         <h2>Creating a Marko..</h2>
         <div id="line-separator" style="margin: 10px 0;"></div>
         <p>Add shortlink name or leave blank</p> 
-        <p>Check box for one-time link</p> 
+        <p>Check box for a use-twice link</p> 
         <input type="text" id="aliasInput" class="notiflix-input chooseMarkoType" maxlength="11" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
         <label for="onetimeCheckbox" style="display: block; margin-top: 10px; text-align: left;">
             <input type="checkbox" id="onetimeCheckbox" class="chooseMarkoType" style="margin-left: 20px; vertical-align: middle;">
-            One-time link
+            Use-twice link
         </label>
         <div id="form-buttons" style="margin-top: 10px;">
             <button id="default3Button" class="create-buttons" style="margin-right: 10px;">Submit</button>
@@ -670,7 +670,7 @@
 <div id="info3Modal" class="help-modal">
     <div class="help-modal-content">
         <span class="close-help3">&times;</span>
-        <p>Leave blank to create a random shortlink representing your Marko to share it publicly. Service from spoo.me is used for this option. Add a preferred name (max 11 characters) so that a custom shortlink can be created using spoo.me. If you check the one-time option your link will work only once.. Click cancel to create a looong link with parameters without using external services. You can also share this link with friends and family and them clicking on it will add your Marko on their Marko app.</p>
+        <p>Leave blank to create a random shortlink representing your Marko to share it publicly. Service from spoo.me is used for this option. Add a preferred name (max 11 characters) so that a custom shortlink can be created using spoo.me. If you check the use-twice option your link will work only twice.. Click cancel to create a looong link with parameters without using external services. You can also share this link with friends and family and them clicking on it will add your Marko on their Marko app.</p>
     </div>
 </div>
 
@@ -1795,7 +1795,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
             const data = new URLSearchParams();
             data.append('url', url);
             if (alias && alias.trim() !== '') data.append('alias', alias); // Only append alias if not empty
-            if (maxClicks) data.append('max-clicks', '1');
+            if (maxClicks) data.append('max-clicks', '2');
 
             return fetch('https://spoo.me/', {
                 method: 'POST',
