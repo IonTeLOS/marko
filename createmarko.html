@@ -1702,7 +1702,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
             if (storedAlias) {
                 // Handle alias length and spaces
                 if (storedAlias.length > 11) {
-                    M.toast({html: `Alias was too long and has been shortened to: ${storedAlias.substring(0, 11)}`});
+                    Notiflix.Notify.success(`Alias was too long and has been shortened to: ${storedAlias.substring(0, 11)}`); // Show Notiflix notification
                     storedAlias = storedAlias.substring(0, 11);
                 }
                 storedAlias = storedAlias.replace(/\s+/g, '_'); // Replace spaces with underscores
@@ -1736,7 +1736,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                     console.log('Parsed API response:', responseData);
 
                     if (responseData.short_url) {
-                        M.toast({html: 'Shortlink created successfully!'});
+                        Notiflix.Notify.success('Shortlink created successfully!'); // Show Notiflix notification
 
                         // Store the shortlink in localStorage
                         localStorage.setItem('short-link', responseData.short_url);
@@ -1756,7 +1756,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                                 console.log('Parsed API response:', responseData);
 
                                 if (responseData.short_url) {
-                                    M.toast({html: 'Custom alias unavailable. Shortlink created without alias.'});
+                                    Notiflix.Notify.success('Custom alias unavailable. Shortlink created without alias.'); // Show Notiflix notification
 
                                     // Store the shortlink in localStorage
                                     localStorage.setItem('short-link', responseData.short_url);
@@ -1769,10 +1769,10 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                             })
                             .catch(error => {
                                 console.error('Error:', error.message);
-                                M.toast({html: 'Error occurred while creating shortlink'});
+                                Notiflix.Notify.failure('Error occurred while creating shortlink'); // Show Notiflix notification
                             });
                     } else {
-                        M.toast({html: 'Error occurred while creating shortlink'});
+                                Notiflix.Notify.failure('Error occurred while creating shortlink'); // Show Notiflix notification
                     }
                 });
         }
@@ -1790,7 +1790,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                 })
                 .catch(err => {
                     console.error('Error copying to clipboard:', err);
-                    M.toast({html: 'Failed to copy shortlink to clipboard.'});
+                    Notiflix.Notify.failure('Failed to copy shortlink to clipboard.'); // Show Notiflix notification
                 });
 
             // Share link if Web Share API is available
@@ -1801,14 +1801,14 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                     url: shortlink
                 })
                 .then(() => {
-                    M.toast({html: 'Shortlink shared successfully!'});
+                    Notiflix.Notify.success('Shortlink shared successfully!'); // Show Notiflix notification
                 })
                 .catch(err => {
                     console.error('Error sharing shortlink:', err);
-                    M.toast({html: 'Failed to share shortlink.'});
+                    Notiflix.Notify.failure('Failed to share shortlink.'); // Show Notiflix notification
                 });
             } else {
-                M.toast({html: 'Web Share API not supported in this browser.'});
+                Notiflix.Notify.failure('Web SHARE API not available in this browser.'); // Show Notiflix notification
             }
         }
 
