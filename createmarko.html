@@ -1637,7 +1637,13 @@ function showNoteFieldAndWait(name) {
     submitButton.addEventListener('click', handleSubmitNote, { once: true });
   });
 }
-
+        // Function to hide a modal by ID if it exists
+        function tryHideModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
         // Event listener to detect clicks outside the help-modal-content
         document.addEventListener('click', function(event) {
             const helpModals = document.querySelectorAll('.help-modal-content');
