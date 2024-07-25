@@ -125,7 +125,7 @@
         #cancelCreation3Button {
             background-color: #a9a9a9;
         }
-        #cancelCreationButton:hover, #cancelCreation2Button, #continueTo2Button:hover, #continueTo2Button:hover {
+        #cancelCreationButton:hover, #cancelCreation2Button:hover, #cancelCreation3Button:hover {
             opacity: 0.8; 
         }
         #defaultButton,
@@ -656,7 +656,7 @@
     </label>
     <div id="form-buttons">
         <button id="default3Button" class="create-buttons">Submit</button>
-        <button id="cancelCreation2Button" class="create-buttons">Cancel</button>
+        <button id="cancelCreation3Button" class="create-buttons">Cancel</button>
     </div>
 </div>
 <div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
@@ -1528,8 +1528,8 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
         document.getElementById('formOverlay').style.display = 'block';
 
         // Add event listeners for submit and cancel buttons
-        document.getElementById('aliasSubmit').addEventListener('click', handleSubmit);
-        document.getElementById('aliasCancel').addEventListener('click', handleCancel);
+        document.getElementById('default3Button').addEventListener('click', handleSubmit);
+        document.getElementById('cancelCreation3Button').addEventListener('click', handleCancel);
 
         function handleSubmit() {
             const alias = document.getElementById('aliasInput').value;
@@ -1545,17 +1545,20 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
+                sessionStorage.clear();
             } else {
                 Notiflix.Notify.success('Shortlink created successfully!'); // Show Notiflix notification
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
+                sessionStorage.clear();
             }
         }
 
         function handleCancel() {
             Notiflix.Notify.failure('Prompt canceled.'); // Show Notiflix notification for cancelation
             removeAliasForm();
+            sessionStorage.clear();
         }
 
         function removeAliasForm() {
@@ -1578,6 +1581,7 @@ function saveToStorage() {
     let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
     bookmarks.push(linkData);
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    sessionStorage.clear();
     window.location.href = 'https://teloslinux.org/marko/newfile';
 }
 
@@ -1720,6 +1724,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
              select.value = '1'; // Set to "Default"
              select.dispatchEvent(new Event('change')); // Trigger the change event
     };
+
 
         // Function to handle selection change
         select.onchange = function() {
@@ -6143,11 +6148,6 @@ document.getElementById('cancelCreation2Button').onclick = function() {
             Notiflix.Notify.info('Marko creation aborted. Bye!');
             hideForm('markoIconTypeForm');
 }
-// Handle cancel button click
-document.getElementById('cancelCreation3Button').onclick = function() {
-            Notiflix.Notify.info('Marko shortlink creation aborted.');
-            hideForm('aliasForm');
-}        
 window.onclick = function(event) {
     if (event.target == document.getElementById('infoModal')) {
         document.getElementById('infoModal').style.display = 'none';
