@@ -1524,7 +1524,9 @@ function sendToMarko() {
     
     if (urlParams.has('fromApp')) {
         console.log('Page opened with "fromApp" parameter');
-        saveToStorage();
+        // Check for the 'book' key and get its value to find out where user wants to store his new bookmark, main (bookmarks array) or some Google Drive file array
+        const bookValue = urlParams.get('book') || 'bookmarks'; // Default to 'bookmarks' if no key or no value
+        saveToStorage(bookValue);
     }
 }
         
@@ -1581,8 +1583,9 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
         }
     });
 }  
-
-function saveToStorage() {
+        
+// possibly save to other array, for example synced file on Google Drive. Make sure main app handles such url params
+function saveToStorage(array = 'bookmarks') {
     const type = sessionStorage.getItem('temp-marko-type');
     const link = sessionStorage.getItem('temp-marko-link');
     const title = sessionStorage.getItem('temp-marko-name');
@@ -1590,10 +1593,11 @@ function saveToStorage() {
     const color = sessionStorage.getItem('temp-marko-color');
     const linkData = [type, link, title, icon, color];
     // Save the bookmark to local storage
-    let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    let bookmarks = JSON.parse(localStorage.getItem(array)) || [];
     bookmarks.push(linkData);
-    localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
+    localStorage.setItem(array, JSON.stringify(bookmarks));
     sessionStorage.clear();
+    // TODO add specific url param for other arrays
     window.location.href = 'https://teloslinux.org/marko/newfile';
 }
 
