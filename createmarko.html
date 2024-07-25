@@ -1590,8 +1590,8 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
         function removeAliasForm() {
             document.getElementById('aliasForm').style.display = 'none';
             document.getElementById('formOverlay').style.display = 'none';
-            document.getElementById('aliasSubmit').removeEventListener('click', handleSubmit);
-            document.getElementById('aliasCancel').removeEventListener('click', handleCancel);
+            document.getElementById('default3Button').removeEventListener('click', handleSubmit);
+            document.getElementById('cancelCreation2Button').removeEventListener('click', handleCancel);
         }
     });
 }  
