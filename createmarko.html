@@ -1065,7 +1065,7 @@ async function chooseMarkoLink(type = 'website') {
     console.log('Entering chooseMarkoLink for type:', type);
 
     // Wait a bit before showing the prompt
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 500));
 
     return new Promise((resolve, reject) => {
       console.log('Showing Notiflix prompt for link');
