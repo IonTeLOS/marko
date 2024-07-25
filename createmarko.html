@@ -202,7 +202,7 @@
     opacity: 0.8;
 }
 
-#aliasFormOverlay {
+#formOverlay {
     display: none; /* Hide by default */
     position: fixed;
     top: 0;
@@ -239,7 +239,7 @@
         .help-modal {
             display: none;
             position: fixed;
-            z-index: 1000;
+            z-index: 4002;
             left: 0;
             top: 0;
             width: 100%;
@@ -604,6 +604,8 @@
             <span class="material-icons">help_outline</span>
         </button>
     </div>
+    <div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+
 <div id="post-field" class="input-field">
   <div class="mde-textarea-wrapper">
     <textarea id="post-content" placeholder="Create your post here.. (max 10.000 characters)" maxlength="10000"></textarea>
@@ -623,7 +625,8 @@
     Submit
   </button>
 </div>
-<div id="markoIconTypeForm">
+    
+<div id="markoIconTypeForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px;">
     <h2>Creating a Marko..</h2>
     <div id="line-separator"></div>
     <p>Choose the icon type for your Marko:</p>
@@ -643,9 +646,10 @@
         <span class="material-icons">help_outline</span>
     </button>
 </div>
+<div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>    
 
 <!-- Custom Alias Form (initially hidden) -->
-<div id="aliasForm" class="notiflix-prompt-custom-content">
+<div id="aliasForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px;">
     <h2>Creating a Marko..</h2>
     <div id="line-separator"></div>
     <p>Add name for shortlink or leave blank</p> 
@@ -661,7 +665,7 @@
         <button id="aliasCancel" class="create-buttons">Cancel</button>
     </div>
 </div>
-<div id="aliasFormOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+<div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
 
 <!-- Info Modal -->
 <div id="infoModal" class="help-modal">
@@ -1247,12 +1251,14 @@ function getRandomColor() {
 
 function showForm(formId) {
     var form = document.getElementById(formId);
+    document.getElementById('formOverlay').style.display = 'block';
     form.style.display = 'block';
 }
 
 function hideForm(formId) {
     var form = document.getElementById(formId);
     form.style.display = 'none';
+    document.getElementById('formOverlay').style.display = 'none';
 }
 
         
@@ -1525,7 +1531,7 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
 
         // Show the form and overlay
         document.getElementById('aliasForm').style.display = 'block';
-        document.getElementById('aliasFormOverlay').style.display = 'block';
+        document.getElementById('formOverlay').style.display = 'block';
 
         // Add event listeners for submit and cancel buttons
         document.getElementById('aliasSubmit').addEventListener('click', handleSubmit);
@@ -1560,7 +1566,7 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
 
         function removeAliasForm() {
             document.getElementById('aliasForm').style.display = 'none';
-            document.getElementById('aliasFormOverlay').style.display = 'none';
+            document.getElementById('formOverlay').style.display = 'none';
             document.getElementById('aliasSubmit').removeEventListener('click', handleSubmit);
             document.getElementById('aliasCancel').removeEventListener('click', handleCancel);
         }
