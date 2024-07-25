@@ -1187,6 +1187,8 @@ function getRandomColor() {
 function showForm(formId) {
     var form = document.getElementById(formId);
     var background = document.getElementById('overlay');
+    var wrapper = document.getElementById('NotiflixConfirmWrap');
+    wrapper.style.display = 'block';
     background.style.display = 'block';
     form.style.display = 'block';
 }
@@ -1194,7 +1196,9 @@ function showForm(formId) {
 function hideForm(formId) {
     var form = document.getElementById(formId);
     var background = document.getElementById('overlay');
-    background.style.display = 'block';
+    var wrapper = document.getElementById('NotiflixConfirmWrap');
+    wrapper.style.display = 'none;
+    background.style.display = 'none';
     form.style.display = 'none';
 }
 
