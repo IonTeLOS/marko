@@ -6168,12 +6168,15 @@ function initializeGrid() {
 }
 
 document.getElementById('helpButton').onclick = function() {
+    event.stopPropagation(); // Prevent this click from triggering the document click listener
     document.getElementById('infoModal').style.display = 'block';
 }
 document.getElementById('help2Button').onclick = function() {
+    event.stopPropagation(); // Prevent this click from triggering the document click listener
     document.getElementById('info2Modal').style.display = 'block';
 }
 document.getElementById('help3Button').onclick = function() {
+    event.stopPropagation(); // Prevent this click from triggering the document click listener
     document.getElementById('info3Modal').style.display = 'block';
 }        
 document.getElementsByClassName('close-help')[0].onclick = function() {
