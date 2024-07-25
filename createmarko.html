@@ -1463,68 +1463,57 @@ function sendToMarko() {
 }
 async function showAliasPrompt(inputType = 'text', shareLink) {
     return new Promise((resolve) => {
-        Notiflix.Confirm.show(
-            'Enter Alias',
-            `
-            <div>
-                <input type="${inputType}" id="aliasInput" class="notiflix-input">
-                <br>
-                <label for="onetimeCheckbox">
-                    <input type="checkbox" id="onetimeCheckbox">
+        // Create the custom form HTML
+        const formHtml = `
+            <div id="aliasForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px; padding: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+                <h5 style="color:#000000;font-size:20px;">Enter Alias</h5>
+                <input type="${inputType}" id="aliasInput" class="notiflix-input" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
+                <label for="onetimeCheckbox" style="display: block; margin-top: 10px;">
+                    <input type="checkbox" id="onetimeCheckbox" style="margin-left: 10px;">
                     One-time action
                 </label>
+                <div style="margin-top: 20px;">
+                    <button id="aliasSubmit" style="color:#f8f8f8;background:#0D47A1;font-size:15px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Submit</button>
+                    <button id="aliasCancel" style="color:#f8f8f8;background:#a9a9a9;font-size:15px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Cancel</button>
+                </div>
             </div>
-            `,
-            'Submit',
-            'Cancel',
-            function () {
-                const alias = document.getElementById('aliasInput').value;
-                const onetimeChecked = document.getElementById('onetimeCheckbox').checked;
-
-                if (alias) {
-                    sessionStorage.setItem('temp-marko-alias', alias);
-                    if (onetimeChecked) {
-                        sessionStorage.setItem('temp-onetime', 'true');
-                    }
-                    Notiflix.Notify.success('Alias and options saved successfully!');
-                    initializeShortlinkWithTempMarkoLink(shareLink);
-                    resolve(alias);
-                } else {
-                    Notiflix.Notify.failure('Alias cannot be empty.');
-                    showAliasPrompt(inputType, shareLink).then(resolve); // Show prompt again if input is empty
-                }
-            },
-            function () {
-                Notiflix.Notify.failure('Prompt canceled.');
-            },
-            {
-                width: '400px',
-                borderRadius: '8px',
-                messageMaxLength: 500,
-            }
-        );
-
-        // Style the input box and checkbox
-        const style = document.createElement('style');
-        style.innerHTML = `
-            .notiflix-input {
-                width: 90%;
-                padding: 10px;
-                margin: 10px 0;
-                border: 1px solid #ccc;
-                border-radius: 4px;
-            }
-            #onetimeCheckbox {
-                margin-left: 10px;
-            }
+            <div id="aliasFormOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
         `;
-        document.head.appendChild(style);
 
-        // Debugging: Ensure elements are created
-        setTimeout(() => {
-            console.log('Alias Input Element:', document.getElementById('aliasInput'));
-            console.log('One-time Checkbox Element:', document.getElementById('onetimeCheckbox'));
-        }, 100); // Delay to ensure the elements are loaded
+        // Append the form HTML to the body
+        document.body.insertAdjacentHTML('beforeend', formHtml);
+
+        // Add event listeners for submit and cancel buttons
+        document.getElementById('aliasSubmit').addEventListener('click', () => {
+            const alias = document.getElementById('aliasInput').value;
+            const onetimeChecked = document.getElementById('onetimeCheckbox').checked;
+
+            if (alias) {
+                sessionStorage.setItem('temp-marko-alias', alias);
+                if (onetimeChecked) {
+                    sessionStorage.setItem('temp-onetime', 'true');
+                }
+                Notiflix.Notify.success('Alias and options saved successfully!');
+                initializeShortlinkWithTempMarkoLink(shareLink);
+                resolve(alias);
+                removeAliasForm();
+            } else {
+                Notiflix.Notify.failure('Alias cannot be empty.');
+            }
+        });
+
+        document.getElementById('aliasCancel').addEventListener('click', () => {
+            Notiflix.Notify.failure('Prompt canceled.');
+            removeAliasForm();
+        });
+
+        // Function to remove the form
+        function removeAliasForm() {
+            const aliasForm = document.getElementById('aliasForm');
+            const aliasFormOverlay = document.getElementById('aliasFormOverlay');
+            if (aliasForm) aliasForm.remove();
+            if (aliasFormOverlay) aliasFormOverlay.remove();
+        }
     });
 }
 
