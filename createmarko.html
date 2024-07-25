@@ -1466,14 +1466,14 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
         const formHtml = `
             <div id="aliasForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px; padding: 20px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
                 <h5 style="color:#000000;font-size:20px;">Enter Alias</h5>
-                <input type="${inputType}" id="aliasInput" class="notiflix-input" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
+                <input type="${inputType}" id="aliasInput" class="notiflix-input chooseMarkoType" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
                 <label for="onetimeCheckbox" style="display: block; margin-top: 10px;">
-                    <input type="checkbox" id="onetimeCheckbox" style="margin-left: 10px;">
+                    <input type="checkbox" id="onetimeCheckbox" class="chooseMarkoType" style="margin-left: 10px;">
                     One-time action
                 </label>
                 <div style="margin-top: 20px;">
-                    <button id="aliasSubmit" style="color:#f8f8f8;background:#0D47A1;font-size:15px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Submit</button>
-                    <button id="aliasCancel" style="color:#f8f8f8;background:#a9a9a9;font-size:15px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Cancel</button>
+                    <button id="aliasSubmit" class="notiflix-confirm-button-ok chooseMarkoType" style="color:#f8f8f8;background:#0D47A1;font-size:15px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;">Submit</button>
+                    <button id="aliasCancel" class="notiflix-confirm-button-cancel chooseMarkoType" style="color:#f8f8f8;background:#a9a9a9;font-size:15px; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px;">Cancel</button>
                 </div>
             </div>
             <div id="aliasFormOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
@@ -1492,17 +1492,17 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
                 if (onetimeChecked) {
                     sessionStorage.setItem('temp-onetime', 'true');
                 }
-                Notiflix.Notify.success('Alias and options saved successfully!');
+                M.toast({html: 'Shortlink created successfully!'}); // Show toast message
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
             } else {
-                Notiflix.Notify.failure('Alias cannot be empty.');
+                M.toast({html: 'Alias cannot be empty!'}); // Show toast message for empty alias
             }
         });
 
         document.getElementById('aliasCancel').addEventListener('click', () => {
-            Notiflix.Notify.failure('Prompt canceled.');
+            M.toast({html: 'Prompt canceled.'}); // Show toast message for cancelation
             removeAliasForm();
         });
 
