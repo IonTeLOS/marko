@@ -632,27 +632,26 @@
 <div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>    
 
 <!-- Custom Alias Form (initially hidden) -->
-<div id="aliasForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px;">
-    <h2>Creating a Marko..</h2>
-    <div id="line-separator"></div>
-    <p>Add name for shortlink or leave blank</p> 
-    <p>Check the box to get a one-time link</p> 
-    <p>Cancel to use the default long link</p>    
-    <input type="text" id="aliasInput" class="notiflix-input chooseMarkoType" maxlength="11" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
-    <label for="onetimeCheckbox" style="display: block; margin-top: 10px;">
-        <input type="checkbox" id="onetimeCheckbox" class="chooseMarkoType" style="margin-left: 10px;">
-        One-time link
-    </label>
-    <div id="form-buttons">
-        <button id="default3Button" class="create-buttons">Submit</button>
-        <button id="cancelCreation3Button" class="create-buttons">Cancel</button>
+    <div id="aliasForm" class="notiflix-prompt-custom-content" style="width: 400px; background: #f8f8f8; animation-duration: 300ms; border-radius: 8px; padding: 20px;">
+        <h2>Creating a Marko..</h2>
+        <div id="line-separator" style="margin: 10px 0;"></div>
+        <p>Add shortlink name or leave blank</p> 
+        <p>Check box for one-time link</p> 
+        <input type="text" id="aliasInput" class="notiflix-input chooseMarkoType" maxlength="11" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
+        <label for="onetimeCheckbox" style="display: block; margin-top: 10px; text-align: left;">
+            <input type="checkbox" id="onetimeCheckbox" class="chooseMarkoType" style="margin-left: 0; vertical-align: middle;">
+            One-time link
+        </label>
+        <div id="form-buttons" style="margin-top: 10px;">
+            <button id="default3Button" class="create-buttons" style="margin-right: 10px;">Submit</button>
+            <button id="cancelCreation3Button" class="create-buttons">Cancel</button>
+        </div>
+        <button id="help3Button" class="material-help3-button" style="margin-top: 10px;">
+            <span class="material-icons">help_outline</span>
+        </button>
     </div>
-        <button id="help3Button" class="material-help3-button">
-        <span class="material-icons">help_outline</span>
-    </button>
-</div>
-<div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-
+    <div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+    
 <!-- Info Modal -->
 <div id="infoModal" class="help-modal">
     <div class="help-modal-content">
