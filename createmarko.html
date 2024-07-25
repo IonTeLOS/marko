@@ -1461,18 +1461,19 @@ function sendToMarko() {
         saveToStorage();
     }
 }
-// Function to show the Notiflix prompt and store the alias in sessionStorage
-async function showAliasPrompt(inputType = 'text', shareLink) { // default to 'text'
+async function showAliasPrompt(inputType = 'text', shareLink) {
     return new Promise((resolve) => {
         Notiflix.Confirm.show(
             'Enter Alias',
             `
-            <input type="${inputType}" id="aliasInput" class="notiflix-input">
-            <br>
-            <label for="onetimeCheckbox">
-                <input type="checkbox" id="onetimeCheckbox">
-                One-time action
-            </label>
+            <div>
+                <input type="${inputType}" id="aliasInput" class="notiflix-input">
+                <br>
+                <label for="onetimeCheckbox">
+                    <input type="checkbox" id="onetimeCheckbox">
+                    One-time action
+                </label>
+            </div>
             `,
             'Submit',
             'Cancel',
@@ -1486,12 +1487,11 @@ async function showAliasPrompt(inputType = 'text', shareLink) { // default to 't
                         sessionStorage.setItem('temp-onetime', 'true');
                     }
                     Notiflix.Notify.success('Alias and options saved successfully!');
-                                        initializeShortlinkWithTempMarkoLink(shareLink);
-
+                    initializeShortlinkWithTempMarkoLink(shareLink);
                     resolve(alias);
                 } else {
                     Notiflix.Notify.failure('Alias cannot be empty.');
-                    showAliasPrompt(inputType).then(resolve); // Show prompt again if input is empty
+                    showAliasPrompt(inputType, shareLink).then(resolve); // Show prompt again if input is empty
                 }
             },
             function () {
@@ -1519,8 +1519,15 @@ async function showAliasPrompt(inputType = 'text', shareLink) { // default to 't
             }
         `;
         document.head.appendChild(style);
+
+        // Debugging: Ensure elements are created
+        setTimeout(() => {
+            console.log('Alias Input Element:', document.getElementById('aliasInput'));
+            console.log('One-time Checkbox Element:', document.getElementById('onetimeCheckbox'));
+        }, 100); // Delay to ensure the elements are loaded
     });
 }
+
         
 
 function saveToStorage() {
