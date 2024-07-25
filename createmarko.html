@@ -1566,9 +1566,11 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
         }
 
         function handleCancel() {
-            Notiflix.Notify.failure('Prompt canceled.'); // Show Notiflix notification for cancelation
+            Notiflix.Notify.success('A long local weblink has been created and copied to your clipboard.'); // Show Notiflix notification for cancelation
+            const shareLink = constructShareLink();
             removeAliasForm();
             sessionStorage.clear();
+            handleClipboardAndSharing(sharelink);
         }
 
         function removeAliasForm() {
