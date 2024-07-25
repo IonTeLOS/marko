@@ -1839,6 +1839,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
 
         // Function to copy shortlink to clipboard and share it
         function handleClipboardAndSharing(shortlink) {
+            window.focus();
             navigator.clipboard.writeText(shortlink)
                 .then(() => {
                     console.log('Shortlink copied to clipboard!');
