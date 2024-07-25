@@ -1645,7 +1645,7 @@ function showNoteFieldAndWait(name) {
 
         // Event listener to detect clicks outside the modals
         document.addEventListener('click', function(event) {
-            const isClickInsideModal = event.target.closest('.help-modal');
+            const isClickInsideModal = event.target.closest('.help-modal-content');
 
             if (!isClickInsideModal) {
                 hideAllModals();
