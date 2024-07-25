@@ -579,8 +579,6 @@
     Submit
   </button>
 </div>
-<div id="NotiflixConfirmWrap" class="notiflix-prompt-custom nx-with-animation nx-zoom nx-position-center-top" style="z-index: 4000; padding: 10px; font-family: &quot;Roboto, sans-serif&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, &quot;Noto Sans&quot;, sans-serif;">
-<div id="overlay" class="notiflix-prompt-custom-overlay nx-with-animation" style="background:rgba(0,0,0,0.5);animation-duration:300ms;"></div>
 <div id="markoIconTypeForm">
     <h2>Creating a Marko..</h2>
     <div id="line-separator"></div>
@@ -1186,19 +1184,11 @@ function getRandomColor() {
 
 function showForm(formId) {
     var form = document.getElementById(formId);
-    var background = document.getElementById('overlay');
-    var wrapper = document.getElementById('NotiflixConfirmWrap');
-    //wrapper.style.display = 'block';
-    background.style.display = 'block';
     form.style.display = 'block';
 }
 
 function hideForm(formId) {
     var form = document.getElementById(formId);
-    var background = document.getElementById('overlay');
-    //var wrapper = document.getElementById('NotiflixConfirmWrap');
-    // wrapper.style.display = 'none';
-    //background.style.display = 'none';
     form.style.display = 'none';
 }
 
