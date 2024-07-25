@@ -1638,29 +1638,31 @@ function showNoteFieldAndWait(name) {
   });
 }
  
-        // Event listener to detect clicks outside the element with ID 'help1'
+        // Function to hide all help modals
+        function hideAllHelpModals() {
+            const helpModals = document.querySelectorAll('.help-modal');
+            helpModals.forEach(modal => {
+                modal.style.display = 'none';
+            });
+        }
+
+        // Event listener to detect clicks outside help-modal-content elements
         document.addEventListener('click', function(event) {
-            const help1Element = document.getElementById('help1');
-            if (help1Element && !help1Element.contains(event.target)) {
-               document.getElementById(infoModal).style.display = 'none';   
+            const helpContents = document.querySelectorAll('.help-modal-content');
+            let clickedInsideHelpContent = false;
+
+            helpContents.forEach(content => {
+                if (content.contains(event.target)) {
+                    clickedInsideHelpContent = true;
+                }
+            });
+
+            if (!clickedInsideHelpContent) {
+                hideAllHelpModals();
             }
         });
-            // Event listener to detect clicks outside the element with ID 'help1'
-        document.addEventListener('click', function(event) {
-            const help2Element = document.getElementById('help2');
-            if (help2Element && !help2Element.contains(event.target)) {
-               const modal2 = document.getElementById(info2Modal);
-               modal2.style.display = 'none';   
-            }
-        });
-            // Event listener to detect clicks outside the element with ID 'help1'
-        document.addEventListener('click', function(event) {
-            const help3Element = document.getElementById('help3');
-            if (help3Element && !help3Element.contains(event.target)) {
-               const modal3 = document.getElementById(info3Modal);
-               modal3.style.display = 'none';   
-            }
-        });
+
+
 // Function to show the post field and wait for submission
 function showPostFieldAndWait(name) {
   return new Promise((resolve, reject) => {
