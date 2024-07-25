@@ -19,6 +19,7 @@
             margin: 0;
             padding: 0;
             height: 100%;
+            width: 100%;
             align-items: center;
             justify-content: center;
             background-color: #e3f2fd;
@@ -120,25 +121,29 @@
         }
  
         #cancelCreationButton,
-        #cancelCreation2Button {
+        #cancelCreation2Button,
+        #cancelCreation3Button {
             background-color: #a9a9a9;
         }
         #cancelCreationButton:hover, #cancelCreation2Button, #continueTo2Button:hover, #continueTo2Button:hover {
             opacity: 0.8; 
         }
         #defaultButton,
-        #default2Button {
+        #default2Button,
+        #default3Button {
             background-color: #0D47A1; /* Default blue color */
             transition: background-color 0.3s, transform 0.1s; /* Smooth transition for hover and click */
         }
 
         #defaultButton:hover,
-        #default2Button:hover {
+        #default2Button:hover,
+        #default3Button:hover {
             background-color: #1565C0; /* Lighter blue on hover */
         }
 
         #defaultButton:active,
-        #default2Button:active {
+        #default2Button:active,
+        #default3Button:active {
             background-color: #0D47A1; /* Darker blue on click */
             transform: scale(0.95); /* Slightly reduce size on click */
         }
@@ -189,17 +194,6 @@
 
 #aliasForm input[type="text"], #aliasForm input[type="checkbox"] {
     margin-bottom: 10px;
-}
-
-#aliasForm button {
-    padding: 10px 20px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-}
-
-#aliasForm button:hover {
-    opacity: 0.8;
 }
 
 #formOverlay {
@@ -660,9 +654,9 @@
         <input type="checkbox" id="onetimeCheckbox" class="chooseMarkoType" style="margin-left: 10px;">
         One-time link
     </label>
-    <div style="margin-top: 20px;">
-        <button id="aliasSubmit" class="create-buttons">Submit</button>
-        <button id="aliasCancel" class="create-buttons">Cancel</button>
+    <div id="form-buttons">
+        <button id="default3Button" class="create-buttons">Submit</button>
+        <button id="cancelCreation2Button" class="create-buttons">Cancel</button>
     </div>
 </div>
 <div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
@@ -6142,13 +6136,18 @@ document.getElementsByClassName('close-help2')[0].onclick = function() {
 // Handle cancel button click
 document.getElementById('cancelCreationButton').onclick = function() {
             Notiflix.Notify.info('Marko creation aborted. Bye!');
-            document.getElementById('markoTypeForm').style.display = 'none';
+            hideForm('markoTypeForm');
 }
 // Handle cancel button click
 document.getElementById('cancelCreation2Button').onclick = function() {
             Notiflix.Notify.info('Marko creation aborted. Bye!');
-            document.getElementById('markoIconTypeForm').style.display = 'none';
+            hideForm('markoIconTypeForm');
 }
+// Handle cancel button click
+document.getElementById('cancelCreation3Button').onclick = function() {
+            Notiflix.Notify.info('Marko shortlink creation aborted.');
+            hideForm('aliasForm');
+}        
 window.onclick = function(event) {
     if (event.target == document.getElementById('infoModal')) {
         document.getElementById('infoModal').style.display = 'none';
