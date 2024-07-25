@@ -783,7 +783,16 @@ Notiflix.Confirm.init({
             fontFamily: 'Roboto, sans-serif',
             messageMaxLength: 2000,
         });
+
+        function callShowAliasPrompt() {
+                const shareLink = constructShareLink();
+                // Log the link for debugging
+                console.log('Constructed Share Link:', shareLink);
+                showAliasPrompt('text', shareLink);
+        }
+        
         function reportMarkoCreation() {
+            
             // Retrieve bookmark details from sessionStorage
             const link = sessionStorage.getItem('temp-marko-link');
             const name = sessionStorage.getItem('temp-marko-name');
@@ -804,21 +813,15 @@ Notiflix.Confirm.init({
                     function() {
                         // Optional callback function after the report is closed
                         console.log('Report closed');
-                        const shareLink = constructShareLink();
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                        showAliasPrompt('text', shareLink);
-                        // Log the link for debugging
-                        console.log('Constructed Share Link:', shareLink);
+                        // Call the function after a delay of 500 milliseconds (0.5 seconds)
+                        setTimeout(callShowAliasPrompt, 500);
                     }
                 );
             } else {
                 // Handle missing data
                 console.log('Failed to create the report. Some data is missing.');
                 Notiflix.Notify.info('You are on the right path..');
-                const shareLink = constructShareLink();
-                await new Promise(resolve => setTimeout(resolve, 500));
-                showAliasPrompt('text', shareLink);
-                console.log('Constructed Share Link:', shareLink);
+                setTimeout(callShowAliasPrompt, 500);
             }
         }
        
