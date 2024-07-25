@@ -648,7 +648,7 @@
 <div id="aliasForm" class="notiflix-prompt-custom-content">
     <h2>Creating a Marko..</h2>
     <div id="line-separator"></div>
-    <p>Choose the name of your shortlink or leave blank</p> 
+    <p>Choose name of shortlink or leave blank</p> 
     <p>Check the box to create a one-time link</p> 
     <p>Click Cancel to use the default long link</p>    
     <input type="text" id="aliasInput" class="notiflix-input chooseMarkoType" style="width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;">
@@ -1539,13 +1539,17 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
                 sessionStorage.setItem('temp-marko-alias', alias);
                 if (onetimeChecked) {
                     sessionStorage.setItem('temp-onetime', 'true');
+                    Notiflix.Notify.success('Your shortlink can be used only once!'); // Show Notiflix notification
                 }
-                Notiflix.Notify.success('Shortlink created successfully!'); // Show Notiflix notification
+                Notiflix.Notify.success('Custom shortlink created successfully!'); // Show Notiflix notification
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
             } else {
-                Notiflix.Notify.failure('Alias cannot be empty!'); // Show Notiflix notification for empty alias
+                Notiflix.Notify.success('Shortlink created successfully!'); // Show Notiflix notification
+                initializeShortlinkWithTempMarkoLink(shareLink);
+                resolve(alias);
+                removeAliasForm();
             }
         }
 
@@ -1873,13 +1877,14 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
             }
         }
 
+        /*
         // Automatically initialize shortlink creation if temp-marko-link is set in localStorage
         const savedLink = localStorage.getItem('created-temp-marko-link');
         if (savedLink) {
             initializeShortlinkWithTempMarkoLink(savedLink);
         }
 
-
+        */
 
         
 
