@@ -1635,7 +1635,22 @@ function showNoteFieldAndWait(name) {
     submitButton.addEventListener('click', handleSubmitNote, { once: true });
   });
 }
+        // Function to hide all elements with the specified class
+        function hideAllModals() {
+            const modals = document.querySelectorAll('.help-modal');
+            modals.forEach(modal => {
+                modal.classList.add('hidden');
+            });
+        }
 
+        // Event listener to detect clicks outside the modals
+        document.addEventListener('click', function(event) {
+            const isClickInsideModal = event.target.closest('.help-modal');
+
+            if (!isClickInsideModal) {
+                hideAllModals();
+            }
+        });
 // Function to show the post field and wait for submission
 function showPostFieldAndWait(name) {
   return new Promise((resolve, reject) => {
