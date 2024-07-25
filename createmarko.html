@@ -805,14 +805,20 @@ Notiflix.Confirm.init({
                         // Optional callback function after the report is closed
                         console.log('Report closed');
                         const shareLink = constructShareLink();
-                        // Log the link for debugging
+                        await new Promise(resolve => setTimeout(resolve, 500));
                         showAliasPrompt('text', shareLink);
+                        // Log the link for debugging
                         console.log('Constructed Share Link:', shareLink);
                     }
                 );
             } else {
                 // Handle missing data
                 console.log('Failed to create the report. Some data is missing.');
+                Notiflix.Notify.info('You are on the right path..');
+                const shareLink = constructShareLink();
+                await new Promise(resolve => setTimeout(resolve, 500));
+                showAliasPrompt('text', shareLink);
+                console.log('Constructed Share Link:', shareLink);
             }
         }
        
@@ -1437,8 +1443,15 @@ async function chooseMarkoType() {
                 } finally {
                     // Reset the form for next selection
                     sendToMarko();
+                    const urlParams = new URLSearchParams(window.location.search);
+    
+                    if (urlParams.has('fromApp')) {
+                        console.log('Page opened with "fromApp" parameter');
+                        return;
+                    } else {
                     reportMarkoCreation();
                     select.value = '0';
+                    }
                 }
             } else {
                 Notiflix.Notify.warning('Select the type of your Marko');
@@ -1522,17 +1535,12 @@ function constructShareLink() {
 function sendToMarko() {
     const urlParams = new URLSearchParams(window.location.search);
     
-    if (urlParams.has('internal')) {
-        console.log('Page opened with "internal" parameter');
-
-        // Uncomment this line if you want an alert
-        // alert('The "internal" parameter is present in the URL.');
-
-        // Call the function to open the share link
-        // backToMarko();  // this is to send a url with params to main app
+    if (urlParams.has('fromApp')) {
+        console.log('Page opened with "fromApp" parameter');
         saveToStorage();
     }
 }
+        
 async function showAliasPrompt(inputType = 'text', shareLink) {
     return new Promise((resolve) => {
         // Set the input type
