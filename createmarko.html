@@ -580,22 +580,45 @@
     box-sizing: border-box;
 }
 
-@keyframes enlargeAndShrink {
-        0% {
-            font-size: 14px;
+        @keyframes enlargeAndShrink {
+            0% {
+                font-size: 14px;
+            }
+            10% {
+                font-size: 16px;
+            }
+            20% {
+                font-size: 18px;
+            }
+            30% {
+                font-size: 20px;
+            }
+            40% {
+                font-size: 22px;
+            }
+            50% {
+                font-size: 21px;
+            }
+            60% {
+                font-size: 20px;
+            }
+            70% {
+                font-size: 19px;
+            }
+            80% {
+                font-size: 18px;
+            }
+            90% {
+                font-size: 17px;
+            }
+            100% {
+                font-size: 18px;
+            }
         }
-        50% {
-            font-size: 22px;
-        }
-        100% {
-            font-size: 18px;
-        }
-    }
 
-    .gradual-enlarge {
-        animation: enlargeAndShrink 3s ease forwards; /* 3s for the whole animation */
-        transition: font-size 1s ease; /* Smooth transition for font size change */
-    }
+        .gradual-enlarge {
+            animation: enlargeAndShrink 1.5s ease forwards;
+        }
         
     </style>
 </head>
@@ -6363,17 +6386,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function setupObserver() {
+        let processedGiveName = false;
+        let processedAddLink = false;
+
         const observer = new MutationObserver((mutations) => {
             mutations.forEach(mutation => {
                 // Find the div with the specific text
                 const targetDivs = document.querySelectorAll('.notiflix-prompt-custom-content div');
                 targetDivs.forEach(div => {
-                    if (div.textContent.includes('Give your Marko a name') || div.textContent.includes('Add the link for your Marko')) {
+                    if (!processedGiveName && div.textContent.includes('Give your Marko a name')) {
                         applyAnimation(div);
-                        // Disconnect the observer once the target is found and updated
-                        observer.disconnect();
+                        processedGiveName = true;
+                    }
+                    if (!processedAddLink && div.textContent.includes('Add the link for your Marko')) {
+                        applyAnimation(div);
+                        processedAddLink = true;
                     }
                 });
+
+                // Disconnect the observer once both texts are found and updated
+                if (processedGiveName && processedAddLink) {
+                    observer.disconnect();
+                }
             });
         });
 
