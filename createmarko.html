@@ -838,7 +838,9 @@ function stripProtocolFromUrl(url) {
 }
         
 async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('temp-marko-link')) {
+    // Set the type in sessionStorage
     sessionStorage.setItem('temp-marko-type', type);
+
     return new Promise((resolve, reject) => {
         Notiflix.Confirm.prompt(
             'Creating a Marko..',
@@ -847,32 +849,39 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
             'Continue',
             'Cancel',
             (chosenName) => {
+                // Process the chosen name
                 chosenName = (chosenName && chosenName.trim()) ? chosenName : stripProtocolFromUrl(link);
                 chosenName = (chosenName.length > 50) ? chosenName.substring(0, 50) + '..' : chosenName;
                 sessionStorage.setItem('temp-marko-name', chosenName);
                 resolve(chosenName);
             },
             () => {
+                // Handle cancel action
                 Notiflix.Notify.info('Marko creation aborted. Bye!');
                 sessionStorage.removeItem('temp-marko-type');
                 reject(new Error('User cancelled'));
             },
             {}
         );
+
+        // Define and set dynamic input type and styles
         function setDynamicInputType() {
             const inputElement = document.getElementById('NXConfirmValidationInput');
             const precedingDiv = inputElement ? inputElement.previousElementSibling : null;
             if (!inputElement) return;
-            
+
+            // Update the input element's font size
             inputElement.style.fontSize = '20px'; // Set font size to 20px
 
+            // Update the preceding div's font size
             if (precedingDiv && precedingDiv.tagName === 'DIV') {
-                // Update the font size of the preceding div
-                precedingDiv.style.fontSize = '18px';
+                precedingDiv.style.fontSize = '18px'; // Set font size to 18px
             }
+        }
 
         // Ensure input type is set after the prompt is rendered
         setTimeout(setDynamicInputType, 100);
+    });
 }
 
 async function sanitizeAndValidateUrl(url, allowCustomProtocol = false) {
@@ -1271,6 +1280,7 @@ async function chooseMarkoLink(type = 'website') {
         setTimeout(setDynamicInputType, 100);
     });
 }
+        
 function getRandomColor() {
     // Function to check if a color is too close to white or black
     const isColorTooCloseToWhiteOrBlack = (r, g, b) => {
