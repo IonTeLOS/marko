@@ -941,9 +941,10 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
     // Set the font size of the input element
     inputElement.style.fontSize = '20px'; // Set font size to 20px
 
+        }
+        
         // Ensure input type is set after the prompt is rendered
         setTimeout(setDynamicInputType, 200);
-        }
     });
 }
 
