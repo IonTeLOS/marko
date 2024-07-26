@@ -1245,47 +1245,57 @@ async function chooseMarkoLink(type = 'website') {
             {}
         );
 
-        // Define and set dynamic input type and styles
-        function setDynamicInputType() {
-            const inputElement = document.getElementById('NXConfirmValidationInput');
-            const precedingDiv = inputElement.parentElement.previousElementSibling;
-            if (!inputElement) return;
+// Define and set dynamic input type and styles
+function setDynamicInputType() {
+    // Get the input element by its ID
+    const inputElement = document.getElementById('NXConfirmValidationInput');
 
-            // Set input type based on the provided type
-            switch (type) {
-                case 'phone':
-                    inputElement.type = 'tel';
-                    break;
-                case 'email':
-                    inputElement.type = 'email';
-                    break;
-                default:
-                    inputElement.type = 'text'; // Fallback for other types
-                    break;
-            }
+    // Check if the input element exists
+    if (!inputElement) {
+        console.error('Input element not found');
+        return;
+    }
 
-            // Update the font size of the input element and its preceding div
-            if (precedingDiv && precedingDiv.tagName === 'DIV') {
-                precedingDiv.style.fontSize = '18px'; // Set font size to 18px
-            }
-            inputElement.style.fontSize = '20px'; // Set font size to 20px
+    // Get the parent div which contains both the label text and the input
+    const parentDiv = inputElement.parentElement.parentElement;
 
-            // Add real-time validation based on the input type
-            inputElement.addEventListener('input', () => {
-                let value = inputElement.value;
+    // Check if the parent div is correctly selected
+    if (parentDiv) {
+        const textDiv = parentDiv.querySelector('div:not(:last-child)'); // Select the first div within parentDiv
 
-                if (type === 'phone' || type === 'Viber' || type === 'WhatsApp') {
-                    // Remove spaces for phone numbers
-                    value = value.replace(/\s+/g, '');
-                } else if (type === 'email') {
-                    // Trim spaces for emails
-                    value = value.trim();
-                }
-
-                inputElement.value = value;
-            });
+        if (textDiv) {
+            console.log('Text DIV found:', textDiv);
+            textDiv.style.fontSize = '18px'; // Set font size to 18px
+        } else {
+            console.log('Text DIV not found');
         }
+    } else {
+        console.log('Parent DIV not found');
+    }
 
+    // Set the font size of the input element
+    inputElement.style.fontSize = '20px'; // Set font size to 20px
+
+    // Set the type of the input element based on the provided type
+    switch (type) {
+        case 'phone':
+            inputElement.type = 'tel';
+            break;
+        case 'email':
+            inputElement.type = 'email';
+            break;
+        default:
+            inputElement.type = 'text'; // Fallback for other types
+            break;
+    }
+
+    // Add real-time validation based on the input type
+    inputElement.addEventListener('input', () => {
+        let value = inputElement.value;
+         value = value.replace(/\s+/g, '');
+        inputElement.value = value;
+    });
+}
         // Ensure input type is set after the prompt is rendered
         setTimeout(setDynamicInputType, 200);
     });
