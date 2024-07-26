@@ -649,7 +649,8 @@
     </style>
 </head>
 <body>
-
+    <!-- Audio element for the success sound -->
+    <audio id="successSound" src="https://github.com/IonTeLOS/marko/raw/main/not_sim.wav" preload="auto"></audio>
 <div id="markoTypeForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px;">
         <h2>Creating a Marko..</h2>
         <div id="line-separator"></div>
@@ -1473,8 +1474,9 @@ async function getFavicon(url) {
             const leaveButton = document.createElement('button');
             leaveButton.classList.add('leave');
             leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
-            leaveButton.onclick = () => window.close();
-
+            leaveButton.onclick = () => {
+                window.location.href = 'https://teloslinux.org/marko/newfile';
+            };
             // Append buttons to the container
             buttonContainer.appendChild(retryButton);
             buttonContainer.appendChild(leaveButton);
@@ -1811,6 +1813,7 @@ function saveToStorage(array = 'bookmarks') {
     localStorage.setItem(array, JSON.stringify(bookmarks));
     sessionStorage.clear();
     // TODO add specific url param for other arrays
+    playSuccessSound();
     window.location.href = 'https://teloslinux.org/marko/newfile';
 }
 
@@ -2107,6 +2110,8 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                 })
                 .then(() => {
                     Notiflix.Notify.success('Shortlink shared successfully!'); // Show Notiflix notification
+                    playSuccessSound();
+                    onAbort();
                 })
                 .catch(err => {
                     console.error('Error sharing shortlink:', err);
@@ -2114,6 +2119,9 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                 });
             } else {
                 Notiflix.Notify.success('Shortlink copied to clipboard!'); // Show Notiflix notification
+                window.focus();
+                navigator.clipboard.writeText(shortlink);
+                playSuccessSound();
             }
         }
 
@@ -6460,7 +6468,10 @@ window.onclick = function(event) {
 
         setupObserver();
     });
-            
+          function playSuccessSound() {
+            const successSound = document.getElementById('successSound');
+            successSound.play();
+        }          
 </script>
 </body>
 </html>
