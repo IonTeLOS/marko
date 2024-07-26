@@ -1441,7 +1441,7 @@ async function chooseMarkoType() {
                                 randomColor = getRandomColor();
                                 sessionStorage.setItem('temp-marko-color', randomColor);
                                 const chosenLink = sessionStorage.getItem('temp-marko-link');
-                                const favicon = fetchFavicon(chosenLink);
+                                const favicon = await fetchFavicon(chosenLink);
                                 //const favicon = `https://www.google.com/s2/favicons?domain=${chosenLink}&sz=32`
                                 sessionStorage.setItem('temp-marko-icon', favicon);
                             } else {
