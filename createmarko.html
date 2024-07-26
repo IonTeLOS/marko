@@ -173,7 +173,7 @@
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     background-color: white;
-    font-size: 16px;
+    font-size: 18px;
     z-index: 4001;
     display: none; /* Hide by default */
 }
@@ -861,10 +861,16 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
         );
         function setDynamicInputType() {
             const inputElement = document.getElementById('NXConfirmValidationInput');
+            const precedingDiv = inputElement ? inputElement.previousElementSibling : null;
             if (!inputElement) return;
             
             inputElement.style.fontSize = '20px'; // Set font size to 20px
         }
+
+            if (precedingDiv && precedingDiv.tagName === 'DIV') {
+                // Update the font size of the preceding div
+                precedingDiv.style.fontSize = '18px';
+            }
 
         // Ensure input type is set after the prompt is rendered
         setTimeout(setDynamicInputType, 100);
@@ -1232,7 +1238,13 @@ async function chooseMarkoLink(type = 'website') {
          // Dynamic setting of input type
         function setDynamicInputType() {
             const inputElement = document.getElementById('NXConfirmValidationInput');
+            const precedingDiv = inputElement ? inputElement.previousElementSibling : null;
             if (!inputElement) return;
+
+            if (precedingDiv && precedingDiv.tagName === 'DIV') {
+                // Update the font size of the preceding div
+                precedingDiv.style.fontSize = '18px';
+            }     
 
             // Set input type based on the provided type
             switch (type) {
