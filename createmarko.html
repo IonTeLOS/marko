@@ -929,6 +929,7 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
                 sessionStorage.removeItem('temp-marko-type');
                 sessionStorage.removeItem('temp-marko-link');
                 reject(new Error('User cancelled'));
+                onAbort();
             },
             {}
         );
@@ -1307,6 +1308,7 @@ async function chooseMarkoLink(type = 'website') {
                 Notiflix.Notify.info('Marko creation aborted. Bye!');
                 sessionStorage.removeItem('temp-marko-type');
                 reject(new Error('User cancelled'));
+                onAbort();
             },
             {}
         );
@@ -1431,7 +1433,25 @@ async function getFavicon(url) {
     img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=${expectedSize}`;
   });
 }
-    
+
+    function onAbort() {
+            const buttonContainer = document.querySelector('.create-buttons');
+
+            // Create Retry button
+            const retryButton = document.createElement('button');
+            retryButton.innerHTML = '<span class="material-icons">refresh</span> Retry';
+            retryButton.onclick = () => location.reload();
+
+            // Create Leave button
+            const leaveButton = document.createElement('button');
+            leaveButton.classList.add('leave');
+            leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
+            leaveButton.onclick = () => window.close();
+
+            // Append buttons to the container
+            buttonContainer.appendChild(retryButton);
+            buttonContainer.appendChild(leaveButton);
+        }         
 async function chooseMarkoType() {
     const form = document.getElementById('markoTypeForm');
     const select = document.getElementById('markoType');
@@ -6363,7 +6383,8 @@ document.getElementById('cancelCreationButton').onclick = function() {
             Notiflix.Notify.info('Marko creation aborted. Bye!');
             hideForm('markoTypeForm');
             console.log('User cancelled');
-            return; 
+            onAbort();
+            //return; 
 }
 // Handle cancel button click
 document.getElementById('cancelCreation2Button').onclick = function() {
@@ -6372,7 +6393,8 @@ document.getElementById('cancelCreation2Button').onclick = function() {
             sessionStorage.removeItem('temp-marko-link');
             hideForm('markoIconTypeForm');
             console.log('User cancelled');
-            return; 
+            onAbort();
+            //return; 
 }
 window.onclick = function(event) {
     if (event.target == document.getElementById('infoModal')) {
@@ -6411,25 +6433,7 @@ window.onclick = function(event) {
 
         setupObserver();
     });
-        
-    function showRetryAndLeaveButtons() {
-            const buttonContainer = document.querySelector('.create-buttons');
-
-            // Create Retry button
-            const retryButton = document.createElement('button');
-            retryButton.innerHTML = '<span class="material-icons">refresh</span> Retry';
-            retryButton.onclick = () => location.reload();
-
-            // Create Leave button
-            const leaveButton = document.createElement('button');
-            leaveButton.classList.add('leave');
-            leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
-            leaveButton.onclick = () => window.close();
-
-            // Append buttons to the container
-            buttonContainer.appendChild(retryButton);
-            buttonContainer.appendChild(leaveButton);
-        }     
+            
 </script>
 </body>
 </html>
