@@ -1781,7 +1781,7 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
             Notiflix.Notify.success('A long local weblink has been created and copied to your clipboard.'); // Show Notiflix notification for cancelation
             const shareLink = constructShareLink();
             removeAliasForm();
-            handleClipboardAndSharing(sharelink);
+            handleClipboardAndSharing(shareLink);
             sessionStorage.clear();
         }
 
