@@ -867,17 +867,33 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
         // Define and set dynamic input type and styles
         function setDynamicInputType() {
             const inputElement = document.getElementById('NXConfirmValidationInput');
-            const precedingDiv = inputElement.parentElement.previousElementSibling;
-            if (!inputElement) return;
+             // Check if the input element exists
+    if (!inputElement) {
+        console.error('Input element not found');
+        return;
+    }
 
-            // Update the input element's font size
-            inputElement.style.fontSize = '20px'; // Set font size to 20px
+    // Get the parent div which contains both the label text and the input
+    const contentDiv = inputElement.closest('.notiflix-prompt-custom-content');
+    
+    // Check if the contentDiv is correctly selected
+    if (contentDiv) {
+        // Select the div containing the text
+        const textDiv = contentDiv.querySelector('.notiflix-prompt-custom-head > div:first-of-type');
 
-            // Update the preceding div's font size
-            if (precedingDiv && precedingDiv.tagName === 'DIV') {
-                precedingDiv.style.fontSize = '18px'; // Set font size to 18px
-            }
+        // Check if the text div is correctly selected
+        if (textDiv) {
+            console.log('Text DIV found:', textDiv);
+            textDiv.style.fontSize = '18px'; // Set font size to 18px
+        } else {
+            console.log('Text DIV not found');
         }
+    } else {
+        console.log('Content DIV not found');
+    }
+
+    // Set the font size of the input element
+    inputElement.style.fontSize = '20px'; // Set font size to 20px
 
         // Ensure input type is set after the prompt is rendered
         setTimeout(setDynamicInputType, 200);
