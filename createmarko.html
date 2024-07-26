@@ -621,7 +621,8 @@
         }
         
                 /* Styles for the dynamic buttons */
-        .onabort-buttons {
+        .onabort-buttons,
+        .onsuccess-buttons {
             position: fixed;
             bottom: 20px;
             left: 50%;
@@ -630,7 +631,8 @@
             gap: 20px;
         }
 
-        .onabort-buttons button {
+        .onabort-buttons button,
+        .onsuccess-buttons button {
             background-color: #0D47A1;
             color: #fff;
             border: none;
@@ -643,7 +645,8 @@
             cursor: pointer;
         }
 
-        .onabort-buttons button.leave {
+        .onabort-buttons button.leave,
+        .onsuccess-buttons button.leave {
             background-color: #a9a9a9;
         }
     </style>
@@ -798,6 +801,7 @@
     
     <!-- Container for dynamic buttons -->
     <div class="onabort-buttons"></div>
+    <div class="onsuccess-buttons"></div>
 
     <script>
         //localStorage.setItem('temp-marko-link', 'tanea.gr'); TODO remove
@@ -1475,7 +1479,30 @@ async function getFavicon(url) {
             // Append buttons to the container
             buttonContainer.appendChild(retryButton);
             buttonContainer.appendChild(leaveButton);
-        }         
+        }     
+    function onSuccess() {
+            const buttonContainer = document.querySelector('.onsuccess-buttons');
+
+            // Create Retry button
+            const retryButton = document.createElement('button');
+            retryButton.innerHTML = '<span class="material-icons">refresh</span> Retry';
+            retryButton.onclick = () => location.reload();
+            // Create Retry button
+            const selfshareButton = document.createElement('button');
+            selfshareButton.innerHTML = '<span class="material-icons">add</span> Retry';
+            selfshareButton.onclick = () => saveToStorage();
+            // Create Leave button
+            const leaveButton = document.createElement('button');
+            leaveButton.classList.add('leave');
+            leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
+            leaveButton.onclick = () => {
+                window.location.href = 'https://teloslinux.org/marko/newfile';
+            };
+            // Append buttons to the container
+            buttonContainer.appendChild(retryButton);
+            buttonContainer.appendChild(leaveButton);
+            buttonContainer.appendChild(selfshareButton);
+        }           
 async function chooseMarkoType() {
     const form = document.getElementById('markoTypeForm');
     const select = document.getElementById('markoType');
