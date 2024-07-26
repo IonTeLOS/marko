@@ -1263,8 +1263,8 @@ function hideForm(formId) {
 }
 
 async function fetchFavicon(url, defaultIcon = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg') {
-            const highResUrl = `https://www.google.com/s2/favicons?domain=${url}&sz=64`;
-            const lowResUrl = `https://www.google.com/s2/favicons?domain=${url}&sz=32`;
+            const highResUrl = `https://corsproxy.io/?https://www.google.com/s2/favicons?domain=${url}&sz=64`;
+            const lowResUrl = `https://corsproxy.io/?https://www.google.com/s2/favicons?domain=${url}&sz=32`;
 
             try {
                 // Attempt to fetch the high-res favicon
