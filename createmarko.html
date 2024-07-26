@@ -867,7 +867,7 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
         // Define and set dynamic input type and styles
         function setDynamicInputType() {
             const inputElement = document.getElementById('NXConfirmValidationInput');
-            const precedingDiv = inputElement ? inputElement.previousElementSibling : null;
+            const precedingDiv = inputElement.parentElement.previousElementSibling;
             if (!inputElement) return;
 
             // Update the input element's font size
@@ -1248,7 +1248,7 @@ async function chooseMarkoLink(type = 'website') {
         // Define and set dynamic input type and styles
         function setDynamicInputType() {
             const inputElement = document.getElementById('NXConfirmValidationInput');
-            const precedingDiv = inputElement ? inputElement.previousElementSibling : null;
+            const precedingDiv = inputElement.parentElement.previousElementSibling;
             if (!inputElement) return;
 
             // Set input type based on the provided type
