@@ -6380,44 +6380,32 @@ window.onclick = function(event) {
     }
 }  
         
-document.addEventListener('DOMContentLoaded', () => {
-    function applyAnimation(element) {
-        element.classList.add('gradual-enlarge');
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+        function applyAnimation(element) {
+            element.classList.add('gradual-enlarge');
+        }
 
-    function setupObserver() {
-        let processedGiveName = false;
-        let processedAddLink = false;
-
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach(mutation => {
-                // Find the div with the specific text
-                const targetDivs = document.querySelectorAll('.notiflix-prompt-custom-content div');
-                targetDivs.forEach(div => {
-                    if (!processedGiveName && div.textContent.includes('Give your Marko a name')) {
-                        applyAnimation(div);
-                        processedGiveName = true;
-                    }
-                    if (!processedAddLink && div.textContent.includes('Add the link for your Marko')) {
-                        applyAnimation(div);
-                        processedAddLink = true;
-                    }
+        function setupObserver() {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach(mutation => {
+                    // Find the div with the specific text
+                    const targetDivs = document.querySelectorAll('.notiflix-prompt-custom-content div');
+                    targetDivs.forEach(div => {
+                        if (div.textContent.includes('Give your Marko a name') || div.textContent.includes('Add the link for your Marko')) {
+                            applyAnimation(div);
+                            // Disconnect the observer once the target is found and updated
+                            // observer.disconnect();
+                        }
+                    });
                 });
-
-                // Disconnect the observer once both texts are found and updated
-                if (processedGiveName && processedAddLink) {
-                    observer.disconnect();
-                }
             });
-        });
 
-        // Observe changes in child elements
-        observer.observe(document.body, { childList: true, subtree: true });
-    }
+            // Observe changes in child elements
+            observer.observe(document.body, { childList: true, subtree: true });
+        }
 
-    setupObserver();
-});
-        
+        setupObserver();
+    });
 </script>
 </body>
 </html>
