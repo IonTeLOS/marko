@@ -1402,6 +1402,8 @@ async function chooseMarkoType() {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/web_asset/default/48px.svg');
                                 } else if (selectedType === 'download') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/download_2/default/48px.svg');
+                                } else if (selectedType === 'youtube') {
+                                    sessionStorage.setItem('temp-marko-icon', 'https://www.google.com/s2/favicons?domain=https://youtube.com&sz=64');
                                 } else if (selectedType === 'pdf') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/picture_as_pdf/default/48px.svg');
                                 } else if (selectedType === 'videocall') {
@@ -1731,7 +1733,7 @@ async function chooseMarkoIconType(type) {
     return new Promise((resolve, reject) => {
         const form = document.getElementById('markoIconTypeForm');
         const select = document.getElementById('markoIconType');
-if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'payment' || type === 'location' || type === 'note' || type === 'post') {
+if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'payment' || type === 'location' || type === 'note' || type === 'post' || type === 'download' || type === 'youtube') {
     const select = document.getElementById('markoIconType');
     if (select && select.options.length > 3) { // Ensure there are at least three options
         select.remove(3); // Remove the third option (index starts at 0)
