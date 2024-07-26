@@ -896,18 +896,7 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
              // Check if the input element exists
     if (!inputElement) {
         console.error('Input element not found');
-        return;
     }
-
-        const contentDivs = document.querySelectorAll('.notiflix-prompt-custom-content div');
-        
-        // Iterate through each div to find the one with the target text
-        contentDivs.forEach(div => {
-            if (div.textContent.includes('Give your Marko a name')) {
-                div.style.fontSize = '18px'; // Set the font size to 18px
-            }
-        });
-
     // Set the font size of the input element
     inputElement.style.fontSize = '20px'; // Set font size to 20px
 
@@ -6349,7 +6338,37 @@ window.onclick = function(event) {
     if (event.target == document.getElementById('infoModal2')) {
         document.getElementById('infoModal2').style.display = 'none';
     }
-}         
+}  
+        
+document.addEventListener('DOMContentLoaded', () => {
+    function graduallyEnlargeText(element) {
+        // Apply the initial style
+        element.style.transition = 'font-size 1s ease';
+        element.style.fontSize = '18px'; // Target font size
+    }
+
+    function setupObserver() {
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach(mutation => {
+                // Find the div with the specific text
+                const targetDivs = document.querySelectorAll('.notiflix-prompt-custom-content div');
+                targetDivs.forEach(div => {
+                    if (div.textContent.includes('Give your Marko a name')) {
+                        graduallyEnlargeText(div);
+                        // Disconnect the observer once the target is found and updated
+                        observer.disconnect();
+                    }
+                });
+            });
+        });
+
+        // Observe changes in child elements
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    setupObserver();
+});
+        
 </script>
 </body>
 </html>
