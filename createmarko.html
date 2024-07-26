@@ -899,24 +899,14 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
         return;
     }
 
-    // Get the parent div which contains both the label text and the input
-    const contentDiv = inputElement.closest('.notiflix-prompt-custom-content');
-    
-    // Check if the contentDiv is correctly selected
-    if (contentDiv) {
-        // Select the div containing the text
-        const textDiv = contentDiv.querySelector('.notiflix-prompt-custom-head > div:first-of-type');
-
-        // Check if the text div is correctly selected
-        if (textDiv) {
-            console.log('Text DIV found:', textDiv);
-            textDiv.style.fontSize = '18px'; // Set font size to 18px
-        } else {
-            console.log('Text DIV not found');
-        }
-    } else {
-        console.log('Content DIV not found');
-    }
+        const contentDivs = document.querySelectorAll('.notiflix-prompt-custom-content div');
+        
+        // Iterate through each div to find the one with the target text
+        contentDivs.forEach(div => {
+            if (div.textContent.includes('Give your Marko a name')) {
+                div.style.fontSize = '18px'; // Set the font size to 18px
+            }
+        });
 
     // Set the font size of the input element
     inputElement.style.fontSize = '20px'; // Set font size to 20px
