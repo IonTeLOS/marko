@@ -1516,13 +1516,6 @@ async function chooseMarkoType() {
                                 reject('Invalid icon type selected');
                                 return; // Ensure we don't resolve twice
                             }
-                        
-                        resolve(); // Resolve to continue the process
-                } catch (error) {
-                    console.error('Error in Marko creation:', error);
-                    reject(error); // Reject on error
-                } finally {
-                    // Reset the form for next selection
                     sendToMarko();
                     const urlParams = new URLSearchParams(window.location.search);
     
@@ -1533,6 +1526,24 @@ async function chooseMarkoType() {
                     reportMarkoCreation();
                     select.value = '0';
                     }
+                        resolve(); // Resolve to continue the process
+                } catch (error) {
+                    console.error('Error in Marko creation:', error);
+                    reject(error); // Reject on error
+                } finally {
+                    // Reset the form for next selection
+                    /*
+                    sendToMarko();
+                    const urlParams = new URLSearchParams(window.location.search);
+    
+                    if (urlParams.has('fromApp')) {
+                        console.log('Page opened with "fromApp" parameter');
+                        return;
+                    } else {
+                    reportMarkoCreation();
+                    select.value = '0';
+                    }
+                    */
                 }
             } else {
                 Notiflix.Notify.warning('Select the type of your Marko');
