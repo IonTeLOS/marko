@@ -623,7 +623,8 @@
     </style>
 </head>
 <body>
-    
+    <!-- Container for dynamic buttons -->
+    <div class="create-buttons"></div>
 <div id="markoTypeForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px;">
         <h2>Creating a Marko..</h2>
         <div id="line-separator"></div>
@@ -926,6 +927,7 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
                 // Handle cancel action
                 Notiflix.Notify.info('Marko creation aborted. Bye!');
                 sessionStorage.removeItem('temp-marko-type');
+                sessionStorage.removeItem('temp-marko-link');
                 reject(new Error('User cancelled'));
             },
             {}
@@ -1303,7 +1305,7 @@ async function chooseMarkoLink(type = 'website') {
             () => {
                 console.log('User cancelled link input');
                 Notiflix.Notify.info('Marko creation aborted. Bye!');
-                sessionStorage.removeItem('temp-marko-name');
+                sessionStorage.removeItem('temp-marko-type');
                 reject(new Error('User cancelled'));
             },
             {}
@@ -6366,6 +6368,8 @@ document.getElementById('cancelCreationButton').onclick = function() {
 // Handle cancel button click
 document.getElementById('cancelCreation2Button').onclick = function() {
             Notiflix.Notify.info('Marko creation aborted. Bye!');
+            sessionStorage.removeItem('temp-marko-type');
+            sessionStorage.removeItem('temp-marko-link');
             hideForm('markoIconTypeForm');
             console.log('User cancelled');
             return; 
@@ -6407,6 +6411,25 @@ window.onclick = function(event) {
 
         setupObserver();
     });
+        
+    function showRetryAndLeaveButtons() {
+            const buttonContainer = document.querySelector('.create-buttons');
+
+            // Create Retry button
+            const retryButton = document.createElement('button');
+            retryButton.innerHTML = '<span class="material-icons">refresh</span> Retry';
+            retryButton.onclick = () => location.reload();
+
+            // Create Leave button
+            const leaveButton = document.createElement('button');
+            leaveButton.classList.add('leave');
+            leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
+            leaveButton.onclick = () => window.close();
+
+            // Append buttons to the container
+            buttonContainer.appendChild(retryButton);
+            buttonContainer.appendChild(leaveButton);
+        }     
 </script>
 </body>
 </html>
