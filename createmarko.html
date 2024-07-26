@@ -1262,30 +1262,27 @@ function hideForm(formId) {
     document.getElementById('formOverlay').style.display = 'none';
 }
 
-async function fetchFavicon(url, defaultIcon = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg') {
-            const highResUrl = `https://corsproxy.io/?https://www.google.com/s2/favicons?domain=${url}&sz=64`;
-            const lowResUrl = `https://corsproxy.io/?https://www.google.com/s2/favicons?domain=${url}&sz=32`;
+async function getFavicon(url) {
+  return new Promise((resolve) => {
+    const img = new Image();
+    const fallbackIcon = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg';
+    const expectedSize = 64;
 
-            try {
-                // Attempt to fetch the high-res favicon
-                let response = await fetch(highResUrl);
-                if (response.ok) {
-                    return highResUrl;
-                } else {
-                    // If high-res fails, attempt to fetch the low-res favicon
-                    response = await fetch(lowResUrl);
-                    if (response.ok) {
-                        return lowResUrl;
-                    } else {
-                        // If both high-res and low-res fail, return the default icon
-                        return defaultIcon;
-                    }
-                }
-            } catch (error) {
-                // If an error occurs during fetch, return the default icon
-                return defaultIcon;
-            }
-        }        
+    img.onload = function() {
+      if (this.width < expectedSize || this.height < expectedSize) {
+        resolve(fallbackIcon);
+      } else {
+        resolve(this.src);
+      }
+    };
+
+    img.onerror = function() {
+      resolve(fallbackIcon);
+    };
+
+    img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=${expectedSize}`;
+  });
+}
     
 async function chooseMarkoType() {
     const form = document.getElementById('markoTypeForm');
@@ -1441,7 +1438,7 @@ async function chooseMarkoType() {
                                 randomColor = getRandomColor();
                                 sessionStorage.setItem('temp-marko-color', randomColor);
                                 const chosenLink = sessionStorage.getItem('temp-marko-link');
-                                const favicon = await fetchFavicon(chosenLink);
+                                const favicon = await getFavicon(chosenLink);
                                 //const favicon = `https://www.google.com/s2/favicons?domain=${chosenLink}&sz=32`
                                 sessionStorage.setItem('temp-marko-icon', favicon);
                             } else {
