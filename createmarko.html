@@ -1246,7 +1246,7 @@ async function chooseMarkoLink(type = 'website') {
         );
 
 // Define and set dynamic input type and styles
-function setDynamicInputType() {
+function setDynamicInputType(type) {
     // Get the input element by its ID
     const inputElement = document.getElementById('NXConfirmValidationInput');
 
@@ -1257,12 +1257,14 @@ function setDynamicInputType() {
     }
 
     // Get the parent div which contains both the label text and the input
-    const parentDiv = inputElement.parentElement.parentElement;
+    const contentDiv = inputElement.closest('.notiflix-prompt-custom-content');
+    
+    // Check if the contentDiv is correctly selected
+    if (contentDiv) {
+        // Select the div containing the text
+        const textDiv = contentDiv.querySelector('.notiflix-prompt-custom-head > div:first-of-type');
 
-    // Check if the parent div is correctly selected
-    if (parentDiv) {
-        const textDiv = parentDiv.querySelector('div:not(:last-child)'); // Select the first div within parentDiv
-
+        // Check if the text div is correctly selected
         if (textDiv) {
             console.log('Text DIV found:', textDiv);
             textDiv.style.fontSize = '18px'; // Set font size to 18px
@@ -1270,7 +1272,7 @@ function setDynamicInputType() {
             console.log('Text DIV not found');
         }
     } else {
-        console.log('Parent DIV not found');
+        console.log('Content DIV not found');
     }
 
     // Set the font size of the input element
@@ -1292,10 +1294,11 @@ function setDynamicInputType() {
     // Add real-time validation based on the input type
     inputElement.addEventListener('input', () => {
         let value = inputElement.value;
-         value = value.replace(/\s+/g, '');
+        value = value.replace(/\s+/g, '');
         inputElement.value = value;
     });
 }
+
         // Ensure input type is set after the prompt is rendered
         setTimeout(setDynamicInputType, 200);
     });
