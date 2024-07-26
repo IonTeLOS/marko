@@ -880,7 +880,7 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
         }
 
         // Ensure input type is set after the prompt is rendered
-        setTimeout(setDynamicInputType, 100);
+        setTimeout(setDynamicInputType, 200);
     });
 }
 
@@ -1156,17 +1156,16 @@ async function chooseMarkoLink(type = 'website') {
     await new Promise(resolve => setTimeout(resolve, 500));
 
     return new Promise((resolve, reject) => {
-      console.log('Showing Notiflix prompt for link');
-    const guideTexts = {
-    'phone': 'Add the phone number for your Marko',
-    'Viber': 'Add the phone number including international code for your Marko',
-    'WhatsApp': 'Add the phone number including international code for your Marko',
-    'email': 'Add the email address for your Marko',
-    };
+        console.log('Showing Notiflix prompt for link');
+        const guideTexts = {
+            'phone': 'Add the phone number for your Marko',
+            'Viber': 'Add the phone number including international code for your Marko',
+            'WhatsApp': 'Add the phone number including international code for your Marko',
+            'email': 'Add the email address for your Marko',
+        };
 
-    const guideText = guideTexts[type] || 'Add the link for your Marko';
+        const guideText = guideTexts[type] || 'Add the link for your Marko';
 
-          
         Notiflix.Confirm.prompt(
             'Creating a Marko..',
             guideText,
@@ -1176,58 +1175,61 @@ async function chooseMarkoLink(type = 'website') {
             async (chosenLink) => {
                 console.log('Link provided:', chosenLink);
                 try {
-                    if (type === 'website' || type === 'videocall' || type === 'download') {
-                      const sanitizedUrl = await sanitizeAndValidateUrl(chosenLink, type === 'other');
-                      sessionStorage.setItem('temp-marko-link', sanitizedUrl);
-                      resolve(sanitizedUrl);
-                    }
-                    if (type === 'email') {
-                    	const sanitizedEmail = await sanitizeAndValidateEmail(chosenLink);
-                    	sessionStorage.setItem('temp-marko-link', sanitizedEmail);
-                    	resolve(sanitizedEmail);
-                    }
-                    if (type === 'phone') {
-                    	const formattedPhone = await processPhoneNumber(chosenLink);
-                    	sessionStorage.setItem('temp-marko-link', formattedPhone);
-                    	resolve(formattedPhone);
-                    }
-                    if (type === 'Viber') {
-                    	const formattedPhone = await processPhoneNumber(chosenLink);
-                    	const bareNumber = formattedPhone.replace(/^\+/, '');  // Remove '+' for Viber
-                        const bareNoTelNumber = formattedPhone.replace(/tel:/g, '');
-                        const viberNumber = `viber://chat?number=${bareNoTelNumber}`
-                    	sessionStorage.setItem('temp-marko-link', viberNumber);
-                    	resolve(viberNumber);
-                    }
-                    if (type === 'WhatsApp') {
-                    	const formattedPhone = await processPhoneNumber(chosenLink);
-                    	const bareNumber = formattedPhone.replace(/tel:/g, '');
+                    let result;
 
-                        const waNumber = `https://wa.me/${bareNumber}`
-                    	sessionStorage.setItem('temp-marko-link', waNumber);
-                    	resolve(waNumber);
+                    switch (type) {
+                        case 'website':
+                        case 'videocall':
+                        case 'download':
+                            result = await sanitizeAndValidateUrl(chosenLink, type === 'other');
+                            sessionStorage.setItem('temp-marko-link', result);
+                            break;
+                        case 'email':
+                            result = await sanitizeAndValidateEmail(chosenLink);
+                            sessionStorage.setItem('temp-marko-link', result);
+                            break;
+                        case 'phone':
+                            result = await processPhoneNumber(chosenLink);
+                            sessionStorage.setItem('temp-marko-link', result);
+                            break;
+                        case 'Viber':
+                            result = await processPhoneNumber(chosenLink);
+                            const bareNoTelNumber = result.replace(/^\+/, ''); // Remove '+' for Viber
+                            result = `viber://chat?number=${bareNoTelNumber}`;
+                            sessionStorage.setItem('temp-marko-link', result);
+                            break;
+                        case 'WhatsApp':
+                            result = await processPhoneNumber(chosenLink);
+                            const bareNumber = result.replace(/tel:/g, '');
+                            result = `https://wa.me/${bareNumber}`;
+                            sessionStorage.setItem('temp-marko-link', result);
+                            break;
+                        case 'pdf':
+                        case 'window':
+                            if (chosenLink.includes("youtu.be") || chosenLink.includes("youtube.com")) {
+                                result = getYouTubeId(chosenLink);
+                                sessionStorage.setItem('temp-marko-link', result);
+                                sessionStorage.setItem('temp-marko-type', 'youtube');
+                            } else {
+                                result = await sanitizeAndValidateUrl(chosenLink, type === 'other');
+                                sessionStorage.setItem('temp-marko-link', result);
+                            }
+                            break;
+                        case 'location':
+                            result = await handleLocation(chosenLink);
+                            sessionStorage.setItem('temp-marko-link', result);
+                            break;
+                        case 'payment':
+                            result = await validatePaylink(chosenLink);
+                            sessionStorage.setItem('temp-marko-link', result);
+                            break;
+                        default:
+                            result = chosenLink;
+                            sessionStorage.setItem('temp-marko-link', result);
+                            break;
                     }
-                    if (type === 'pdf' || type === 'window') {
-                       if ((chosenLink.includes("youtu.be")) || (chosenLink.includes("youtube.com"))) {
-                           const ytId = getYouTubeId(chosenLink);
-                           sessionStorage.setItem('temp-marko-link', ytId);
-                           sessionStorage.setItem('temp-marko-type', 'youtube');
-                           resolve(ytId);
-                      }     
-                      const sanitizedUrl = await sanitizeAndValidateUrl(chosenLink, type === 'other');
-                      sessionStorage.setItem('temp-marko-link', sanitizedUrl);
-                      resolve(sanitizedUrl);
-                    }
-                    if (type === 'location') {
-                    	const formattedLocation = await handleLocation(chosenLink);
-                    	sessionStorage.setItem('temp-marko-link', formattedLocation);
-                    	resolve(formattedLocation);
-                    }
-                    if (type === 'payment') {
-                    	const payLink = await validatePaylink(chosenLink);
-                    	sessionStorage.setItem('temp-marko-link', payLink);
-                    	resolve(payLink);
-                    }
+
+                    resolve(result);
                 } catch (error) {
                     console.error('Error sanitizing or validating URL:', error);
                     Notiflix.Notify.failure(error.message);
@@ -1242,16 +1244,12 @@ async function chooseMarkoLink(type = 'website') {
             },
             {}
         );
-         // Dynamic setting of input type
+
+        // Define and set dynamic input type and styles
         function setDynamicInputType() {
             const inputElement = document.getElementById('NXConfirmValidationInput');
             const precedingDiv = inputElement ? inputElement.previousElementSibling : null;
             if (!inputElement) return;
-
-            if (precedingDiv && precedingDiv.tagName === 'DIV') {
-                // Update the font size of the preceding div
-                precedingDiv.style.fontSize = '18px';
-            }     
 
             // Set input type based on the provided type
             switch (type) {
@@ -1265,21 +1263,34 @@ async function chooseMarkoLink(type = 'website') {
                     inputElement.type = 'text'; // Fallback for other types
                     break;
             }
-            
+
+            // Update the font size of the input element and its preceding div
+            if (precedingDiv && precedingDiv.tagName === 'DIV') {
+                precedingDiv.style.fontSize = '18px'; // Set font size to 18px
+            }
             inputElement.style.fontSize = '20px'; // Set font size to 20px
+
             // Add real-time validation based on the input type
             inputElement.addEventListener('input', () => {
                 let value = inputElement.value;
-                value = value.replace(/\s+/g, '');
+
+                if (type === 'phone' || type === 'Viber' || type === 'WhatsApp') {
+                    // Remove spaces for phone numbers
+                    value = value.replace(/\s+/g, '');
+                } else if (type === 'email') {
+                    // Trim spaces for emails
+                    value = value.trim();
+                }
 
                 inputElement.value = value;
             });
         }
 
         // Ensure input type is set after the prompt is rendered
-        setTimeout(setDynamicInputType, 100);
+        setTimeout(setDynamicInputType, 200);
     });
 }
+
         
 function getRandomColor() {
     // Function to check if a color is too close to white or black
