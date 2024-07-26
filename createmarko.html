@@ -1237,18 +1237,12 @@ async function chooseMarkoLink(type = 'website') {
                     inputElement.type = 'text'; // Fallback for other types
                     break;
             }
-
+            
+            inputElement.style.fontSize = '18px'; // Set font size to 18px
             // Add real-time validation based on the input type
             inputElement.addEventListener('input', () => {
                 let value = inputElement.value;
-
-                if (type === 'phone' || type === 'Viber' || type === 'WhatsApp') {
-                    // Remove spaces for phone numbers
-                    value = value.replace(/\s+/g, '');
-                } else if (type === 'email') {
-                    // Trim spaces for emails
-                    value = value.trim();
-                }
+                value = value.replace(/\s+/g, '');
 
                 inputElement.value = value;
             });
