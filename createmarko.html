@@ -1292,12 +1292,12 @@ async function chooseMarkoLink(type = 'website') {
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
                     }
-
                     resolve(result);
                 } catch (error) {
                     console.error('Error sanitizing or validating URL:', error);
                     Notiflix.Notify.failure(error.message);
                     reject(error);
+                    location.reload();
                 }
             },
             () => {
@@ -1715,7 +1715,7 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
                 sessionStorage.setItem('temp-marko-alias', alias);
                 if (onetimeChecked) {
                     sessionStorage.setItem('temp-onetime', 'true');
-                    Notiflix.Notify.success('Your shortlink can be used only once!'); // Show Notiflix notification
+                    Notiflix.Notify.success('Your shortlink can be used only twice!'); // Show Notiflix notification
                 }
                 Notiflix.Notify.success('Custom shortlink created successfully!'); // Show Notiflix notification
                 initializeShortlinkWithTempMarkoLink(shareLink);
@@ -1735,8 +1735,8 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
             Notiflix.Notify.success('A long local weblink has been created and copied to your clipboard.'); // Show Notiflix notification for cancelation
             const shareLink = constructShareLink();
             removeAliasForm();
-            sessionStorage.clear();
             handleClipboardAndSharing(sharelink);
+            sessionStorage.clear();
         }
 
         function removeAliasForm() {
