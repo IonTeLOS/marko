@@ -1474,41 +1474,24 @@ function constructShareLink() {
     if (icon) url.searchParams.append('icon', icon);
     if (color) url.searchParams.append('color', color);
     
-    // Determine action based on type
-    let mLink = '';
-    switch (type) {
-        case 'youtube':
-            mLink = '${link}';
-            break;
-        case 'window':
-            mLink = '${link}';
-            break;
-        case 'pdf':
-            const proxied = `https://corsproxy.io/?${link}`;
-            mLink = '${proxied}';
-            break;
-        case 'download':
-            mLink = '${link}';
-            break;
-        case 'contact':
-            mLink = '${link}';
-            break;
-        case 'post':
-            mLink = '${encodedLink}';
-            break;
-        case 'note':
-            mLink = '${link}';
-            break;
-        case 'phone':
-            mLink = '${link}';
-            break;
-        case 'email':
-            mLink = '${link}';
-            break;    
-        default:
-            mLink = '${link}';
-            break;
-    }
+// Determine action based on type
+let mLink = '';
+switch (type) {
+    case 'pdf':
+        mLink = `https://corsproxy.io/?${link}`;
+        break;
+    case 'post':
+        mLink = `${encodedLink}`;
+        break;
+    case 'phone':
+        // Remove starting '+' if it exists
+        mLink = link.startsWith('+') ? link.substring(1) : link;
+        break;
+    default:
+        mLink = `${link}`;
+        break;
+}
+
     
     // Append action parameter with proper encoding
     url.searchParams.append('link', link);
@@ -6196,11 +6179,15 @@ document.getElementsByClassName('close-help3')[0].onclick = function() {
 document.getElementById('cancelCreationButton').onclick = function() {
             Notiflix.Notify.info('Marko creation aborted. Bye!');
             hideForm('markoTypeForm');
+            console.log('User cancelled');
+            return; 
 }
 // Handle cancel button click
 document.getElementById('cancelCreation2Button').onclick = function() {
             Notiflix.Notify.info('Marko creation aborted. Bye!');
             hideForm('markoIconTypeForm');
+            console.log('User cancelled');
+            return; 
 }
 window.onclick = function(event) {
     if (event.target == document.getElementById('infoModal')) {
