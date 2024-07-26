@@ -620,11 +620,36 @@
             animation: enlargeAndShrink 1.2s ease forwards;
         }
         
+                /* Styles for the dynamic buttons */
+        .onabort-buttons {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+
+        .onabort-buttons button {
+            background-color: #0D47A1;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .onabort-buttons button.leave {
+            background-color: #a9a9a9;
+        }
     </style>
 </head>
 <body>
-    <!-- Container for dynamic buttons -->
-    <div class="create-buttons"></div>
+
 <div id="markoTypeForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px;">
         <h2>Creating a Marko..</h2>
         <div id="line-separator"></div>
@@ -769,7 +794,9 @@
             </button>
         </div>
     </div>
-
+    
+    <!-- Container for dynamic buttons -->
+    <div class="onabort-buttons"></div>
 
     <script>
         //localStorage.setItem('temp-marko-link', 'tanea.gr'); TODO remove
@@ -1435,7 +1462,7 @@ async function getFavicon(url) {
 }
 
     function onAbort() {
-            const buttonContainer = document.querySelector('.create-buttons');
+            const buttonContainer = document.querySelector('.onabort-buttons');
 
             // Create Retry button
             const retryButton = document.createElement('button');
