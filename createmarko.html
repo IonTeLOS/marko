@@ -215,34 +215,61 @@
             outline: none; /* Remove default outline */
         }
 
-        .help-modal {
-            display: none;
-            position: fixed;
-            z-index: 4002;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5); /* Black w/ opacity */
-            animation: fadeIn 0.5s; /* Fade in the modal */
-        }
-        .help-modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 500px;
-        }
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    position: relative;
+        <style>
+/* Modal overlay */
+.help-modal {
+    display: none; /* Hidden by default, shown via JavaScript */
+    position: fixed; /* Fixed position to cover the viewport */
+    z-index: 4002; /* Ensure it is above other content */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto; /* Enable scrolling if content is too large */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    animation: fadeIn 0.5s; /* Smooth fade-in effect */
 }
+
+/* Modal content */
+.help-modal-content {
+    background-color: #fefefe; /* White background for the modal */
+    margin: 5% auto; /* Adjust margin for better centering */
+    padding: 20px; /* Padding inside the modal */
+    border: 1px solid #888; /* Light gray border */
+    border-radius: 8px; /* Rounded corners */
+    width: 90%; /* Responsive width */
+    max-width: 600px; /* Maximum width */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    position: relative; /* Relative positioning for close button */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+/* Modal text styling */
+.help-modal-content p {
+    font-size: 16px;
+    line-height: 1.6; /* Improve readability */
+    color: #333;
+    margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .help-modal-content {
+        width: 95%; /* Full width on smaller screens */
+        padding: 15px; /* Adjust padding for smaller screens */
+    }
+
+    .help-modal-content .close-help2 {
+        font-size: 20px; /* Smaller close button on small screens */
+        top: 5px;
+        right: 5px;
+    }
+
+    .help-modal-content p {
+        font-size: 14px; /* Smaller text on small screens */
+    }
+}
+
 
 /* Close Button */
 .close-help,
