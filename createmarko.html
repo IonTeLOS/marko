@@ -859,6 +859,15 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
             },
             {}
         );
+        function setDynamicInputType() {
+            const inputElement = document.getElementById('NXConfirmValidationInput');
+            if (!inputElement) return;
+            
+            inputElement.style.fontSize = '20px'; // Set font size to 20px
+        }
+
+        // Ensure input type is set after the prompt is rendered
+        setTimeout(setDynamicInputType, 100);
     });
 }
 
@@ -1238,7 +1247,7 @@ async function chooseMarkoLink(type = 'website') {
                     break;
             }
             
-            inputElement.style.fontSize = '18px'; // Set font size to 18px
+            inputElement.style.fontSize = '20px'; // Set font size to 20px
             // Add real-time validation based on the input type
             inputElement.addEventListener('input', () => {
                 let value = inputElement.value;
