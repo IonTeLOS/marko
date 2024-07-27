@@ -1873,16 +1873,16 @@ function stripProtocolFromUrl(url) {
   if (url.startsWith('mailto:')) {
     return strippedUrl;  // Email is good as is after removing 'mailto:'
   } else if (url.startsWith('tel:') || url.startsWith('viber://') || url.startsWith('whatsapp://')) {
-    return strippedUrl.replace(/[?=]/g, '');  // Remove any query parameters
+    return strippedUrl.split('?')[0];  // Remove any query parameters
   } else {
     try {
       const { hostname, pathname } = new URL(url);
-      return (hostname + pathname).replace(/\/$/, '');
+      return (hostname + pathname).replace(/\/$/, ''); // Remove trailing slash
     } catch (e) {
       return strippedUrl;
     }
   }
-}        
+}
 
 function isBlankOrSpaces(str) {
     return !str || str.trim() === '';
@@ -1892,10 +1892,18 @@ function isBlankOrSpaces(str) {
 function saveToStorage(array = 'bookmarks') {
     const type = sessionStorage.getItem('temp-marko-type');
     const link = sessionStorage.getItem('temp-marko-link');
-    const title = sessionStorage.getItem('temp-marko-name');
+    let title = sessionStorage.getItem('temp-marko-name');
     // handle cases where title is blank
     if (isBlankOrSpaces(title)) {
+         if (type = 'youtube') {
+            title = 'YouTube link';
+         } else if (type = 'note') {
+            title = 'Marko Note';
+         } else if (type = 'post') {
+            title = 'Marko Post';
+         } else {
          title = stripProtocolFromUrl(link);
+         }
          sessionStorage.setItem('temp-marko-name', title);
     }
     const icon = sessionStorage.getItem('temp-marko-icon');
