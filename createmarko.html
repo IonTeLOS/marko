@@ -1895,12 +1895,18 @@ function saveToStorage(array = 'bookmarks') {
     let title = sessionStorage.getItem('temp-marko-name');
     // handle cases where title is blank
     if (isBlankOrSpaces(title)) {
-         if (type = 'youtube') {
+         if (type === 'youtube') {
             title = 'YouTube link';
-         } else if (type = 'note') {
+         } else if (type === 'note') {
             title = 'Marko Note';
-         } else if (type = 'post') {
+         } else if (type === 'post') {
             title = 'Marko Post';
+         } else if (type === 'location') {
+            title = 'Marko Location';  
+         } else if (type === 'payment') {
+            title = 'Marko Paylink';   
+        } else if (type === 'videocall') {
+            title = 'Marko Conference';
          } else {
          title = stripProtocolFromUrl(link);
          }
