@@ -1506,9 +1506,9 @@ async function getFavicon(url) {
                 sessionStorage.clear();
                 location.reload();
             };
-            // Create Retry button
+            // Create selfshare button
             const selfshareButton = document.createElement('button');
-            selfshareButton.innerHTML = '<span class="material-icons">add</span> Retry';
+            selfshareButton.innerHTML = '<span class="material-icons">add</span> Add';
             selfshareButton.onclick = () => {
                 saveToStorage();
                 sessionStorage.clear();
@@ -1854,13 +1854,50 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
             document.getElementById('cancelCreation2Button').removeEventListener('click', handleCancel);
         }
     });
-}  
+}
+
+function stripProtocolFromUrl(url) {
+  // Array of prefixes to strip
+  const prefixes = [
+    'https://', 'http://',  // Web protocols
+    'mailto:',             // Email
+    'tel:', 'viber://chat?number=', 'whatsapp://send?phone=',  // Phone-related
+    'file://',            // Local file
+  ];
+
+  // Use a regular expression to match and remove any of the prefixes
+  const prefixPattern = new RegExp('^(' + prefixes.map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'i');
+  let strippedUrl = url.replace(prefixPattern, '');
+
+  // Further cleanup for specific types
+  if (url.startsWith('mailto:')) {
+    return strippedUrl;  // Email is good as is after removing 'mailto:'
+  } else if (url.startsWith('tel:') || url.startsWith('viber://') || url.startsWith('whatsapp://')) {
+    return strippedUrl.replace(/[?=]/g, '');  // Remove any query parameters
+  } else {
+    try {
+      const { hostname, pathname } = new URL(url);
+      return (hostname + pathname).replace(/\/$/, '');
+    } catch (e) {
+      return strippedUrl;
+    }
+  }
+}        
+
+function isBlankOrSpaces(str) {
+    return !str || str.trim() === '';
+}        
         
 // possibly save to other array, for example synced file on Google Drive. Make sure main app handles such url params
 function saveToStorage(array = 'bookmarks') {
     const type = sessionStorage.getItem('temp-marko-type');
     const link = sessionStorage.getItem('temp-marko-link');
     const title = sessionStorage.getItem('temp-marko-name');
+    // handle cases where title is blank
+    if (isBlankOrSpaces(title)) {
+         title = stripProtocolFromUrl(link);
+         sessionStorage.setItem('temp-marko-name', title);
+    }
     const icon = sessionStorage.getItem('temp-marko-icon');
     const color = sessionStorage.getItem('temp-marko-color');
     const linkData = [type, link, title, icon, color];
