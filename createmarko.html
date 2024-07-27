@@ -1325,8 +1325,8 @@ function validatePaylink(url) {
   // PayPal.me link pattern: paypal.me/username
   const paypalRegex = /^(?:https?:\/\/)?paypal\.me\/(?:[a-zA-Z0-9._-]{1,50}|\{[a-zA-Z0-9._-]{1,50}\})$/i;
 
-  // Bitcoin address pattern
-  const bitcoinRegex = /^(?:bitcoin:)?(bc1|[13])[a-km-zA-HJ-NP-Z1-9]{25,34}$/i;
+  // Bitcoin address pattern with optional parameters
+  const bitcoinRegex = /^(?:bitcoin:)?([13][a-km-zA-HJ-NP-Z1-9]{26,34})(\?amount=[0-9]*[.,]?[0-9]+)?(&label=[%20a-zA-Z0-9]+)?$/i;
 
   // Determine if the URL is valid and format it accordingly
   const isPayPal = paypalRegex.test(url);
