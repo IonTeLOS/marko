@@ -1619,7 +1619,7 @@ async function chooseMarkoType() {
                 sessionStorage.setItem('temp-marko-type', selectedType);
                 
                 try {
-                    if (selectedType !== 'note' && selectedType !== 'post' &&  selectedType !== 'videocall') {
+                    if (selectedType !== 'note' && selectedType !== 'post' &&  selectedType !== 'videocall' && selectedType !== 'window') {
                     // Delay before calling chooseMarkoLink
                     await new Promise(resolve => setTimeout(resolve, 500));
                     console.log('Calling chooseMarkoLink');
@@ -1631,7 +1631,20 @@ async function chooseMarkoType() {
                     console.log('Calling chooseMarkoName');
                     const name = await chooseMarkoName(selectedType, link);
                     console.log('Name chosen:', name);
-                    }
+                    } else if (selectedType === 'window') {
+                        const newType = sessionStorage.getItem('temp-marko-type'); 
+                        // Delay before calling chooseMarkoLink
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        console.log('Calling chooseMarkoLink');
+                        const link = await chooseMarkoLink(selectedType);
+                        console.log('Link chosen:', link);
+
+                        // Delay before calling chooseMarkoName
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        console.log('Calling chooseMarkoName');
+                        const name = await chooseMarkoName(selectedType, link);
+                        console.log('Name chosen:', name);
+                    } 
                     
                     let note, post, iconAndColor;
 
@@ -1656,9 +1669,6 @@ async function chooseMarkoType() {
                         postContent.style.display = 'block';
                         post = await processPost(name);
                         sessionStorage.setItem('temp-marko-link', post);
-                        //iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
-                        //console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', post:', post, ', icon and icon color:', iconAndColor);
-                        //resolve(); // Resolve to continue the process
                     } else if (selectedType === 'videocall') {
                         // Delay before calling chooseMarkoName
                         await new Promise(resolve => setTimeout(resolve, 500));
@@ -1666,9 +1676,6 @@ async function chooseMarkoType() {
                         const name = await chooseMarkoName(selectedType, ' ');
                         const randomRoom = appendUUIDToURL('https://pchat.xyz/public/');
                         sessionStorage.setItem('temp-marko-link', randomRoom);
-                        //iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
-                        //console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', post:', post, ', icon and icon color:', iconAndColor);
-                        //resolve(); // Resolve to continue the process
                     } 
                         // Default handling for other types (e.g., 'link')
                         console.log('Calling chooseMarkoIconType');
