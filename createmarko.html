@@ -941,7 +941,10 @@ function stripProtocolFromUrl(url) {
 }
         
 async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('temp-marko-link')) {
-
+    const newType = sessionStorage.getItem('temp-marko-type');
+    if (newType !== type) {
+       type = newType;
+    }
     return new Promise((resolve, reject) => {
         Notiflix.Confirm.prompt(
             'Creating a Marko..',
@@ -950,7 +953,7 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
             'Continue',
             'Cancel',
             (chosenName) => {
-                const typeToTitleMap = {
+            const typeToTitleMap = {
         'window': 'Marko Frame',                        
         'youtube': 'YouTube link',
         'note': 'Marko Note',
