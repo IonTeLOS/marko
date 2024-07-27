@@ -958,27 +958,27 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
         'payment': 'Marko Paylink',
         'videocall': 'Marko Conference'
     };
-
+    let markoName = '';
     // If chosenName is blank or contains only spaces
     if (!chosenName || chosenName.trim() === '') {
         // Assign the stripped URL if the type is not in the specific type map
         if (!typeToTitleMap.hasOwnProperty(type)) {
-            chosenName = stripProtocolFromUrl(link);
+            markoName = stripProtocolFromUrl(link);
+        // If type matches any key in the typeToTitleMap, assign the corresponding title    
+        } else {
+            markoName = typeToTitleMap[type];
         }
+    } else {
+            markoName = chosenName;
     }
 
-    // If type matches any key in the typeToTitleMap, assign the corresponding title
-    if (typeToTitleMap.hasOwnProperty(type)) {
-        chosenName = typeToTitleMap[type];
-    }
-
-    // Ensure chosenName does not exceed 50 characters
-    chosenName = (chosenName.length > 50) ? chosenName.substring(0, 50) + '..' : chosenName;
+    // Ensure markoName does not exceed 50 characters
+    markoName = (markoName.length > 50) ? markoName.substring(0, 50) + '..' : markoName;
 
     // Store the final chosenName in sessionStorage
-    sessionStorage.setItem('temp-marko-name', chosenName);
+    sessionStorage.setItem('temp-marko-name', markoName);
 
-    return chosenName;
+    resolve(markoName);
                 /*
                 // Process the chosen name
                 chosenName = (chosenName && chosenName.trim()) ? chosenName : stripProtocolFromUrl(link);
