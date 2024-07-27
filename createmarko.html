@@ -1451,7 +1451,16 @@ async function getFavicon(url) {
             buttonContainer.appendChild(retryButton);
             buttonContainer.appendChild(leaveButton);
             buttonContainer.appendChild(selfshareButton);
-        }           
+        }         
+// Import the uuid library
+const { v4: uuidv4 } = require('uuid');
+
+// Define the function
+function appendUUIDToURL(url) {
+  const uuid = uuidv4();
+  return `${url}${uuid}`;
+}
+        
 async function chooseMarkoType() {
     const form = document.getElementById('markoTypeForm');
     const select = document.getElementById('markoType');
@@ -1503,7 +1512,7 @@ async function chooseMarkoType() {
                 sessionStorage.setItem('temp-marko-type', selectedType);
                 
                 try {
-                    if (selectedType !== 'note' && selectedType !== 'post') {
+                    if (selectedType !== 'note' && selectedType !== 'post' &&  selectedType !== 'videocall') {
                     // Delay before calling chooseMarkoLink
                     await new Promise(resolve => setTimeout(resolve, 500));
                     console.log('Calling chooseMarkoLink');
@@ -1540,6 +1549,16 @@ async function chooseMarkoType() {
                         postContent.style.display = 'block';
                         post = await processPost(name);
                         sessionStorage.setItem('temp-marko-link', post);
+                        //iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
+                        //console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', post:', post, ', icon and icon color:', iconAndColor);
+                        //resolve(); // Resolve to continue the process
+                    } else if (selectedType === 'videocall') {
+                        // Delay before calling chooseMarkoName
+                        await new Promise(resolve => setTimeout(resolve, 500));
+                        console.log('Calling chooseMarkoName');
+                        const name = await chooseMarkoName(selectedType, ' ');
+                        const randomRoom = appendUUIDToURL('https://pchat.xyz/public/');
+                        sessionStorage.setItem('temp-marko-link', randomRoom);
                         //iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
                         //console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', post:', post, ', icon and icon color:', iconAndColor);
                         //resolve(); // Resolve to continue the process
