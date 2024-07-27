@@ -951,14 +951,14 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
             'Cancel',
             (chosenName) => {
                 const typeToTitleMap = {
+        'window': 'Marko Frame',                        
         'youtube': 'YouTube link',
         'note': 'Marko Note',
         'post': 'Marko Post',
         'location': 'Marko Location',
         'payment': 'Marko Paylink',
-        'videocall': 'Marko Conference',
-        'window': 'Marko Frame'            
-    };
+        'videocall': 'Marko Conference'
+        };
     let markoName = '';
     // If chosenName is blank or contains only spaces
     if (!chosenName || chosenName.trim() === '') {
