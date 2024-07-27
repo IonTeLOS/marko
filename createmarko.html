@@ -6478,6 +6478,8 @@ window.onclick = function(event) {
                     targetDivs.forEach(div => {
                         if (div.textContent.includes('Give your Marko a name') || div.textContent.includes('Add the link for your Marko') || div.textContent.includes('Add the phone number for your Marko') || div.textContent.includes('Add the phone number including international code') || div.textContent.includes('Add the email for your Marko')) {
                             applyAnimation(div);
+                                if (div.textContent.includes('Add the link for your Marko') || div.textContent.includes('Add the phone number for your Marko') || div.textContent.includes('Add the phone number including international code') || div.textContent.includes('Add the email for your Marko')) {
+
                             const inputElement = document.getElementById('NXConfirmValidationInput');
     // Set the font size of the input element
     inputElement.style.fontSize = '20px'; // Set font size to 20px
@@ -6502,6 +6504,7 @@ window.onclick = function(event) {
         value = value.replace(/\s+/g, '');
         inputElement.value = value;
     });
+ }
                             // Disconnect the observer once the target is found and updated
                             // observer.disconnect();
                         }
