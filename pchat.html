@@ -135,14 +135,24 @@
             }
         });
 
-        // Function to share self address with iframe
-        function shareSelfAddress() {
-            const iframe = document.getElementById('teleconference-iframe');
-            const message = sessionStorage.getItem('myAddress'); // Your message to send
-            if (iframe.contentWindow) {
-                iframe.contentWindow.postMessage(message, '*'); // '*' allows messages from any origin, you can restrict it to a specific origin
-            }
+// Function to share self address with iframe
+function shareSelfAddress() {
+    const iframe = document.getElementById('teleconference-iframe');
+    const message = sessionStorage.getItem('myAddress'); // Your message to send
+
+    // Check if iframe and message are available
+    if (iframe && iframe.contentWindow && message) {
+        try {
+            iframe.contentWindow.postMessage({ type: 'SHARE_ADDRESS', data: message }, 'https://pchat.xyz'); // Replace with the specific origin of the iframe if known
+
+        } catch (error) {
+            console.error('Failed to send message to iframe:', error);
         }
+    } else {
+        console.warn('Iframe or message is not available');
+    }
+}
+
 
         // Function to handle iframe load event
         function onIframeLoad() {
