@@ -1452,12 +1452,13 @@ async function getFavicon(url) {
             buttonContainer.appendChild(leaveButton);
             buttonContainer.appendChild(selfshareButton);
         }         
-// Import the uuid library
-const { v4: uuidv4 } = require('uuid');
 
-// Define the function
 function appendUUIDToURL(url) {
-  const uuid = uuidv4();
+  const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    let r = Math.random() * 16 | 0,
+        v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
   return `${url}${uuid}`;
 }
         
