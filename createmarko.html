@@ -1258,8 +1258,8 @@ async function chooseMarkoLink(type = 'website') {
         console.log('Showing Notiflix prompt for link');
         const guideTexts = {
             'phone': 'Add the phone number for your Marko',
-            'Viber': 'Add the phone number including international code for your Marko',
-            'WhatsApp': 'Add the phone number including international code for your Marko',
+            'Viber': 'Add the phone number including international code',
+            'WhatsApp': 'Add the phone number including international code',
             'email': 'Add the email address for your Marko',
         };
 
@@ -6475,7 +6475,7 @@ window.onclick = function(event) {
                     // Find the div with the specific text
                     const targetDivs = document.querySelectorAll('.notiflix-prompt-custom-content div');
                     targetDivs.forEach(div => {
-                        if (div.textContent.includes('Give your Marko a name') || div.textContent.includes('Add the link for your Marko')) {
+                        if (div.textContent.includes('Give your Marko a name') || div.textContent.includes('Add the link for your Marko') || div.textContent.includes('Add the phone number for your Marko') || div.textContent.includes('Add the phone number including international code') || div.textContent.includes('Add the email for your Marko')) {
                             applyAnimation(div);
                             // Disconnect the observer once the target is found and updated
                             // observer.disconnect();
