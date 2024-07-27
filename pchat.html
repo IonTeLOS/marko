@@ -99,11 +99,14 @@
             const urlParams = new URLSearchParams(window.location.search);
             const room = urlParams.get('room');
             const iframe = document.getElementById('teleconference-iframe');
+            const randomRoom = generateUUID();
 
             if (room) {
                 iframe.src = `https://pchat.xyz/public/${room}`;
+                sessionStorage.setItem('myAddress', room);
             } else {
-                iframe.src = `https://pchat.xyz/public/${generateUUID()}`;
+                iframe.src = `https://pchat.xyz/public/${randomRoom}`;
+                sessionStorage.setItem('myAddress', randomRoom);
             }
         }
 
@@ -132,8 +135,26 @@
             }
         });
 
+        // Function to share self address with iframe
+        function shareSelfAddress() {
+            const iframe = document.getElementById('teleconference-iframe');
+            const message = sessionStorage.getItem('myAddress'); // Your message to send
+            if (iframe.contentWindow) {
+                iframe.contentWindow.postMessage(message, '*'); // '*' allows messages from any origin, you can restrict it to a specific origin
+            }
+        }
+
+        // Function to handle iframe load event
+        function onIframeLoad() {
+            shareSelfAddress();
+        }
+
         window.onload = () => {
             setIframeSrc();
+            const iframe = document.getElementById('teleconference-iframe');
+
+            // Set the iframe's onload event handler
+            iframe.onload = onIframeLoad;
         };
     </script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
