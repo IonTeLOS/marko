@@ -950,11 +950,44 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
             'Continue',
             'Cancel',
             (chosenName) => {
+                const typeToTitleMap = {
+        'youtube': 'YouTube link',
+        'note': 'Marko Note',
+        'post': 'Marko Post',
+        'location': 'Marko Location',
+        'payment': 'Marko Paylink',
+        'videocall': 'Marko Conference'
+    };
+
+    let chosenName = sessionStorage.getItem('temp-marko-name');
+
+    // If chosenName is blank or contains only spaces
+    if (!chosenName || chosenName.trim() === '') {
+        // Assign the stripped URL if the type is not in the specific type map
+        if (!typeToTitleMap.hasOwnProperty(type)) {
+            chosenName = stripProtocolFromUrl(link);
+        }
+    }
+
+    // If type matches any key in the typeToTitleMap, assign the corresponding title
+    if (typeToTitleMap.hasOwnProperty(type)) {
+        chosenName = typeToTitleMap[type];
+    }
+
+    // Ensure chosenName does not exceed 50 characters
+    chosenName = (chosenName.length > 50) ? chosenName.substring(0, 50) + '..' : chosenName;
+
+    // Store the final chosenName in sessionStorage
+    sessionStorage.setItem('temp-marko-name', chosenName);
+
+    return chosenName;
+                /*
                 // Process the chosen name
                 chosenName = (chosenName && chosenName.trim()) ? chosenName : stripProtocolFromUrl(link);
                 chosenName = (chosenName.length > 50) ? chosenName.substring(0, 50) + '..' : chosenName;
                 sessionStorage.setItem('temp-marko-name', chosenName);
                 resolve(chosenName);
+                */
             },
             () => {
                 // Handle cancel action
@@ -1892,26 +1925,7 @@ function isBlankOrSpaces(str) {
 function saveToStorage(array = 'bookmarks') {
     const type = sessionStorage.getItem('temp-marko-type');
     const link = sessionStorage.getItem('temp-marko-link');
-    let title = sessionStorage.getItem('temp-marko-name');
-    // handle cases where title is blank
-    if (isBlankOrSpaces(title)) {
-         if (type === 'youtube') {
-            title = 'YouTube link';
-         } else if (type === 'note') {
-            title = 'Marko Note';
-         } else if (type === 'post') {
-            title = 'Marko Post';
-         } else if (type === 'location') {
-            title = 'Marko Location';  
-         } else if (type === 'payment') {
-            title = 'Marko Paylink';   
-        } else if (type === 'videocall') {
-            title = 'Marko Conference';
-         } else {
-         title = stripProtocolFromUrl(link);
-         }
-         sessionStorage.setItem('temp-marko-name', title);
-    }
+    const title = sessionStorage.getItem('temp-marko-name');
     const icon = sessionStorage.getItem('temp-marko-icon');
     const color = sessionStorage.getItem('temp-marko-color');
     const linkData = [type, link, title, icon, color];
