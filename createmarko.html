@@ -1221,6 +1221,76 @@ function handleLocation(locUrl) {
   return; // Indicate invalid format
 }
 
+function formatUrl(url, allowCustomProtocol = false) {
+  // Check if URL is empty
+  if (!url) return '';
+
+  // Remove leading/trailing spaces
+  url = url.trim();
+
+  // Remove spaces
+  url = url.replace(/\s+/g, '');
+
+  // Lowercase the entire URL unless it is YouTube related
+    url = toLowerCaseMainUrl(url);
+
+    // Handle other cases or apply necessary transformations
+  // Split URL into parts (protocol, domain, path)
+    const urlParts = url.split(/[:.]/);
+
+
+  // Check if the first part is a protocol (optional)
+  let protocol = '';
+  if (urlParts[0].match(/^(http|https|ftp)$/)) {
+    protocol = urlParts.shift() + ':'; // Extract and remove protocol
+  }
+
+  // Remove leading dot from domain (if present)
+  urlParts[0] = urlParts[0].replace(/^\./, '');
+
+  // Join the formatted parts back into a URL
+  url = protocol + urlParts.join('.');
+
+  // If custom protocols are not allowed, enforce https:// Custom protocolls are allowed mainly for link type "other"
+  if (!allowCustomProtocol && !protocol) {
+    url = 'https://' + url;
+  }
+  return url;
+}
+        
+function toLowerCaseMainUrl(url) {
+    // Check if the URL starts with 'http://' or 'https://'
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        // Assume 'http://' as the default protocol if not provided
+        url = 'https://' + url;
+    }
+
+    // Use URL constructor to parse the URL
+    let parsedUrl = new URL(url);
+
+    // Extract the protocol and hostname, and convert them to lowercase
+    let protocol = parsedUrl.protocol.toLowerCase();
+    let hostname = parsedUrl.hostname.toLowerCase();
+
+    // Reconstruct the main URL with lowercase protocol and hostname
+    let mainUrl = `${protocol}//${hostname}`;
+
+    // Append the pathname, search, and hash to the main URL
+    let fullUrl = `${mainUrl}${parsedUrl.pathname}${parsedUrl.search}${parsedUrl.hash}`;
+
+    return fullUrl;
+}
+        
+function validatePdf(url) {
+  // Validate URL format using the previous function
+  if (!formatUrl(url, allowCustomProtocol)) {
+    return false;
+  }
+
+  // Check if URL ends with ".pdf" (case-insensitive)
+  return url.toLowerCase().endsWith('.pdf');
+}
+        
 function validatePaylink(url) {
   // PayPal.me link pattern: paypal.me/username
   const paypalRegex = /^(?:https?:\/\/)?paypal\.me\/(?:[a-zA-Z0-9._-]{1,50}|\{[a-zA-Z0-9._-]{1,50}\})$/i;
@@ -1303,6 +1373,9 @@ async function chooseMarkoLink(type = 'website') {
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
                         case 'pdf':
+                            result = validatePdf(chosenLink);
+                            sessionStorage.setItem('temp-marko-link', result);
+                            break;
                         case 'window':
                             if (chosenLink.includes("youtu.be") || chosenLink.includes("youtube.com")) {
                                 result = getYouTubeId(chosenLink);
