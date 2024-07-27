@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teleconference Page</title>
+    <style>
+        /* Basic reset */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Container for the iframe */
+        .iframe-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* iFrame styling */
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- Container for the iframe -->
+    <div class="iframe-container">
+        <iframe 
+            id="teleconference-iframe" 
+            allow="camera; microphone; autoplay" 
+            loading="eager" 
+            title="Teleconference"
+        ></iframe>
+    </div>
+
+    <script>
+        // Function to generate a UUID
+        function generateUUID() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = Math.random() * 16 | 0,
+                    v = c == 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Function to set the iframe source with a UUID
+        function setIframeSrc() {
+            var uuid = generateUUID();
+            var iframe = document.getElementById('teleconference-iframe');
+            iframe.src = `https://pchat.xyz/public/${uuid}`;
+        }
+
+        // Set the iframe source when the page loads
+        window.onload = setIframeSrc;
+    </script>
+</body>
+</html>
+
