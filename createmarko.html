@@ -6479,26 +6479,6 @@ window.onclick = function(event) {
                         if (div.textContent.includes('Give your Marko a name') || div.textContent.includes('Add the link for your Marko') || div.textContent.includes('Add the phone number for your Marko') || div.textContent.includes('Add the phone number including international code') || div.textContent.includes('Add the email for your Marko')) {
                             applyAnimation(div);
                             const inputElement = document.getElementById('NXConfirmValidationInput');
-    /*
-    // Get the parent div which contains both the label text and the input
-    const contentDiv = inputElement.closest('.notiflix-prompt-custom-content');
-    
-    // Check if the contentDiv is correctly selected
-    if (contentDiv) {
-        // Select the div containing the text
-        const textDiv = contentDiv.querySelector('.notiflix-prompt-custom-head > div:first-of-type');
-
-        // Check if the text div is correctly selected
-        if (textDiv) {
-            console.log('Text DIV found:', textDiv);
-            textDiv.style.fontSize = '18px'; // Set font size to 18px
-        } else {
-            console.log('Text DIV not found');
-        }
-    } else {
-        console.log('Content DIV not found');
-    }
-*/
     // Set the font size of the input element
     inputElement.style.fontSize = '20px'; // Set font size to 20px
     const type = sessionStorage.getItem('type');
@@ -6522,7 +6502,6 @@ window.onclick = function(event) {
         value = value.replace(/\s+/g, '');
         inputElement.value = value;
     });
-}
                             // Disconnect the observer once the target is found and updated
                             // observer.disconnect();
                         }
