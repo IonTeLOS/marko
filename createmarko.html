@@ -941,6 +941,7 @@ function stripProtocolFromUrl(url) {
 }
         
 async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('temp-marko-link')) {
+    // check, because maybe by now window has become youtube
     const newType = sessionStorage.getItem('temp-marko-type');
     if (newType !== type) {
        type = newType;
