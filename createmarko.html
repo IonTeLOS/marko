@@ -1221,43 +1221,41 @@ function handleLocation(locUrl) {
   return; // Indicate invalid format
 }
 
-function formatUrl(url, allowCustomProtocol = false) {
-  // Check if URL is empty
-  if (!url) return '';
+// Helper function to format the URL
+function formatUrl(url) {
+    // Check if URL is empty
+    if (!url) return '';
 
-  // Remove leading/trailing spaces
-  url = url.trim();
+    // Remove leading/trailing spaces
+    url = url.trim();
 
-  // Remove spaces
-  url = url.replace(/\s+/g, '');
+    // Remove spaces
+    url = url.replace(/\s+/g, '');
 
-  // Lowercase the entire URL unless it is YouTube related
+    // Lowercase the entire URL unless it is YouTube related
     url = toLowerCaseMainUrl(url);
 
-    // Handle other cases or apply necessary transformations
-  // Split URL into parts (protocol, domain, path)
+    // Split URL into parts (protocol, domain, path)
     const urlParts = url.split(/[:.]/);
 
+    // Check if the first part is a protocol (optional)
+    let protocol = '';
+    if (urlParts[0].match(/^(http|https|ftp)$/)) {
+        protocol = urlParts.shift() + ':'; // Extract and remove protocol
+    }
 
-  // Check if the first part is a protocol (optional)
-  let protocol = '';
-  if (urlParts[0].match(/^(http|https|ftp)$/)) {
-    protocol = urlParts.shift() + ':'; // Extract and remove protocol
-  }
+    // Remove leading dot from domain (if present)
+    urlParts[0] = urlParts[0].replace(/^\./, '');
 
-  // Remove leading dot from domain (if present)
-  urlParts[0] = urlParts[0].replace(/^\./, '');
+    // Join the formatted parts back into a URL
+    url = protocol + urlParts.join('.');
 
-  // Join the formatted parts back into a URL
-  url = protocol + urlParts.join('.');
-
-  // If custom protocols are not allowed, enforce https:// Custom protocolls are allowed mainly for link type "other"
-  if (!allowCustomProtocol && !protocol) {
     url = 'https://' + url;
-  }
-  return url;
+    
+    return url;
 }
-        
+
+// Helper function to lowercase the main URL
 function toLowerCaseMainUrl(url) {
     // Check if the URL starts with 'http://' or 'https://'
     if (!url.startsWith('http://') && !url.startsWith('https://')) {
@@ -1283,7 +1281,7 @@ function toLowerCaseMainUrl(url) {
         
 function validatePdf(url) {
   // Validate URL format using the previous function
-  if (!formatUrl(url, allowCustomProtocol)) {
+  if (!formatUrl(url)) {
     return false;
   }
 
