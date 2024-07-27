@@ -959,8 +959,6 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
         'videocall': 'Marko Conference'
     };
 
-    let chosenName = sessionStorage.getItem('temp-marko-name');
-
     // If chosenName is blank or contains only spaces
     if (!chosenName || chosenName.trim() === '') {
         // Assign the stripped URL if the type is not in the specific type map
