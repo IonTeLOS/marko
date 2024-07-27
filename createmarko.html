@@ -1036,7 +1036,7 @@ async function sanitizeAndValidateUrl(url, allowCustomProtocol = false) {
     let cleanedUrl = stripProtocolFromUrl(url);
 
     // Format and validate URL
-    cleanedUrl = formatUrl(cleanedUrl, allowCustomProtocol);
+    cleanedUrl = formatURL(cleanedUrl, allowCustomProtocol);
     if (!validateUrl(cleanedUrl)) {
         Notiflix.Notify.failure('Invalid URL format. Please enter a valid URL.');
         throw new Error('Invalid URL format');
@@ -1361,7 +1361,7 @@ async function chooseMarkoLink(type = 'website') {
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
                         case 'pdf':
-                            result = formatUrl(chosenLink);
+                            result = formatURL(chosenLink);
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
                         case 'window':
