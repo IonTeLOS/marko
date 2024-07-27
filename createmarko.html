@@ -1292,7 +1292,7 @@ async function chooseMarkoLink(type = 'website') {
                             break;
                         case 'Viber':
                             result = await processPhoneNumber(chosenLink);
-                            const bareNoTelNumber = result.replace(/\+/g, ''); // Remove all '+' signs
+                            const bareNoTelNumber = result.replace(/\+/g, '%2B'); // Remove all '+' signs
                             result = `viber://chat?number=${bareNoTelNumber}`;
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
