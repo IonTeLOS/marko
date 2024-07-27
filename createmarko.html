@@ -1574,6 +1574,7 @@ async function chooseMarkoType() {
                                 randomColor = getRandomColor();
                                 sessionStorage.setItem('temp-marko-color', randomColor);
                                 const newType = sessionStorage.getItem('temp-marko-type');
+                                const isYoutube = (newType === 'youtube');
                                 console.log('newType: ' + newType)
                                 if (selectedType === 'website') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg'); 
@@ -1595,7 +1596,7 @@ async function chooseMarkoType() {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/web_asset/default/48px.svg');
                                 } else if (selectedType === 'download') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/download_2/default/48px.svg');
-                                } else if (newType === 'youtube') {
+                                } else if (isYouTube) {
                                     sessionStorage.setItem('temp-marko-icon', 'https://www.google.com/s2/favicons?domain=https://youtube.com&sz=64');
                                 } else if (selectedType === 'pdf') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/picture_as_pdf/default/48px.svg');
