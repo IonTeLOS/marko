@@ -938,8 +938,6 @@ function stripProtocolFromUrl(url) {
 }
         
 async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('temp-marko-link')) {
-    // Set the type in sessionStorage
-    sessionStorage.setItem('temp-marko-type', type);
 
     return new Promise((resolve, reject) => {
         Notiflix.Confirm.prompt(
@@ -1551,7 +1549,9 @@ async function chooseMarkoType() {
             if (selectedIndex > 0 && selectedIndex < markoTypes.length) {
                 //form.style.display = 'none';
                 hideForm('markoTypeForm');
-
+                // Set the type in sessionStorage
+                sessionStorage.setItem('temp-marko-type', selectedType);
+                
                 try {
                     if (selectedType !== 'note' && selectedType !== 'post') {
                     // Delay before calling chooseMarkoLink
