@@ -1339,7 +1339,6 @@ async function chooseMarkoLink(type = 'website') {
                     switch (type) {
                         case 'website':
                         case 'videocall':
-                        case 'download':
                             result = await sanitizeAndValidateUrl(chosenLink, type === 'other');
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
@@ -1364,6 +1363,7 @@ async function chooseMarkoLink(type = 'website') {
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
                         case 'pdf':
+                        case 'download':    
                             result = formatURL(chosenLink);
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
