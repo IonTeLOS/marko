@@ -956,17 +956,18 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
         'post': 'Marko Post',
         'location': 'Marko Location',
         'payment': 'Marko Paylink',
-        'videocall': 'Marko Conference'
+        'videocall': 'Marko Conference',
+        'window': 'Marko Frame'            
     };
     let markoName = '';
     // If chosenName is blank or contains only spaces
     if (!chosenName || chosenName.trim() === '') {
-        // Assign the stripped URL if the type is not in the specific type map
-        if (!typeToTitleMap.hasOwnProperty(type)) {
-            markoName = stripProtocolFromUrl(link);
         // If type matches any key in the typeToTitleMap, assign the corresponding title    
-        } else {
+        if (typeToTitleMap.hasOwnProperty(type)) {
             markoName = typeToTitleMap[type];
+        // Assign the stripped URL if the type is not in the specific type map      
+        } else {
+            markoName = stripProtocolFromUrl(link);
         }
     } else {
             markoName = chosenName;
