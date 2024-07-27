@@ -624,6 +624,8 @@
         .onabort-buttons,
         .onsuccess-buttons {
             position: fixed;
+            max-width: 90vw;
+            max-height: 20vh;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
@@ -1499,16 +1501,23 @@ async function getFavicon(url) {
             // Create Retry button
             const retryButton = document.createElement('button');
             retryButton.innerHTML = '<span class="material-icons">refresh</span> Retry';
-            retryButton.onclick = () => location.reload();
+            retryButton.onclick = () => {
+                sessionStorage.clear();
+                location.reload();
+            };
             // Create Retry button
             const selfshareButton = document.createElement('button');
             selfshareButton.innerHTML = '<span class="material-icons">add</span> Retry';
-            selfshareButton.onclick = () => saveToStorage();
+            selfshareButton.onclick = () => {
+                saveToStorage();
+                sessionStorage.clear();
+            };
             // Create Leave button
             const leaveButton = document.createElement('button');
             leaveButton.classList.add('leave');
             leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
             leaveButton.onclick = () => {
+                sessionStorage.clear();
                 window.location.href = 'https://teloslinux.org/marko/newfile';
             };
             // Append buttons to the container
@@ -1819,14 +1828,12 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
-                sessionStorage.clear();
                 onSuccess();
             } else {
                 Notiflix.Notify.success('Shortlink created successfully!'); // Show Notiflix notification
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
-                sessionStorage.clear();
                 onSuccess();
             }
         }
@@ -1836,7 +1843,6 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
             const shareLink = constructShareLink();
             removeAliasForm();
             handleClipboardAndSharing(shareLink);
-            sessionStorage.clear();
             onSuccess();
         }
 
