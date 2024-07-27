@@ -1343,57 +1343,6 @@ async function chooseMarkoLink(type = 'website') {
             },
             {}
         );
-/*
-// Define and set dynamic input type and styles
-function setDynamicInputType(type) {
-    // Get the input element by its ID
-    const inputElement = document.getElementById('NXConfirmValidationInput');
-    /*
-    // Get the parent div which contains both the label text and the input
-    const contentDiv = inputElement.closest('.notiflix-prompt-custom-content');
-    
-    // Check if the contentDiv is correctly selected
-    if (contentDiv) {
-        // Select the div containing the text
-        const textDiv = contentDiv.querySelector('.notiflix-prompt-custom-head > div:first-of-type');
-
-        // Check if the text div is correctly selected
-        if (textDiv) {
-            console.log('Text DIV found:', textDiv);
-            textDiv.style.fontSize = '18px'; // Set font size to 18px
-        } else {
-            console.log('Text DIV not found');
-        }
-    } else {
-        console.log('Content DIV not found');
-    }
-
-    // Set the font size of the input element
-    inputElement.style.fontSize = '20px'; // Set font size to 20px
-
-    // Set the type of the input element based on the provided type
-    switch (type) {
-        case 'phone':
-            inputElement.type = 'tel';
-            break;
-        case 'email':
-            inputElement.type = 'email';
-            break;
-        default:
-            inputElement.type = 'text'; // Fallback for other types
-            break;
-    }
-
-    // Add real-time validation based on the input type
-    inputElement.addEventListener('input', () => {
-        let value = inputElement.value;
-        value = value.replace(/\s+/g, '');
-        inputElement.value = value;
-    });
-}
-*/
-        // Ensure input type is set after the prompt is rendered
-        // setTimeout(setDynamicInputType, 200);
     });
 }
 
@@ -1479,6 +1428,7 @@ async function getFavicon(url) {
             buttonContainer.appendChild(retryButton);
             buttonContainer.appendChild(leaveButton);
         }     
+        
     function onSuccess() {
             const buttonContainer = document.querySelector('.onsuccess-buttons');
 
@@ -1623,6 +1573,7 @@ async function chooseMarkoType() {
                         } else if (iconTypeIndex === '1') {
                                 randomColor = getRandomColor();
                                 sessionStorage.setItem('temp-marko-color', randomColor);
+                                const newType = sessionStorage.getItem('temp-marko-type');
                                 if (selectedType === 'website') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg'); 
                                 } else if (selectedType === 'email') {
@@ -1643,14 +1594,13 @@ async function chooseMarkoType() {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/web_asset/default/48px.svg');
                                 } else if (selectedType === 'download') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/download_2/default/48px.svg');
-                                } else if (selectedType === 'youtube') {
+                                } else if (newType === 'youtube') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://www.google.com/s2/favicons?domain=https://youtube.com&sz=64');
                                 } else if (selectedType === 'pdf') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/picture_as_pdf/default/48px.svg');
                                 } else if (selectedType === 'videocall') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/duo/default/48px.svg');
-                                }
-                                if (selectedType === 'payment') {
+                                } else if (selectedType === 'payment') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/attach_money/default/48px.svg');
                                 }
                            
