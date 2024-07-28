@@ -19,6 +19,7 @@
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
+            padding-bottom: 40px;
             height: 100%;
             width: 100%;
             align-items: center;
@@ -28,10 +29,6 @@
             box-sizing: border-box;
         }
 
-        /* Push content down when Google Translate toolbar is shown */
-        body.with-google-translate-toolbar {
-            padding-top: 40px; /* Adjust this value as needed */
-        }
 .input-field {
   position: fixed;
   top: 0;
@@ -304,18 +301,13 @@
             justify-content: center;
         }
 
-        /* Hide the Google Translate Toolbar */
-        .goog-te-banner-frame.skiptranslate,
-        .goog-te-banner-frame.skiptranslate iframe,
-        .goog-te-menu-frame.skiptranslate,
-        .goog-te-menu-frame.skiptranslate iframe,
-        .goog-te-gadget {
-            display: none !important;
-        }
-
-        body {
-            top: 0 !important;
-        }
+#google_translate_element {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+}
 
 /* Close Button */
 .close-help,
