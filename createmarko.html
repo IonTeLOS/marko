@@ -6807,18 +6807,22 @@ window.onfocus = checkVisibilityAndReload;
 
             // Function to redirect to a specific URL
             function redirectToUrl() {
-                window.location.href = 'https://tovima.gr'; // Change this to your specific URL
+                window.location.href = 'https://example.com'; // Change this to your specific URL
             }
 
             // Only override the back button if 'fromApp' parameter is present
             if (hasFromAppParam()) {
+                console.log("fromApp parameter detected, setting up popstate listener.");
                 // Push a state to the history to detect the back navigation
                 history.pushState(null, null, window.location.href);
                 window.addEventListener('popstate', function (event) {
+                    console.log("popstate event detected, redirecting to URL.");
                     redirectToUrl();
                 });
+            } else {
+                console.log("fromApp parameter not found, no changes to back button behavior.");
             }
-        });        
+        });
 </script>
 </body>
 </html>
