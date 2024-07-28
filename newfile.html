@@ -3909,7 +3909,7 @@ function getBaseUrl(url) {
             }
     }
     
-        function clearLink(index) {
+        function clearLink(index, array = 'bookmarks') {
               removeBookmark(index);
               links.splice(index, 1);
               localStorage.setItem(array, JSON.stringify(links));
