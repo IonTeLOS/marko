@@ -11,7 +11,6 @@
       <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">  
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
-<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
     <style>
         /* General Styling */
@@ -254,42 +253,25 @@
         }
 
 
-.translate-container {
-    position: fixed;
-    bottom: 20px; /* Adjust this value to control distance from bottom */
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    width: 100vw;
-    z-index: 9999; /* Ensure it's above other elements */
-}
-
-/* Google Translate Widget Styling for the bar */
-.skiptranslate {
-    display: none !important;
-}
-
-/* Ensure the Google top bar stays at the top */
-.goog-te-banner-frame {
-    top: 0 !important;
-    position: fixed;
-    display: flex;
-    justify-content: center;
-    width: 100vw;
-}
-
-/* Style for the dropdown itself */
-.goog-te-combo {
-    bottom: 0 !important;
-    position: fixed;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    width: 100vw;
-    z-index: 9999; /* Ensure it's above other elements */
-}
+        .translate-dropdown {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #f1f1f1;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .translate-dropdown select {
+            padding: 5px;
+            font-size: 16px;
+        }
+        @media (max-width: 600px) {
+            .translate-dropdown select {
+                width: 80%;
+            }
+        }
                 /* Responsive Design */
         @media (max-width: 768px) {
             .help-modal-content {
@@ -692,9 +674,52 @@
 <body>
 
 
-<div class="translate-container">
-    <div id="google-translate"></div>
-</div>    
+    <div id="google_translate_element" style="display:none;"></div>
+<!-- Language selection dropdown -->
+    <div class="translate-dropdown">
+        <select id="translate-select" onchange="changeLanguage()">
+            <option value="">Select Language</option>
+            <option value="en">English</option>
+            <option value="es">Spanish</option>
+            <option value="fr">French</option>
+            <option value="de">German</option>
+            <option value="it">Italian</option>
+            <option value="pt">Portuguese</option>
+            <option value="ru">Russian</option>
+            <option value="zh-CN">Chinese (Simplified)</option>
+            <option value="ja">Japanese</option>
+            <option value="ko">Korean</option>
+            <option value="ar">Arabic</option>
+            <option value="hi">Hindi</option>
+            <option value="ms">Malay</option>
+            <option value="id">Indonesian</option>
+            <option value="vi">Vietnamese</option>
+            <option value="fa">Persian</option>
+            <option value="th">Thai</option>
+            <option value="pl">Polish</option>
+            <option value="nl">Dutch</option>
+            <option value="sv">Swedish</option>
+            <option value="da">Danish</option>
+            <option value="fi">Finnish</option>
+            <option value="no">Norwegian</option>
+            <option value="el">Greek</option>
+            <option value="hu">Hungarian</option>
+            <option value="cs">Czech</option>
+            <option value="sk">Slovak</option>
+            <option value="uk">Ukrainian</option>
+            <option value="he">Hebrew</option>
+            <option value="bg">Bulgarian</option>
+            <option value="tr">Turkish</option>
+            <option value="hr">Croatian</option>
+            <option value="lt">Lithuanian</option>
+            <option value="lv">Latvian</option>
+            <option value="et">Estonian</option>
+            <option value="sl">Slovenian</option>
+            <option value="mt">Maltese</option>
+        </select>
+    </div>
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <!-- Audio element for the success sound -->
     <audio id="successSound" src="https://github.com/IonTeLOS/marko/raw/main/not_sim.wav" preload="auto"></audio>
 <div id="markoTypeForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px;">
@@ -848,26 +873,18 @@
     <div class="onsuccess-buttons"></div>
 
 <script type="text/javascript">
-function googleTranslateElementInit() {
-    var userLang = navigator.language || navigator.userLanguage;
-    new google.translate.TranslateElement({
-        pageLanguage: 'en',
-        includedLanguages: 'en,es,zh-CN,hi,ar,pt,bn,ru,ja,pa,de,jv,ko,fr,tr,' +
-                          'bg,cs,da,de,el,et,fi,fr,hr,hu,is,it,lv,lt,mt,nl,no,pl,pt,ro,sk,sl,sr,sv,tr,uk',
-        autoDisplay: false,
-        layout: google.translate.TranslateElement.InlineLayout,SIMPLE,
-        multilanguagePage: true
-    }, 'google-translate');
-
-    // Set the detected language after a short delay
-    setTimeout(function() {
-        var select = document.querySelector('.goog-te-combo');
-        if (select) {
-            select.value = userLang.substring(0, 2);
-            select.dispatchEvent(new Event('change'));
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,ja,ko,ar,hi,ms,id,vi,fa,th,pl,nl,sv,da,fi,no,el,hu,cs,sk,uk,he,bg,tr,hr,lt,lv,et,sl,mt', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
         }
-    }, 2000);
-}
+
+        function changeLanguage() {
+            var translateSelect = document.getElementById("translate-select");
+            var language = translateSelect.value;
+            var frame = document.getElementsByClassName('goog-te-banner-frame')[0];
+            if (frame) {
+                frame.contentDocument.getElementById(':0.container').click();
+            }
+        }
     </script>
 
     <script>
