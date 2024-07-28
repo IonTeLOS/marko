@@ -2108,10 +2108,9 @@ function showNoteFieldAndWait(name) {
     // Function to handle note submission
     function handleSubmitNote() {
       // Get note content
-      const noteContent = document.getElementById('noteContent').value;
-  
+      const noteText = noteContent.value;  
       // Replace newline characters with <br> tags
-      const formattedContent = noteContent.replace(/\n/g, '<br>');
+      const formattedContent = noteText.replace(/\n/g, '<br>');
 
       // Enclose the content in <p> tags
       const htmlContent = `<p>${formattedContent}</p>`;
