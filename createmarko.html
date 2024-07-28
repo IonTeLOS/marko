@@ -1533,6 +1533,9 @@ async function getFavicon(url) {
         }     
         
     function onSuccess() {
+            document.querySelectorAll('.onabort-buttons').forEach(function(button) {
+                button.style.display = 'none';
+            });
             const buttonContainer = document.querySelector('.onsuccess-buttons');
 
             // Create Retry button
