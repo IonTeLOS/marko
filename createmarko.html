@@ -645,18 +645,21 @@ body.dark-mode {
             animation: enlargeAndShrink 1.2s ease forwards;
         }
         
-       /* Styles for the dynamic buttons */
-        .onFinish-buttons {
-            position: fixed;
-            max-width: 90vw;
-            max-height: 20vh;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
+/* Styles for the dynamic buttons */
+.onFinish-buttons {
+    position: fixed;
+    max-width: 90vw;
+    width: 100%;
+    max-height: 20vh;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    box-sizing: border-box;
+}
+
 
         .onFinish-buttons button {
             background-color: #0D47A1;
@@ -669,6 +672,9 @@ body.dark-mode {
             align-items: center;
             gap: 10px;
             cursor: pointer;
+            max-width: calc(90vw / 3 - 20px); /* Adjust based on the number of buttons */
+            flex-shrink: 1;
+            box-sizing: border-box;
         }
 
     </style>
