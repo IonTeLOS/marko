@@ -1939,6 +1939,7 @@ switch (type) {
         mLink = `https://corsproxy.io/?${link}`;
         break;
     case 'post':
+    case 'note':    
         mLink = `${encodedLink}`;
         break;
     case 'phone':
@@ -6815,7 +6816,7 @@ window.onfocus = checkVisibilityAndReload;
 
             // Function to redirect to a specific URL
             function redirectToUrl() {
-                window.location.href = 'https://example.com'; // Change this to your specific URL
+                window.location.href = 'https://teloslinux.org/marko/newfile'; // Change this to your specific URL
             }
 
             // Only override the back button if 'fromApp' parameter is present
