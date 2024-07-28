@@ -2356,8 +2356,8 @@ function handleClipboardAndSharing(shortlink) {
     // Share link if Web Share API is available
     if (navigator.share) {
         navigator.share({
-            title: 'Marko shortlink',
-            text: 'Check out my bookmark:',
+            title: 'Shortlink:',
+            text: 'Check out my Marko:',
             url: shortlink
         })
         .then(() => {
