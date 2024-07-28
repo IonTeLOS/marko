@@ -2226,41 +2226,37 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
         // Function to copy shortlink to clipboard and share it
         function handleClipboardAndSharing(shortlink) {
             window.focus();
-            navigator.clipboard.writeText(shortlink)
-                .then(() => {
-                    console.log('Shortlink copied to clipboard!');
-                    // Clear localStorage
-                    localStorage.removeItem('temp-long-link');
-                    localStorage.removeItem('temp-alias');
-                    localStorage.removeItem('temp-onetime');
-                    localStorage.removeItem('temp-marko-link');
-                })
-                .catch(err => {
-                    console.error('Error copying to clipboard:', err);
-                    Notiflix.Notify.failure('Failed to copy shortlink to clipboard.'); // Show Notiflix notification
-                });
-
             // Share link if Web Share API is available
             if (navigator.share) {
                 navigator.share({
-                    title: 'Shortlink',
-                    text: 'Check out this shortlink:',
+                    title: 'Marko shortlink',
+                    text: 'Check out my bookmark:',
                     url: shortlink
                 })
                 .then(() => {
                     Notiflix.Notify.success('Shortlink shared successfully!'); // Show Notiflix notification
                     playSuccessSound();
-                    onAbort();
+                    onSuccess();
                 })
                 .catch(err => {
                     console.error('Error sharing shortlink:', err);
                     Notiflix.Notify.failure('Failed to share shortlink.'); // Show Notiflix notification
+                    onSuccess();
                 });
             } else {
                 Notiflix.Notify.success('Shortlink copied to clipboard!'); // Show Notiflix notification
                 window.focus();
-                navigator.clipboard.writeText(shortlink);
-                playSuccessSound();
+                navigator.clipboard.writeText(shortlink)
+                .then(() => {
+                    playSuccessSound();
+                    console.log('Shortlink copied to clipboard!');
+                    onSuccess();
+                })
+                .catch(err => {
+                    console.error('Error copying to clipboard:', err);
+                    Notiflix.Notify.failure('Failed to copy shortlink to clipboard.'); // Show Notiflix notification
+                    onSuccess();
+                });
             }
         }
 
@@ -2270,7 +2266,6 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
             return validPattern.test(alias);
         }
 
-      
         // Function to set temp-marko-link and initiate shortlink creation
         function initializeShortlinkWithTempMarkoLink(link) {
             if (link && link.trim() !== '') {
