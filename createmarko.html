@@ -1642,6 +1642,12 @@ function onFinish() {
         location.reload();
     });
 
+    // Create Leave button with a custom background color
+    createButton('leaveButton', '<span class="material-icons">exit_to_app</span> Leave', () => {
+        sessionStorage.clear();
+        window.location.href = 'https://teloslinux.org/marko/newfile';
+    }, { backgroundColor: '#a9a9a9' });
+    
     // Create selfShare button if the condition is met
     if (sessionStorage.getItem('created-link')) {
         createButton('selfShareButton', '<span class="material-icons">add</span> Add', () => {
@@ -1650,12 +1656,6 @@ function onFinish() {
             location.reload();
         });
     }
-
-    // Create Leave button with a custom background color
-    createButton('leaveButton', '<span class="material-icons">exit_to_app</span> Leave', () => {
-        sessionStorage.clear();
-        window.location.href = 'https://teloslinux.org/marko/newfile';
-    }, { backgroundColor: '#a9a9a9' });
 }
 
 
