@@ -660,22 +660,19 @@ body.dark-mode {
     box-sizing: border-box;
 }
 
+/* Additional styles for buttons to prevent them from expanding too much */
+.onFinish-buttons button {
+    max-width: calc(90vw / 3 - 20px); /* Adjust based on the number of buttons */
+    flex-shrink: 1;
+    padding: 8px 12px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    box-sizing: border-box;
+    white-space: nowrap; /* Prevent text from wrapping */
+    overflow: hidden; /* Hide overflow text */
+    text-overflow: ellipsis; /* Show ellipsis for overflow text */
+    min-width: 60px; /* Set a minimum width to prevent buttons from shrinking too much */
+}
 
-        .onFinish-buttons button {
-            background-color: #0D47A1;
-            color: #fff;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            max-width: calc(90vw / 3 - 20px); /* Adjust based on the number of buttons */
-            flex-shrink: 1;
-            box-sizing: border-box;
-        }
 
     </style>
 </head>
