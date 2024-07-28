@@ -260,6 +260,7 @@
             text-align: center;
             padding: 10px 0;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 9999;
         }
         .translate-dropdown select {
             padding: 5px;
@@ -727,7 +728,7 @@
         <div id="line-separator"></div>
         <p>Choose the type of your Marko:</p>
         <div class="form-group">
-            <select id="markoType" name="markoType">
+            <select id="markoType" name="markoType" translate="no">
                 <option value="0">Choose Marko type</option>
                 <option value="1">website</option>
                 <option value="2">email</option>
@@ -779,7 +780,7 @@
     <div id="line-separator"></div>
     <p>Choose the icon type for your Marko:</p>
     <div class="form-group">
-        <select id="markoIconType" name="markoIconType">
+        <select id="markoIconType" name="markoIconType" translate="no">
             <option value="0">Select Marko icon type</option>
             <option value="1">Default</option>
             <option value="2">Let me choose</option>
@@ -878,8 +879,7 @@
             var language = translateSelect.value;
             if (language) {
                 var currentUrl = window.location.href;
-                var cleanUrl = currentUrl.replace(/^https?:\/\//, ''); // Remove http:// or https://
-                var translateUrl = "https://translated.turbopages.org/proxy_u/en-" + language + ".en/https/" + cleanUrl;
+                var translateUrl = "https://translate.google.com/translate?hl=" + language + "&sl=auto&tl=" + language + "&u=" + encodeURIComponent(currentUrl);
                 window.location.href = translateUrl;
             }
         }
