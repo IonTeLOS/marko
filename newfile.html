@@ -3669,7 +3669,19 @@ function scrollToBottomIfRequested() {
     const isNewMarko = params.get('createMarko');
     // Decode the action parameter
     const link = decodeURIComponent(theLink || '').replace(/\n/g, '<br>');
-
+    const scroll = params.get('scroll');
+            
+            // Check if the scroll parameter is present
+            if (scroll) {
+                // Scroll the div with class 'bookmarks-container' to the bottom
+                const container = document.querySelector('.bookmarks-container');
+                if (container) {
+                    container.scrollTop = container.scrollHeight;
+                    console.log('Scroll to bottom performed');
+                } else {
+                    console.log('Container not found');
+                }
+            }
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
         if (confirm(`Do you want to add a Marko for ${title}?`)) {
