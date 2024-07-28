@@ -11,7 +11,32 @@
       <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">  
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
-    
+        <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+      <script type="text/javascript">
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,ja,ko,ar,hi,ms,id,vi,fa,th,pl,nl,sv,da,fi,no,el,hu,cs,sk,uk,he,bg,tr,hr,lt,lv,et,sl,mt', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        }
+
+        function changeLanguage() {
+            var translateSelect = document.getElementById("translate-select");
+            var language = translateSelect.value;
+            if (language) {
+                var iframe = document.querySelector('iframe.goog-te-banner-frame');
+                if (iframe) {
+                    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    var languageList = innerDoc.querySelectorAll('a.goog-te-menu-value span.text');
+                    for (var i = 0; i < languageList.length; i++) {
+                        if (languageList[i].innerText.toLowerCase().includes(language.toLowerCase())) {
+                            languageList[i].click();
+                            break;
+                        }
+                    }
+                } else {
+                    window.location.href = 'https://translate.google.com/translate?hl=&sl=en&tl=' + language + '&u=' + encodeURIComponent(window.location.href);
+                }
+            }
+        }
+    </script>  
     <style>
         /* General Styling */
         body {
@@ -719,32 +744,7 @@
         </select>
     </div>
 
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({pageLanguage: 'en', includedLanguages: 'en,es,fr,de,it,pt,ru,zh-CN,ja,ko,ar,hi,ms,id,vi,fa,th,pl,nl,sv,da,fi,no,el,hu,cs,sk,uk,he,bg,tr,hr,lt,lv,et,sl,mt', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
-        }
 
-        function changeLanguage() {
-            var translateSelect = document.getElementById("translate-select");
-            var language = translateSelect.value;
-            if (language) {
-                var iframe = document.querySelector('iframe.goog-te-banner-frame');
-                if (iframe) {
-                    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-                    var languageList = innerDoc.querySelectorAll('a.goog-te-menu-value span.text');
-                    for (var i = 0; i < languageList.length; i++) {
-                        if (languageList[i].innerText.toLowerCase().includes(language.toLowerCase())) {
-                            languageList[i].click();
-                            break;
-                        }
-                    }
-                } else {
-                    window.location.href = 'https://translate.google.com/translate?hl=&sl=en&tl=' + language + '&u=' + encodeURIComponent(window.location.href);
-                }
-            }
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
     
     <!-- Audio element for the success sound -->
     <audio id="successSound" src="https://github.com/IonTeLOS/marko/raw/main/not_sim.wav" preload="auto"></audio>
