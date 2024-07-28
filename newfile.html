@@ -3656,14 +3656,12 @@ function handleSharedLink(url, title, text) {
             // Check if the scroll parameter is present
             if (scrollRequest === 'down') {
                 console.log('Scroll to bottom requested');
-                // Scroll the div with class 'bookmarks-container' to the bottom
-                const container = document.querySelector('.bookmarks-container');
-                if (container) {
-                    container.scrollTop = container.scrollHeight;
-                    console.log('Scroll to bottom performed');
-                } else {
-                    console.log('Container not found');
-                }
+                window.scroll({
+    top: document.body.scrollHeight,
+    left: 0,
+    behavior: 'smooth' // Optional: Use 'smooth' for smooth scrolling
+});
+
             }
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
