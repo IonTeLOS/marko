@@ -27,6 +27,12 @@
             box-sizing: border-box;
         }
 
+/* Dark Mode Styling */
+body.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+        
 .input-field {
   position: fixed;
   top: 0;
@@ -950,6 +956,10 @@ Notiflix.Confirm.init({
 
         // Event listener for DOMContentLoaded
         document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('darkMode')) {
+                 document.body.classList.add('dark-mode');
+            }
             // Hide Notiflix Loading
             setTimeout(() => {
                 Notiflix.Loading.remove();
