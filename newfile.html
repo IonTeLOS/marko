@@ -3649,9 +3649,13 @@ function handleSharedLink(url, title, text) {
     const icon = params.get('icon');
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
+    const scroll = params.get('scroll');
     // Decode the action parameter
     const link = decodeURIComponent(theLink || '').replace(/\n/g, '<br>');
 
+    if (scroll) {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
         if (confirm(`Do you want to add a Marko for ${title}?`)) {
