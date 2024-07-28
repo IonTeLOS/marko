@@ -640,8 +640,7 @@
         }
         
        /* Styles for the dynamic buttons */
-        .onabort-buttons,
-        .onsuccess-buttons {
+        .onFinish-buttons {
             position: fixed;
             max-width: 90vw;
             max-height: 20vh;
@@ -653,8 +652,7 @@
             gap: 20px;
         }
 
-        .onabort-buttons button,
-        .onsuccess-buttons button {
+        .onFinish-buttons button {
             background-color: #0D47A1;
             bottom: 80px;
             color: #fff;
@@ -668,8 +666,7 @@
             cursor: pointer;
         }
 
-        .onabort-buttons button.leave,
-        .onsuccess-buttons button.leave {
+        .onFinish-buttons button.leave {
             background-color: #a9a9a9;
         }
     </style>
@@ -872,8 +869,7 @@
     </div>
     
     <!-- Container for dynamic buttons -->
-    <div class="onabort-buttons"></div>
-    <div class="onsuccess-buttons"></div>
+    <div class="onFinish-buttons"></div>
 
     <script>
         function changeLanguage() {
@@ -1097,7 +1093,7 @@ async function chooseMarkoName(type = 'website', link = sessionStorage.getItem('
                 sessionStorage.removeItem('temp-marko-type');
                 sessionStorage.removeItem('temp-marko-link');
                 reject(new Error('User cancelled'));
-                onAbort();
+                onFinish();
             },
             {}
         );
@@ -1541,7 +1537,7 @@ async function chooseMarkoLink(type = 'website') {
                 Notiflix.Notify.info('Marko creation aborted. Bye!');
                 sessionStorage.removeItem('temp-marko-type');
                 reject(new Error('User cancelled'));
-                onAbort();
+                onFinish();
             },
             {}
         );
@@ -1610,37 +1606,9 @@ async function getFavicon(url) {
     img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=${expectedSize}`;
   });
 }
-
-    function onAbort() {
-            document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
-                button.style.display = 'none';
-            });
-            const buttonContainer = document.querySelector('.onabort-buttons');
-
-            // Create Retry button
-            const retryButton = document.createElement('button');
-            retryButton.innerHTML = '<span class="material-icons">refresh</span> Retry';
-            retryButton.onclick = () => location.reload();
-
-            // Create Leave button
-            const leaveButton = document.createElement('button');
-            leaveButton.classList.add('leave');
-            leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
-            leaveButton.onclick = () => {
-                sessionStorage.clear();
-                location.reload();
-                window.location.href = 'https://teloslinux.org/marko/newfile';
-            };
-            // Append buttons to the container
-            buttonContainer.appendChild(retryButton);
-            buttonContainer.appendChild(leaveButton);
-        }     
         
-    function onSuccess() {
-            document.querySelectorAll('.onabort-buttons').forEach(function(button) {
-                button.style.display = 'none';
-            });
-            const buttonContainer = document.querySelector('.onsuccess-buttons');
+    function onFinish() {
+            const buttonContainer = document.querySelector('.onFinish-buttons');
 
             // Create Retry button
             const retryButton = document.createElement('button');
@@ -1649,14 +1617,16 @@ async function getFavicon(url) {
                 sessionStorage.clear();
                 location.reload();
             };
+            if (sessionStorage.getItem('created-link')) {
             // Create selfshare button
-            const selfshareButton = document.createElement('button');
-            selfshareButton.innerHTML = '<span class="material-icons">add</span> Add';
-            selfshareButton.onclick = () => {
+            const selfShareButton = document.createElement('button');
+            selfShareButton.innerHTML = '<span class="material-icons">add</span> Add';
+            selfShareButton.onclick = () => {
                 saveToStorage();
-                location.reload();
                 sessionStorage.clear();
+                location.reload();
             };
+            }
             // Create Leave button
             const leaveButton = document.createElement('button');
             leaveButton.classList.add('leave');
@@ -1669,7 +1639,7 @@ async function getFavicon(url) {
             // Append buttons to the container
             buttonContainer.appendChild(retryButton);
             buttonContainer.appendChild(leaveButton);
-            buttonContainer.appendChild(selfshareButton);
+            buttonContainer.appendChild(selfShareButton);
         }         
 
 function appendUUIDToURL(url) {
@@ -1940,7 +1910,7 @@ switch (type) {
     
     // Append action parameter with proper encoding
     url.searchParams.append('link', link);
-    
+    sessionStorage.setItem('created-link', url.toString());
     // Return the constructed shareable link
     return url.toString();
 }
@@ -1989,19 +1959,13 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
-                document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
-                button.style.display = 'none';
-                });
-                onSuccess();
+                onFinish();
             } else {
                 Notiflix.Notify.success('Shortlink created successfully!'); // Show Notiflix notification
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
-                document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
-                button.style.display = 'none';
-                 });
-                onSuccess();
+                onFinish();
             }
         }
 
@@ -2011,10 +1975,7 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
             const shareLink = constructShareLink();
             removeAliasForm();
             handleClipboardAndSharing(shareLink);
-            document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
-                button.style.display = 'none';
-            });
-            onSuccess();
+            onFinish();
         }
 
         function removeAliasForm() {
@@ -2305,8 +2266,8 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                     if (responseData.short_url) {
                         Notiflix.Notify.success('Shortlink created successfully!'); // Show Notiflix notification
 
-                        // Store the shortlink in localStorage
-                        localStorage.setItem('short-link', responseData.short_url);
+                        // Store the shortlink in sessionStorage
+                        sessionStorage.setItem('created-link', shareLink);
 
                         // Handle clipboard copy and sharing
                         handleClipboardAndSharing(responseData.short_url);
@@ -2325,8 +2286,8 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                                 if (responseData.short_url) {
                                     Notiflix.Notify.success('Custom alias unavailable. Shortlink created without alias.'); // Show Notiflix notification
 
-                                    // Store the shortlink in localStorage
-                                    localStorage.setItem('short-link', responseData.short_url);
+                                    // Store the shortlink in sessionStorage
+                                    sessionStorage.setItem('created-link', shareLink);
 
                                     // Handle clipboard copy and sharing
                                     handleClipboardAndSharing(responseData.short_url);
@@ -2357,15 +2318,12 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                 .then(() => {
                     Notiflix.Notify.success('Shortlink shared successfully!'); // Show Notiflix notification
                     playSuccessSound();
-                    onSuccess();
+                    onFinish();
                 })
                 .catch(err => {
                     console.error('Error sharing shortlink:', err);
                     Notiflix.Notify.failure('Failed to share shortlink.'); // Show Notiflix notification
-                    document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
-                       button.style.display = 'none';
-                    });
-                    onSuccess();
+                    onFinish();
                 });
             } else {
                 Notiflix.Notify.success('Shortlink copied to clipboard!'); // Show Notiflix notification
@@ -2374,18 +2332,12 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                 .then(() => {
                     playSuccessSound();
                     console.log('Shortlink copied to clipboard!');
-                    document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
-                       button.style.display = 'none';
-                    });
-                    onSuccess();
+                    onFinish();
                 })
                 .catch(err => {
                     console.error('Error copying to clipboard:', err);
                     Notiflix.Notify.failure('Failed to copy shortlink to clipboard.'); // Show Notiflix notification
-                    document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
-                button.style.display = 'none';
-            });
-                    onSuccess();
+                    onFinish();
                 });
             }
         }
@@ -2404,7 +2356,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                     link = 'https://' + link;
                 }
                 
-                localStorage.setItem('created-temp-marko-link', link);
+                sessionStorage.setItem('created-link', shareLink);
 
                 // Handle shortlink creation using stored values
                 const { storedAlias, isOneTime } = retrieveAndProcessStorage();
@@ -6682,7 +6634,7 @@ document.getElementById('cancelCreationButton').onclick = function() {
             Notiflix.Notify.info('Marko creation aborted. Bye!');
             hideForm('markoTypeForm');
             console.log('User cancelled');
-            onAbort();
+            onFinish();
             //return; 
 }
 // Handle cancel button click
@@ -6692,7 +6644,7 @@ document.getElementById('cancelCreation2Button').onclick = function() {
             sessionStorage.removeItem('temp-marko-link');
             hideForm('markoIconTypeForm');
             console.log('User cancelled');
-            onAbort();
+            onFinish();
             //return; 
 }
 window.onclick = function(event) {
