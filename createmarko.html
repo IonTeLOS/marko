@@ -2127,13 +2127,14 @@ function showNoteFieldAndWait(name) {
 
       // Enclose the content in <p> tags
        const htmlContent = `<p>${formattedContent}</p>`;
+       const encodedContent = encodeURIComponent(htmlContent);
 
-      console.log('Note is:', htmlContent);  
+       console.log('Note is:', encodedContent);  
      
       // Save HTML content with <p> and <br> tags to sessionStorage
-      sessionStorage.setItem('temp-marko-link', htmlContent);
+      sessionStorage.setItem('temp-marko-link', encodedContent);
       // Resolve the promise with note content
-      resolve(htmlContent);
+      resolve(encodedContent);
 
       noteField.style.display = 'none';
       noteContent.style.display = 'none';
