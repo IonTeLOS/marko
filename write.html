@@ -5,114 +5,136 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Write to Shared JSON File</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        input, button {
-            display: block;
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-        #message {
-            margin-top: 10px;
-            font-weight: bold;
-        }
+        /* ... (keep the existing CSS) ... */
     </style>
 </head>
 <body>
     <div class="container">
         <input type="text" id="inputText" placeholder="Enter text to write">
-        <button id="submitBtn">Submit</button>
+        <button id="authorizeButton" style="display: none;">Authorize</button>
+        <button id="submitBtn" style="display: none;">Submit</button>
         <div id="message"></div>
     </div>
 
     <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
     <script>
-        // Replace with your actual API key and file ID
+        // Replace with your actual client ID and API key
+        const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
         const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
         const FILE_ID = '1tiZwvpoRj1Dinb0_Y29lCmJJQJ4Ja-Zk';
 
-        function loadGoogleDriveAPI() {
-            gapi.load('client', initClient);
+        // Discovery doc URL for APIs used by the quickstart
+        const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+
+        // Authorization scopes required by the API; multiple scopes can be
+        // included, separated by spaces.
+        const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
+
+        function gapiLoaded() {
+            gapi.load('client', initializeGapiClient);
         }
 
-        function initClient() {
-            gapi.client.init({
+        async function initializeGapiClient() {
+            await gapi.client.init({
                 apiKey: API_KEY,
-                discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'],
-            }).then(function() {
-                document.getElementById('submitBtn').addEventListener('click', writeToFile);
+                discoveryDocs: [DISCOVERY_DOC],
+            });
+            gapiInited = true;
+            maybeEnableButtons();
+        }
+
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: '', // defined later
+            });
+            gisInited = true;
+            maybeEnableButtons();
+        }
+
+        function maybeEnableButtons() {
+            if (gapiInited && gisInited) {
+                document.getElementById('authorizeButton').style.display = 'block';
+            }
+        }
+
+        function handleAuthClick() {
+            tokenClient.callback = async (resp) => {
+                if (resp.error !== undefined) {
+                    throw (resp);
+                }
+                document.getElementById('submitBtn').style.display = 'block';
+                document.getElementById('authorizeButton').innerText = 'Refresh';
+            };
+
+            if (gapi.client.getToken() === null) {
+                tokenClient.requestAccessToken({prompt: 'consent'});
+            } else {
+                tokenClient.requestAccessToken({prompt: ''});
+            }
+        }
+
+        function writeToFile() {
+            const content = document.getElementById('inputText').value;
+            if (!content) {
+                showMessage('Please enter some text to write.');
+                return;
+            }
+
+            gapi.client.drive.files.get({
+                fileId: FILE_ID,
+                alt: 'media'
+            }).then(function(response) {
+                let jsonContent;
+                try {
+                    jsonContent = JSON.parse(response.body);
+                } catch (error) {
+                    jsonContent = {};
+                }
+
+                if (!jsonContent.entries) {
+                    jsonContent.entries = [];
+                }
+                jsonContent.entries.push(content);
+
+                const blob = new Blob([JSON.stringify(jsonContent)], {type: 'application/json'});
+
+                const form = new FormData();
+                form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
+                form.append('file', blob);
+
+                fetch(`https://www.googleapis.com/upload/drive/v3/files/${FILE_ID}?uploadType=multipart`, {
+                    method: 'PATCH',
+                    headers: new Headers({'Authorization': 'Bearer ' + gapi.client.getToken().access_token}),
+                    body: form
+                }).then(response => {
+                    if (response.ok) {
+                        showMessage('Successfully written to file!');
+                    } else {
+                        showMessage('Error writing to file.');
+                    }
+                }).catch(error => {
+                    showMessage('Error: ' + error.message);
+                });
+            }).catch(error => {
+                showMessage('Error reading file: ' + error.message);
             });
         }
-
-function writeToFile() {
-    const content = document.getElementById('inputText').value;
-    if (!content) {
-        showMessage('Please enter some text to write.');
-        return;
-    }
-
-    gapi.client.drive.files.get({
-        fileId: FILE_ID,
-        alt: 'media'
-    }).then(function(response) {
-        let jsonContent;
-        try {
-            jsonContent = JSON.parse(response.body);
-        } catch (error) {
-            // If parsing fails, start with an empty object
-            jsonContent = {};
-        }
-
-        // Add new content
-        if (!jsonContent.entries) {
-            jsonContent.entries = [];
-        }
-        jsonContent.entries.push(content);
-
-        const blob = new Blob([JSON.stringify(jsonContent)], {type: 'application/json'});
-
-        const form = new FormData();
-        form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
-        form.append('file', blob);
-
-        fetch(`https://www.googleapis.com/upload/drive/v3/files/${FILE_ID}?uploadType=multipart`, {
-            method: 'PATCH',
-            headers: new Headers({'Authorization': 'Bearer ' + gapi.auth.getToken().access_token}),
-            body: form
-        }).then(response => {
-            if (response.ok) {
-                showMessage('Successfully written to file!');
-            } else {
-                showMessage('Error writing to file.');
-            }
-        }).catch(error => {
-            showMessage('Error: ' + error.message);
-        });
-    }).catch(error => {
-        showMessage('Error reading file: ' + error.message);
-    });
-}
 
         function showMessage(msg) {
             document.getElementById('message').textContent = msg;
         }
 
-        loadGoogleDriveAPI();
+        document.getElementById('authorizeButton').addEventListener('click', handleAuthClick);
+        document.getElementById('submitBtn').addEventListener('click', writeToFile);
     </script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </body>
 </html>
