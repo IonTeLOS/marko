@@ -3654,7 +3654,7 @@ function handleSharedLink(url, title, text) {
     const scrollRequest = params.get('scroll');
             
             // Check if the scroll parameter is present
-            if (scroll === 'down') {
+            if (scrollRequest === 'down') {
                 console.log('Scroll to bottom requested');
                 // Scroll the div with class 'bookmarks-container' to the bottom
                 const container = document.querySelector('.bookmarks-container');
