@@ -4722,6 +4722,7 @@ linkContainer.appendChild(bookmarkElement);
                 else if (link[0] === "note") {
     
                 const iconUrl = link[3] || defaultIconUrl; 
+                const note = decodeURIComponent(link[1]).replace(/\n/g, '<br>');
 
                 const bookmarkElement = document.createElement('div');
                 bookmarkElement.className = 'bookmark';
@@ -4731,7 +4732,7 @@ linkContainer.appendChild(bookmarkElement);
                 
                 bookmarkElement.innerHTML = `
     <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
-     onmouseout="hideTooltip()" onclick="openMarko(showShareNote, '${link[2]}', '${link[1]}')" style="cursor: pointer;">
+     onmouseout="hideTooltip()" onclick="openMarko(showShareNote, '${link[2]}', '${note}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon" style="width: 42px; height: 42px;">
