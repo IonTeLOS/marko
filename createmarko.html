@@ -826,7 +826,7 @@ body.dark-mode {
     <div id="infoModal" class="help-modal">
         <div id="help1" class="help-modal-content">
             <span class="close-help">&times;</span>
-            <p>Choose the type of your Marko. <br>Website is for url links, καλημέρα, φίλε ! links to social profiles and so much more. Email is for email addresses. Phone, Viber and WhatsApp make more sense on mobile. Viber and WhatsApp need the phonenumber prefixed with the international code. Window creates a local frame which you can use to surf a website of your choice. Adding a Youtube link in window lets you watch a video without leaving Marko. Using Note you can take a local note, which never leaves your browser. Same applies to post. Selecting post you can create a local website post. Location accepts geo: links or links to Google maps or openstreetmaps. Payment accepts paypal.me and bitcoin: links. Choose pdf to add a pdf to read inside Marko. Download creates a link to a download object. Videocall creates a link you can use to share with the friend(s) you want to get in touch with. <br>If you are unsure what to try first, choose website, which is the default anyway...</p>
+            <p>Choose the type of your Marko. <br>Website is for url links, links to social profiles and so much more. Email is for email addresses. Phone, Viber and WhatsApp make more sense on mobile. Viber and WhatsApp need the phonenumber prefixed with the international code. Window creates a local frame which you can use to surf a website of your choice. Adding a Youtube link in window lets you watch a video without leaving Marko. Using Note you can take a local note, which never leaves your browser. Same applies to post. Selecting post you can create a local website post. Location accepts geo: links or links to Google maps or openstreetmaps. Payment accepts paypal.me and bitcoin: links. Choose pdf to add a pdf to read inside Marko. Download creates a link to a download object. Videocall creates a link you can use to share with the friend(s) you want to get in touch with. <br>If you are unsure what to try first, choose website, which is the default anyway...</p>
         </div>
     </div>
 
@@ -1491,7 +1491,14 @@ async function chooseMarkoLink(type = 'website') {
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
                         case 'phone':
-                            result = await processPhoneNumber(chosenLink);
+                            // Await the result from processPhoneNumber
+                            let result = await processPhoneNumber(chosenLink);
+
+                            // Remove the + prefix from the result
+                            if (result.startsWith('+')) {
+                                result = result.substring(1);
+                            }
+                            // Store the modified result in session storage
                             sessionStorage.setItem('temp-marko-link', result);
                             break;
                         case 'Viber':
