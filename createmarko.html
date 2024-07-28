@@ -1607,40 +1607,43 @@ async function getFavicon(url) {
   });
 }
         
-    function onFinish() {
-            const buttonContainer = document.querySelector('.onFinish-buttons');
+   function onFinish() {
+    const buttonContainer = document.querySelector('.onFinish-buttons');
 
-            // Create Retry button
-            const retryButton = document.createElement('button');
-            retryButton.innerHTML = '<span class="material-icons">refresh</span> Retry';
-            retryButton.onclick = () => {
-                sessionStorage.clear();
-                location.reload();
-            };
-            if (sessionStorage.getItem('created-link')) {
-            // Create selfshare button
-            const selfShareButton = document.createElement('button');
-            selfShareButton.innerHTML = '<span class="material-icons">add</span> Add';
-            selfShareButton.onclick = () => {
-                saveToStorage();
-                sessionStorage.clear();
-                location.reload();
-            };
-            }
-            // Create Leave button
-            const leaveButton = document.createElement('button');
-            leaveButton.classList.add('leave');
-            leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
-            leaveButton.onclick = () => {
-                sessionStorage.clear();
-                location.reload();
-                window.location.href = 'https://teloslinux.org/marko/newfile';
-            };
-            // Append buttons to the container
-            buttonContainer.appendChild(retryButton);
-            buttonContainer.appendChild(leaveButton);
-            buttonContainer.appendChild(selfShareButton);
-        }         
+    // Helper function to create a button if it doesn't already exist
+    function createButton(id, innerHTML, onClick) {
+        let button = document.getElementById(id);
+        if (!button) {
+            button = document.createElement('button');
+            button.id = id;
+            button.innerHTML = innerHTML;
+            button.onclick = onClick;
+            buttonContainer.appendChild(button);
+        }
+    }
+
+    // Create Retry button
+    createButton('retryButton', '<span class="material-icons">refresh</span> Retry', () => {
+        sessionStorage.clear();
+        location.reload();
+    });
+
+    // Create selfShare button if the condition is met
+    if (sessionStorage.getItem('created-link')) {
+        createButton('selfShareButton', '<span class="material-icons">add</span> Add', () => {
+            saveToStorage();
+            sessionStorage.clear();
+            location.reload();
+        });
+    }
+
+    // Create Leave button
+    createButton('leaveButton', '<span class="material-icons">exit_to_app</span> Leave', () => {
+        sessionStorage.clear();
+        location.reload();
+        window.location.href = 'https://teloslinux.org/marko/newfile';
+    });
+}
 
 function appendUUIDToURL(url) {
   const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -2259,6 +2262,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
 
         // Function to process the shortlink creation response
         function processShortlinkCreationResponse(url, alias, maxClicks) {
+            sessionStorage.setItem('created-link', url);
             sendShortlinkCreationRequest(url, alias, maxClicks)
                 .then(responseData => {
                     console.log('Parsed API response:', responseData);
@@ -2266,9 +2270,8 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                     if (responseData.short_url) {
                         Notiflix.Notify.success('Shortlink created successfully!'); // Show Notiflix notification
 
-                        // Store the shortlink in sessionStorage
-                        sessionStorage.setItem('created-link', shareLink);
-
+                        // Store by updating the shortlink in sessionStorage
+                        sessionStorage.setItem('created-link', responseData.short_url);
                         // Handle clipboard copy and sharing
                         handleClipboardAndSharing(responseData.short_url);
                     } else {
@@ -2287,7 +2290,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                                     Notiflix.Notify.success('Custom alias unavailable. Shortlink created without alias.'); // Show Notiflix notification
 
                                     // Store the shortlink in sessionStorage
-                                    sessionStorage.setItem('created-link', shareLink);
+                                    sessionStorage.setItem('created-link', responseData.short_url);
 
                                     // Handle clipboard copy and sharing
                                     handleClipboardAndSharing(responseData.short_url);
@@ -2356,7 +2359,7 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                     link = 'https://' + link;
                 }
                 
-                sessionStorage.setItem('created-link', shareLink);
+                sessionStorage.setItem('created-link', link);
 
                 // Handle shortlink creation using stored values
                 const { storedAlias, isOneTime } = retrieveAndProcessStorage();
