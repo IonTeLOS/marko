@@ -1523,6 +1523,9 @@ async function getFavicon(url) {
 }
 
     function onAbort() {
+            document.querySelectorAll('.onabort-buttons').forEach(function(button) {
+                button.style.display = 'none';
+            });
             document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
                 button.style.display = 'none';
             });
@@ -1548,6 +1551,9 @@ async function getFavicon(url) {
         }     
         
     function onSuccess() {
+            document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
+                button.style.display = 'none';
+            });
             document.querySelectorAll('.onabort-buttons').forEach(function(button) {
                 button.style.display = 'none';
             });
