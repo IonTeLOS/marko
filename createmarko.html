@@ -1661,7 +1661,7 @@ async function chooseMarkoType() {
                         console.log('Name chosen:', name);
                     } 
                     
-                    let note, post, iconAndColor;
+                    let note, post;
 
                     if (selectedType === 'note') {
                         // Delay before calling chooseMarkoName
@@ -1672,9 +1672,6 @@ async function chooseMarkoType() {
                         noteContent.style.display = 'block';
                         note = await processNote(name);
                         sessionStorage.setItem('temp-marko-link', note);
-                        //iconAndColor = await chooseMarkoIconType(selectedType); // Call icon type selection
-                        //console.log('Marko created: ', 'type:', selectedType, ', title:', name, ', note:', note, ', icon and icon color:', iconAndColor);
-                        //resolve(); // Resolve to continue the process
                     } else if (selectedType === 'post') {
                         // Delay before calling chooseMarkoName
                         await new Promise(resolve => setTimeout(resolve, 500));
