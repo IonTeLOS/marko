@@ -258,7 +258,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: #f1f1f1;
+            background-color: #0D47A1;
             text-align: center;
             padding: 10px 0;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
@@ -656,6 +656,7 @@
         .onabort-buttons button,
         .onsuccess-buttons button {
             background-color: #0D47A1;
+            bottom: 80px;
             color: #fff;
             border: none;
             padding: 15px 30px;
@@ -676,7 +677,6 @@
 <body>
 
 
-    <div id="google_translate_element" style="display:none;"></div>
 <!-- Language selection dropdown -->
     <div class="translate-dropdown">
         <select id="translate-select" onchange="changeLanguage()">
@@ -730,7 +730,7 @@
         <div id="line-separator"></div>
         <p>Choose the type of your Marko:</p>
         <div class="form-group">
-            <select id="markoType" name="markoType" translate="no">
+            <select id="markoType" name="markoType" translate="yes">
                 <option value="0">Choose Marko type</option>
                 <option value="1">website</option>
                 <option value="2">email</option>
@@ -782,7 +782,7 @@
     <div id="line-separator"></div>
     <p>Choose the icon type for your Marko:</p>
     <div class="form-group">
-        <select id="markoIconType" name="markoIconType" translate="no">
+        <select id="markoIconType" name="markoIconType" translate="yes">
             <option value="0">Select Marko icon type</option>
             <option value="1">Default</option>
             <option value="2">Let me choose</option>
@@ -883,9 +883,20 @@
                 var currentUrl = window.location.href;
                 var cleanUrl = currentUrl.replace(/^https?:\/\//, ''); // Remove http:// or https://
                 var translateUrl = "https://translated.turbopages.org/proxy_u/en-" + language + ".en/https/" + cleanUrl;
+                document.querySelector('.translate-dropdown').style.display = 'none';
                 window.location.href = translateUrl;
             }
         }
+
+        // Define the function to create the event listener
+function handleEnterKey(buttonId) {
+    return function(event) {
+        if (event.key === 'Enter') {
+            document.getElementById(buttonId).click();
+        }
+    };
+}
+        
 const markoTypes = [
     'Choose Marko type',  // Index 0
     'website',            // Index 1
@@ -1702,6 +1713,9 @@ async function chooseMarkoType() {
         select.value = '1'; // Set to "Default"
         select.dispatchEvent(new Event('change')); // Trigger the change event
     };
+
+    const enterKeyListener = handleEnterKey('defaultButton');
+    document.addEventListener('keydown', enterKeyListener);
     // Use a Promise to ensure the dropdown is ready
     await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -1710,7 +1724,11 @@ async function chooseMarkoType() {
             const selectedIndex = Number(select.value);
             const selectedOption = select.options[select.selectedIndex];
             const selectedType = selectedOption.textContent.trim();  // Get text of the selected option and trim i
-
+            // Remove the listener
+            document.removeEventListener('keydown', enterKeyListener);
+            // hide traslation bottom-bar
+            document.querySelector('.translate-dropdown').style.display = 'none';
+            
             console.log('Selected index:', selectedIndex);
             console.log('Selected type:', selectedType);
 
@@ -1952,8 +1970,12 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
         // Add event listeners for submit and cancel buttons
         document.getElementById('default3Button').addEventListener('click', handleSubmit);
         document.getElementById('cancelCreation3Button').addEventListener('click', handleCancel);
-
+        // Add the listener for ENTER keyboard key
+        const enter3KeyListener = handleEnterKey('default3Button');
+        document.addEventListener('keydown', enter3KeyListener);
+        
         function handleSubmit() {
+            document.removeEventListener('keydown', enter3KeyListener);
             const alias = document.getElementById('aliasInput').value;
             const onetimeChecked = document.getElementById('onetimeCheckbox').checked;
 
@@ -1967,21 +1989,31 @@ async function showAliasPrompt(inputType = 'text', shareLink) {
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
+                document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
+                button.style.display = 'none';
+                });
                 onSuccess();
             } else {
                 Notiflix.Notify.success('Shortlink created successfully!'); // Show Notiflix notification
                 initializeShortlinkWithTempMarkoLink(shareLink);
                 resolve(alias);
                 removeAliasForm();
+                document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
+                button.style.display = 'none';
+                 });
                 onSuccess();
             }
         }
 
         function handleCancel() {
+            document.removeEventListener('keydown', enter3KeyListener);
             Notiflix.Notify.success('A long local weblink has been created and copied to your clipboard.'); // Show Notiflix notification for cancelation
             const shareLink = constructShareLink();
             removeAliasForm();
             handleClipboardAndSharing(shareLink);
+            document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
+                button.style.display = 'none';
+            });
             onSuccess();
         }
 
@@ -2209,13 +2241,15 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
              hideForm('markoIconTypeForm'); 
              select.value = '1'; // Set to "Default"
              select.dispatchEvent(new Event('change')); // Trigger the change event
-    };
-
+        };
+         const enter2KeyListener = handleEnterKey('default2Button');
+         document.addEventListener('keydown', enter2KeyListener);
 
         // Function to handle selection change
         select.onchange = function() {
             const selectedIndex = select.value;
-
+            // Remove the listener
+            document.removeEventListener('keydown', enter2KeyListener);
             if (selectedIndex !== '') {
                 //form.style.display = 'none'; // Hide the form after selection
                 hideForm('markoIconTypeForm');
@@ -2328,6 +2362,9 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                 .catch(err => {
                     console.error('Error sharing shortlink:', err);
                     Notiflix.Notify.failure('Failed to share shortlink.'); // Show Notiflix notification
+                    document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
+                       button.style.display = 'none';
+                    });
                     onSuccess();
                 });
             } else {
@@ -2337,11 +2374,17 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                 .then(() => {
                     playSuccessSound();
                     console.log('Shortlink copied to clipboard!');
+                    document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
+                       button.style.display = 'none';
+                    });
                     onSuccess();
                 })
                 .catch(err => {
                     console.error('Error copying to clipboard:', err);
                     Notiflix.Notify.failure('Failed to copy shortlink to clipboard.'); // Show Notiflix notification
+                    document.querySelectorAll('.onsuccess-buttons').forEach(function(button) {
+                button.style.display = 'none';
+            });
                     onSuccess();
                 });
             }
