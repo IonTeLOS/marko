@@ -87,7 +87,6 @@ background-color: #1f1b24;
       flex: 100;
       display: flex;
       flex-direction: column;
-      overflow-y: auto; /* Make it scrollable */
     }      
 
 
@@ -3636,11 +3635,17 @@ function scrollToBottomIfRequested() {
             
             // Check if the scroll parameter is present
             if (scroll) {
-                // Scroll to the bottom of the page
-                window.scrollTo(0, document.body.scrollHeight);
-                console.log('scroll to bottom performed');
+                // Scroll the div with class 'bookmarks-container' to the bottom
+                const container = document.querySelector('.bookmarks-container');
+                if (container) {
+                    container.scrollTop = container.scrollHeight;
+                    console.log('Scroll to bottom performed');
+                } else {
+                    console.log('Container not found');
+                }
             }
         }
+
             
   function loadArrayFromURL() {
     const params = new URLSearchParams(window.location.search);
