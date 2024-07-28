@@ -1493,11 +1493,11 @@ async function chooseMarkoLink(type = 'website') {
                             break;
                         case 'phone':
                             // Await the result from processPhoneNumber
-                            let result = await processPhoneNumber(chosenLink);
+                            result = await processPhoneNumber(chosenLink);
 
                             // Remove the + prefix from the result
-                            if (result.startsWith('+')) {
-                                result = result.substring(1);
+                            if (result.includes('+')) {
+                                result = result.replace(/\+/g, '');
                             }
                             // Store the modified result in session storage
                             sessionStorage.setItem('temp-marko-link', result);
