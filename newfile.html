@@ -2658,6 +2658,13 @@ function saveBookmark(linkData, array = "bookmarks") {
 
     // main function
     window.addLink = function() {
+          if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+              window.location.href = 'https://teloslinux.org/marko/createmarko?fromApp&darkMode'; 
+            } else {
+              window.location.href = 'https://teloslinux.org/marko/createmarko?fromApp'; 
+            }
+}
+        /*
         const linkType = linkTypeSelect.value;
         console.log(`Adding link of type: ${linkType}`);  // Debug log
         let linkData = [];
@@ -2897,6 +2904,7 @@ document.getElementById('phone-number').addEventListener('keydown', function(eve
   }
   });
 });
+*/
     function passCheck() {
             const storedPassword = localStorage.getItem('password');
             console.log("pass=" + storedPassword);
