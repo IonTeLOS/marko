@@ -830,7 +830,6 @@ Notiflix.Confirm.init({
     className: 'notiflix-prompt-custom',
     position: 'center-top', // Position in the upper half of the screen in the middle
     width: '400px', // Maximum width
-    height: '400px',
     borderRadius: '8px', // Border radius
     useGoogleFont: true, // Disable Google Fonts to use custom font
     fontFamily: 'Roboto, sans-serif', // Set font family
@@ -840,8 +839,18 @@ Notiflix.Confirm.init({
     okButtonBackground: '#0D47A1',
     titleColor: '#000000',
     titleFontSize: '20px',
-    zindex: 4000, // Adjust z-index if needed
+    messageFontSize: '18px',
+    zindex: 4000, 
 });
+        Notiflix.Notification.init({
+            position: 'center-top',
+            timeout: '7000',
+            clickToClose: 'true',
+            zindex: 4003,
+            cssAnimationStyle: 'from-top',
+            fontFamily: 'Roboto, sans-serif', // Set font family
+            });
+
         // Initialize and show Notiflix Loading
         Notiflix.Loading.init({
             className: 'notiflix-loading-custom',
@@ -852,7 +861,7 @@ Notiflix.Confirm.init({
             customSvgUrl: 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg',
             svgSize: '150px',
             clickToClose: true,
-            messageFontSize: '20px',
+            messageFontSize: '24px',
         });
 
         Notiflix.Loading.custom('Marko is coming..');
