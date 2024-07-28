@@ -878,7 +878,7 @@
             var language = translateSelect.value;
             if (language) {
                 var currentUrl = window.location.href;
-                var translateUrl = "https://translate.google.com/translate?hl=" + language + "&sl=auto&tl=" + language + "&u=" + encodeURIComponent(currentUrl);
+                var translateUrl = "https://www.translatetheweb.com/?from=&to=" + language + "&a=" + encodeURIComponent(currentUrl);
                 window.location.href = translateUrl;
             }
         }
