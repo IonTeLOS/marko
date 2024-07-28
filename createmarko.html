@@ -254,7 +254,7 @@
         }
 
 /* Translate container styling for the dropdown */
-.translate-container {
+#translate-element {
     position: fixed;
     display: flex;
     bottom: 0;
@@ -684,10 +684,8 @@
 </head>
 <body>
 
-     <div class="translate-container">
-                <!-- Google Translate Widget -->
-                <div id="translateElement"></div>
-    </div>
+
+                <div id="google-translate"></div>
     
     <!-- Audio element for the success sound -->
     <audio id="successSound" src="https://github.com/IonTeLOS/marko/raw/main/not_sim.wav" preload="auto"></audio>
@@ -849,9 +847,9 @@ function googleTranslateElementInit() {
         includedLanguages: 'en,es,zh-CN,hi,ar,pt,bn,ru,ja,pa,de,jv,ko,fr,tr,' +
                           'bg,cs,da,de,el,et,fi,fr,hr,hu,is,it,lv,lt,mt,nl,no,pl,pt,ro,sk,sl,sr,sv,tr,uk',
         autoDisplay: true,
-        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL,
         multilanguagePage: true
-    }, 'translateElement');
+    }, 'google-translate');
 
     function setLanguage() {
         var select = document.querySelector('.goog-te-combo');
