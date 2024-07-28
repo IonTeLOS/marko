@@ -2093,6 +2093,16 @@ function backToMarko() {
     window.location.href = shareLink;
 }
 
+// Function to escape HTML special characters
+function escapeHtml(unsafe) {
+  return unsafe
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+        
 // Function to show the note field and wait for submission
 function showNoteFieldAndWait(name) {
   return new Promise((resolve, reject) => {
@@ -2109,14 +2119,17 @@ function showNoteFieldAndWait(name) {
     function handleSubmitNote() {
       // Get note content
       const noteText = noteContent.value;  
+      // Escape HTML special characters
+      const escapedContent = escapeHtml(noteText);
+
       // Replace newline characters with <br> tags
-      const formattedContent = noteText.replace(/\n/g, '<br>');
+      const formattedContent = escapedContent.replace(/\n/g, '<br>');
 
       // Enclose the content in <p> tags
-      const htmlContent = `<p>${formattedContent}</p>`;
-  
-      console.log('Note is:', htmlContent);
+       const htmlContent = `<p>${formattedContent}</p>`;
 
+      console.log('Note is:', htmlContent);  
+     
       // Save HTML content with <p> and <br> tags to sessionStorage
       sessionStorage.setItem('temp-marko-link', htmlContent);
       // Resolve the promise with note content
