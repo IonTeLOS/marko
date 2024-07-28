@@ -6746,7 +6746,25 @@ window.onclick = function(event) {
           function playSuccessSound() {
             const successSound = document.getElementById('successSound');
             successSound.play();
-        }          
+        } 
+        function checkVisibilityAndReload() {
+    const body = document.body;
+    const elements = body.querySelectorAll('*'); // Select all elements in the body
+    let visibleElementFound = false;
+
+    elements.forEach(element => {
+        if (element.offsetParent !== null) {
+            visibleElementFound = true;
+        }
+    });
+
+    if (!visibleElementFound) {
+        location.reload();
+    }
+}
+
+// Add an event listener for the window focus event
+window.onfocus = checkVisibilityAndReload;
 </script>
 </body>
 </html>
