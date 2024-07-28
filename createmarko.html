@@ -20,6 +20,7 @@
             margin: 0;
             padding: 0;
             padding-bottom: 40px;
+            padding-top: 40px;
             height: 100%;
             width: 100%;
             align-items: center;
@@ -296,16 +297,35 @@
             }
         }
 
-        /* Google Translate Widget Styling */
-        #translateElement {
-            display: flex;
-            justify-content: center;
-                position: fixed;
+/* Google Translate Widget Styling */
+#translateElement, .skiptranslate {
+    display: flex;
+    justify-content: center;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 9999;
-        }
+}
+
+/* Hide the Google Translate attribution */
+.goog-logo-link {
+    display: none !important;
+}
+.goog-te-gadget {
+    color: transparent !important;
+}
+
+/* Move the Google top bar to bottom */
+.goog-te-banner-frame {
+    bottom: 0px !important;
+    top: auto !important;
+}
+
+/* Adjust body padding */
+body {
+    padding-bottom: 40px;
+}
 
 /* Close Button */
 .close-help,
@@ -851,29 +871,38 @@
     <div class="onsuccess-buttons"></div>
 
 <script type="text/javascript">
-        function googleTranslateElementInit() {
-            var userLang = navigator.language || navigator.userLanguage; // Detect user's language
-            new google.translate.TranslateElement({
-                pageLanguage: 'en', // The language of the original content
-                includedLanguages: 'en,es,zh-CN,hi,ar,pt,bn,ru,ja,pa,de,jv,ko,fr,tr,' + // Global languages
-                                  'bg,cs,da,de,el,et,fi,fr,hr,hu,is,it,lv,lt,mt,nl,no,pl,pt,ro,sk,sl,sr,sv,tr,uk', // European languages
-                autoDisplay: true, // Prevent automatic translation on page load
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                multilanguagePage: true // Enable multilanguage support
-            }, 'translateElement');
+function googleTranslateElementInit() {
+    var userLang = navigator.language || navigator.userLanguage; // Detect user's language
+    new google.translate.TranslateElement({
+        pageLanguage: 'en', // The language of the original content
+        includedLanguages: 'en,es,zh-CN,hi,ar,pt,bn,ru,ja,pa,de,jv,ko,fr,tr,' + // Global languages
+                          'bg,cs,da,de,el,et,fi,fr,hr,hu,is,it,lv,lt,mt,nl,no,pl,pt,ro,sk,sl,sr,sv,tr,uk', // European languages
+        autoDisplay: true, // Prevent automatic translation on page load
+        layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+        multilanguagePage: true // Enable multilanguage support
+    }, 'translateElement');
 
-            // Ensure the language selector is set after the translate element is initialized
-            function setLanguage() {
-                var select = document.querySelector('.goog-te-combo');
-                if (select) {
-                    select.value = userLang.substring(0, 2); // Set the detected language
-                    select.dispatchEvent(new Event('change')); // Trigger the translation
-                } else {
-                    setTimeout(setLanguage, 300); // Retry after a short delay if the selector is not available
-                }
-            }
-            setTimeout(setLanguage, 300);
+    // Ensure the language selector is set after the translate element is initialized
+    function setLanguage() {
+        var select = document.querySelector('.goog-te-combo');
+        if (select) {
+            select.value = userLang.substring(0, 2); // Set the detected language
+            select.dispatchEvent(new Event('change')); // Trigger the translation
+        } else {
+            setTimeout(setLanguage, 300); // Retry after a short delay if the selector is not available
         }
+    }
+    setTimeout(setLanguage, 300);
+
+    // Move the translate bar to the bottom after initialization
+    var moveBarInterval = setInterval(function() {
+        var bar = document.querySelector('.goog-te-banner-frame');
+        if (bar) {
+            clearInterval(moveBarInterval);
+            document.body.appendChild(bar);
+        }
+    }, 100);
+}
     </script>
 
     <script>
