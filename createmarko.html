@@ -255,7 +255,8 @@
 
 /* Translate container styling for the dropdown */
 .translate-container {
-    position: absolute;
+    position: fixed;
+    display: flex;
     bottom: 0;
     left: 0;
     right: 0;
@@ -266,14 +267,22 @@
 
 /* Google Translate Widget Styling for the bar */
 .skiptranslate {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 9999;
 }
 
+/* Ensure the Google top bar stays at the top */
+.goog-te-banner-frame {
+    top: 0 !important;
+}
 
+/* Style for the dropdown itself */
+.goog-te-combo {
+    margin-bottom: 10px;
+}
                 /* Responsive Design */
         @media (max-width: 768px) {
             .help-modal-content {
