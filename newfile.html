@@ -3895,9 +3895,9 @@ function getBaseUrl(url) {
 }
     window.onload = function() {
     initializeGoogleIdentity();
+    scrollToBottomIfRequested();  
     loadDonationParams();
     loadArrayFromURL();
-    scrollToBottomIfRequested();  
     toggleBellIcons();
 };   
    // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
