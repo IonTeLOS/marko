@@ -1,17 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Write to Shared JSON File</title>
-    <style>
-        /* ... (keep the existing CSS) ... */
-    </style>
+    <title>Google Drive Integration</title>
 </head>
 <body>
     <div class="container">
         <input type="text" id="inputText" placeholder="Enter text to write">
-        <button id="authorizeButton" style="display: none;">Authorize</button>
+        <button id="authorizeButton">Authorize</button>
         <button id="submitBtn" style="display: none;">Submit</button>
         <div id="message"></div>
     </div>
@@ -26,12 +21,9 @@
 
         // Discovery doc URL for APIs used by the quickstart
         const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
-
-        // Authorization scopes required by the API; multiple scopes can be
-        // included, separated by spaces.
         const SCOPES = 'https://www.googleapis.com/auth/drive.file';
 
-        let tokenClient;
+               let tokenClient;
         let gapiInited = false;
         let gisInited = false;
 
@@ -40,19 +32,23 @@
         }
 
         async function initializeGapiClient() {
-            await gapi.client.init({
-                apiKey: API_KEY,
-                discoveryDocs: [DISCOVERY_DOC],
-            });
-            gapiInited = true;
-            maybeEnableButtons();
+            try {
+                await gapi.client.init({
+                    apiKey: API_KEY,
+                    discoveryDocs: [DISCOVERY_DOC],
+                });
+                gapiInited = true;
+                maybeEnableButtons();
+            } catch (error) {
+                showMessage('Error initializing Google API client: ' + error.message);
+            }
         }
 
         function gisLoaded() {
             tokenClient = google.accounts.oauth2.initTokenClient({
                 client_id: CLIENT_ID,
                 scope: SCOPES,
-                callback: '', // defined later
+                callback: handleAuthCallback
             });
             gisInited = true;
             maybeEnableButtons();
@@ -65,66 +61,61 @@
         }
 
         function handleAuthClick() {
-            tokenClient.callback = async (resp) => {
-                if (resp.error !== undefined) {
-                    throw (resp);
-                }
-                document.getElementById('submitBtn').style.display = 'block';
-                document.getElementById('authorizeButton').innerText = 'Refresh';
-            };
-
-            if (gapi.client.getToken() === null) {
-                tokenClient.requestAccessToken({prompt: 'consent'});
-            } else {
-                tokenClient.requestAccessToken({prompt: ''});
-            }
+            tokenClient.requestAccessToken({prompt: 'consent'});
         }
 
-        function writeToFile() {
+        function handleAuthCallback(resp) {
+            if (resp.error) {
+                showMessage('Error during authentication: ' + resp.error);
+                return;
+            }
+            document.getElementById('submitBtn').style.display = 'block';
+            document.getElementById('authorizeButton').innerText = 'Refresh';
+        }
+
+        async function writeToFile() {
             const content = document.getElementById('inputText').value;
             if (!content) {
                 showMessage('Please enter some text to write.');
                 return;
             }
 
-            gapi.client.drive.files.get({
-                fileId: FILE_ID,
-                alt: 'media'
-            }).then(function(response) {
+            try {
+                const response = await gapi.client.drive.files.get({
+                    fileId: FILE_ID,
+                    alt: 'media'
+                });
+                
                 let jsonContent;
                 try {
                     jsonContent = JSON.parse(response.body);
-                } catch (error) {
-                    jsonContent = {};
+                } catch {
+                    jsonContent = { entries: [] };
                 }
 
-                if (!jsonContent.entries) {
-                    jsonContent.entries = [];
-                }
                 jsonContent.entries.push(content);
-
                 const blob = new Blob([JSON.stringify(jsonContent)], {type: 'application/json'});
-
+                
                 const form = new FormData();
                 form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
                 form.append('file', blob);
 
-                fetch(`https://www.googleapis.com/upload/drive/v3/files/${FILE_ID}?uploadType=multipart`, {
+                const uploadResponse = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${FILE_ID}?uploadType=multipart`, {
                     method: 'PATCH',
-                    headers: new Headers({'Authorization': 'Bearer ' + gapi.client.getToken().access_token}),
+                    headers: {
+                        'Authorization': 'Bearer ' + gapi.auth.getToken().access_token,
+                    },
                     body: form
-                }).then(response => {
-                    if (response.ok) {
-                        showMessage('Successfully written to file!');
-                    } else {
-                        showMessage('Error writing to file.');
-                    }
-                }).catch(error => {
-                    showMessage('Error: ' + error.message);
                 });
-            }).catch(error => {
-                showMessage('Error reading file: ' + error.message);
-            });
+
+                if (uploadResponse.ok) {
+                    showMessage('Successfully written to file!');
+                } else {
+                    showMessage('Error writing to file: ' + uploadResponse.statusText);
+                }
+            } catch (error) {
+                showMessage('Error: ' + error.message);
+            }
         }
 
         function showMessage(msg) {
