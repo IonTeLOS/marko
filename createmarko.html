@@ -2113,8 +2113,8 @@ function showNoteFieldAndWait(name) {
 
       const converter = new showdown.Converter();
       converter.setOption('backslashEscapesHTMLTags', true);
-      const htmlContent = converter.makeHtml(noteText);
-
+      let htmlContent = converter.makeHtml(noteText);
+      htmlContent = htmlContent.replace(/\n/g, '<br>');
 
       console.log('Note is:', htmlContent);
 
