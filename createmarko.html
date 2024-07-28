@@ -2108,16 +2108,17 @@ function showNoteFieldAndWait(name) {
     // Function to handle note submission
     function handleSubmitNote() {
       // Get note content
-      const noteText = noteContent.value;
+      const noteContent = document.getElementById('noteContent').value;
+  
+      // Replace newline characters with <br> tags
+      const formattedContent = noteContent.replace(/\n/g, '<br>');
 
-
-      const converter = new showdown.Converter();
-      converter.setOption('backslashEscapesHTMLTags', true);
-      let htmlContent = converter.makeHtml(noteText);
-      htmlContent = htmlContent.replace(/\n/g, '<br>');
-
+      // Enclose the content in <p> tags
+      const htmlContent = `<p>${formattedContent}</p>`;
+  
       console.log('Note is:', htmlContent);
 
+      // Save HTML content with <p> and <br> tags to sessionStorage
       sessionStorage.setItem('temp-marko-link', htmlContent);
       // Resolve the promise with note content
       resolve(htmlContent);
