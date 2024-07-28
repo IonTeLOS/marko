@@ -252,6 +252,12 @@
     margin: 0;
 }
 
+        /* Translate container styling */
+        .translate-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }        
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .help-modal-content {
@@ -753,13 +759,16 @@
     </div>
     <div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
     
-<div id="infoModal" class="help-modal">
-    <div id="help1" class="help-modal-content">
-        <div id="translateElement"></div> <!-- Google Translate Widget -->
-        <span class="close-help">&times;</span>
-        <p>Choose the type of your Marko. <br>Website is for url links, καλημέρα φίλε links to social profiles and so much more. Email is for email addresses. Phone, Viber and WhatsApp make more sense on mobile. Viber and WhatsApp need the phonenumber prefixed with the international code. Window creates a local frame which you can use to surf a website of your choice. Adding a Youtube link in window lets you watch a video without leaving Marko. Using Note you can take a local note, which never leaves your browser. Same applies to post. Selecting post you can create a local website post. Location accepts geo: links or links to Google maps or openstreetmaps. Payment accepts paypal.me and bitcoin: links. SChoose pdf to add a pdf to read inside Marko. Download creates a link to a download object. Videocall creates a link you can use to share with the friend(s) you want to get in touch with. <br>If you are unsure what to try first, choose website, which is the default anyway...</p>
+    <!-- Info Modal -->
+    <div id="infoModal" class="help-modal">
+        <div id="help1" class="help-modal-content">
+            <div class="translate-container">
+                <div id="translateElement"></div> <!-- Google Translate Widget -->
+            </div>
+            <span class="close-help">&times;</span>
+            <p>Choose the type of your Marko. <br>Website is for url links, links to social profiles and so much more. Email is for email addresses. Phone, Viber and WhatsApp make more sense on mobile. Viber and WhatsApp need the phonenumber prefixed with the international code. Window creates a local frame which you can use to surf a website of your choice. Adding a Youtube link in window lets you watch a video without leaving Marko. Using Note you can take a local note, which never leaves your browser. Same applies to post. Selecting post you can create a local website post. Location accepts geo: links or links to Google maps or openstreetmaps. Payment accepts paypal.me and bitcoin: links. SChoose pdf to add a pdf to read inside Marko. Download creates a link to a download object. Videocall creates a link you can use to share with the friend(s) you want to get in touch with. <br>If you are unsure what to try first, choose website, which is the default anyway...</p>
+        </div>
     </div>
-</div>
 
 <!-- Info Modal -->
 <div id="info2Modal" class="help-modal">
