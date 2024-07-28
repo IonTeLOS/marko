@@ -181,7 +181,15 @@
 #aliasForm input[type="text"], #aliasForm input[type="checkbox"] {
     margin-bottom: 10px;
 }
-
+.notiflix-prompt-custom-content {
+    position: relative; /* Make the form relative for absolute positioning of elements */
+    top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: center;
+    max-width: 100%;
+    max-height: 96vh;
+}
 #formOverlay {
     display: none; /* Hide by default */
     position: fixed;
@@ -879,7 +887,8 @@
             var language = translateSelect.value;
             if (language) {
                 var currentUrl = window.location.href;
-                var translateUrl = "https://translate.google.com/translate?hl=" + language + "&sl=auto&tl=" + language + "&u=" + encodeURIComponent(currentUrl);
+                var cleanUrl = currentUrl.replace(/^https?:\/\//, ''); // Remove http:// or https://
+                var translateUrl = "https://translated.turbopages.org/proxy_u/en-" + language + ".en/https/" + cleanUrl;
                 window.location.href = translateUrl;
             }
         }
@@ -902,7 +911,7 @@ const markoTypes = [
 
 // Initialize Notiflix Prompt with options
 Notiflix.Confirm.init({
-    className: 'notiflix-prompt-custom',
+    className: 'notiflix-prompt-custom-content',
     position: 'center-top', // Position in the upper half of the screen in the middle
     width: '400px', // Maximum width
     borderRadius: '8px', // Border radius
