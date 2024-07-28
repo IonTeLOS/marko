@@ -263,6 +263,7 @@
             padding: 10px 0;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
             z-index: 9999;
+            display: none;
         }
         .translate-dropdown select {
             padding: 5px;
@@ -952,6 +953,7 @@ Notiflix.Confirm.init({
             // Hide Notiflix Loading
             setTimeout(() => {
                 Notiflix.Loading.remove();
+                document.querySelector('.translate-dropdown').style.display = 'block';
                 chooseMarkoType();
             }, 1500);
         });
