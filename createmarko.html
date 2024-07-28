@@ -257,6 +257,7 @@
             display: flex;
             justify-content: flex-start;
             margin-bottom: 20px;
+            bottom: 0;
         }
 
         /* Marko creation Forms */
@@ -299,15 +300,12 @@
         #translateElement {
             display: flex;
             justify-content: center;
-        }
-
-#google_translate_element {
-    position: fixed;
+                position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     z-index: 9999;
-}
+        }
 
 /* Close Button */
 .close-help,
@@ -694,6 +692,12 @@
     </style>
 </head>
 <body>
+
+     <div class="translate-container">
+                <!-- Google Translate Widget -->
+                <div id="translateElement"></div>
+    </div>
+    
     <!-- Audio element for the success sound -->
     <audio id="successSound" src="https://github.com/IonTeLOS/marko/raw/main/not_sim.wav" preload="auto"></audio>
 <div id="markoTypeForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px;">
@@ -794,10 +798,6 @@
     <!-- Info Modal -->
     <div id="infoModal" class="help-modal">
         <div id="help1" class="help-modal-content">
-            <div class="translate-container">
-                <!-- Google Translate Widget -->
-                <div id="translateElement"></div>
-            </div>
             <span class="close-help">&times;</span>
             <p>Choose the type of your Marko. <br>Website is for url links, καλημέρα, φίλε ! links to social profiles and so much more. Email is for email addresses. Phone, Viber and WhatsApp make more sense on mobile. Viber and WhatsApp need the phonenumber prefixed with the international code. Window creates a local frame which you can use to surf a website of your choice. Adding a Youtube link in window lets you watch a video without leaving Marko. Using Note you can take a local note, which never leaves your browser. Same applies to post. Selecting post you can create a local website post. Location accepts geo: links or links to Google maps or openstreetmaps. Payment accepts paypal.me and bitcoin: links. Choose pdf to add a pdf to read inside Marko. Download creates a link to a download object. Videocall creates a link you can use to share with the friend(s) you want to get in touch with. <br>If you are unsure what to try first, choose website, which is the default anyway...</p>
         </div>
