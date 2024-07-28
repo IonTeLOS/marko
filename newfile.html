@@ -3628,6 +3628,19 @@ function handleSharedLink(url, title, text) {
     console.log(`Link: ${url}, Title: ${title}, Extras: ${text}`);  
     createMarko('', url, title, '', '');
 }
+function scrollToBottom() {
+            // Get URL parameters
+            const params = new URLSearchParams(window.location.search);
+            const scroll = params.get('scroll');
+            
+            // Check if the scroll parameter is present
+            if (scroll) {
+                // Scroll to the bottom of the page
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        }
+      
+document.addEventListener('DOMContentLoaded', scrollToBottomIfRequired);
       
   function loadArrayFromURL() {
     const params = new URLSearchParams(window.location.search);
@@ -3649,13 +3662,9 @@ function handleSharedLink(url, title, text) {
     const icon = params.get('icon');
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
-    const scroll = params.get('scroll');
     // Decode the action parameter
     const link = decodeURIComponent(theLink || '').replace(/\n/g, '<br>');
 
-    if (scroll) {
-        window.scrollTo(0, document.body.scrollHeight);
-    }
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
         if (confirm(`Do you want to add a Marko for ${title}?`)) {
