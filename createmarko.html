@@ -1526,6 +1526,8 @@ async function getFavicon(url) {
             leaveButton.classList.add('leave');
             leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
             leaveButton.onclick = () => {
+                sessionStorage.clear();
+                location.reload();
                 window.location.href = 'https://teloslinux.org/marko/newfile';
             };
             // Append buttons to the container
@@ -1551,6 +1553,7 @@ async function getFavicon(url) {
             selfshareButton.innerHTML = '<span class="material-icons">add</span> Add';
             selfshareButton.onclick = () => {
                 saveToStorage();
+                location.reload();
                 sessionStorage.clear();
             };
             // Create Leave button
@@ -1559,6 +1562,7 @@ async function getFavicon(url) {
             leaveButton.innerHTML = '<span class="material-icons">exit_to_app</span> Leave';
             leaveButton.onclick = () => {
                 sessionStorage.clear();
+                location.reload();
                 window.location.href = 'https://teloslinux.org/marko/newfile';
             };
             // Append buttons to the container
