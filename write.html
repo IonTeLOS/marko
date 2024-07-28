@@ -59,41 +59,54 @@
             });
         }
 
-        function writeToFile() {
-            const content = document.getElementById('inputText').value;
-            if (!content) {
-                showMessage('Please enter some text to write.');
-                return;
-            }
+function writeToFile() {
+    const content = document.getElementById('inputText').value;
+    if (!content) {
+        showMessage('Please enter some text to write.');
+        return;
+    }
 
-            gapi.client.drive.files.get({
-                fileId: FILE_ID,
-                alt: 'media'
-            }).then(function(response) {
-                let jsonContent = JSON.parse(response.body);
-                jsonContent.newEntry = content;
-
-                const blob = new Blob([JSON.stringify(jsonContent)], {type: 'application/json'});
-
-                const form = new FormData();
-                form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
-                form.append('file', blob);
-
-                fetch(`https://www.googleapis.com/upload/drive/v3/files/${FILE_ID}?uploadType=multipart`, {
-                    method: 'PATCH',
-                    headers: new Headers({'Authorization': 'Bearer ' + gapi.auth.getToken().access_token}),
-                    body: form
-                }).then(response => {
-                    if (response.ok) {
-                        showMessage('Successfully written to file!');
-                    } else {
-                        showMessage('Error writing to file.');
-                    }
-                }).catch(error => {
-                    showMessage('Error: ' + error.message);
-                });
-            });
+    gapi.client.drive.files.get({
+        fileId: FILE_ID,
+        alt: 'media'
+    }).then(function(response) {
+        let jsonContent;
+        try {
+            jsonContent = JSON.parse(response.body);
+        } catch (error) {
+            // If parsing fails, start with an empty object
+            jsonContent = {};
         }
+
+        // Add new content
+        if (!jsonContent.entries) {
+            jsonContent.entries = [];
+        }
+        jsonContent.entries.push(content);
+
+        const blob = new Blob([JSON.stringify(jsonContent)], {type: 'application/json'});
+
+        const form = new FormData();
+        form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
+        form.append('file', blob);
+
+        fetch(`https://www.googleapis.com/upload/drive/v3/files/${FILE_ID}?uploadType=multipart`, {
+            method: 'PATCH',
+            headers: new Headers({'Authorization': 'Bearer ' + gapi.auth.getToken().access_token}),
+            body: form
+        }).then(response => {
+            if (response.ok) {
+                showMessage('Successfully written to file!');
+            } else {
+                showMessage('Error writing to file.');
+            }
+        }).catch(error => {
+            showMessage('Error: ' + error.message);
+        });
+    }).catch(error => {
+        showMessage('Error reading file: ' + error.message);
+    });
+}
 
         function showMessage(msg) {
             document.getElementById('message').textContent = msg;
