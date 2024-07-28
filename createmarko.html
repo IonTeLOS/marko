@@ -283,7 +283,7 @@
             display: none; /* Hide by default */
         }
 
-         /* Responsive Design */
+                /* Responsive Design */
         @media (max-width: 768px) {
             .help-modal-content {
                 width: 95%;
@@ -305,13 +305,16 @@
         }
 
         /* Hide the Google Translate Toolbar */
-        .goog-te-banner-frame.skiptranslate {
+        .goog-te-banner-frame.skiptranslate,
+        .goog-te-banner-frame.skiptranslate iframe,
+        .goog-te-menu-frame.skiptranslate,
+        .goog-te-menu-frame.skiptranslate iframe,
+        .goog-te-gadget {
             display: none !important;
         }
 
-        .goog-te-gadget {
-            font-family: Roboto, sans-serif;
-            text-align: right;
+        body {
+            top: 0 !important;
         }
 
 /* Close Button */
