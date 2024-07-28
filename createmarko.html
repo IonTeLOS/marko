@@ -2306,42 +2306,55 @@ if (type === 'phone' || type === 'Viber' || type === 'WhatsApp' || type === 'pay
                 });
         }
 
-        // Function to copy shortlink to clipboard and share it
-        function handleClipboardAndSharing(shortlink) {
+// Function to copy shortlink to clipboard and share it
+function handleClipboardAndSharing(shortlink) {
+    window.focus();
+    // Share link if Web Share API is available
+    if (navigator.share) {
+        navigator.share({
+            title: 'Marko shortlink',
+            text: 'Check out my bookmark:',
+            url: shortlink
+        })
+        .then(() => {
+            playSuccessSound();
+            Notiflix.Notify.success('Shortlink shared successfully!'); // Show Notiflix notification
+            onFinish();
+        })
+        .catch(err => {
+            console.error('Error sharing shortlink:', err);
+            Notiflix.Notify.warning('Shortlink has not been shared.'); // Show Notiflix notification
             window.focus();
-            // Share link if Web Share API is available
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Marko shortlink',
-                    text: 'Check out my bookmark:',
-                    url: shortlink
-                })
-                .then(() => {
-                    Notiflix.Notify.success('Shortlink shared successfully!'); // Show Notiflix notification
-                    playSuccessSound();
-                    onFinish();
-                })
-                .catch(err => {
-                    console.error('Error sharing shortlink:', err);
-                    Notiflix.Notify.failure('Failed to share shortlink.'); // Show Notiflix notification
-                    onFinish();
-                });
-            } else {
-                Notiflix.Notify.success('Shortlink copied to clipboard!'); // Show Notiflix notification
-                window.focus();
-                navigator.clipboard.writeText(shortlink)
-                .then(() => {
-                    playSuccessSound();
-                    console.log('Shortlink copied to clipboard!');
-                    onFinish();
-                })
-                .catch(err => {
-                    console.error('Error copying to clipboard:', err);
-                    Notiflix.Notify.failure('Failed to copy shortlink to clipboard.'); // Show Notiflix notification
-                    onFinish();
-                });
-            }
-        }
+            navigator.clipboard.writeText(shortlink)
+            .then(() => {
+                playSuccessSound();
+                Notiflix.Notify.success('Shortlink has been copied to clipboard!'); // Show Notiflix notification   
+                console.log('Shortlink copied to clipboard!');
+                onFinish();
+            })
+            .catch(err => {
+                console.error('Error copying to clipboard:', err);
+                Notiflix.Notify.failure('Failed to copy shortlink to clipboard.'); // Show Notiflix notification
+                onFinish();
+            });
+        });
+    } else {
+        window.focus();
+        navigator.clipboard.writeText(shortlink)
+        .then(() => {
+            playSuccessSound();
+            Notiflix.Notify.success('Shortlink copied to clipboard!'); // Show Notiflix notification
+            console.log('Shortlink copied to clipboard!');
+            onFinish();
+        })
+        .catch(err => {
+            console.error('Error copying to clipboard:', err);
+            Notiflix.Notify.failure('Failed to copy shortlink to clipboard.'); // Show Notiflix notification
+            onFinish();
+        });
+    }
+}
+
 
         // Function to validate alias characters
         function validateAliasCharacters(alias) {
