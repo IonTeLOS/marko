@@ -253,16 +253,14 @@
             margin: 0;
         }
 
-/* Translate container styling for the dropdown */
-#translate-element {
+.translate-container {
     position: fixed;
-    display: flex;
-    bottom: 0;
+    bottom: 20px; /* Adjust this value to control distance from bottom */
     left: 0;
     right: 0;
+    display: flex;
     justify-content: center;
-    margin-bottom: 20px;
-    z-index: 9998;
+    z-index: 9999; /* Ensure it's above other elements */
 }
 
 /* Google Translate Widget Styling for the bar */
@@ -685,8 +683,9 @@
 <body>
 
 
-                <div id="google-translate"></div>
-    
+<div class="translate-container">
+    <div id="google-translate"></div>
+</div>    
     <!-- Audio element for the success sound -->
     <audio id="successSound" src="https://github.com/IonTeLOS/marko/raw/main/not_sim.wav" preload="auto"></audio>
 <div id="markoTypeForm" class="notiflix-prompt-custom-content" style="width:400px; background:#f8f8f8; animation-duration:300ms; border-radius: 8px;">
@@ -846,21 +845,19 @@ function googleTranslateElementInit() {
         pageLanguage: 'en',
         includedLanguages: 'en,es,zh-CN,hi,ar,pt,bn,ru,ja,pa,de,jv,ko,fr,tr,' +
                           'bg,cs,da,de,el,et,fi,fr,hr,hu,is,it,lv,lt,mt,nl,no,pl,pt,ro,sk,sl,sr,sv,tr,uk',
-        autoDisplay: true,
+        autoDisplay: false,
         layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL,
         multilanguagePage: true
     }, 'google-translate');
 
-    function setLanguage() {
+    // Set the detected language after a short delay
+    setTimeout(function() {
         var select = document.querySelector('.goog-te-combo');
         if (select) {
             select.value = userLang.substring(0, 2);
             select.dispatchEvent(new Event('change'));
-        } else {
-            setTimeout(setLanguage, 300);
         }
-    }
-    setTimeout(setLanguage, 300);
+    }, 2000);
 }
     </script>
 
