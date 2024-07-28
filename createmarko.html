@@ -1641,7 +1641,9 @@ function onFinish() {
 
     // Create Leave button with a custom background color
     createButton('leaveButton', '<span class="material-icons">exit_to_app</span> Leave', () => {
-        sessionStorage.clear();
+            setTimeout(() => {
+                sessionStorage.clear();
+            }, 1000); // 1 second timeout
         window.location.href = 'https://teloslinux.org/marko/newfile';
     }, { backgroundColor: '#a9a9a9' });
     
@@ -1649,7 +1651,9 @@ function onFinish() {
     if (sessionStorage.getItem('created-link')) {
         createButton('selfShareButton', '<span class="material-icons">add</span> Add', () => {
             saveToStorage();
-            sessionStorage.clear();
+            setTimeout(() => {
+                sessionStorage.clear();
+            }, 1000); // 1 second timeout
         });
     }
 }
@@ -2045,9 +2049,11 @@ function saveToStorage(array = 'bookmarks') {
     bookmarks.push(linkData);
     localStorage.setItem(array, JSON.stringify(bookmarks));
     playSuccessSound();
-    sessionStorage.clear();
+            setTimeout(() => {
+                sessionStorage.clear();
+            }, 1000); // 1 second timeout
     // TODO add specific url param for other arrays
-    window.location.href = 'https://teloslinux.org/marko/newfile?scroll';
+    window.location.href = 'https://teloslinux.org/marko/newfile/scroll';
 }
 
 // currently not implemented        
