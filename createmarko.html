@@ -818,13 +818,23 @@
     <div class="onsuccess-buttons"></div>
 
 <script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-      pageLanguage: 'en', // The language of the original content
-      includedLanguages: 'es,fr,de,it,zh-CN', // Languages you want to translate to
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    }, 'translateElement');
-  }
+        function googleTranslateElementInit() {
+            var userLang = navigator.language || navigator.userLanguage; // Detect user's language
+            new google.translate.TranslateElement({
+                pageLanguage: 'en', // The language of the original content
+                includedLanguages: 'en,es,zh-CN,hi,ar,pt,bn,ru,ja,pa,de,jv,ko,fr,tr,' + // Global languages
+                                  'bg,cs,da,de,el,et,fi,fr,hr,hu,is,it,lv,lt,mt,nl,no,pl,pt,ro,sk,sl,sr,sv,tr,uk', // European languages
+                autoDisplay: false, // Prevent automatic translation on page load
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                multilanguagePage: true // Enable multilanguage support
+            }, 'translateElement');
+            // Auto-translate to user's system language if it is in the included languages
+            if (document.querySelector('.goog-te-combo')) {
+                var select = document.querySelector('.goog-te-combo');
+                select.value = userLang.substring(0, 2); // Set the detected language
+                select.dispatchEvent(new Event('change')); // Trigger the translation
+            }
+        }
 </script>
 
     <script>
