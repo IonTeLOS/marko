@@ -6797,6 +6797,28 @@ window.onclick = function(event) {
 
 // Add an event listener for the window focus event
 window.onfocus = checkVisibilityAndReload;
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Function to check if URL has the parameter 'fromApp'
+            function hasFromAppParam() {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.has('fromApp');
+            }
+
+            // Function to redirect to a specific URL
+            function redirectToUrl() {
+                window.location.href = 'https://tovima.gr'; // Change this to your specific URL
+            }
+
+            // Only override the back button if 'fromApp' parameter is present
+            if (hasFromAppParam()) {
+                // Push a state to the history to detect the back navigation
+                history.pushState(null, null, window.location.href);
+                window.addEventListener('popstate', function (event) {
+                    redirectToUrl();
+                });
+            }
+        });        
 </script>
 </body>
 </html>
