@@ -878,7 +878,8 @@
             var language = translateSelect.value;
             if (language) {
                 var currentUrl = window.location.href;
-                var translateUrl = "https://www.translatetheweb.com/?from=&to=" + language + "&a=" + encodeURIComponent(currentUrl);
+                var cleanUrl = currentUrl.replace(/^https?:\/\//, ''); // Remove http:// or https://
+                var translateUrl = "https://translated.turbopages.org/proxy_u/en-" + language + ".en/https/" + cleanUrl;
                 window.location.href = translateUrl;
             }
         }
