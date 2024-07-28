@@ -645,7 +645,8 @@ body.dark-mode {
             animation: enlargeAndShrink 1.2s ease forwards;
         }
         
-/* Styles for the dynamic buttons */
+
+/* Additional styles for buttons to prevent them from expanding too much */
 .onFinish-buttons {
     position: fixed;
     max-width: 90vw;
@@ -671,8 +672,22 @@ body.dark-mode {
     background-color: #0D47A1; /* Set button background color */
     overflow: hidden; /* Hide overflow text */
     text-overflow: ellipsis; /* Show ellipsis for overflow text */
-    min-width: 60px; /* Set a minimum width to prevent buttons from shrinking too much */
+    min-width: 90px; /* Set a minimum width to prevent buttons from shrinking too much */
+    color: white; /* Set text color to white for contrast */
+    border: none; /* Remove default border */
+    border-radius: 12px; /* Add border-radius for rounded corners */
+    cursor: pointer; /* Change cursor to pointer on hover */
 }
+
+/* Optional: Add hover and active styles for better UX */
+.onFinish-buttons button:hover {
+    background-color: #0b3c91; /* Slightly darker shade for hover effect */
+}
+
+.onFinish-buttons button:active {
+    background-color: #092d73; /* Even darker shade for active effect */
+}
+
 
 
     </style>
@@ -1656,14 +1671,17 @@ function onFinish() {
     }, { backgroundColor: '#a9a9a9' });
     
     // Create selfShare button if the condition is met
-    if (sessionStorage.getItem('created-link')) {
-        createButton('selfShareButton', '<span class="material-icons">add</span> Add', () => {
+     createButton('selfShareButton', '<span class="material-icons">add</span> Add', () => {
+        if (!sessionStorage.getItem('created-link')) {
+            Notiflix.Notify.failure('Link has already been invalidated. Reloading..');
+            location.reload();
+            return;
+        }
             saveToStorage();
             setTimeout(() => {
                 sessionStorage.clear();
             }, 1000); // 1 second timeout
         });
-    }
 }
 
 
