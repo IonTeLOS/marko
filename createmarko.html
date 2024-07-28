@@ -279,12 +279,23 @@
 
 /* Ensure the Google top bar stays at the top */
 .goog-te-banner-frame {
-    bottom: 0 !important;
+    top: 0 !important;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    width: 100vw;
 }
 
 /* Style for the dropdown itself */
 .goog-te-combo {
     bottom: 0 !important;
+    position: fixed;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    width: 100vw;
+    z-index: 9999; /* Ensure it's above other elements */
 }
                 /* Responsive Design */
         @media (max-width: 768px) {
