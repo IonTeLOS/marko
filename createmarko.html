@@ -644,17 +644,16 @@
             position: fixed;
             max-width: 90vw;
             max-height: 20vh;
-            bottom: 20px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 10px;
         }
 
         .onFinish-buttons button {
             background-color: #0D47A1;
-            bottom: 80px;
             color: #fff;
             border: none;
             padding: 15px 30px;
@@ -666,7 +665,7 @@
             cursor: pointer;
         }
 
-        .onFinish-buttons button.leave {
+        .onFinish-buttons button.leaveButton {
             background-color: #a9a9a9;
         }
     </style>
@@ -1633,14 +1632,13 @@ async function getFavicon(url) {
         createButton('selfShareButton', '<span class="material-icons">add</span> Add', () => {
             saveToStorage();
             sessionStorage.clear();
-            location.reload();
+            window.location.href = 'https://teloslinux.org/marko/newfile';
         });
     }
 
     // Create Leave button
     createButton('leaveButton', '<span class="material-icons">exit_to_app</span> Leave', () => {
         sessionStorage.clear();
-        location.reload();
         window.location.href = 'https://teloslinux.org/marko/newfile';
     });
 }
