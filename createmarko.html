@@ -253,15 +253,20 @@
             margin: 0;
         }
 
-        /* Translate container styling */
-        .translate-container {
-            display: flex;
-            justify-content: flex-start;
-            margin-bottom: 20px;
-            bottom: 0;
-        }
-/* Google Translate Widget Styling */
-#translateElement, .skiptranslate {
+/* Translate container styling for the dropdown */
+.translate-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    z-index: 9998;
+}
+
+/* Google Translate Widget Styling for the bar */
+.skiptranslate {
     position: fixed;
     top: 0;
     left: 0;
@@ -272,6 +277,17 @@
 /* Ensure the Google top bar stays at the top */
 .goog-te-banner-frame {
     top: 0 !important;
+}
+
+/* Style for the dropdown itself */
+.goog-te-combo {
+    margin-bottom: 10px;
+}
+
+/* Add padding to body to prevent content from being hidden */
+body {
+    padding-top: 40px; /* Adjust as needed for the top bar */
+    padding-bottom: 60px; /* Adjust as needed for the dropdown */
 }
 
                 /* Responsive Design */
