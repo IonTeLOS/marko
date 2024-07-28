@@ -28,7 +28,10 @@
             box-sizing: border-box;
         }
 
-
+        /* Push content down when Google Translate toolbar is shown */
+        body.with-google-translate-toolbar {
+            padding-top: 40px; /* Adjust this value as needed */
+        }
 .input-field {
   position: fixed;
   top: 0;
@@ -253,22 +256,11 @@
         }
 
         /* Translate container styling */
+        /* Translate container styling */
         .translate-container {
             display: flex;
-            justify-content: flex-end;
-            margin-bottom: 10px;
-        }
-        /* Position Google Translate at the bottom */
-        .translate-bottom {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            z-index: 4003; /* Ensure it is above other content */
-            background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
-            text-align: center;
-            padding: 10px 0;
-            box-shadow: 0 -4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+            justify-content: flex-start;
+            margin-bottom: 15px;
         }
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -779,13 +771,8 @@
                 <div id="translateElement"></div>
             </div>
             <span class="close-help">&times;</span>
-            <p>Choose the type of your Marko. <br>Website is for url links, καλημέρα, φίλε ! links to social profiles and so much more. Email is for email addresses. Phone, Viber and WhatsApp make more sense on mobile. Viber and WhatsApp need the phonenumber prefixed with the international code. Window creates a local frame which you can use to surf a website of your choice. Adding a Youtube link in window lets you watch a video without leaving Marko. Using Note you can take a local note, which never leaves your browser. Same applies to post. Selecting post you can create a local website post. Location accepts geo: links or links to Google maps or openstreetmaps. Payment accepts paypal.me and bitcoin: links. SChoose pdf to add a pdf to read inside Marko. Download creates a link to a download object. Videocall creates a link you can use to share with the friend(s) you want to get in touch with. <br>If you are unsure what to try first, choose website, which is the default anyway...</p>
+            <p>Choose the type of your Marko. <br>Website is for url links, links to social profiles and so much more. Email is for email addresses. Phone, Viber and WhatsApp make more sense on mobile. Viber and WhatsApp need the phonenumber prefixed with the international code. Window creates a local frame which you can use to surf a website of your choice. Adding a Youtube link in window lets you watch a video without leaving Marko. Using Note you can take a local note, which never leaves your browser. Same applies to post. Selecting post you can create a local website post. Location accepts geo: links or links to Google maps or openstreetmaps. Payment accepts paypal.me and bitcoin: links. SChoose pdf to add a pdf to read inside Marko. Download creates a link to a download object. Videocall creates a link you can use to share with the friend(s) you want to get in touch with. <br>If you are unsure what to try first, choose website, which is the default anyway...</p>
         </div>
-    </div>
-
-    <!-- Google Translate Bottom Bar -->
-    <div id="translateElementContainer" class="translate-bottom">
-        <div id="translateElement"></div>
     </div>
 
 <!-- Info Modal -->
@@ -836,13 +823,13 @@
     <div class="onsuccess-buttons"></div>
 
 <script type="text/javascript">
-                function googleTranslateElementInit() {
+        function googleTranslateElementInit() {
             var userLang = navigator.language || navigator.userLanguage; // Detect user's language
             new google.translate.TranslateElement({
                 pageLanguage: 'en', // The language of the original content
                 includedLanguages: 'en,es,zh-CN,hi,ar,pt,bn,ru,ja,pa,de,jv,ko,fr,tr,' + // Global languages
                                   'bg,cs,da,de,el,et,fi,fr,hr,hu,is,it,lv,lt,mt,nl,no,pl,pt,ro,sk,sl,sr,sv,tr,uk', // European languages
-                autoDisplay: true, // automatic translation on page load
+                autoDisplay: false, // Prevent automatic translation on page load
                 layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
                 multilanguagePage: true // Enable multilanguage support
             }, 'translateElement');
@@ -854,14 +841,27 @@
                     select.value = userLang.substring(0, 2); // Set the detected language
                     select.dispatchEvent(new Event('change')); // Trigger the translation
                 } else {
-                    setTimeout(setLanguage, 300); // Retry after a short delay if the selector is not available
+                    setTimeout(setLanguage, 100); // Retry after a short delay if the selector is not available
                 }
             }
-            setTimeout(setLanguage, 300);
+            setTimeout(setLanguage, 100);
         }
     </script>
 
     <script>
+
+              // Detect Google Translate toolbar and push content down
+      function detectGoogleTranslateToolbar() {
+        const interval = setInterval(() => {
+          const translateToolbar = document.querySelector('.goog-te-banner-frame.skiptranslate');
+          if (translateToolbar) {
+            document.body.classList.add('with-google-translate-toolbar');
+            clearInterval(interval);
+          }
+        }, 100);
+      }
+
+      detectGoogleTranslateToolbar();
         //localStorage.setItem('temp-marko-link', 'tanea.gr'); TODO remove
 const markoTypes = [
     'Choose Marko type',  // Index 0
