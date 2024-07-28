@@ -665,9 +665,6 @@
             cursor: pointer;
         }
 
-        .onFinish-buttons button.leaveButton {
-            background-color: #a9a9a9;
-        }
     </style>
 </head>
 <body>
@@ -1606,17 +1603,18 @@ async function getFavicon(url) {
   });
 }
         
-   function onFinish() {
+function onFinish() {
     const buttonContainer = document.querySelector('.onFinish-buttons');
 
     // Helper function to create a button if it doesn't already exist
-    function createButton(id, innerHTML, onClick) {
+    function createButton(id, innerHTML, onClick, styles = {}) {
         let button = document.getElementById(id);
         if (!button) {
             button = document.createElement('button');
             button.id = id;
             button.innerHTML = innerHTML;
             button.onclick = onClick;
+            Object.assign(button.style, styles); // Apply the styles to the button
             buttonContainer.appendChild(button);
         }
     }
@@ -1632,16 +1630,17 @@ async function getFavicon(url) {
         createButton('selfShareButton', '<span class="material-icons">add</span> Add', () => {
             saveToStorage();
             sessionStorage.clear();
-            window.location.href = 'https://teloslinux.org/marko/newfile';
+            location.reload();
         });
     }
 
-    // Create Leave button
+    // Create Leave button with a custom background color
     createButton('leaveButton', '<span class="material-icons">exit_to_app</span> Leave', () => {
         sessionStorage.clear();
         window.location.href = 'https://teloslinux.org/marko/newfile';
-    });
+    }, { backgroundColor: '#a9a9a9' });
 }
+
 
 function appendUUIDToURL(url) {
   const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
