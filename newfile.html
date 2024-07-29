@@ -7576,8 +7576,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleInput() {
         const query = searchInput.value.trim();
         if (query.length > 0) {
-            fetchSearchResults(query);
-            buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
+            
+            const myEngine = localStorage.getItem('selectedEngine');
+            if (myEngine === 'Google') {
+                fetchSearchResults(query);
+                buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
+            }
         } else {
             dropdown.style.display = 'none';
             firstUrlInDropdown = '';
