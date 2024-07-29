@@ -5947,16 +5947,16 @@ if (confirm("Do you want to share the note with your friends or other apps?")) {
 }
 else {    
       var iframe = document.getElementById('lightbox-iframe');
-iframe.srcdoc = \`
+iframe.srcdoc = `
 <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: lightgrey; text-align: center; font-family: 'Roboto', sans-serif;">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
     </style>
     <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <div style="font-weight: bold; font-size: 24px;">${title}</div>
-        <div style="font-weight: normal; font-size: 18px;">${text}</div>
+        <div style="font-weight: bold; font-size: 24px;">\${title}</div>
+        <div style="font-weight: normal; font-size: 18px;">\${text}</div>
     </div>
-</div>\`;
+</div>`;
 // Display the lightbox
 document.getElementById('lightbox').style.display = 'flex';
 document.getElementById('add-banner').style.display = 'none';
