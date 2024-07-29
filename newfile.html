@@ -66,9 +66,7 @@ body.light-mode {
   color: #333333;
 }
 
-body.light-mode .bookmark,
-body.light-mode .top-bookmark,
-body.light-mode .menu-bookmarks .bookmark {
+body.light-mode .bookmark {
   background-color: #bbdefb;
 }
     
@@ -77,9 +75,7 @@ body.dark-mode {
   color: #999999;
 }
 
-body.dark-mode .bookmark,
-body.dark-mode .top-bookmark,
-body.dark-mode .menu-bookmarks .bookmark {
+body.dark-mode .bookmark {
 background-color: #1f1b24;
 }
       
@@ -91,39 +87,20 @@ background-color: #1f1b24;
 
 
 
-.top-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-}
 
-.top-bookmark {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  margin-bottom: 16px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-radius: 4px;
-}
+
+
       
       .bookmark-wrapper {
         width: 100%;
       }  
 
-    .top-bookmark .icon-wrapper,
     .bookmark .icon-wrapper {
       display: flex;
       align-items: center;
       flex: 1;
     }
 
-    .top-bookmark .icon-container,  
     .bookmark .icon-container {
       display: flex;
       align-items: center;
@@ -136,7 +113,6 @@ background-color: #1f1b24;
       background-color: #fff; /* Light background */
     }
 
-    .top-bookmark .icon-container:hover,
     .bookmark:hover .icon-container,
     .bookmark-title:hover {
       transform: scale(1.1); /* Enlarge container on hover */
@@ -242,54 +218,12 @@ background-color: #1f1b24;
       border-radius: 4px;
       margin-top: 8px;
     }
-
-    .menu-bookmarks {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #ddd;
-    }
-
-    .menu-bookmarks .bookmark {
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .menu-bookmarks .bookmark:hover {
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-    }
    
 
       [id^="bookmark-"]:hover {
           color: #ffffff;
       } 
 
-
-    /* Dropdown Menu */
-    .dropdown-menu {
-      display: none;
-      background-color: #fff;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border-radius: 4px;
-      padding: 8px 0;
-      position: absolute;
-      right: 10px;
-      z-index: 1000;
-    }
-
-    .menu-item {
-      padding: 8px 16px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .menu-item:hover {
-      background-color: #f5f5f5;
-    }
     
 /* System Default (initial state) */
 @media (prefers-color-scheme: light) {
@@ -297,18 +231,14 @@ background-color: #1f1b24;
     background-color: #e3f2fd; /* Align with .body.light-mode */
     color: #333333; /* Align with .body.light-mode */
   }
-  .bookmark,
-  .top-bookmark,
-  .menu-bookmarks .bookmark {
+  .bookmark {
     background-color: #bbdefb; /* Align with .body.light-mode .bookmark */
     transition: background-color 0.2s ease-in-out; /* Smooth transition on background color change */
   }
 }
 
 /* Hover effect for .bookmark and related elements */
-.body.light-mode .bookmark:hover,
-.body.light-mode .top-bookmark:hover,
-.body.light-mode .menu-bookmarks .bookmark:hover {
+.body.light-mode .bookmark:hover {
   background-color: #acc8e5; /* Lighter background on hover */
 }
     
@@ -318,18 +248,14 @@ background-color: #1f1b24;
     background-color: #292929;
     color: #999999;
   }
-  .bookmark,
-  .top-bookmark,
-  .menu-bookmarks .bookmark {
+  .bookmark {
     background-color: #1f1b24;
     transition: background-color 0.2s ease-in-out; /* Smooth transition on background color change */
   }
 }
 
 /* Hover effect for .bookmark and related elements */
-.body.dark-mode .bookmark:hover,
-.body.dark-mode .top-bookmark:hover,
-.body.dark-mode .menu-bookmarks .bookmark:hover {
+.body.dark-mode .bookmark:hover {
   background-color: #333; /* Darker background on hover */
 }
 
@@ -555,18 +481,7 @@ input:focus {
       transform: translate(-50%, -50%) scale(1);
       transition: 0s;
     }
-    .error {
-      color: red;
-      font-size: 0.8rem;
-      margin-top: 5px;
-    }
-  .main-image {
-    max-width: 60%;
-    height: auto;
-    display: table;
-    margin: 0 auto;
-    display: none;
-}
+
 .bookmark-button {
   display: flex;
   justify-content: center;
@@ -613,80 +528,7 @@ input:focus {
             width: 100%; /* Make the input field take the full width */
         }
 
-.link-container {
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
-            padding: 0 10px;
-        }
-        .link-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin: 10px 0;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease;
-        }
-        .link-item:hover {
-            background-color: #f1f1f1;
-        }
-        .link-item a {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: #333;
-            flex-grow: 1;
-            overflow: hidden;
-        }
-        .link-item img {
-    width: 40px; /* Decrease the width of the favicon */
-    height: 40px; /* Decrease the height of the favicon */
-    margin-right: 10px; /* Add less margin to the right */
-    border-radius: 50%;
-    object-fit: contain; /* Ensure the favicon fits within the circle */
-}
-      
-    
-.link-item .note-icon {
-    width: 40px; /* Decrease the width of the note icon */
-    height: 40px; /* Decrease the height of the note icon */
-    margin-right: 10px; /* Add less margin to the right */
-    border-radius: 50%;
-    object-fit: contain; /* Ensure the icon fits within the circle */
-}
-        .link-item .material-icons {
-            width: 50px;
-            height: 50px;
-            margin-right: 15px;
-            border-radius: 50%;
-        }
-        .link-item span.link-text {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            text-align: center;
-            font-size: 18px;
-            font-weight: 500;
-            flex-grow: 1;
-        }
-        .link-item button {
-            border: none;
-            background: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            margin-left: 5px;
-        }
-        .link-item button i {
-            font-size: 24px;
-            color: #d32f2f;
-        }
-     .offline-banner {
+.offline-banner {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -2198,17 +2040,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return value.substring(0, maxLength);
     }
     
-// detect if run on mobile or on desktop based on screen width. TODO use this function to make it more mobile friendly
-function isMobileDevice() {
-  return 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 0 ||
-         window.matchMedia('(max-width: 768px)').matches;
-}
 
-if (isMobileDevice()) {
-  console.log("Marko seems to be running on mobile");
-} else {
-  console.log("Marko seems to be running on desktop");
-}    
 
 
 
@@ -5614,7 +5446,7 @@ async function downloadPage() {
         passCheck();
         const linksContainer = document.querySelector('.bookmarks-container');
         const linksHTML = linksContainer.innerHTML;
-        const newName = prompt('You chose to download your Marko bookmarks. Enter the name of your webpage:', 'Marko');
+        const newName = prompt('You chose to download your Markos as a complete webpage. Enter the name of your page:', 'Marko');
   
         // Set default name if newName is blank or null
         const title = newName ? newName : 'Marko';
@@ -5631,113 +5463,103 @@ const currentState = `<!DOCTYPE html>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
        <style> 
 .bookmarks-container {
-      flex: 1;
+      flex: 100;
       display: flex;
       flex-direction: column;
-      gap: 6px; /* Add some spacing between bookmarks */
-      padding: 0;
-      padding-top: 16px;
-      padding-bottom: 80px;
     }      
 body {
   font-family: Roboto, sans-serif;
-  margin: 20px;
+  position: relative;
   display: flex;
   min-height: 100vh;
+  justify-content: center;
   flex-direction: column;
-  margin: 0;
-  padding: 0;
   max-width: 100%;
   overflow-x: hidden;
   height:auto!important;    
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  margin 0;
+  gap: 6px; /* Add some spacing between bookmarks */
+  padding: 0;
+  padding-top: 8px;
+  padding-bottom: 160px;  
+  transition: background-color 0.5s ease-in-out, color;
 }
+
 
 body.light-mode {
-  background-color: #fdf6e3; /* Solarized Base3 */
-  color: #657b83; /* Solarized Base00 */
+  background-color: #e3f2fd;
+  color: #333333;
 }
 
-body.light-mode .bookmark,
-body.light-mode .top-bookmark,
-body.light-mode .menu-bookmarks .bookmark {
-  background-color: #eee8d5; /* Solarized Base2 */
+body.light-mode .bookmark {
+  background-color: #bbdefb;
 }
-
-body.light-mode .bookmark-icon,
-body.light-mode .top-bookmark .bookmark-icon {
-  color: #586e75; /* Solarized Base01 */
-}
-
+    
 body.dark-mode {
-  background-color: #002b36; /* Solarized Base03 */
-  color: #839496; /* Solarized Base0 */
+  background-color: #292929;
+  color: #999999;
 }
 
-body.dark-mode .bookmark,
-body.dark-mode .top-bookmark,
-body.dark-mode .menu-bookmarks .bookmark {
-  background-color: #073642; /* Solarized Base02 */
-  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+body.dark-mode .bookmark {
+background-color: #1f1b24;
+}
+/* Hover effect for .bookmark and related elements */
+.body.light-mode .bookmark:hover {
+  background-color: #acc8e5; /* Lighter background on hover */
+}
+    
+/* System Default (initial state) */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #292929;
+    color: #999999;
+  }
+  .bookmark {
+    background-color: #1f1b24;
+    transition: background-color 0.2s ease-in-out; /* Smooth transition on background color change */
+  }
 }
 
-body.dark-mode .top-bookmark .icon-container,
-body.dark-mode .menu-item:hover {
-  background-color: #586e75; /* Solarized Base01 */
+/* Hover effect for .bookmark and related elements */
+.body.dark-mode .bookmark:hover {
+  background-color: #333; /* Darker background on hover */
 }
+      
+.bookmarks-container {
+      flex: 100;
+      display: flex;
+      flex-direction: column;
+    }   
+      
+     
 
-body.dark-mode .bookmark-icon,
-body.dark-mode .top-bookmark .bookmark-icon {
-  color: #93a1a1; /* Solarized Base1 */
-}
 
-.top-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 16px;
-}
 
-.top-bookmark {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  margin-bottom: 16px;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px;
-  border-radius: 4px;
-}
       
       .bookmark-wrapper {
         width: 100%;
       }  
 
-    .top-bookmark .icon-wrapper,
     .bookmark .icon-wrapper {
       display: flex;
       align-items: center;
       flex: 1;
     }
 
-    .top-bookmark .icon-container,  
     .bookmark .icon-container {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 56px; /* Standard width */
-      height: 56px; /* Standard height */
+      width: 72px; /* Standard width */
+      height: 72px; /* Standard height */
       border-radius: 50%;
       transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
       margin-right: 16px;
       background-color: #fff; /* Light background */
     }
 
-    .top-bookmark .icon-container:hover,
-    .bookmark:hover .icon-container {
+    .bookmark:hover .icon-container,
+    .bookmark-title:hover {
       transform: scale(1.1); /* Enlarge container on hover */
     }
 
@@ -5745,17 +5567,15 @@ body.dark-mode .top-bookmark .bookmark-icon {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: 10px;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   position: relative;
   margin-bottom: 8px;
 }
 
 .bookmark:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adjusted shadow color and intensity */
 }
 
 .bookmark.active {
@@ -5764,555 +5584,88 @@ body.dark-mode .top-bookmark .bookmark-icon {
 
 .bookmark .bookmark-title {
   font-weight: bold;
-  text-align: left;
+  text-align: center;
   flex: 1;
   transition: transform 0.2s ease-in-out;
 }
 
 .bookmark:hover .bookmark-title {
-  transform: scale(1.02);
+  transform: scale(1.50);
 }
 
+.icon-container {
+            width: 72px; /* Adjust as needed */
+            height: 72px; /* Adjust as needed */
+            position: relative;
+            overflow: hidden;
+        }
+.icon-container::before {
+            content: '';
+            position: absolute;
+            width: 62px; /* 72px (size of container) - 5px (border) * 2 */
+            height: 62px; /* Same calculation as width */
+            border-radius: 50%; /* Makes the ring circular */
+            border: 5px solid var(--ring-color, #2ecc71); /* Thickness and color of the ring TODO change default color */
+            box-sizing: border-box; /* Ensures the border is included in the size */
+        }  
 .bookmark-icon {
   font-size: 36px;
+  object-fit: contain; /* Adjust to 'contain' if you prefer the image to be fully visible */
+  display: block;    
   transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .bookmark:hover .bookmark-icon {
-  color: #333;
+  color: #0d47a1;
 }
 
-.bookmark.active .icon-container {
-  background-color: #1976d2;
-  box-shadow: 0 2px 4px rgba(25, 118, 210, 0.4);
+/* System Default (initial state) */
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #e3f2fd; /* Align with .body.light-mode */
+    color: #333333; /* Align with .body.light-mode */
+  }
+  .bookmark {
+    background-color: #bbdefb; /* Align with .body.light-mode .bookmark */
+    transition: background-color 0.2s ease-in-out; /* Smooth transition on background color change */
+  }
 }
 
-.bookmark.active .bookmark-icon {
-  color: #fff;
+/* Hover effect for .bookmark and related elements */
+.body.light-mode .bookmark:hover {
+  background-color: #acc8e5; /* Lighter background on hover */
+}
+    
+/* System Default (initial state) */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #292929;
+    color: #999999;
+  }
+  .bookmark {
+    background-color: #1f1b24;
+    transition: background-color 0.2s ease-in-out; /* Smooth transition on background color change */
+  }
 }
 
-    /* Custom colors for specific icons */
-    .bookmark[data-link="show-content"]:hover .icon-container {
-      background-color: rgba(13, 71, 161, 0.1); /* Light blue for info icon */
-    }
-
-    .bookmark[data-link="show-content"]:hover .bookmark-icon {
-      color: #0d47a1; /* Darker blue for info icon */
-    }
-
-    .bookmark[data-link^="https://"]:hover .icon-container {
-      background-color: rgba(46, 125, 50, 0.1); /* Light green for external link */
-    }
-
-    .bookmark[data-link^="https://"]:hover .bookmark-icon {
-      color: #2e7d32; /* Green for external link icon */
-    }
-
-    .delete-icon {
-      color: #f44336; /* Material Design error color */
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%); /* Center icon vertically */
-      opacity: 0; /* Initially hide the delete icon */
-      transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Add transitions */
-      font-size: 24px; /* Slightly smaller than main icons */
-    }
-
-    .bookmark:hover .delete-icon,
-    .bookmark.long-press .delete-icon {
-      opacity: 1; /* Show delete icon on hover or long press */
-      transform: translateY(-50%) scale(1.1); /* Scale up while maintaining vertical center */
-    }
-
-    .delete-icon:hover {
-      color: #d32f2f; /* Darker red on hover */
-      cursor: pointer; /* Change cursor to indicate clickability */
-      transform: translateY(-50%) scale(1.2); /* Scale up more on direct hover */
-    }
-
-    .content {
-      display: none; /* Initially hide content divs */
-      padding: 16px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      margin-top: 8px;
-    }
-
-    .menu-bookmarks {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #ddd;
-    }
-
-    .menu-bookmarks .bookmark {
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .menu-bookmarks .bookmark:hover {
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-    }
-
-    /* Specific Icons for Menu Items */
-    .bookmark[data-action="info"] .icon-container {
-      background-color: rgba(33, 150, 243, 0.1);
-    }
-
-    .bookmark[data-action="add-link"] .icon-container {
-      background-color: rgba(76, 175, 80, 0.1);
-    }
-
-    .bookmark[data-action="generate"] .icon-container {
-      background-color: rgba(255, 152, 0, 0.1);
-    }
-
-    .bookmark[data-action="toggle-mode"] .icon-container {
-      background-color: rgba(156, 39, 176, 0.1);
-    }
-
-    .bookmark[data-action="info"]:hover .bookmark-icon {
-      color: #2196f3;
-    }
-
-    .bookmark[data-action="add-link"]:hover .bookmark-icon {
-      color: #4caf50;
-    }
-
-    .bookmark[data-action="generate"]:hover .bookmark-icon {
-      color: #ff9800;
-    }
-
-    .bookmark[data-action="toggle-mode"]:hover .bookmark-icon {
-      color: #9c27b0;
-    }
-
-   
-
-      [id^="bookmark-"]:hover {
-          background-color: #444;
-      }  
-      
-    #marko.bookmark.top-bookmark,
-    icon-container.menu-icon:hover,  
-    body.dark-mode .top-bookmark .icon-container:hover,
-    body.dark-mode .menu-bookmarks .bookmark:hover .icon-container {
-      background-color: #444; /* Slight hover effect in dark mode */
-    }
-
-    body.dark-mode .mode-indicator::after {
-      content: '🌚';
-    }
-
-    /* Dropdown Menu */
-    .dropdown-menu {
-      display: none;
-      background-color: #fff;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      border-radius: 4px;
-      padding: 8px 0;
-      position: absolute;
-      right: 10px;
-      z-index: 1000;
-    }
-
-    .menu-item {
-      padding: 8px 16px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .menu-item:hover {
-      background-color: #f5f5f5;
-    }
-
-    /* System Default (initial state) */
-    @media (prefers-color-scheme: dark) {
-       body { background-color: #121212; color: #e0e0e0; }
-      .bookmark, .dropdown-menu { background-color: #1e1e1e; box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); }
-      .top-bookmark { background-color: #333; }
-      .top-bookmark .icon-container, .menu-item:hover { background-color: #424242; }
-      .icon-container.add-link-icon:hover, .icon-container.menu-icon:hover { background-color: darkcyan; }    
-    }
-
-/* Light Mode */
-body.light-mode { 
-  background-color: #fdf6e3; /* Solarized Base3 */
-  color: #657b83; /* Solarized Base00 */
-}
-body.light-mode .bookmark { 
-  background-color: #eee8d5; /* Solarized Base2 */
-}
-body.light-mode .top-bookmark { 
-  background-color: #eee8d5; /* Solarized Base2 */
-}
-body.light-mode .mode-indicator::after { 
-  content: '🌞'; 
-}
-body.light-mode .bookmark-icon, 
-body.light-mode .top-bookmark .bookmark-icon { 
-  color: #586e75; /* Solarized Base01 */
-}
-
-/* Dark Mode */
-body.dark-mode { 
-  background-color: #002b36; /* Solarized Base03 */
-  color: #839496; /* Solarized Base0 */
-}
-body.dark-mode .bookmark, 
-body.dark-mode .dropdown-menu { 
-  background-color: #073642; /* Solarized Base02 */
-  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1); 
-}
-body.dark-mode .top-bookmark { 
-  background-color: #073642; /* Solarized Base02 */
-}
-body.dark-mode .top-bookmark .icon-container, 
-body.dark-mode .menu-item:hover { 
-  background-color: #586e75; /* Solarized Base01 */
-}
-body.dark-mode .mode-indicator::after { 
-  content: '🌚'; 
-}
-body.dark-mode .bookmark-icon, 
-body.dark-mode .top-bookmark .bookmark-icon { 
-  color: #93a1a1; /* Solarized Base1 */
-}      
-
-input {
-  padding-right: 30px; /* Space for the clear button */
-  font-size: 16px;
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  outline: none;
-  color: darkcyan; 
-}
-
-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-.clear-btn {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  color: #999;
-  padding: 0;
-  line-height: 1;
-}
-
-.clear-btn:hover {
-  color: #333;
+/* Hover effect for .bookmark and related elements */
+.body.dark-mode .bookmark:hover {
+  background-color: #333; /* Darker background on hover */
 }
 
 
-.clear-btn:hover {
-  color: #333;
-}
-
-#icon-select { 
-  cursor: pointer; 
-  background: none; 
-  border: none; 
-  padding: 0; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  width: 56px; 
-  height: 56px; 
-  transition: background-color 0.3s; 
-}
-
-#icon-select:hover, #icon-select:focus { 
-  background-color: rgba(0, 0, 0, 0.1); 
-}
-        #search { 
-  flex-grow: 1; 
-  height: 56px; 
-  font-size: 16px; 
-  border: none; 
-  outline: none; 
-  margin-left: 10px; 
-  padding: 0 15px; 
-  width: 90%;
-  box-sizing: border-box;
-
-}
-
-#icon-name { 
-  margin: 0 15px 0 0; 
-  font-size: 1rem; 
-}
-
-#color-select { 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  width: 56px; 
-  height: 56px; 
-  font-size: 12px; 
-  font-weight: bold; 
-  color: white; 
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); 
-  cursor: pointer; 
-}
-
-.card-panel { 
-  position: relative; 
-  z-index: 1; 
-  display: flex; 
-  flex-direction: column; 
-  align-items: stretch; 
-  padding: 0; 
-}
-
-#icon-select .material-icons-outlined { font-size: 32px; }
-#icon-dropdown {
-  display: none;
-  position: fixed; /* Change from absolute to fixed */
-  z-index: 1000;
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 8px 17px 2px rgba(0,0,0,0.14), 0 3px 14px 2px rgba(0,0,0,0.12), 0 5px 5px -3px rgba(0,0,0,0.2);
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 90%;
-  max-width: 400px;
-  max-height: 80vh; /* Set max height to 80% of viewport height */
-  overflow-y: auto;
-  padding: 10px;
-}
-
-#icon-selection-container {
-  position: relative;
-  padding-bottom: 80px; /* Space for the buttons */
-  overflow: hidden;
-}
-
-#icon-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-  gap: 10px;
-}
-
-.icon { text-align: center; cursor: pointer; padding: 10px; border-radius: 4px; transition: background-color 0.3s; }
-.icon:hover { background-color: #f0f0f0; }
-.material-icons-outlined { font-size: 24px; }
 
 
-#color-select { display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; font-size: 12px; font-weight: bold; color: white; text-shadow: 0 0 3px rgba(0, 0, 0, 0.5); cursor: pointer; }
-        @media only screen and (min-width: 601px) {
-            .container { width: 85%; }
-        }
-    .container {
-      flex: 2;    
-      max-width: 500px;
-      margin: 0 auto;
-    }
 
-    .input-field {
-      margin-bottom: 20px;
-      position: relative;
-  
-    }
 
-    .input-field input[type="url"],
-    .input-field input[type="text"],
-    .input-field input[type="tel"],
-    .input-field select,
-    .input-field textarea {
-      display: block;
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      box-sizing: border-box;
-    }
 
-    .icon-source-selector {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
 
-    .icon-source-selector select {
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background-color: white;
-      appearance: auto;
-    }
 
-    .menu-container {
-      display: flex;
-      gap: 20px;
-      justify-content: center;
-    }
 
-    .menu-container button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: #18488e;
-      color: white;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 24px;
-      overflow: hidden;
-      position: relative;
-      border: none;
-      cursor: pointer;
-    }
 
-    .menu-container button i {
-      font-size: 36px;
-    }
 
-    .menu-container button::before {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 200%;
-      height: 200%;
-      background-color: rgba(255, 255, 255, 0.4);
-      border-radius: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      transition: transform 0.4s;
-    }
 
-    .menu-container button:active::before {
-      transform: translate(-50%, -50%) scale(1);
-      transition: 0s;
-    }
-    .error {
-      color: red;
-      font-size: 0.8rem;
-      margin-top: 5px;
-    }
-  .main-image {
-    max-width: 60%;
-    height: auto;
-    display: table;
-    margin: 0 auto;
-    display: none;
-}
-.bookmark-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.bookmark-button .btn {
-  display: flex;
-  align-items: center;
-  background-color: #18488e; /* Customize as needed */
-  color: white;
-  padding: 20px 40px; /* Significantly increase padding for a larger button */
-  border-radius: 10px; /* Adjust border radius as needed */
-  text-transform: none;
-  font-size: 24px; /* Increase font size */
-  transition: background-color 0.3s ease;
-}
-
-.bookmark-button .btn:hover {
-  background-color: #123366; /* Customize hover color as needed */
-}
-
-.bookmark-button .btn i.material-icons {
-  margin-right: 12px; /* Increase margin for better spacing */
-  font-size: 32px; /* Increase icon size */
-}
-.link-container {
-            width: 100%;
-            max-width: 600px;
-            margin-top: 20px;
-            padding: 0 10px;
-        }
-        .link-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin: 10px 0;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s ease;
-        }
-        .link-item:hover {
-            background-color: #f1f1f1;
-        }
-        .link-item a {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: #333;
-            flex-grow: 1;
-            overflow: hidden;
-        }
-        .link-item img {
-    width: 40px; /* Decrease the width of the favicon */
-    height: 40px; /* Decrease the height of the favicon */
-    margin-right: 10px; /* Add less margin to the right */
-    border-radius: 50%;
-    object-fit: contain; /* Ensure the favicon fits within the circle */
-}
-
-.link-item .note-icon {
-    width: 40px; /* Decrease the width of the note icon */
-    height: 40px; /* Decrease the height of the note icon */
-    margin-right: 10px; /* Add less margin to the right */
-    border-radius: 50%;
-    object-fit: contain; /* Ensure the icon fits within the circle */
-}
-        .link-item .material-icons {
-            width: 50px;
-            height: 50px;
-            margin-right: 15px;
-            border-radius: 50%;
-        }
-        .link-item span.link-text {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            text-align: center;
-            font-size: 18px;
-            font-weight: 500;
-            flex-grow: 1;
-        }
-        .link-item button {
-            border: none;
-            background: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            margin-left: 5px;
-        }
-        .link-item button i {
-            font-size: 24px;
-            color: #d32f2f;
-        }
-     .offline-banner {
+.offline-banner {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -6326,6 +5679,7 @@ input:focus {
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
     z-index: 998; /* Ensure it appears above other elements */
     transition: transform 0.3s ease-in-out;
+    display: hidden;     
     transform: translateY(100%); /* Initially hidden */
 }
 
@@ -6334,54 +5688,22 @@ input:focus {
     transform: translateY(0);
 }
 
-        .dark-mode-switch {
-            position: fixed;
-            bottom: 50px;
-            left: 20px;
-            display: flex;
-            align-items: center;
-            z-index: 1000; /* Ensure the switch appears above the offline banner */
-      }
          iframe {
             aspect-ratio: 16/9;
             width: 100%;
         }
-
-.form-buttons {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;    
-  background-color: #4267B2;
-  margin-bottom: 80px;    
-  box-sizing: border-box;
-  z-index: 999;
-  text-align: center; /* Center the buttons horizontally */
-  justify-content: center;    
-  transition: transform 0.5s ease-in-out;  
-}
-
-.add-banner {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 80px;     
-  background-color: #0D47A1;
-  margin-bottom: 0;    
-  box-sizing: border-box;
-  z-index: 1000;
-  text-align: center; /* Center the buttons horizontally */
-  justify-content: center;    
-}
+.container {
+  transition: margin-bottom 0.3s ease;
+  margin-bottom: 40px;    
+}   
    
+      
 .material-btn {
   background: none;
   border: none;
   color: white;
   cursor: pointer;
-  transition: color 0.2s ease-in-out, transform 0.2s ease-in-out;
+  transition: color 0.2s ease-in-out, transform 0.2s ease-in-out, background 0.2s ease-in-out;
   height: 72px;
   width: 72px;
   display: inline-flex;
@@ -6392,15 +5714,24 @@ input:focus {
 }
 
 .material-btn:hover {
-  color: #ffeb3b;
+  color: #333333;
   transform: scale(1.1);
 }
-      
-      
-      
+
 .material-btn .material-icon {
-  font-size: 48px; /* Change the icon size to 48x48 */
+  font-size: 42px; /* Change the icon size to 48x48 */
 }
+  
+.material-btn:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.3); /* Darker background on focus */
+}
+
+.material-btn:focus-visible {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.3); /* Darker background on focus */
+}
+
 .top-banner {
             display: flex;
             align-items: center;
@@ -6430,22 +5761,35 @@ input:focus {
         <!-- Second icon -->
         <span class="material-icons" id="share-icon">share</span>
     </div>
-        <div class="bookmarks-container">${linksHTML}</div>
+        <div class="bookmarks-container no-select">${linksHTML}</div>
     <script>      
             // Call the function on page load
         window.onload = checkIfLocalAndConfirm;
          function sharePage() {
-  if (navigator.share) {
-    navigator.share({
-      title: document.title,
-      url: window.location.href
-    })
-    .then(() => console.log('Shared successfully'))
-    .catch((error) => console.error('Error in sharing:', error));
-  } else {
-    // Fallback for browsers that do not support Web Share API
-    alert("Web Share API is not supported in this browser.");
-  }
+      // Check if Web Share API is supported
+    if (navigator.share) {
+        navigator.share({
+          title: document.title,
+          url: window.location.href
+        })
+        .then(() => {
+            console.log('Shared successfully');
+        })
+        .catch((shareError) => {
+            console.error('Error sharing:', shareError);
+        });
+    } else {
+        // If Web Share API is not supported, copy to clipboard
+        navigator.clipboard.writeText(window.location.href)
+        .then(() => {
+            console.log('Shareable link copied to clipboard');
+            alert('Share link has been copied to clipboard.');
+        })
+        .catch((err) => {
+            console.error('Failed to copy: ', err);
+            alert('There was an error. Please try again.');
+        });
+    }
 }
 
        function toggleTheme() {
@@ -6462,13 +5806,67 @@ input:focus {
 
 function confirmNav() {
             if (confirm('This option is available in Marko app. Navigate there?')) {
-                            window.open('https://teloslinux.org/marko', '_blank');
+                window.open('https://teloslinux.org/marko/newfile', '_blank');
             }
         }
         
-function openLink(url) {
-  window.open(url, '_blank');
+     // function to open bookmark links in new tab. separate behavior for friends' links
+        function openLink(url) {
+          const prefix = 'https://teloslinux.org/marko/newfile?marko:common-';
+          if (url.startsWith(prefix)) {
+              let restOfString = url.substring(prefix.length);
+        
+               // Find the index of the first '-' character
+               let firstDashIndex = restOfString.indexOf('-');
+        
+               // If there is a '-' character, extract name and link
+         if (firstDashIndex !== -1) {
+            let commonName = restOfString.substring(0, firstDashIndex);
+            let commonId = restOfString.substring(firstDashIndex + 1);
+            syncAndShowCommonMarko(commonId, commonName);
+            console.log(`Title of common Marko: ${commonName}, its FileId: ${commonId}`);
+    }
+          }
+            if (url.startsWith("friends/")) {
+               console.log("friend!!");
+               changeURL(url);
+               renderFriend(url);
+            } else {
+                window.open(url, '_blank');
+            }
 }
+        // function to open bookmark links in new tab. separate behavior for friends' links
+        function openMarko(action, data, extras) {
+            if (action === loadVideo) {
+               loadVideo(data);
+            } else if (action === showWindow) {
+                showWindow(data);
+            } else if (action === showPDFLightbox) {
+                showPDFLightbox(data, extras);
+            } else if (action === syncAndShowCommonMarko) {
+                syncAndShowCommonMarko(data, extras);
+            } else if (action === downloadFile) {
+                downloadFile(data, extras);
+            } else if (action === showPost) {
+                showPost(data);
+            } else if (action === showShareNote) {
+                showShareNote(data, extras);
+            } else {
+                openLink(data);
+            }
+}
+
+
+        function showNoteForm() {
+            const noteText = prompt("Enter your note:");
+            if (noteText) {
+                const iconUrl = noteIcon;
+                const iconColor = getRandomColor();
+                links.push({ text: noteText, iconUrl, iconColor });
+                passCheck();
+                saveLinks();
+            }
+        }
 // Function to handle click on home icon
         function handleHomeClick() {
             openLink("https://teloslinux.org/marko/newfile");
@@ -6501,8 +5899,400 @@ function openLink(url) {
                 }
             }
         }
+function detectTheme() {
+    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = localStorage.getItem("theme");
+
+    // Apply the theme based on user preference or system theme
+    if (theme) {
+        if (theme === "dark") {
+            document.body.classList.add('dark-mode');
+            document.body.classList.remove('light-mode');
+            console.log("Following user choice: Dark");
+        } else {
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+            console.log("Following user choice: Light");
+        }
+    } else {
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            document.body.classList.remove('light-mode');
+            console.log("Following system theme: Dark");
+        } else {
+            document.body.classList.add('light-mode');
+            document.body.classList.remove('dark-mode');
+            console.log("Following system theme: Light");
+        }
+    }
+}
 
 
+// detect if run on mobile or on desktop based on screen width. TODO use this function to make it more mobile friendly
+function isMobileDevice() {
+  return 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 0 ||
+         window.matchMedia('(max-width: 768px)').matches;
+}
+
+if (isMobileDevice()) {
+  console.log("Marko seems to be running on mobile");
+} else {
+  console.log("Marko seems to be running on desktop");
+}   
+
+    // show an offline notice in the form of a banner if offline, autohide it when back online
+    function checkConnection() {
+
+        const offlineBanner = document.getElementById('offline-banner');
+        if (!navigator.onLine) {
+            document.getElementById('offline-banner').classList.add('show');
+        }
+        window.addEventListener('online', () => {
+            document.getElementById('offline-banner').classList.remove('show');
+        });
+        window.addEventListener('offline', () => {
+            document.getElementById('offline-banner').classList.add('show');
+        });
+    }
+
+
+
+function clearFrame() {
+    document.getElementById("lightbox-iframe").srcdoc = "";
+}  
+    
+function showShareNote(title, text) {
+if (confirm("Do you want to share the note with your friends or other apps?")) {
+    shareNote(title, text);
+    return;
+}
+else {    
+      var iframe = document.getElementById('lightbox-iframe');
+iframe.srcdoc = \`
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: lightgrey; text-align: center; font-family: 'Roboto', sans-serif;">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    </style>
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div style="font-weight: bold; font-size: 24px;">${title}</div>
+        <div style="font-weight: normal; font-size: 18px;">${text}</div>
+    </div>
+</div>\`;
+// Display the lightbox
+document.getElementById('lightbox').style.display = 'flex';
+document.getElementById('add-banner').style.display = 'none';
+// Set a timeout to hide the lightbox after 20 seconds     
+setTimeout(function() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('add-banner').style.display = 'block';
+}, 20000);
+}
+}
+
+function shareNote(title, text) {
+    if (navigator.share) {
+    navigator.share({
+      title: title,
+      text: text
+    })
+    .then(() => {
+      console.log('Successfully shared');
+    })
+    .catch((error) => {
+      console.error('Error sharing:', error);
+    });
+  } else if (navigator.clipboard) {
+    navigator.clipboard.writeText(title + ": " + text)
+      .then(() => {
+        alert('Note text has been copied to the clipboard.');
+      })
+      .catch((error) => {
+        console.error('Error copying to clipboard:', error);
+        alert('Failed to copy text to clipboard.');
+      });
+  } 
+}
+
+// Function to check if an element is partially visible at the top, considering the main-bookmark
+        function isPartiallyVisibleAtTop(el, offset) {
+            const rect = el.getBoundingClientRect();
+            return rect.top < offset && rect.bottom > offset;
+        }
+
+        // Function to scroll the element into view
+        function adjustScroll() {
+            const mainBookmark = document.getElementById('main-bookmark');
+            const mainBookmarkHeight = mainBookmark.getBoundingClientRect().height;
+            const paddingOffset = 10; // Adjust this value to match your bookmark padding
+            const bookmarks = document.querySelectorAll('.bookmark');
+            bookmarks.forEach(bookmark => {
+                const rect = bookmark.getBoundingClientRect();
+                if (isPartiallyVisibleAtTop(bookmark, mainBookmarkHeight + paddingOffset)) {
+                    const scrollOffset = rect.top - (mainBookmarkHeight + paddingOffset);
+                    window.scrollBy({
+                        top: scrollOffset,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        }
+
+        // Debounce function to limit the rate at which the adjustScroll function is called
+        function debounce(func, wait) {
+            let timeout;
+            return function (...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Add scroll event listener with debounce
+        window.addEventListener('scroll', debounce(adjustScroll, 100));
+
+
+// detect if run on mobile or on desktop based on screen width. TODO use this function to make it more mobile friendly
+    
+function showTooltip(link) {
+    currentLink = link;
+    const isGoodForStatus = () => {
+        return 'maxTouchPoints' in navigator && navigator.maxTouchPoints > 0 ||
+               window.matchMedia('(max-width: 768px)').matches;
+    };
+
+    if (!isGoodForStatus ()) {
+        const tooltip = document.getElementById('tooltip');
+        const tooltipContent = document.getElementById('tooltip-content');
+
+        if (tooltip && tooltipContent) {
+            tooltipContent.textContent = link;
+            tooltip.style.display = 'block';
+
+            const tooltipWidth = tooltip.offsetWidth;
+            const textWidth = tooltipContent.scrollWidth;
+
+            // If the text overflows the tooltip, apply the scrolling animation
+            if (textWidth > tooltipWidth) {
+                tooltipContent.style.animation = 'scroll-text 10s linear infinite';
+            } else {
+                tooltipContent.style.animation = 'none';
+            }
+        }
+    }
+}
+
+
+    function hideTooltip() {
+        const tooltip = document.getElementById('tooltip');
+        if (tooltip) {
+            tooltip.style.display = 'none';
+        }
+    }
+        
+
+ function showPost(htmlContent) {
+            document.getElementById('add-banner').style.display = 'none';
+            var iframe = document.getElementById('lightbox-iframe');
+iframe.srcdoc = \`
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: lightcyan; text-align: center; flex-direction: column; overflow-x: hidden; font-family: 'Roboto', sans-serif;">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+    ${htmlContent}
+</div>\`;
+            document.getElementById('lightbox').style.display = 'flex';
+        }
+
+
+// Function to download a file after user confirmation
+function downloadFile(url, title) {
+    if (confirm(`Do you want to download ${title} - ${url}?`)) {
+        openLink(url);
+    }
+      }
+
+
+
+
+    
+// open a lightbox to show an iFrame    
+function openLight(link) {
+    const lightboxIframe = document.getElementById("lightbox-iframe");
+
+    
+    lightboxIframe.src = link;
+        const lightboxContainer = document.getElementById("lightbox");
+
+    lightboxContainer.classList.add("active");
+}    
+  function showWindow(link) {
+    if (!link) {
+      alert("Please enter a valid link.");
+      return;
+    }
+
+    //const isYouTubeLink = link.includes("youtube.com") || link.includes("youtu.be");
+    const lightboxContainer = document.getElementById("lightbox");
+    const lightboxIframe = document.getElementById("lightbox-iframe");
+    lightboxContainer.style.display = 'flex';
+    lightboxIframe.src = link;
+    document.getElementById('add-banner').style.display = 'none';
+  }
+    
+// load a YouTube link in the iFrame
+function loadVideo(link) {
+    const init = () => {
+        const ytlightboxContainer = document.getElementById("youtube-lightbox");
+
+        ytlightboxContainer.classList.add("active");
+
+        const videoId = link;
+
+        const playerContainer = document.getElementById("player");
+        playerContainer.innerHTML = ''; // Clear any existing iframe
+
+        const iframe = document.createElement('iframe');
+        iframe.src = \`https://www.youtube-nocookie.com/embed/${videoId}\`;
+        iframe.width = '100%';
+        iframe.height = '100%';
+        iframe.title = 'YouTube video player';
+        iframe.frameBorder = '0';
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;';
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+        playerContainer.appendChild(iframe);
+
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const ytlightboxContainer = document.getElementById("youtube-lightbox");
+    const playerContainer = document.getElementById("player");
+    let inactivityTimer;
+
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(hideCloseButton, 3000); // Hide after 3 seconds of inactivity
+    }
+
+    function hideCloseButton() {
+        const closeBtn = document.getElementById("close-yt");
+        if (closeBtn) {
+            closeBtn.classList.add('hidden');
+        }
+    }
+
+    function showCloseButton() {
+        const closeBtn = document.getElementById("close-yt");
+        if (closeBtn) {
+            closeBtn.classList.remove('hidden');
+            resetInactivityTimer();
+        }
+    }
+
+    // Event listeners based on user interaction
+    if (ytlightboxContainer) {
+        // For desktop and tablets
+        ytlightboxContainer.addEventListener('mousemove', showCloseButton);
+        // For mobile devices
+        ytlightboxContainer.addEventListener('touchstart', showCloseButton);
+    } else {
+        console.error("YouTube lightbox container not found");
+    }
+
+    // Optional: Click event listener for close button
+    const closeBtn = document.getElementById("close-yt");
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            ytlightboxContainer.classList.remove("active");
+            ytlightboxContainer.style.display = 'none'; // Optional: Hide the lightbox
+            playerContainer.innerHTML = ''; // Clear the iframe
+            location.reload(true);
+        });
+    } else {
+        console.error("Close button not found");
+    }
+});
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const closeBtn = document.getElementById("close-btn");
+
+    function closeMainLightbox() {
+    location.reload();
+    // TODO dont reload page, find a way to clear srcdoc 
+    // const lightboxContainer = document.getElementById("lightbox");
+    // document.getElementById("lightbox-iframe").src = "";
+    // lightboxContainer.style.display = 'none';
+    // document.getElementById('add-banner').style.display = 'block';  
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeMainLightbox);
+    } else {
+        console.error("Close button not found");
+    }
+});
+
+
+        function showPDFLightbox(pdfUrl, title) {
+            const adobeDCView = new AdobeDC.View({
+                clientId: "f0b67b61ecc04ab98f1fff720590cca2",
+                divId: "adobe-dc-view",
+            });
+
+            const pdfContainer = document.getElementById("adobe-dc-view");
+            pdfContainer.style.position = "fixed";
+            pdfContainer.style.top = "0";
+            pdfContainer.style.left = "0";
+            pdfContainer.style.width = "100%";
+            pdfContainer.style.height = "100%";
+            pdfContainer.style.backgroundColor = "rgba(0, 0, 0, 0)";
+            pdfContainer.style.zIndex = "9999";
+            pdfContainer.style.display = "flex";
+            pdfContainer.style.justifyContent = "center";
+            pdfContainer.style.alignItems = "center";
+
+            adobeDCView.previewFile({
+                content: {
+                    location: {
+                        url: pdfUrl,
+                    },
+                },
+                metaData: {
+                    fileName: title,
+                },
+            }, {
+                embedMode: "LIGHT_BOX",
+                defaultViewMode: "FIT_WIDTH",
+            });
+
+            pdfContainer.addEventListener("click", (event) => {
+                if (event.target === pdfContainer) {
+                    pdfContainer.style.display = "none";
+                }
+            });
+        }
+  // Detect theme on page load and apply it, unless user has chosen differently
+  document.addEventListener('DOMContentLoaded', detectTheme);
     <\/script>
 </body>
 </html>`;
