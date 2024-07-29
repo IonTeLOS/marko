@@ -1464,7 +1464,10 @@ input:focus {
     display: none;
     z-index: 1000;
     width: 180px; /* Increased size */
+    max-height: 400px; /* Set maximum height */
+    overflow-y: auto; /* Enable vertical scrolling */
 }
+
 
 .engine-option {
     padding: 10px;
@@ -7552,6 +7555,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'naver': 'Naver',
         'youtube': 'YouTube',
         'wikipedia': 'Wiki',
+        'maps': 'Maps',
         'searx': 'searX',
         'local': 'Local'
     };
@@ -7578,8 +7582,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (query.length > 0) {
             
             const myEngine = localStorage.getItem('selectedEngine');
-            if (myEngine === 'Google') {
+            if (myEngine === 'google') {
                 fetchSearchResults(query);
+                buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
+            } else if (myEngine === 'maps') {
+                fetchMapsResults(query);
+                buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
+            } else if (myEngine === 'youtube') {
+                fetchYouTubeResults(query);
                 buttonIcon.textContent = isValidURL(query) ? 'send' : 'search';
             }
         } else {
@@ -7639,7 +7649,99 @@ document.addEventListener('DOMContentLoaded', () => {
             engineDropdown.style.display = 'none';
         }
     }
+    
+function fetchYouTubeResults(query) {
+    const apiKey = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your YouTube Data API key
+    const url = `https://www.googleapis.com/youtube/v3/search?part=snippet&type=video,channel&maxResults=5&q=${encodeURIComponent(query)}&key=${apiKey}`;
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.items) {
+                showYouTubeResults(data.items);
+            }
+        })
+        .catch(error => console.error('Error fetching YouTube results:', error));
+}
 
+function showYouTubeResults(results) {
+    const dropdown = document.getElementById('youtube-dropdown');
+    dropdown.innerHTML = '';
+    
+    if (results.length > 0) {
+        results.forEach(result => {
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            item.textContent = result.snippet.title;
+            item.dataset.url = `https://www.youtube.com/${result.id.kind === 'youtube#channel' ? 'channel' : 'watch'}?v=${result.id.videoId || result.id.channelId}`;
+            item.addEventListener('click', () => {
+                handleResultClick(result);
+            });
+            item.addEventListener('contextmenu', handleRightClick);
+            dropdown.appendChild(item);
+        });
+    } else {
+        dropdown.innerHTML = '<p>No YouTube results found</p>';
+    }
+    
+    adjustDropdownPosition();
+    dropdown.style.display = results.length ? 'block' : 'none';
+}
+
+function fetchMapsResults(query) {
+    const apiKey = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your actual API key
+    const url = 'https://places.googleapis.com/v1/places:searchText';
+    const requestBody = {
+        textQuery: query,
+        languageCode: "en"
+    };
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': apiKey,
+            'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.id'
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Places API error: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.places) {
+            showMapsResults(data.places);
+        }
+    })
+    .catch(error => console.error('Error fetching Maps data:', error));
+}
+
+function showMapsResults(results) {
+    const dropdown = document.getElementById('maps-dropdown');
+    dropdown.innerHTML = '';
+    
+    if (results.length > 0) {
+        results.forEach(place => {
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            item.textContent = `${place.displayName.text} - ${place.formattedAddress}`;
+            item.dataset.url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.displayName.text)}&query_place_id=${place.id}`;
+            item.addEventListener('click', () => {
+                handleResultClick(place);
+            });
+            item.addEventListener('contextmenu', handleRightClick);
+            dropdown.appendChild(item);
+        });
+    } else {
+        dropdown.innerHTML = '<p>No Maps results found</p>';
+    }
+    
+    adjustDropdownPosition();
+    dropdown.style.display = results.length ? 'block' : 'none';
+}
     // Helper Functions
     function fetchSearchResults(query) {
         const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${SEARCH_API_KEY}&cx=${CX}`;
@@ -7748,6 +7850,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 break;  
             case 'wikipedia':
                 searchUrl = `https://wikipedia.org/wiki/${encodeURIComponent(query)}`;
+                break; 
+            case 'maps':
+                searchUrl = `https://www.google.gr/maps/search/${encodeURIComponent(query)}`;
                 break; 
             case 'searx':
                 searchUrl = `https://searxng.site/searxng/search?q=${encodeURIComponent(query)}`;
@@ -7934,6 +8039,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="engine-option" data-engine="naver">Naver</div>
                 <div class="engine-option" data-engine="youtube">YouTube</div>
                 <div class="engine-option" data-engine="wikipedia">Wikipedia</div>
+                <div class="engine-option" data-engine="maps">Maps</div>
                 <div class="engine-option" data-engine="searx">searX</div>
                 <div class="engine-option" data-engine="local">Local</div>
             </div>
