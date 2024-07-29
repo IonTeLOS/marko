@@ -6044,27 +6044,7 @@ function showTooltip(link) {
     }
         
 
- function showPost(htmlContent) {
-            document.getElementById('add-banner').style.display = 'none';
-            var iframe = document.getElementById('lightbox-iframe');
-iframe.srcdoc = \`
-<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: lightcyan; text-align: center; flex-direction: column; overflow-x: hidden; font-family: 'Roboto', sans-serif;">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-        body {
-            margin: 0;
-            font-family: 'Roboto', sans-serif;
-        }
-    </style>
-    ${htmlContent}
-</div>\`;
-            document.getElementById('lightbox').style.display = 'flex';
-        }
-
+//SHOWPOST IS MISSING HERE TODO
 
 // Function to download a file after user confirmation
 function downloadFile(url, title) {
