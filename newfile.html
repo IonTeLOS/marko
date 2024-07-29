@@ -7962,7 +7962,13 @@ function showResults(results) {
         const title = event.target.textContent; // Get the title from the data attribute
         const url = event.target.dataset.url; // Get the URL from the data attribute
         searchInput.value = url; // Set the URL to the text input
-        createMarko('website', url, title, `https://www.google.com/s2/favicons?domain=${url}&sz=32`, '#0D47A1');
+        if (url.includes('https://www.google.com/maps/')) {
+            createMarko('website', url, title, 'https://www.google.com/s2/favicons?domain=https://maps.google.com&sz=64', '#0D47A1');
+        } else if (url.includes('https://www.youtube.com/')) {
+            createMarko('website', url, title, 'https://www.google.com/s2/favicons?domain=https://youtube.com&sz=64', '#0D47A1');
+        } else {
+            createMarko('website', url, title, `https://www.google.com/s2/favicons?domain=${url}&sz=32`, '#0D47A1');
+        }
         // markoButton.click(); // Trigger the left button click
     }
 
