@@ -4409,12 +4409,12 @@ const bookmarkElement = document.createElement('div');
 bookmarkElement.className = 'bookmark';
 bookmarkElement.id = 'main-bookmark';
 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='website' onmouseover="showTooltip('Welcome!')"
+    <div class="bookmark-wrapper" id="home-icon" data-type='website' onmouseover="showTooltip('Welcome!')"
      onmouseout="hideTooltip()" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: #0d47a1;">
                 <img src="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg"
-                alt="Home" id="home-icon" class="bookmark-icon" style="width: 42px; height: 42px;">
+                alt="Home" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
             <span class="bookmark-title">${title}</span>
         </div>
@@ -6091,6 +6091,7 @@ function openLink(url) {
             }
             openLink("https://teloslinux.org/marko/newfile?" + param);
         }
+        
         document.getElementById('home-icon').addEventListener('click', handleHomeClick);
 
         function checkIfLocalAndConfirm() {
@@ -6496,6 +6497,72 @@ document.addEventListener('DOMContentLoaded', () => {
         }
   // Detect theme on page load and apply it, unless user has chosen differently
   document.addEventListener('DOMContentLoaded', detectTheme);
+
+// this is actually a shareLink function, kept the name for convenience
+function deleteLink(index) {
+  const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
+  if (!bookmark) {
+    console.log(`No bookmark found with index ${index}`);
+    return null;
+  }
+
+  const bookmarkWrapper = bookmark.querySelector('.bookmark-wrapper');
+  const iconContainer = bookmarkWrapper.querySelector('.icon-container');
+  const bookmarkTitle = bookmarkWrapper.querySelector('.bookmark-title');
+  const bookmarkIcon = iconContainer.querySelector('img');
+
+  // Extract the required values
+  const onclickValue = bookmarkWrapper.getAttribute('onclick');
+  const actionMatch = onclickValue ? onclickValue.match(/openMarko\((.+?)\)/) : null;
+  const actionLink = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
+  const type = bookmarkWrapper.getAttribute('data-type') || '';
+  const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
+  const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
+  const color = iconContainer ? getComputedStyle(iconContainer).getPropertyValue('--ring-color').trim() : '';
+
+  // Construct the URL for the shareable link
+  const url = new URL('https://teloslinux.org/marko/newfile');
+  url.searchParams.append('type', type);
+  url.searchParams.append('link', actionLink);
+  url.searchParams.append('title', title);
+  url.searchParams.append('icon', icon);
+  url.searchParams.append('color', color);
+  url.searchParams.append('createMarko', 'true');
+
+  const shareLink = url.toString();
+  const shareTitle = "Use Marko to open..";
+  const shareBody = title;
+  const shareIcon = icon;
+
+    // Prompt the user for confirmation
+    const userConfirmed = window.confirm('Create a shortlink?');
+
+    if (userConfirmed) {
+        // If the user confirms, call the function with the provided shareLink
+        initializeShortlinkWithTempMarkoLink(shareLink);
+        return;
+    }
+  
+  if (navigator.share) {
+    navigator.share({
+      title: shareTitle,
+      url: shareLink
+    })
+    .then(() => console.log('Shared successfully'))
+    .catch((error) => console.error('Error in sharing:', error));
+  } else {
+    // Fallback for browsers that do not support Web Share API
+    navigator.clipboard.writeText(shareLink)
+      .then(() => {
+        console.log('Link copied to clipboard');
+        alert('Link has been copied to your clipboard.');
+      })
+      .catch((error) => {
+        console.error('Error in copying link to clipboard:', error);
+      });
+  }
+  return shareLink;
+}
     <\/script>
 </body>
 </html>`;
