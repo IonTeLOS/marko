@@ -4433,7 +4433,9 @@ linkContainer.appendChild(bookmarkElement);
                 <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
             <span class="bookmark-title">${link[2]}</span>
-        </div>
+    </div>        
+</div> 
+    <span id="bell-${index}" class="material-icons bell-icon" style="display: none;" onclick="removeReminder(${index}); event.stopPropagation();">notifications_active</span>
         <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
     </div>
 `;
@@ -4455,7 +4457,9 @@ linkContainer.appendChild(bookmarkElement);
                 <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
             <span class="bookmark-title">${link[2]}</span>
-        </div>
+    </div>        
+</div> 
+    <span id="bell-${index}" class="material-icons bell-icon" style="display: none;" onclick="removeReminder(${index}); event.stopPropagation();">notifications_active</span>
         <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
     </div>
 `;
@@ -4478,7 +4482,9 @@ linkContainer.appendChild(bookmarkElement);
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
             <span class="bookmark-title">${link[2]}</span>
-        </div>
+    </div>        
+</div> 
+    <span id="bell-${index}" class="material-icons bell-icon" style="display: none;" onclick="removeReminder(${index}); event.stopPropagation();">notifications_active</span>
         <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
     </div>
 `;
@@ -4502,7 +4508,9 @@ linkContainer.appendChild(bookmarkElement);
                 <img src="${link[3]}" alt="${link[2]}" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
             <span class="bookmark-title">${link[2]}</span>
-        </div>
+    </div>        
+</div> 
+    <span id="bell-${index}" class="material-icons bell-icon" style="display: none;" onclick="removeReminder(${index}); event.stopPropagation();">notifications_active</span>
         <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
     </div>
 `;
@@ -4546,7 +4554,9 @@ linkContainer.appendChild(bookmarkElement);
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
             <span class="bookmark-title">${link[2]}</span>
-        </div>
+    </div>        
+</div> 
+    <span id="bell-${index}" class="material-icons bell-icon" style="display: none;" onclick="removeReminder(${index}); event.stopPropagation();">notifications_active</span>
         <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
     </div>
 `;
@@ -4573,7 +4583,9 @@ linkContainer.appendChild(bookmarkElement);
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
             <span class="bookmark-title">${link[2]}</span>
-        </div>
+    </div>        
+</div> 
+    <span id="bell-${index}" class="material-icons bell-icon" style="display: none;" onclick="removeReminder(${index}); event.stopPropagation();">notifications_active</span>
         <span id="delete-${index}" class="material-icons delete-icon" onclick="deleteLink(${index}); event.stopPropagation();">delete</span>
     </div>
 `;
@@ -5456,7 +5468,8 @@ const currentState = `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${title}</title>
-          <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M0 0h24v24H0z'/%3E%3Cpath fill='%2300bcd4' d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM15 3v2h2.59L8.7 13.89l1.41 1.41L19 6.41V9h2V3h-6z'/%3E%3C/svg%3E" type="image/svg+xml">    
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M0 0h24v24H0z'/%3E%3Cpath fill='%2300bcd4' d='M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM15 3v2h2.59L8.7 13.89l1.41 1.41L19 6.41V9h2V3h-6z'/%3E%3C/svg%3E" type="image/svg+xml">    
+  <script src="https://documentcloud.adobe.com/view-sdk/main.js"><\/script>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
@@ -5822,8 +5835,6 @@ function openLink(url) {
                 showWindow(data);
             } else if (action === showPDFLightbox) {
                 showPDFLightbox(data, extras);
-            } else if (action === syncAndShowCommonMarko) {
-                syncAndShowCommonMarko(data, extras);
             } else if (action === downloadFile) {
                 downloadFile(data, extras);
             } else if (action === showPost) {
@@ -5939,7 +5950,35 @@ if (isMobileDevice()) {
 function clearFrame() {
     document.getElementById("lightbox-iframe").srcdoc = "";
 }  
-//showShareNote missing here TODO 
+
+function showShareNote(title, text) {
+if (confirm("Do you want to share the note with your friends or other apps?")) {
+    shareNote(title, text);
+    return;
+}
+else {    
+      var iframe = document.getElementById('lightbox-iframe');
+iframe.srcdoc =\`
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: lightgrey; text-align: center; font-family: 'Roboto', sans-serif;">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+    </style>
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <div style="font-weight: bold; font-size: 24px;">\${title}</div>
+        <div style="font-weight: normal; font-size: 18px;">\${text}</div>
+    </div>
+</div>\`;
+// Display the lightbox
+document.getElementById('lightbox').style.display = 'flex';
+document.getElementById('add-banner').style.display = 'none';
+// Set a timeout to hide the lightbox after 20 seconds     
+setTimeout(function() {
+    document.getElementById('lightbox').style.display = 'none';
+    document.getElementById('add-banner').style.display = 'block';
+}, 20000);
+}
+}
+
 function shareNote(title, text) {
     if (navigator.share) {
     navigator.share({
@@ -6044,8 +6083,27 @@ function showTooltip(link) {
     }
         
 
-//SHOWPOST IS MISSING HERE TODO
-
+        function showPost(htmlContent) {
+            document.getElementById('add-banner').style.display = 'none';
+            var iframe = document.getElementById('lightbox-iframe');
+iframe.srcdoc = \`
+<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: lightcyan; text-align: center; flex-direction: column; overflow-x: hidden; font-family: 'Roboto', sans-serif;">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+    \${htmlContent}
+</div>\`;
+            document.getElementById('lightbox').style.display = 'flex';
+}
+        
 // Function to download a file after user confirmation
 function downloadFile(url, title) {
     if (confirm(\`Do you want to download \${title} - \${url}?\`)) {
