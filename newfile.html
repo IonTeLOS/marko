@@ -5943,10 +5943,6 @@ function openLink(url) {
             }
             openLink("https://teloslinux.org/marko/newfile?" + param);
         }
-
-        // Add event listeners to main-bookmark icons
-        document.getElementById('home-icon').addEventListener('click', handleHomeClick);
-        document.getElementById('share-me').addEventListener('click', handleShareClick);
         
         function checkIfLocalAndConfirm() {
             if (window.location.protocol === 'file:' || window.location.protocol === 'content:') {
@@ -6241,6 +6237,9 @@ function loadVideo(link) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Add event listeners to main-bookmark icons
+    document.getElementById('home-icon').addEventListener('click', handleHomeClick);
+    document.getElementById('share-me').addEventListener('click', handleShareClick);
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
     const playerContainer = document.getElementById("player");
     let inactivityTimer;
@@ -7339,6 +7338,7 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('share-me').addEventListener('click', sharePage());
     const searchContainer = document.querySelector('.search-container');
     const overlay = document.getElementById('overlay');
     const searchToggle = document.getElementById('main-bookmark');
@@ -7373,7 +7373,6 @@ document.addEventListener('DOMContentLoaded', () => {
     overlay.addEventListener('click', hideSearchContainer);
 });
 
-        document.getElementById('share-me').addEventListener('click', sharePage());
   
 document.addEventListener('DOMContentLoaded', () => {
     // Define constants
