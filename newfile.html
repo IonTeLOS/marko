@@ -3468,6 +3468,14 @@ function handleSharedLink(url, title, text) {
 }
             
   function loadArrayFromURL() {
+        function getColor() {
+        const letters = '0123456789ABCDEF';
+        let color = '#';
+        for (let i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
     const params = new URLSearchParams(window.location.search);
     
     const compressed = params.get('data');
@@ -3490,7 +3498,7 @@ function handleSharedLink(url, title, text) {
     // Decode the action parameter
     const link = decodeURIComponent(theLink || '').replace(/\n/g, '<br>');
     const scrollRequest = params.get('scroll');
-    const randomColor = getRandomColor();
+    const randomColor = getColor();
             
             // Check if the scroll parameter is present
             if (scrollRequest === 'down') {
