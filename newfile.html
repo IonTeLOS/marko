@@ -6494,9 +6494,42 @@ document.addEventListener('DOMContentLoaded', () => {
   // Detect theme on page load and apply it, unless user has chosen differently
   document.addEventListener('DOMContentLoaded', detectTheme);
 
+function getLinkFromValue(onclickString) {
+    // Regular expression to match the pattern of the onclick attribute
+    const regex = /openMarko\(([^,]+),\s*'([^']*)'(?:,\s*'([^']*)')?\)/;
+
+    // Execute the regex on the onclick string
+    const match = onclickString.match(regex);
+
+    // If there's a match, extract the arguments
+    if (match) {
+        const functionName = match[1].trim();
+        const firstArgument = match[2].trim();
+        const secondArgument = match[3] ? match[3].trim() : null;
+
+        // Return the arguments as an object without quotes
+        return {
+            //functionName: functionName,
+            firstArgument: firstArgument.replace(/^'|'$/g, "")
+            //secondArgument: secondArgument ? secondArgument.replace(/^'|'$/g, "") : null
+        };
+    }
+
+    // If no match, return null
+    return null;
+}
+
+// Example usage
+const onclickString = "onclick=\"openMarko(openLink, 'https://in.gr/')\"";
+const arguments = getArgumentsFromOnclick(onclickString);
+
+console.log(arguments);
+// Output: { functionName: 'openLink', firstArgument: 'https://in.gr', secondArgument: null }
+
 // this is actually a shareLink function, kept the name for convenience
 function deleteLink(index) {
   const bookmark = document.querySelector(\`.bookmark[data-index="\${index}"]\`);
+  console.log('Selected Marko to share: ', bookmark);
   if (!bookmark) {
     console.log(\`No bookmark found with index \${index}\`);
     return null;
@@ -6509,7 +6542,7 @@ function deleteLink(index) {
 
   // Extract the required values
   const onclickValue = bookmarkWrapper.getAttribute('onclick');
-  const actionMatch = onclickValue ? onclickValue.match(/openMarko\((.+?)\)/) : null;
+  const actionMatch = getLinkFromValue(onclickValue);
   const actionLink = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
   const type = bookmarkWrapper.getAttribute('data-type') || '';
   const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
