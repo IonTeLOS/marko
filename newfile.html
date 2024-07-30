@@ -6496,7 +6496,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // this is actually a shareLink function, kept the name for convenience
 function deleteLink(index) {
-  const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
+  const bookmark = document.querySelector(\`.bookmark[data-index="${index}"]\`);
   if (!bookmark) {
     console.log(\`No bookmark found with index \${index}\`);
     return null;
