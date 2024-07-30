@@ -5493,11 +5493,7 @@ const currentState = `<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
        <style> 
-.bookmarks-container {
-      flex: 100;
-      display: flex;
-      flex-direction: column;
-    }      
+
 body {
   font-family: Roboto, sans-serif;
   position: relative;
@@ -6502,7 +6498,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function deleteLink(index) {
   const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
   if (!bookmark) {
-    console.log(`No bookmark found with index ${index}`);
+    console.log(\`No bookmark found with index \${index}\`);
     return null;
   }
 
