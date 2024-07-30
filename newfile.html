@@ -1604,7 +1604,8 @@ export async function cancelScheduledNotification(uuid) {
 // Expose the function globally
 window.cancelScheduledNotification = cancelScheduledNotification;
 
-  //////
+</script>
+ <script> 
 function onWindowFocus() {
     console.log("Window is focused!");
     // Your function code here
@@ -3489,6 +3490,7 @@ function handleSharedLink(url, title, text) {
     // Decode the action parameter
     const link = decodeURIComponent(theLink || '').replace(/\n/g, '<br>');
     const scrollRequest = params.get('scroll');
+    const randomColor = getRandomColor();
             
             // Check if the scroll parameter is present
             if (scrollRequest === 'down') {
@@ -3644,7 +3646,6 @@ console.log("No valid sharing data found.");
 
     if (purelink) {
         if (confirm("Do you want to add " + params.get('friendname') + " as friend?")) {
-            const randomColor = getRandomColor();
             linkData = ['friend', params.get('friendlink'), params.get('friendname'), 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg', randomColor];
             let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
