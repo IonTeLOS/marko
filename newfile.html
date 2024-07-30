@@ -4426,7 +4426,7 @@ linkContainer.appendChild(bookmarkElement);
                 bookmarkElement.dataset.index = index; // Store the index as a data attribute
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+    <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
      onmouseout="hideTooltip()" onclick="openMarko(loadVideo, '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
@@ -4450,7 +4450,7 @@ linkContainer.appendChild(bookmarkElement);
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+    <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
      onmouseout="hideTooltip()" onclick="openMarko(showWindow, '${link[1]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
@@ -4475,7 +4475,7 @@ linkContainer.appendChild(bookmarkElement);
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+    <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
      onmouseout="hideTooltip()" onclick="openMarko(showPDFLightbox, '${proxied}', '${link[2]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
@@ -4501,7 +4501,7 @@ linkContainer.appendChild(bookmarkElement);
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
+    <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('${link[1]}')"
      onmouseout="hideTooltip()" onclick="openMarko(downloadFile, '${link[1]}', '${link[2]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
@@ -4525,7 +4525,7 @@ linkContainer.appendChild(bookmarkElement);
                 // TODO: deleting should remove the google drive file, if initiated by owner
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('This is a contact')"
+    <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('This is a contact')"
      onmouseout="hideTooltip()" onclick="openMarko(syncAndShowCommonMarko, '${link[1]}', '${link[2]}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
@@ -4547,7 +4547,7 @@ linkContainer.appendChild(bookmarkElement);
 
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
-     <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('open to view post')"
+     <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('open to view post')"
      onmouseout="hideTooltip()" onclick='openMarko(showPost, ${JSON.stringify(link[1])})'>
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
@@ -4576,7 +4576,7 @@ linkContainer.appendChild(bookmarkElement);
                 bookmarkElement.id = `bookmark-${index}`;
                 
                 bookmarkElement.innerHTML = `
-    <div class="bookmark-wrapper" data-type='${link[0]}' onmouseover="showTooltip('${link[2]}')"
+    <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('${link[2]}')"
      onmouseout="hideTooltip()" onclick="openMarko(showShareNote, '${link[2]}', '${note}')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
