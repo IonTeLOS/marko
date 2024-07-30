@@ -5815,6 +5815,37 @@ background-color: #1f1b24;
         <span id="banner-title">${title}</span>
         <!-- Second icon -->
         <span class="material-icons" id="share-icon">share</span>
+
+    <!-- Lightbox with iframe and YouTube player -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-content">
+      <div id="content-container">
+<iframe id="lightbox-iframe" class="lightbox-iframe" src="" allowfullscreen allow="autoplay"></iframe>
+          <button id="close-btn" class="close-btn">
+        <i class="material-icons">close</i>
+      </button>
+      </div>
+    </div>
+  </div>
+<div class="youtube-lightbox" id="youtube-lightbox">
+    <button id="close-yt">&times;</button>
+    <div id="player"></div>
+</div>
+
+    <!-- Placeholder div for Adobe PDF Embed API -->
+    <div id="adobe-dc-view"></div>
+    <div>
+<div id="tooltip" class="tooltip">
+    <div class="tooltip-content" id="tooltip-content"></div>
+</div>
+    
+  <div class="offline-banner" id="offline-banner">
+        <span class="material-icons">wifi_off</span>
+    </div>
+
+
+
+        
     </div>
         <div class="bookmarks-container no-select">${linksHTML}</div>
     <script>      
