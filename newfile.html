@@ -3644,7 +3644,8 @@ console.log("No valid sharing data found.");
 
     if (purelink) {
         if (confirm("Do you want to add " + params.get('friendname') + " as friend?")) {
-            linkData = ["friend", params.get('friendlink'), params.get('friendname'), "https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg", getRandomColor()];
+            const randomColor = getRandomColor();
+            linkData = ['friend', params.get('friendlink'), params.get('friendname'), 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg', randomColor];
             let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
 
             bookmarks.push(linkData);
@@ -5495,7 +5496,7 @@ body {
   gap: 6px; /* Add some spacing between bookmarks */
   padding: 0;
   padding-top: 8px;
-  padding-bottom: 160px;  
+  padding-bottom: 60px;  
   transition: background-color 0.5s ease-in-out, color;
 }
 
@@ -5585,7 +5586,7 @@ background-color: #1f1b24;
   border-radius: 4px;
   cursor: pointer;
   position: relative;
-  margin-bottom: 40px;
+  margin-bottom: 8px;
 }
 
 .bookmark:hover {
@@ -5786,24 +5787,6 @@ background-color: #1f1b24;
   outline: none;
   background-color: rgba(255, 255, 255, 0.3); /* Darker background on focus */
 }
-
-.top-banner {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 50px;
-            background-color: #f0f0f0;
-        }
-
-        .material-icons {
-            cursor: pointer;
-            font-size: 42px; /* Increase icon size */
-
-        }
-        #banner-title {
-            font-family: 'Roboto', sans-serif; /* Set font to Roboto */
-            font-size: 24px; /* Set the desired font size */
-            }
       
   </style>
 </head>
@@ -5939,7 +5922,7 @@ function openLink(url) {
         function handleShareClick() {
             const param = 'friendname=${title}&friendlink=${window.location.origin}${window.location.pathname}';
             if (param.includes("file://") || param.includes("content://")) {
-                    confirm('Upload this file on a server so that it can accessed by your users?');
+                    confirm('Upload this file on a server so that everyone can access it?');
                     if (confirm) {
                     openLink("https://tiiny.host");
                     }
