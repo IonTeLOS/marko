@@ -4400,7 +4400,7 @@ bookmarkElement.innerHTML = `
     <div class="bookmark-wrapper" data-type='website' onmouseover="showTooltip('Welcome!')"
      onmouseout="hideTooltip()" style="cursor: pointer;">
         <div class="icon-wrapper">
-            <div class="icon-container" style="--ring-color: #ff005678;">
+            <div class="icon-container" style="--ring-color: #f2b85e;">
                 <img src="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg"
                 alt="Home" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
@@ -4548,7 +4548,7 @@ linkContainer.appendChild(bookmarkElement);
                 bookmarkElement.id = `bookmark-${index}`;
                 bookmarkElement.innerHTML = `
      <div class="bookmark-wrapper" data-uuid='${link[5]}' data-type='${link[0]}' onmouseover="showTooltip('open to view post')"
-     onmouseout="hideTooltip()" onclick='openMarko(showPost, ${JSON.stringify(link[1])})'>
+     onmouseout="hideTooltip()" onclick='openMarko(showPost, ${JSON.stringify(link[1])})' style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: ${link[4]};">
                 <img src="${iconUrl}" alt="${link[2]}" class="bookmark-icon" style="width: 42px; height: 42px;">
