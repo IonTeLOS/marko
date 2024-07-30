@@ -6508,11 +6508,7 @@ function getLinkFromValue(onclickString) {
         const secondArgument = match[3] ? match[3].trim() : null;
 
         // Return the arguments as an object without quotes
-        return {
-            //functionName: functionName,
-            firstArgument: firstArgument.replace(/^'|'$/g, "")
-            //secondArgument: secondArgument ? secondArgument.replace(/^'|'$/g, "") : null
-        };
+        return firstArgument: firstArgument.replace(/^'|'$/g, "");
     }
 
     // If no match, return null
