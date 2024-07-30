@@ -4398,6 +4398,8 @@ function openReminder(uuid) {
 //localStorage.clear();
 // main function to show the bookmarks that are stored as arrays in local storage as visual elements    
 function renderLinks() {
+            let title = document.title;
+            let pageUrl = window.location.href;
             const linkContainer = document.querySelector('.bookmarks-container');
             linkContainer.innerHTML = ''; // Clear the container
             // Add no-select class to prevent text selection
@@ -4412,11 +4414,12 @@ bookmarkElement.innerHTML = `
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: #0d47a1;">
                 <img src="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg"
-                alt="Home" class="bookmark-icon" style="width: 42px; height: 42px;">
+                alt="Home" id="home-icon" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
-            <span class="bookmark-title">Home</span>
+            <span class="bookmark-title">${title}</span>
         </div>
-        <span id="next-icon" class="material-icons next-icon" onclick="syncAndShowCommonMarko(); event.stopPropagation();">arrow_forward_ios</span>
+        </div>
+        <span id="share-me" class="material-icons delete-icon">share</span>
     </div>
 `;
 
@@ -5284,6 +5287,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 function sharePage() {
+  event.stopPropagation();
   if (navigator.share) {
     navigator.share({
       title: document.title,
@@ -5293,6 +5297,7 @@ function sharePage() {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
+    window.focus();
     const url = window.location.href;
     const tempInput = document.createElement('input');
     tempInput.style.position = 'absolute';
@@ -5843,32 +5848,31 @@ background-color: #1f1b24;
     <script>      
             // Call the function on page load
         window.onload = checkIfLocalAndConfirm;
-         function sharePage() {
-      // Check if Web Share API is supported
-    if (navigator.share) {
-        navigator.share({
-          title: document.title,
-          url: window.location.href
-        })
-        .then(() => {
-            console.log('Shared successfully');
-        })
-        .catch((shareError) => {
-            console.error('Error sharing:', shareError);
-        });
-    } else {
-        // If Web Share API is not supported, copy to clipboard
-        navigator.clipboard.writeText(window.location.href)
-        .then(() => {
-            console.log('Shareable link copied to clipboard');
-            alert('Share link has been copied to clipboard.');
-        })
-        .catch((err) => {
-            console.error('Failed to copy: ', err);
-            alert('There was an error. Please try again.');
-        });
-    }
+function sharePage() {
+  event.stopPropagation();
+  if (navigator.share) {
+    navigator.share({
+      title: document.title,
+      url: window.location.href
+    })
+    .then(() => console.log('Shared successfully'))
+    .catch((error) => console.error('Error in sharing:', error));
+  } else {
+    // Fallback for browsers that do not support Web Share API
+    window.focus();
+    const url = window.location.href;
+    const tempInput = document.createElement('input');
+    tempInput.style.position = 'absolute';
+    tempInput.style.left = '-9999px';
+    tempInput.value = url;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    alert("Link has been copied to your clipboard.");
+  }
 }
+
 
        function toggleTheme() {
       const body = document.body;
@@ -5923,12 +5927,12 @@ function openLink(url) {
             }
         }
 // Function to handle click on home icon
-        function handleHomeClick() {
-            openLink("https://teloslinux.org/marko/newfile");
+        function handleShareClick() {
+            sharePage();
         }
 
         // Function to handle click on share icon
-        function handleShareClick() {
+        function handleHomeClick() {
             const param = 'friendname=${title}&friendlink=${window.location.origin}${window.location.pathname}';
             if (param.includes("file://") || param.includes("content://")) {
                     confirm('Upload this file on a server so that everyone can access it?');
@@ -5940,9 +5944,9 @@ function openLink(url) {
             openLink("https://teloslinux.org/marko/newfile?" + param);
         }
 
-        // Add event listeners to icons
+        // Add event listeners to main-bookmark icons
         document.getElementById('home-icon').addEventListener('click', handleHomeClick);
-        document.getElementById('share-icon').addEventListener('click', handleShareClick);
+        document.getElementById('share-me').addEventListener('click', handleShareClick);
         
         function checkIfLocalAndConfirm() {
             if (window.location.protocol === 'file:' || window.location.protocol === 'content:') {
@@ -7338,7 +7342,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchContainer = document.querySelector('.search-container');
     const overlay = document.getElementById('overlay');
     const searchToggle = document.getElementById('main-bookmark');
-
+        // Add event listeners to main-bookmark icons
 
     // Show the search container with animation
     function showSearchContainer() {
@@ -7368,6 +7372,8 @@ document.addEventListener('DOMContentLoaded', () => {
     searchToggle.addEventListener('click', showSearchContainer);
     overlay.addEventListener('click', hideSearchContainer);
 });
+
+        document.getElementById('share-me').addEventListener('click', sharePage());
   
 document.addEventListener('DOMContentLoaded', () => {
     // Define constants
