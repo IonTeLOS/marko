@@ -6583,11 +6583,14 @@ function deleteLink(index) {
   }
   return shareLink;
 }
+
     <\/script>
 </body>
 </html>`;
 
         // create the html document and auto download it. This creates a document with an exact copy of all visible user-made bookmarks.
+        // Replace >delete< with >share<
+        currentState = currentState.replace(/>delete</g, '>share<');
         const blob = new Blob([currentState], { type: 'text/html' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
@@ -6595,7 +6598,8 @@ function deleteLink(index) {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+        const url = URL.createObjectURL(blob);
+        window.open(url);
         // also create a shareable link that, when loaded, can add the friend with his links
         if (confirm('Do you also want to create a shareable direct link?')) {
           createShareableLink(title);
