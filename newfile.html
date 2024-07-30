@@ -5288,7 +5288,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-function sharePage() {
+function sharePage(event) {
   event.stopPropagation();
   if (navigator.share) {
     navigator.share({
@@ -5727,7 +5727,28 @@ background-color: #1f1b24;
     animation: scroll-text 10s linear infinite;
 }
 
+    .delete-icon {
+      color: #f44336; /* Material Design error color */
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%); /* Center icon vertically */
+      opacity: 0; /* Initially hide the delete icon */
+      transition: opacity 0.2s ease-in-out, color 0.2s ease-in-out, transform 0.2s ease-in-out; /* Add transitions */
+      font-size: 24px; /* Smaller than main icons */
+    }
 
+    .bookmark:hover .delete-icon,
+    .bookmark.long-press .delete-icon {
+      opacity: 1; /* Show delete icon on hover or long press */
+      transform: translateY(-50%) scale(1.1); /* Scale up while maintaining vertical center */
+    }
+
+    .delete-icon:hover {
+      color: #d32f2f; /* Darker red on hover */
+      cursor: pointer; /* Change cursor to indicate clickability */
+      transform: translateY(-50%) scale(1.2); /* Scale up more on direct hover */
+    }
 
     .lightbox {
       display: none;
@@ -5977,7 +5998,8 @@ background-color: #1f1b24;
     <script>      
             // Call the function on page load
         window.onload = checkIfLocalAndConfirm;
-function sharePage() {
+
+function sharePage(event) {
   event.stopPropagation();
   if (navigator.share) {
     navigator.share({
@@ -6056,9 +6078,6 @@ function openLink(url) {
             }
         }
 // Function to handle click on home icon
-        function handleShareClick() {
-            sharePage();
-        }
 
         // Function to handle click on share icon
         function handleHomeClick() {
@@ -6072,7 +6091,8 @@ function openLink(url) {
             }
             openLink("https://teloslinux.org/marko/newfile?" + param);
         }
-        
+        document.getElementById('home-icon').addEventListener('click', handleHomeClick);
+
         function checkIfLocalAndConfirm() {
             if (window.location.protocol === 'file:' || window.location.protocol === 'content:') {
                 // Show confirmation dialog
@@ -6366,8 +6386,6 @@ function loadVideo(link) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Add event listeners to main-bookmark icons
-    document.getElementById('home-icon').addEventListener('click', handleHomeClick);
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
     const playerContainer = document.getElementById("player");
     let inactivityTimer;
