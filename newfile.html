@@ -4419,7 +4419,7 @@ bookmarkElement.innerHTML = `
             <span class="bookmark-title">${title}</span>
         </div>
         </div>
-        <span id="share-me" class="material-icons delete-icon">share</span>
+      <span id="share-me" class="material-icons delete-icon" onclick="sharePage(event)">share</span>
     </div>
 `;
 
@@ -6239,7 +6239,6 @@ function loadVideo(link) {
 document.addEventListener('DOMContentLoaded', () => {
     // Add event listeners to main-bookmark icons
     document.getElementById('home-icon').addEventListener('click', handleHomeClick);
-    document.getElementById('share-me').addEventListener('click', handleShareClick);
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
     const playerContainer = document.getElementById("player");
     let inactivityTimer;
@@ -7338,7 +7337,6 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('share-me').addEventListener('click', sharePage());
     const searchContainer = document.querySelector('.search-container');
     const overlay = document.getElementById('overlay');
     const searchToggle = document.getElementById('main-bookmark');
