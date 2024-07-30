@@ -6537,7 +6537,8 @@ function deleteLink(index) {
   // Extract the required values
   const onclickValue = bookmarkWrapper.getAttribute('onclick');
   const actionMatch = getLinkFromValue(onclickValue);
-  const actionLink = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
+  console.log('actionMatch');
+  //const actionLink = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
   const type = bookmarkWrapper.getAttribute('data-type') || '';
   const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
   const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
@@ -6546,7 +6547,7 @@ function deleteLink(index) {
   // Construct the URL for the shareable link
   const url = new URL('https://teloslinux.org/marko/newfile');
   url.searchParams.append('type', type);
-  url.searchParams.append('link', actionLink);
+  url.searchParams.append('link', actionMatch);
   url.searchParams.append('title', title);
   url.searchParams.append('icon', icon);
   url.searchParams.append('color', color);
