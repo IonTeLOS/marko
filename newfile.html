@@ -3799,7 +3799,7 @@ function toggleBellIcons() {
         }
 
         // Check if uuid is blank, "null", or "undefined"
-        if (uuid === "" || uuid === "null" || uuid === "undefined") {
+        if (!uuid || uuid === "" || uuid === "null" || uuid === "undefined") {
             bellIcon.style.display = 'none'; // Hide the bell icon
         } else {
             bellIcon.style.display = 'inline-block'; // Show the bell icon
