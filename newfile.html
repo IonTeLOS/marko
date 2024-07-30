@@ -6496,7 +6496,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function getLinkFromValue(onclickString) {
     // Regular expression to match the pattern of the onclick attribute
-    const regex = /openMarko\(([^,]+),\s*'([^']*)'(?:,\s*'([^']*)')?\)/;
+    const regex = /openMarko\\(([^,]+),\\s*'([^']*)'(?:,\\s*'([^']*)')?\\)/;
 
     // Execute the regex on the onclick string
     const match = onclickString.match(regex);
