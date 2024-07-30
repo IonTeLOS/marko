@@ -6519,12 +6519,6 @@ function getLinkFromValue(onclickString) {
     return null;
 }
 
-// Example usage
-const onclickString = "onclick=\"openMarko(openLink, 'https://in.gr/')\"";
-const arguments = getArgumentsFromOnclick(onclickString);
-
-console.log(arguments);
-// Output: { functionName: 'openLink', firstArgument: 'https://in.gr', secondArgument: null }
 
 // this is actually a shareLink function, kept the name for convenience
 function deleteLink(index) {
