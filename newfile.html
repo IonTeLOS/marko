@@ -1370,10 +1370,6 @@ input:focus {
         width: 200px; /* Increased size for desktop */
     }
 }
-#powered-by-marko {
-    display: none;
-}
-
 
   </style>   
 
@@ -5481,7 +5477,12 @@ async function downloadPage() {
         const linkContainer = document.querySelector('.bookmarks-container');
         linkContainer.innerHTML = ''; 
         passCheck();
-        document.getElementById('powered-by-marko').style.display('block');
+      const element = document.getElementById('your-element-id');
+    if (element) {
+        element.style.display = 'block';
+    } else {
+        console.error('Element with id "your-element-id" not found.');
+    }
         const linksContainer = document.querySelector('.bookmarks-container');
         const linksHTML = linksContainer.innerHTML;
         const newName = prompt('You are ready to download your Markos as a complete webpage. Choose a page title:', 'My Markos');
@@ -5513,11 +5514,9 @@ body {
   max-width: 100%;
   overflow-x: hidden;
   height:auto!important;    
-  margin 0;
-  gap: 6px; /* Add some spacing between bookmarks */
+  margin: 8px;
+  margin-bottom: 60px;
   padding: 0;
-  padding-top: 8px;
-  padding-bottom: 60px;  
   transition: background-color 0.5s ease-in-out, color;
 }
 
@@ -6022,6 +6021,7 @@ background-color: #1f1b24;
         
     </div>
         <div class="bookmarks-container no-select">${linksHTML}</div>
+        <div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>
     <script>      
         // Call the function on page load
         window.onload = checkIfLocalAndConfirm;
@@ -8467,7 +8467,6 @@ The appropriate solution will depend on your specific requirements and the natur
 
 
     <div class="bookmarks-container" no-select>
-    <div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>
     </div>
     
 <div oncontextmenu="return false;" class="form-buttons" id="menu-container">
