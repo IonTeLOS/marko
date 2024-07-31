@@ -1372,7 +1372,9 @@ input:focus {
         width: 200px; /* Increased size for desktop */
     }
 }
-
+#powered-by-marko {
+    display: none;
+}
 
 
   </style>   
@@ -5469,7 +5471,7 @@ function showContactBookmarksDropdown() {
 }
 function hideContacts(inputString) {
     // Regular expression to match the bookmark div elements
-    const bookmarkPattern = /<div class="bookmark"[^>]*id="bookmark-\d+"[^>]*>.*?<div class="bookmark-wrapper"[^>]*data-type="phone"[^>]*>.*?<\/div>.*?<\/div>/gs;
+const bookmarkPattern = /<div class="bookmark"[^>]*id="bookmark-\d+"[^>]*>.*?<div class="bookmark-wrapper"[^>]*data-type="phone"[^>]*>.*?<\/div>.*?<\/div>/gs;
 
     // Replace matched elements with an empty string
     const resultString = inputString.replace(bookmarkPattern, '');
@@ -5969,12 +5971,12 @@ background-color: #1f1b24;
 }
 #powered-by-marko {
     position: fixed;
-    bottom: 15px;
-    right: 10px;
+    bottom: 10px;
+    right: 30px;
     font-size: 18px;
     cursor: pointer;
     color: #f44336; /* Optional: To make the text stand out */
-    padding: 10px; /* Optional: To add some padding around the text */
+    padding: 0; /* Optional: To add some padding around the text */
     border-radius: 5px; /* Optional: To make the edges rounded */
     transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition for transform and color */
 }
@@ -5988,7 +5990,6 @@ background-color: #1f1b24;
   </style>
 </head>
 <body>
-<div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>
 
     <!-- Lightbox with iframe and YouTube player -->
   <div class="lightbox" id="lightbox">
@@ -6612,7 +6613,6 @@ function deleteLink(index) {
         // create the html document and auto download it. This creates a document with an exact copy of all visible user-made bookmarks.
         // Replace >delete< with >share<
         currentState = currentState.replace(/>delete</g, '>share<');
-        currentState = currentState.replace(/deleteLink/g, 'shareMarko');
         currentState = hideContacts(currentState);
         const oldTitle = 'id="main-title" class="bookmark-title">Marko<';
         const newTitle = `id="main-title" class="bookmark-title">${title}<`;
@@ -8468,7 +8468,7 @@ The appropriate solution will depend on your specific requirements and the natur
 
 
     <div class="bookmarks-container" no-select>
-
+    <div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>
     </div>
     
 <div oncontextmenu="return false;" class="form-buttons" id="menu-container">
