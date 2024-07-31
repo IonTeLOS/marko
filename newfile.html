@@ -6406,11 +6406,8 @@ function loadVideo(link) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    detectTheme();
-    checkConnection();
-    
-const markoContainer = document.getElementById("bookmarks-container");
+        document.addEventListener("DOMContentLoaded", function() {
+            const markoContainer = document.getElementById("bookmarks-container");
             const poweredBy = document.createElement("div");
             poweredBy.id = "powered-by-marko";
             poweredBy.innerHTML = "Powered by Marko";
@@ -6420,6 +6417,9 @@ const markoContainer = document.getElementById("bookmarks-container");
             markoContainer.appendChild(poweredBy);
         });
 
+document.addEventListener('DOMContentLoaded', () => {
+    detectTheme();
+    checkConnection();
     
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
     const playerContainer = document.getElementById("player");
