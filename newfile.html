@@ -6404,7 +6404,11 @@ function loadVideo(link) {
 document.addEventListener('DOMContentLoaded', () => {
     detectTheme();
     checkConnection();
-  
+    
+    const markoContainer = document.getElementById("bookmarks-container");
+    const poweredBy = '<div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>'
+    bookContainer.appendChild(poweredBy);
+    
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
     const playerContainer = document.getElementById("player");
     let inactivityTimer;
@@ -8456,7 +8460,6 @@ The appropriate solution will depend on your specific requirements and the natur
 
 
     <div class="bookmarks-container" no-select>
-    <div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>
     </div>
     
 <div oncontextmenu="return false;" class="form-buttons" id="menu-container">
