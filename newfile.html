@@ -5961,14 +5961,14 @@ background-color: #1f1b24;
     right: 30px;
     font-size: 18px;
     cursor: pointer;
-    color: #f44336; /* Optional: To make the text stand out */
+    color:  #0d47a1; /* Optional: To make the text stand out */
     padding: 0; /* Optional: To add some padding around the text */
     border-radius: 5px; /* Optional: To make the edges rounded */
     transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition for transform and color */
 }
 
 #powered-by-marko:hover {
-    color: #0d47a1;
+    color: #f44336;
     transform: scale(1.2);
 }
 @media screen and (max-width: 600px) {
@@ -6410,9 +6410,16 @@ document.addEventListener('DOMContentLoaded', () => {
     detectTheme();
     checkConnection();
     
-    const markoContainer = document.getElementById("bookmarks-container");
-    const poweredBy = '<div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>'
-    markoContainer.appendChild(poweredBy);
+const markoContainer = document.getElementById("bookmarks-container");
+            const poweredBy = document.createElement("div");
+            poweredBy.id = "powered-by-marko";
+            poweredBy.innerHTML = "Powered by Marko";
+            poweredBy.onclick = function() {
+                goToApp();
+            };
+            markoContainer.appendChild(poweredBy);
+        });
+
     
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
     const playerContainer = document.getElementById("player");
