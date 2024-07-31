@@ -5732,7 +5732,7 @@ background-color: #1f1b24;
 }
 
     .delete-icon {
-      color: #f44336; /* Material Design error color */
+      color: #f44336; 
       position: absolute;
       top: 50%;
       right: 10px;
@@ -5890,7 +5890,12 @@ background-color: #1f1b24;
             pointer-events: none;
         }
 
-
+#main-bookmark {
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;         /* Standard syntax */
+    top: 0;
+    z-index: 1000;
+}
 
 
 
@@ -5968,8 +5973,8 @@ background-color: #1f1b24;
     right: 10px;
     font-size: 18px;
     cursor: pointer;
-    background-color: white; /* Optional: To make the text stand out */
-    padding: 5px; /* Optional: To add some padding around the text */
+    color: #f44336; /* Optional: To make the text stand out */
+    padding: 10px; /* Optional: To add some padding around the text */
     border-radius: 5px; /* Optional: To make the edges rounded */
     transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition for transform and color */
 }
