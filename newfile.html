@@ -5483,6 +5483,7 @@ async function downloadPage() {
         const linkContainer = document.querySelector('.bookmarks-container');
         linkContainer.innerHTML = ''; 
         passCheck();
+        document.getElementById('powered-by-marko').style.display('block');
         const linksContainer = document.querySelector('.bookmarks-container');
         const linksHTML = linksContainer.innerHTML;
         const newName = prompt('You are ready to download your Markos as a complete webpage. Choose a page title:', 'My Markos');
