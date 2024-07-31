@@ -1371,6 +1371,9 @@ input:focus {
     }
 }
 
+  #powered-by-marko {
+  display: none;
+  }
   </style>   
 
 <script type=module>
@@ -6008,7 +6011,7 @@ background-color: #1f1b24;
         
     </div>
         <div class="bookmarks-container no-select">${linksHTML}</div>
-        <div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>
+
     <script>      
         // Call the function on page load
         window.onload = checkIfLocalAndConfirm;
@@ -8453,6 +8456,7 @@ The appropriate solution will depend on your specific requirements and the natur
 
 
     <div class="bookmarks-container" no-select>
+    <div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>
     </div>
     
 <div oncontextmenu="return false;" class="form-buttons" id="menu-container">
