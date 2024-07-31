@@ -6015,7 +6015,7 @@ background-color: #1f1b24;
 
         
     </div>
-        <div class="bookmarks-container no-select">${linksHTML}</div>
+        <div class="bookmarks-container no-select>${linksHTML}</div>
 
     <script>      
         // Call the function on page load
@@ -6405,9 +6405,8 @@ function loadVideo(link) {
         init();
     }
 }
-
-        document.addEventListener("DOMContentLoaded", function() {
-            const markoContainer = document.getElementById("bookmarks-container");
+showPower() {
+const markoContainer = document.getElementById("bookmarks-container");
             const poweredBy = document.createElement("div");
             poweredBy.id = "powered-by-marko";
             poweredBy.innerHTML = "Powered by Marko";
@@ -6415,11 +6414,13 @@ function loadVideo(link) {
                 goToApp();
             };
             markoContainer.appendChild(poweredBy);
-        });
+}
+        
 
 document.addEventListener('DOMContentLoaded', () => {
     detectTheme();
     checkConnection();
+    showPower();
     
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
     const playerContainer = document.getElementById("player");
@@ -8471,7 +8472,7 @@ The appropriate solution will depend on your specific requirements and the natur
     </div>
 
 
-    <div class="bookmarks-container" no-select>
+    <div class="bookmarks-container" no-select="true">
     </div>
     
 <div oncontextmenu="return false;" class="form-buttons" id="menu-container">
