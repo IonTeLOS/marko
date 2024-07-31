@@ -6383,6 +6383,9 @@ function loadVideo(link) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    detectTheme();
+    checkConnection();
+  
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
     const playerContainer = document.getElementById("player");
     let inactivityTimer;
@@ -6491,8 +6494,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-  // Detect theme on page load and apply it, unless user has chosen differently
-  document.addEventListener('DOMContentLoaded', detectTheme);
 
 function getLinkFromValue(onclickString) {
     // Regular expression to match the pattern of the onclick attribute
