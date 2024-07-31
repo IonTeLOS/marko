@@ -6015,7 +6015,7 @@ background-color: #1f1b24;
 
         
     </div>
-        <div class="bookmarks-container" no-select>${linksHTML}</div>
+        <div id="marko-container" class="bookmarks-container" no-select>${linksHTML}</div>
 
     <script>      
         // Call the function on page load
@@ -6406,7 +6406,7 @@ function loadVideo(link) {
     }
 }
 showPower() {
-const markoContainer = document.getElementById("bookmarks-container");
+const markoContainer = document.getElementById("marko-container");
             const poweredBy = document.createElement("div");
             poweredBy.id = "powered-by-marko";
             poweredBy.innerHTML = "Powered by Marko";
