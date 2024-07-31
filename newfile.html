@@ -4416,7 +4416,7 @@ bookmarkElement.innerHTML = `
                 <img src="https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/home/default/48px.svg"
                 alt="Home" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
-            <span class="bookmark-title">${title}</span>
+            <span id="main-title" class="bookmark-title">${title}</span>
         </div>
         </div>
       <span id="share-me" class="material-icons delete-icon" 
@@ -5467,16 +5467,17 @@ function showContactBookmarksDropdown() {
     container.offsetHeight; // This line triggers a reflow
     container.style.display = 'flex';
 }
+function hideContacts(inputString) {
+    // Regular expression to match the bookmark div elements
+    const bookmarkPattern = /<div class="bookmark"[^>]*id="bookmark-\d+"[^>]*>.*?<div class="bookmark-wrapper"[^>]*data-type="phone"[^>]*>.*?<\/div>.*?<\/div>/gs;
+
+    // Replace matched elements with an empty string
+    const resultString = inputString.replace(bookmarkPattern, '');
+    return resultString;
+}   
 // core action to create an html document for the user to share their links - upload the document on a server
 // this also gives the option to create a sharable link with query parameters that stores the links and can it load it in app by a different user    
 async function downloadPage() {
-        // hide contacts
-        document.querySelectorAll('[id^="bookmark-"]').forEach(function(bookmark) {
-            var bookmarkWrapper = bookmark.querySelector('.bookmark-wrapper');
-            if (bookmarkWrapper && bookmarkWrapper.getAttribute('data-type') === 'phone') {
-              bookmark.style.display = 'none';
-          }
-        });
         const linkContainer = document.querySelector('.bookmarks-container');
         linkContainer.innerHTML = ''; 
         passCheck();
@@ -5961,10 +5962,28 @@ background-color: #1f1b24;
   outline: none;
   background-color: rgba(255, 255, 255, 0.3); /* Darker background on focus */
 }
-      
+#powered-by-marko {
+    position: fixed;
+    bottom: 15px;
+    right: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    background-color: white; /* Optional: To make the text stand out */
+    padding: 5px; /* Optional: To add some padding around the text */
+    border-radius: 5px; /* Optional: To make the edges rounded */
+    transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition for transform and color */
+}
+
+#powered-by-marko:hover {
+    color: #0d47a1;
+    transform: scale(1.2);
+}
+
+  
   </style>
 </head>
 <body>
+<div id="powered-by-marko" onclick="goToApp()">Powered by Marko</div>
 
     <!-- Lightbox with iframe and YouTube player -->
   <div class="lightbox" id="lightbox">
@@ -6589,6 +6608,10 @@ function deleteLink(index) {
         // Replace >delete< with >share<
         currentState = currentState.replace(/>delete</g, '>share<');
         currentState = currentState.replace(/deleteLink/g, 'shareMarko');
+        currentState = hideContacts(currentState);
+        const oldTitle = 'id="main-title" class="bookmark-title">Marko<';
+        const newTitle = `id="main-title" class="bookmark-title">${title}<`;
+        currentState = currentState.replace(oldTitle, newTitle);
         const blob = new Blob([currentState], { type: 'text/html' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
