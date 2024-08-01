@@ -3159,6 +3159,7 @@ setTimeout(function() {
 }
 
 function shareNote(title, text) {
+    window.focus();
     if (navigator.share) {
     navigator.share({
       title: title,
@@ -3171,7 +3172,6 @@ function shareNote(title, text) {
       console.error('Error sharing:', error);
     });
   } else if (navigator.clipboard) {
-    window.focus();  
     navigator.clipboard.writeText(title + ": " + text)
       .then(() => {
         alert('Note text has been copied to the clipboard.');
@@ -5323,6 +5323,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function sharePage(event) {
   event.stopPropagation();
+  window.focus();
   if (navigator.share) {
     navigator.share({
       title: document.title,
@@ -5332,7 +5333,6 @@ function sharePage(event) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
-    window.focus();
     const url = window.location.href;
     const tempInput = document.createElement('input');
     tempInput.style.position = 'absolute';
@@ -6153,6 +6153,7 @@ background-color: #1f1b24;
 
 function sharePage(event) {
   event.stopPropagation();
+  window.focus();
   if (navigator.share) {
     navigator.share({
       title: document.title,
@@ -6162,7 +6163,6 @@ function sharePage(event) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
-    window.focus();
     const url = window.location.href;
     const tempInput = document.createElement('input');
     tempInput.style.position = 'absolute';
@@ -6345,6 +6345,7 @@ setTimeout(function() {
 }
 
 function shareNote(title, text) {
+    window.focus();
     if (navigator.share) {
     navigator.share({
       title: title,
@@ -6357,7 +6358,6 @@ function shareNote(title, text) {
       console.error('Error sharing:', error);
     });
   } else if (navigator.clipboard) {
-    window.focus();
     navigator.clipboard.writeText(title + ": " + text)
       .then(() => {
         alert('Note text has been copied to the clipboard.');
@@ -6885,6 +6885,7 @@ function shareMarko(index) {
   const shareBody = title;
   const shareIcon = icon;
   
+  window.focus();
   if (navigator.share) {
     navigator.share({
       title: shareTitle,
@@ -6894,7 +6895,6 @@ function shareMarko(index) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
-    window.focus();
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
@@ -7780,6 +7780,7 @@ function copyToClipboard(fileId, name) {
     const url = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${name}&commonMarko=true`;
 
     // Check if Web Share API is supported
+    window.focus();
     if (navigator.share) {
         navigator.share({
             title: `${name}`,
@@ -7794,7 +7795,6 @@ function copyToClipboard(fileId, name) {
         });
     } else {
         // If Web Share API is not supported, copy to clipboard
-        window.focus();
         navigator.clipboard.writeText(url)
         .then(() => {
             console.log('Shareable link copied to clipboard');
@@ -9230,7 +9230,8 @@ iconSearchInput.addEventListener('input', function() {
         initializeShortlinkWithTempMarkoLink(shareLink);
         return;
     }
-    
+
+  window.focus();  
   if (navigator.share) {
     navigator.share({
       title: shareTitle,
@@ -9240,7 +9241,6 @@ iconSearchInput.addEventListener('input', function() {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
-    window.focus();
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
@@ -9301,6 +9301,7 @@ function constructLinkFromBookmark(index, full) {
         return;
     }
   
+  window.focus();
   if (navigator.share) {
     navigator.share({
       title: shareTitle,
@@ -9310,7 +9311,6 @@ function constructLinkFromBookmark(index, full) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
-    window.focus();
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
