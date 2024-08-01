@@ -120,7 +120,7 @@ background-color: #1f1b24;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px;
+  padding: 12px;
   border-radius: 4px;
   cursor: pointer;
   position: relative;
@@ -167,19 +167,18 @@ background-color: #1f1b24;
 }
 /* Active state */
 .bookmark.active::before {
-    background:  #0d47a1;
-        animation: blink 1.5s infinite;
-
+    background: blue;
+    animation: blink 2s infinite;
 }
 
 /* Swiped left state */
 .bookmark.swipe-left::before {
-background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
+background: linear-gradient(to right, #FF0000, rgba(255, 0, 0, 0.1));
 }
 
 /* Swiped right state */
 .bookmark.swipe-right::before {
-    background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
+background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));  
 }
 .icon-container {
             width: 72px; /* Adjust as needed */
@@ -5668,6 +5667,60 @@ background-color: #1f1b24;
   cursor: pointer;
   position: relative;
   margin-bottom: 8px;
+border: 4px solid transparent;
+  background-clip: padding-box;
+}
+
+.bookmark::before {
+    content: '';
+    position: absolute;
+    top: -4px; /* Adjusted from -2px to -4px */
+    right: -4px;
+    bottom: -4px;
+    left: -4px;
+    z-index: -1;
+    border-radius: inherit;
+    background: transparent;
+    transition: background 0.3s ease;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+.bookmark:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adjusted shadow color and intensity */
+}
+
+.bookmark.active {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.bookmark .bookmark-title {
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+  transition: transform 0.2s ease-in-out;
+}
+
+.bookmark:hover .bookmark-title {
+  transform: scale(1.20);
+}
+/* Active state */
+.bookmark.active::before {
+    background: #00FFFF;
+        animation: blink 1.5s infinite;
+
+}
+
+/* Swiped left state */
+.bookmark.swipe-left::before {
+    background: linear-gradient(to right, #FF0000, rgba(255, 0, 0, 0.1));
+}
+
+/* Swiped right state */
+.bookmark.swipe-right::before {
+    background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1)); 
 }
 
 .bookmark:hover {
@@ -5993,7 +6046,9 @@ background-color: #1f1b24;
   transition: margin-bottom 0.3s ease;
   margin-bottom: 40px;    
 }   
-   
+        .no-select {
+            user-select: none;
+        }
       
 .material-btn {
   background: none;
@@ -6030,7 +6085,7 @@ background-color: #1f1b24;
 }
 #powered-by-marko {
     position: fixed;
-    bottom: 15px;
+    bottom: -30px;
     right: 30px;
     font-size: 18px;
     cursor: pointer;
@@ -6042,15 +6097,15 @@ background-color: #1f1b24;
 
 #powered-by-marko:hover {
     color: #f44336;
-    transform: scale(1.2);
+    transform: scale(1.1);
 }
 @media screen and (max-width: 600px) {
     #powered-by-marko {
         left: 50%;
-        bottom: 10px;
+        bottom: -25px;
         right: auto;
         transform: translateX(-50%);
-        font-size: 16px; /* Optional: Adjust font size for smaller screens */
+        font-size: 16px;
     }
 }
   </style>
@@ -6489,8 +6544,166 @@ const markoContainer = document.getElementById("marko-container");
             markoContainer.appendChild(poweredBy);
 }
         
+function initSwipeDetection() {
+    document.querySelectorAll('.bookmark-wrapper').forEach(wrapper => {
+        let touchstartX = 0;
+        let touchstartY = 0;
+        let isSwipeInProgress = false;
+        const bookmarkId = wrapper.closest('.bookmark').getAttribute('data-index');
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
+        const handleSwipeStart = (e) => {
+            if (isSwipeInProgress) return;
+            isSwipeInProgress = true;
+            if (isTouchDevice) {
+                touchstartX = e.touches[0].clientX;
+                touchstartY = e.touches[0].clientY;
+            } else {
+                touchstartX = e.clientX;
+                touchstartY = e.clientY;
+            }
+        };
+
+        const handleSwipeMove = (e) => {
+            if (!isSwipeInProgress) return;
+            
+            let currentX, currentY;
+            if (isTouchDevice) {
+                currentX = e.touches[0].clientX;
+                currentY = e.touches[0].clientY;
+            } else {
+                currentX = e.clientX;
+                currentY = e.clientY;
+            }
+            handleSwipe(wrapper, bookmarkId, touchstartX, currentX, touchstartY, currentY);
+        };
+
+        const handleSwipeEnd = () => {
+            isSwipeInProgress = false;
+            updateSwipeClasses(wrapper, 0); // Reset classes
+        };
+
+        if (isTouchDevice) {
+            wrapper.addEventListener('touchstart', handleSwipeStart, { passive: true });
+            wrapper.addEventListener('touchmove', handleSwipeMove, { passive: true });
+            wrapper.addEventListener('touchend', handleSwipeEnd);
+        } else {
+            wrapper.addEventListener('mousedown', handleSwipeStart);
+            wrapper.addEventListener('mousemove', handleSwipeMove);
+            wrapper.addEventListener('mouseup', handleSwipeEnd);
+            wrapper.addEventListener('mouseleave', handleSwipeEnd); // Add this line
+        }
+    });
+}
+
+let isSwipeActionInProgress = false;
+let lastSwipeTime = 0;
+const swipeCooldown = 1000; // 1 second cooldown between swipes
+
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, startY, currentY) => {
+    const now = Date.now();
+    if (isSwipeActionInProgress || now - lastSwipeTime < swipeCooldown) {
+        return;
+    }
+
+    const threshold = 30;
+    const verticalThreshold = 50;
+    const deltaX = currentX - startX;
+    const deltaY = Math.abs(currentY - startY);
+
+    if (deltaY > verticalThreshold) return;
+
+    if (Math.abs(deltaX) > threshold) {
+        isSwipeActionInProgress = true;
+
+        if (deltaX < 0) {
+            // Left swipe
+            try {
+                const confirmation = confirm("Do you really want to remove this Marko?");
+                if (confirmation) {
+                    removeBookmark(bookmarkId);
+                }
+            } catch (error) {
+                console.error('Error clearing link:', error);
+            }
+        } else {
+            // Right swipe
+            try {
+                deleteLink(bookmarkId);
+            } catch (error) {
+                console.error('Error constructing link:', error);
+            }
+        }
+
+        lastSwipeTime = now;
+        setTimeout(() => {
+            isSwipeActionInProgress = false;
+        }, 500); // Reset the flag after 500ms
+    }
+}, 250); // Debounce for 250ms
+
+function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
+    const deltaX = currentX - startX;
+    const deltaY = Math.abs(currentY - startY);
+    const verticalThreshold = 50;
+
+    if (deltaY > verticalThreshold) {
+        updateSwipeClasses(wrapper, 0); // Reset classes if vertical swipe
+        return;
+    }
+
+    updateSwipeClasses(wrapper, deltaX);
+
+    debouncedHandleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY);
+}
+  
+// Check if the DOM is already loaded for swipe detection initialization
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSwipeDetection);
+} else {
+    initSwipeDetection();
+}
+
+function hideDeleted() {
+    // Retrieve the array from localStorage and parse it
+let hidden = JSON.parse(localStorage.getItem('hide-these')) || [];
+
+// Perform a function on each item in the array
+hidden.forEach(item => {
+    // Your function here
+    console.log(item); 
+    const deletedMarko = document.getElementById(item);
+    deletedMarko.remove();
+});
+}
+
+// Function to remove the bookmark element from DOM
+function removeBookmark(index) {
+            // Handle delete icon click with haptic feedback
+          const bookmarkToDelete = document.getElementById(`bookmark-${index}`);
+          const hideIndex = `bookmark-${index}`;
+    
+    if (bookmarkToDelete) {
+        bookmarkToDelete.remove();
+        let hidden = JSON.parse(localStorage.getItem('hide-these')) || [];
+        hidden.push(hideIndex);
+        localStorage.setItem('hide-these', JSON.stringify(hidden));
+    }
+     else {
+        console.error(`Element with ID bookmark-${index} not found.`);
+    }  
+      }
+      
 document.addEventListener('DOMContentLoaded', () => {
+    hideDeleted();
     detectTheme();
     checkConnection();
     showPower();
