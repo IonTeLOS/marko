@@ -9164,6 +9164,27 @@ iconSearchInput.addEventListener('input', function() {
             }
         });
 
+  function getLinkFromValue(onclickString) {
+    // Regular expression to match the pattern of the onclick attribute
+    const regex = /openMarko\(([^,]+),\s*'([^']*)'(?:,\s*'([^']*)')?\)/;
+
+    // Execute the regex on the onclick string
+    const match = onclickString.match(regex);
+
+    // If there's a match, extract the arguments
+    if (match) {
+        const functionName = match[1].trim();
+        const firstArgument = match[2].trim();
+        const secondArgument = match[3] ? match[3].trim() : null;
+
+        // Return the arguments as an object without quotes
+        return firstArgument.replace(/^'|'$/g, "");
+    }
+
+    // If no match, return null
+    return null;
+}
+  
   function shareMarko(index) {
   const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
   console.log('Selected Marko to share: ', bookmark);
