@@ -5322,8 +5322,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-function sharePage(event) {
-  event.stopPropagation();
+function sharePage() {
   window.focus();
   if (navigator.share) {
     navigator.share({
@@ -6152,8 +6151,7 @@ background-color: #1f1b24;
         // Call the function on page load
         window.onload = checkIfLocalAndConfirm;
 
-function sharePage(event) {
-  event.stopPropagation();
+function sharePage() {
   if (navigator.share) {
     window.focus();
     navigator.share({
@@ -9022,7 +9020,6 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
         } else {
             // Right swipe
             try {
-                event.stopPropagation();
                 shareMarko(bookmarkId, true);
             } catch (error) {
                 console.error('Error constructing link:', error);
