@@ -3159,8 +3159,8 @@ setTimeout(function() {
 }
 
 function shareNote(title, text) {
-    window.focus();
     if (navigator.share) {
+    window.focus();  
     navigator.share({
       title: title,
       text: text
@@ -3172,6 +3172,7 @@ function shareNote(title, text) {
       console.error('Error sharing:', error);
     });
   } else if (navigator.clipboard) {
+    window.focus();  
     navigator.clipboard.writeText(title + ": " + text)
       .then(() => {
         alert('Note text has been copied to the clipboard.');
@@ -3244,7 +3245,7 @@ function markoExists(type, url, title, array = "bookmarks") {
             if (storedAlias) {
                 // Handle alias length and spaces
                 if (storedAlias.length > 11) {
-                    M.toast({html: `Alias was too long and has been shortened to: ${storedAlias.substring(0, 11)}`});
+                    alert(`Alias was too long and has been shortened to: ${storedAlias.substring(0, 11)}`);
                     storedAlias = storedAlias.substring(0, 11);
                 }
                 storedAlias = storedAlias.replace(/\s+/g, '_'); // Replace spaces with underscores
@@ -3278,7 +3279,7 @@ function markoExists(type, url, title, array = "bookmarks") {
                     console.log('Parsed API response:', responseData);
 
                     if (responseData.short_url) {
-                        M.toast({html: 'Shortlink created successfully!'});
+                        alert('Shortlink created successfully!');
 
                         // Store the shortlink in localStorage
                         localStorage.setItem('short-link', responseData.short_url);
@@ -3298,7 +3299,7 @@ function markoExists(type, url, title, array = "bookmarks") {
                                 console.log('Parsed API response:', responseData);
 
                                 if (responseData.short_url) {
-                                    M.toast({html: 'Custom alias unavailable. Shortlink created without alias.'});
+                                    alert('Custom alias unavailable. Shortlink created without alias.');
 
                                     // Store the shortlink in localStorage
                                     localStorage.setItem('short-link', responseData.short_url);
@@ -3311,16 +3312,33 @@ function markoExists(type, url, title, array = "bookmarks") {
                             })
                             .catch(error => {
                                 console.error('Error:', error.message);
-                                M.toast({html: 'Error occurred while creating shortlink'});
+                                alert('An error occurred while creating shortlink');
                             });
                     } else {
-                        M.toast({html: 'Error occurred while creating shortlink'});
+                        alert('An error occurred while creating shortlink');
                     }
                 });
         }
 
         // Function to copy shortlink to clipboard and share it
         function handleClipboardAndSharing(shortlink) {
+
+            // Share link if Web Share API is available
+            if (navigator.share) {
+                window.focus();
+                navigator.share({
+                    title: 'Shortlink',
+                    text: 'Check out this shortlink:',
+                    url: shortlink
+                })
+                .then(() => {
+                    alert('Shortlink shared successfully!');
+                })
+                .catch(err => {
+                    console.error('Error sharing shortlink:', err);
+                    alert('Failed to share shortlink.');
+                });
+            } else {
             window.focus();
             navigator.clipboard.writeText(shortlink)
                 .then(() => {
@@ -3333,25 +3351,8 @@ function markoExists(type, url, title, array = "bookmarks") {
                 })
                 .catch(err => {
                     console.error('Error copying to clipboard:', err);
-                    M.toast({html: 'Failed to copy shortlink to clipboard.'});
-                });
-
-            // Share link if Web Share API is available
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Shortlink',
-                    text: 'Check out this shortlink:',
-                    url: shortlink
-                })
-                .then(() => {
-                    M.toast({html: 'Shortlink shared successfully!'});
-                })
-                .catch(err => {
-                    console.error('Error sharing shortlink:', err);
-                    M.toast({html: 'Failed to share shortlink.'});
-                });
-            } else {
-                M.toast({html: 'Web Share API not supported in this browser.'});
+                    alert('Failed to copy shortlink to clipboard.');
+                });            
             }
         }
 
@@ -6153,8 +6154,8 @@ background-color: #1f1b24;
 
 function sharePage(event) {
   event.stopPropagation();
-  window.focus();
   if (navigator.share) {
+    window.focus();
     navigator.share({
       title: document.title,
       url: window.location.href
@@ -6345,8 +6346,8 @@ setTimeout(function() {
 }
 
 function shareNote(title, text) {
-    window.focus();
     if (navigator.share) {
+    window.focus();
     navigator.share({
       title: title,
       text: text
@@ -6358,6 +6359,7 @@ function shareNote(title, text) {
       console.error('Error sharing:', error);
     });
   } else if (navigator.clipboard) {
+    window.focus();
     navigator.clipboard.writeText(title + ": " + text)
       .then(() => {
         alert('Note text has been copied to the clipboard.');
@@ -6885,8 +6887,8 @@ function shareMarko(index) {
   const shareBody = title;
   const shareIcon = icon;
   
-  window.focus();
   if (navigator.share) {
+    window.focus();
     navigator.share({
       title: shareTitle,
       url: shareLink
@@ -6895,6 +6897,7 @@ function shareMarko(index) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
+    window.focus();
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
@@ -7780,8 +7783,8 @@ function copyToClipboard(fileId, name) {
     const url = `${window.location.origin}${window.location.pathname}?common-marko=${fileId}&common-name=${name}&commonMarko=true`;
 
     // Check if Web Share API is supported
-    window.focus();
     if (navigator.share) {
+        window.focus();
         navigator.share({
             title: `${name}`,
             text: 'This is my common Marko link!',
@@ -7795,6 +7798,7 @@ function copyToClipboard(fileId, name) {
         });
     } else {
         // If Web Share API is not supported, copy to clipboard
+        window.focus();
         navigator.clipboard.writeText(url)
         .then(() => {
             console.log('Shareable link copied to clipboard');
@@ -9231,8 +9235,8 @@ iconSearchInput.addEventListener('input', function() {
         return;
     }
 
-  window.focus();  
   if (navigator.share) {
+    window.focus();
     navigator.share({
       title: shareTitle,
       url: shareLink
@@ -9241,6 +9245,7 @@ iconSearchInput.addEventListener('input', function() {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
+    window.focus();
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
@@ -9301,8 +9306,8 @@ function constructLinkFromBookmark(index, full) {
         return;
     }
   
-  window.focus();
   if (navigator.share) {
+    window.focus();
     navigator.share({
       title: shareTitle,
       url: shareLink
@@ -9311,6 +9316,7 @@ function constructLinkFromBookmark(index, full) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
+    window.focus();
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
