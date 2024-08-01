@@ -8144,15 +8144,15 @@ function showResults(results) {
     adjustDropdownPosition();
     dropdown.style.display = results.length ? 'block' : 'none';
 }
-// Helper Functions
 function fetchSearchResults(query) {
-  const url = `https://searx.be/search?q=${encodeURIComponent(query)}&format=json`;
+  const url = `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json`;
 
+  // No API key is needed for DuckDuckGo's Instant Answer API
   fetch(url)
     .then(response => response.json())
     .then(data => {
-      if (data.results) {
-        showResults(data.results); // Assuming you have a function to display results
+      if (data.AbstractText) {
+        showResults([{ title: 'Answer', link: '', snippet: data.AbstractText }]); // Assuming you have a function to display results
       }
     })
     .catch(error => console.error('Error fetching search results:', error));
