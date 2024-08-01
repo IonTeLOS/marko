@@ -8146,14 +8146,13 @@ function showResults(results) {
 }
 // Helper Functions
 function fetchSearchResults(query) {
-  const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${SEARCH_API_KEY}`; // Removed CX parameter
+  const url = `https://searxng.site/searxng/search?q=${encodeURIComponent(query)}&format=json`;
 
-  // Important: You need a Google Search API key for this to work. Get one from the Google Cloud Console.
   fetch(url)
     .then(response => response.json())
     .then(data => {
-      if (data.items) {
-        showResults(data.items); // Assuming you have a function to display results
+      if (data.results) {
+        showResults(data.results); // Assuming you have a function to display results
       }
     })
     .catch(error => console.error('Error fetching search results:', error));
