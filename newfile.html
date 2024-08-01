@@ -8400,7 +8400,7 @@ function fetchSearchResults(query) {
         // Start unwrapping from the body element
         unwrapText(document.body);
     }
-
+/*
     function handleRightClick(event) {
         event.preventDefault(); // Prevent the default context menu
         const title = event.target.textContent; // Get the title from the data attribute
@@ -8415,7 +8415,34 @@ function fetchSearchResults(query) {
         }
         // markoButton.click(); // Trigger the left button click
     }
+*/
+  function handleRightClick(event) {
+    event.preventDefault(); // Prevent the default context menu
+    const title = event.target.textContent; // Get the title from the element's text content
+    const url = event.target.dataset.url; // Get the URL from the data attribute
+    const searchInput = document.getElementById('searchInput'); // Assuming there's an input element with id 'searchInput'
 
+    if (!searchInput) {
+        console.error('Search input element not found');
+        return;
+    }
+
+    searchInput.value = url; // Set the URL to the text input
+
+    // Function to create a marker
+    function createMarko(type, url, title, faviconUrl, color) {
+        console.log(`Creating marko: Type=${type}, URL=${url}, Title=${title}, FaviconURL=${faviconUrl}, Color=${color}`);
+        // Your implementation here
+    }
+
+    if (url.includes('https://www.google.com/maps/')) {
+        createMarko('location', url, title, 'https://www.google.com/s2/favicons?domain=https://maps.google.com&sz=64', '#0D47A1');
+    } else if (url.includes('https://www.youtube.com/')) {
+        createMarko('website', url, title, 'https://www.google.com/s2/favicons?domain=https://youtube.com&sz=64', '#0D47A1');
+    } else {
+        createMarko('website', url, title, `https://www.google.com/s2/favicons?domain=${url}&sz=32`, '#0D47A1');
+    }
+}
     function startRotatingPlaceholder() {
         const rotatingPlaceholders = [
             '..or enter url',
