@@ -8690,6 +8690,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
   
+function updateSwipeClasses(wrapper, deltaX) {
+    const bookmark = wrapper.closest('.bookmark');
+    bookmark.classList.remove('swipe-left', 'swipe-right');
+    if (deltaX < 0) {
+        bookmark.classList.add('swipe-left');
+    } else if (deltaX > 0) {
+        bookmark.classList.add('swipe-right');
+    }
+}
 
 function initSwipeDetection() {
     document.querySelectorAll('.bookmark-wrapper').forEach(wrapper => {
