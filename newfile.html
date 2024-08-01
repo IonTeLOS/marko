@@ -5667,7 +5667,7 @@ background-color: #1f1b24;
   cursor: pointer;
   position: relative;
   margin-bottom: 8px;
-border: 4px solid transparent;
+  border: 4px solid transparent;
   background-clip: padding-box;
 }
 
@@ -5708,8 +5708,8 @@ border: 4px solid transparent;
 }
 /* Active state */
 .bookmark.active::before {
-    background: #00FFFF;
-        animation: blink 1.5s infinite;
+    background: blue;
+    animation: blink 2s infinite;
 
 }
 
@@ -5739,7 +5739,7 @@ border: 4px solid transparent;
 }
 
 .bookmark:hover .bookmark-title {
-  transform: scale(1.50);
+  transform: scale(1.20);
 }
 
 .icon-container {
@@ -6627,7 +6627,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
         if (deltaX < 0) {
             // Left swipe
             try {
-                const confirmation = confirm("Do you really want to remove this Marko?");
+                const confirmation = confirm("Do you want to remove this Marko?");
                 if (confirmation) {
                     removeBookmark(bookmarkId);
                 }
@@ -6637,7 +6637,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
         } else {
             // Right swipe
             try {
-                deleteLink(bookmarkId);
+                shareMarko(bookmarkId);
             } catch (error) {
                 console.error('Error constructing link:', error);
             }
@@ -6688,8 +6688,8 @@ hidden.forEach(item => {
 // Function to remove the bookmark element from DOM
 function removeBookmark(index) {
             // Handle delete icon click with haptic feedback
-          const bookmarkToDelete = document.getElementById(`bookmark-${index}`);
-          const hideIndex = `bookmark-${index}`;
+          const bookmarkToDelete = document.getElementById(\`bookmark-\${index}\`);
+          const hideIndex = \`bookmark-\${index}\`;
     
     if (bookmarkToDelete) {
         bookmarkToDelete.remove();
@@ -6698,7 +6698,7 @@ function removeBookmark(index) {
         localStorage.setItem('hide-these', JSON.stringify(hidden));
     }
      else {
-        console.error(`Element with ID bookmark-${index} not found.`);
+        console.error(\`Element with ID bookmark-\${index} not found.\`);
     }  
       }
       
@@ -6840,7 +6840,12 @@ function getLinkFromValue(onclickString) {
 
 
 // this is actually a shareLink function, kept the name for convenience
+
 function deleteLink(index) {
+    shareMarko(index);
+}
+
+function shareMarko(index) {
   const bookmark = document.querySelector(\`.bookmark[data-index="\${index}"]\`);
   console.log('Selected Marko to share: ', bookmark);
   if (!bookmark) {
