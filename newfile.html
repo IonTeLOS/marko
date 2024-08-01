@@ -3175,7 +3175,7 @@ function shareNote(title, text) {
     window.focus();  
     navigator.clipboard.writeText(title + ": " + text)
       .then(() => {
-        alert('Note text has been copied to the clipboard.');
+        //alert('Note text has been copied to the clipboard.');
       })
       .catch((error) => {
         console.error('Error copying to clipboard:', error);
@@ -3332,7 +3332,7 @@ function markoExists(type, url, title, array = "bookmarks") {
                     url: shortlink
                 })
                 .then(() => {
-                    alert('Shortlink shared successfully!');
+                    //alert('Shortlink shared successfully!');
                 })
                 .catch(err => {
                     console.error('Error sharing shortlink:', err);
@@ -5343,7 +5343,7 @@ function sharePage(event) {
     tempInput.select();
     document.execCommand('copy');
     document.body.removeChild(tempInput);
-    alert("Link has been copied to your clipboard.");
+    //alert("Link has been copied to your clipboard.");
   }
 }
 
@@ -6362,7 +6362,7 @@ function shareNote(title, text) {
     window.focus();
     navigator.clipboard.writeText(title + ": " + text)
       .then(() => {
-        alert('Note text has been copied to the clipboard.');
+        //alert('Note text has been copied to the clipboard.');
       })
       .catch((error) => {
         console.error('Error copying to clipboard:', error);
@@ -6901,7 +6901,7 @@ function shareMarko(index) {
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
-        alert('Link has been copied to your clipboard.');
+        //alert('Link has been copied to your clipboard.');
       })
       .catch((error) => {
         console.error('Error in copying link to clipboard:', error);
@@ -6972,7 +6972,7 @@ function shareMarko(index) {
         try {
             window.focus();
             await navigator.clipboard.writeText(url);
-            alert('Link copied to clipboard!');
+            //alert('Link copied to clipboard!');
         } catch (clipboardError) {
             console.error('Error copying to clipboard:', clipboardError);
             alert('Failed to copy link to clipboard. You can manually copy the link.');
@@ -7802,11 +7802,11 @@ function copyToClipboard(fileId, name) {
         navigator.clipboard.writeText(url)
         .then(() => {
             console.log('Shareable link copied to clipboard');
-            alert('Share link has been copied to clipboard.');
+            //alert('Share link has been copied to clipboard.');
         })
         .catch((err) => {
             console.error('Failed to copy: ', err);
-            alert('There was an error. Please try again.');
+            //alert('There was an error. Please try again.');
         });
     }
 }
@@ -9249,7 +9249,7 @@ iconSearchInput.addEventListener('input', function() {
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
-        alert('Link has been copied to your clipboard.');
+        //alert('Link has been copied to your clipboard.');
       })
       .catch((error) => {
         console.error('Error in copying link to clipboard:', error);
@@ -9320,7 +9320,7 @@ function constructLinkFromBookmark(index, full) {
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
-        alert('Link has been copied to your clipboard.');
+        //alert('Link has been copied to your clipboard.');
       })
       .catch((error) => {
         console.error('Error in copying link to clipboard:', error);
