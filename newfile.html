@@ -6549,7 +6549,7 @@ const markoContainer = document.getElementById("marko-container");
             markoContainer.appendChild(poweredBy);
 }
         
-function initSwipeDetection() {
+function initSwipeDetection(enent) {
     document.querySelectorAll('.bookmark-wrapper').forEach(wrapper => {
         let touchstartX = 0;
         let touchstartY = 0;
@@ -6674,7 +6674,7 @@ function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initSwipeDetection);
 } else {
-    initSwipeDetection();
+    initSwipeDetection(event);
 }
 
 function hideDeleted() {
@@ -8908,7 +8908,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var button = e.which || e.button;
         if (button === 1) {
             toggleMenuOff();
-            initSwipeDetection(); // Reinitialize swipe detection after the menu is closed
+            initSwipeDetection(event); // Reinitialize swipe detection after the menu is closed
         }
     });
 
@@ -8929,7 +8929,7 @@ function updateSwipeClasses(wrapper, deltaX) {
     }
 }
 
-function initSwipeDetection() {
+function initSwipeDetection(event) {
     document.querySelectorAll('.bookmark-wrapper').forEach(wrapper => {
         let touchstartX = 0;
         let touchstartY = 0;
@@ -9055,7 +9055,7 @@ function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initSwipeDetection);
 } else {
-    initSwipeDetection();
+    initSwipeDetection(event);
 }
 
 
