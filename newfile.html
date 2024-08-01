@@ -8117,7 +8117,7 @@ function fetchMapsResults(query) {
     })
     .catch(error => console.error('Error fetching Maps data:', error));
 }
-
+/*
 function showResults(results) {
     const dropdown = document.getElementById('dropdown');
     if (!dropdown) {
@@ -8144,6 +8144,34 @@ function showResults(results) {
     adjustDropdownPosition();
     dropdown.style.display = results.length ? 'block' : 'none';
 }
+*/
+  function showResults(results) {
+    const dropdown = document.getElementById('dropdown');
+    if (!dropdown) {
+        console.error('Dropdown element not found');
+        return;
+    }
+
+    dropdown.innerHTML = '';
+    if (results.length > 0) {
+        firstUrlInDropdown = results[0].url;
+    }
+    results.forEach(result => {
+        const item = document.createElement('div');
+        item.className = 'dropdown-item';
+        item.textContent = result.title;
+        item.dataset.url = result.url;
+        
+        item.addEventListener('click', () => {
+            window.location.href = result.url;
+        });
+
+        dropdown.appendChild(item);
+    });
+    adjustDropdownPosition();
+    dropdown.style.display = results.length ? 'block' : 'none';
+}
+
 function fetchSearchResults(query) {
   const url = `https://corsproxy.io/?https://etsi.me/search?q=${encodeURIComponent(query)}&format=json`;
 
