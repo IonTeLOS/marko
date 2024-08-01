@@ -3171,6 +3171,7 @@ function shareNote(title, text) {
       console.error('Error sharing:', error);
     });
   } else if (navigator.clipboard) {
+    window.focus();  
     navigator.clipboard.writeText(title + ": " + text)
       .then(() => {
         alert('Note text has been copied to the clipboard.');
@@ -3320,6 +3321,7 @@ function markoExists(type, url, title, array = "bookmarks") {
 
         // Function to copy shortlink to clipboard and share it
         function handleClipboardAndSharing(shortlink) {
+            window.focus();
             navigator.clipboard.writeText(shortlink)
                 .then(() => {
                     console.log('Shortlink copied to clipboard!');
@@ -6355,6 +6357,7 @@ function shareNote(title, text) {
       console.error('Error sharing:', error);
     });
   } else if (navigator.clipboard) {
+    window.focus();
     navigator.clipboard.writeText(title + ": " + text)
       .then(() => {
         alert('Note text has been copied to the clipboard.');
@@ -6891,6 +6894,7 @@ function shareMarko(index) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
+    window.focus();
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
@@ -6963,6 +6967,7 @@ function shareMarko(index) {
 
         // Copy to clipboard
         try {
+            window.focus();
             await navigator.clipboard.writeText(url);
             alert('Link copied to clipboard!');
         } catch (clipboardError) {
@@ -7789,6 +7794,7 @@ function copyToClipboard(fileId, name) {
         });
     } else {
         // If Web Share API is not supported, copy to clipboard
+        window.focus();
         navigator.clipboard.writeText(url)
         .then(() => {
             console.log('Shareable link copied to clipboard');
@@ -8543,7 +8549,7 @@ function showResults(results) {
             <div class="ml-3">Move to Common</div>
         </div>
         <hr id="context-divider" class="my-2 border-gray-300 dark:border-gray-700" />
-        <div id="context-share" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center" onclick="constructLinkFromBookmark(`${currentIndex}`, true)">
+        <div id="context-share" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center" onclick="shareMarko(`${currentIndex}`, true)">
             <span class="material-icons-outlined text-gray-900 dark:text-gray-300">link</span>
             <div class="ml-3">Share Marko</div>
         </div>
@@ -9012,7 +9018,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
         } else {
             // Right swipe
             try {
-                constructLinkFromBookmark(bookmarkId, true);
+                shareMarko(bookmarkId, true);
             } catch (error) {
                 console.error('Error constructing link:', error);
             }
@@ -9157,7 +9163,75 @@ iconSearchInput.addEventListener('input', function() {
                 this.click();
             }
         });
+
+  function shareMarko(index) {
+  const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
+  console.log('Selected Marko to share: ', bookmark);
+  if (!bookmark) {
+    console.log(`No bookmark found with index ${index}`);
+    return null;
+  }
+
+  const bookmarkWrapper = bookmark.querySelector('.bookmark-wrapper');
+  const iconContainer = bookmarkWrapper.querySelector('.icon-container');
+  const bookmarkTitle = bookmarkWrapper.querySelector('.bookmark-title');
+  const bookmarkIcon = iconContainer.querySelector('img');
+
+  // Extract the required values
+  const onclickValue = bookmarkWrapper.getAttribute('onclick');
+  const actionMatch = getLinkFromValue(onclickValue);
+  console.log('actionMatch');
+  //const actionLink = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
+  const type = bookmarkWrapper.getAttribute('data-type') || '';
+  const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
+  const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
+  const color = iconContainer ? getComputedStyle(iconContainer).getPropertyValue('--ring-color').trim() : '';
+
+  // Construct the URL for the shareable link
+  const url = new URL('https://teloslinux.org/marko/newfile');
+  url.searchParams.append('type', type);
+  url.searchParams.append('link', actionMatch);
+  url.searchParams.append('title', title);
+  url.searchParams.append('icon', icon);
+  url.searchParams.append('color', color);
+  url.searchParams.append('createMarko', 'true');
+
+  const shareLink = url.toString();
+  const shareTitle = "Use Marko to open..";
+  const shareBody = title;
+  const shareIcon = icon;
+
+
+    const userConfirmed = window.confirm('Create a shortlink?');
+
+    if (userConfirmed) {
+        // If the user confirms, call the function with the provided shareLink
+        initializeShortlinkWithTempMarkoLink(shareLink);
+        return;
+    }
     
+  if (navigator.share) {
+    navigator.share({
+      title: shareTitle,
+      url: shareLink
+    })
+    .then(() => console.log('Shared successfully'))
+    .catch((error) => console.error('Error in sharing:', error));
+  } else {
+    // Fallback for browsers that do not support Web Share API
+    window.focus();
+    navigator.clipboard.writeText(shareLink)
+      .then(() => {
+        console.log('Link copied to clipboard');
+        alert('Link has been copied to your clipboard.');
+      })
+      .catch((error) => {
+        console.error('Error in copying link to clipboard:', error);
+      });
+  }
+  return shareLink;
+}
+
 function constructLinkFromBookmark(index, full) {
   const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
   if (!bookmark) {
@@ -9215,6 +9289,7 @@ function constructLinkFromBookmark(index, full) {
     .catch((error) => console.error('Error in sharing:', error));
   } else {
     // Fallback for browsers that do not support Web Share API
+    window.focus();
     navigator.clipboard.writeText(shareLink)
       .then(() => {
         console.log('Link copied to clipboard');
