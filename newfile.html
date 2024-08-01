@@ -7943,7 +7943,7 @@ document.addEventListener('DOMContentLoaded', () => {
 document.addEventListener('DOMContentLoaded', () => {
     // Define constants
     const SEARCH_API_KEY = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your API key
-    const CX = '50cbca12fd52442e0'; // Replace with your Custom Search Engine ID
+    const CX = ''; // Replace with your Custom Search Engine ID
 
     // Define elements
     const searchInput = document.getElementById('searchBoxInput');
@@ -8144,18 +8144,21 @@ function showResults(results) {
     adjustDropdownPosition();
     dropdown.style.display = results.length ? 'block' : 'none';
 }
-    // Helper Functions
-    function fetchSearchResults(query) {
-        const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${SEARCH_API_KEY}&cx=${CX}`;
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                if (data.items) {
-                    showResults(data.items);
-                }
-            })
-            .catch(error => console.error('Error fetching search results:', error));
-    }
+// Helper Functions
+function fetchSearchResults(query) {
+  const url = `https://www.googleapis.com/customsearch/v1?q=${encodeURIComponent(query)}&key=${SEARCH_API_KEY}`; // Removed CX parameter
+
+  // Important: You need a Google Search API key for this to work. Get one from the Google Cloud Console.
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.items) {
+        showResults(data.items); // Assuming you have a function to display results
+      }
+    })
+    .catch(error => console.error('Error fetching search results:', error));
+}
+
 
     function isValidURL(url) {
         const pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
