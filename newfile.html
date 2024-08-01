@@ -8145,7 +8145,7 @@ function showResults(results) {
     dropdown.style.display = results.length ? 'block' : 'none';
 }
 function fetchSearchResults(query) {
-  const url = `https://corsproxy.io/?https://search.be/search?q=${encodeURIComponent(query)}&format=json`;
+  const url = `https://corsproxy.io/?https://etsi.me/search?q=${encodeURIComponent(query)}&format=json`;
 
   fetch(url)
     .then(response => response.json())
