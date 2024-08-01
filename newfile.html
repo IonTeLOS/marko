@@ -3279,7 +3279,7 @@ function markoExists(type, url, title, array = "bookmarks") {
                     console.log('Parsed API response:', responseData);
 
                     if (responseData.short_url) {
-                        alert('Shortlink created successfully!');
+                        //alert('Shortlink created successfully!');
 
                         // Store the shortlink in localStorage
                         localStorage.setItem('short-link', responseData.short_url);
@@ -3299,7 +3299,7 @@ function markoExists(type, url, title, array = "bookmarks") {
                                 console.log('Parsed API response:', responseData);
 
                                 if (responseData.short_url) {
-                                    alert('Custom alias unavailable. Shortlink created without alias.');
+                                    //alert('Custom alias unavailable. Shortlink created without alias.');
 
                                     // Store the shortlink in localStorage
                                     localStorage.setItem('short-link', responseData.short_url);
