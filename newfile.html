@@ -9022,6 +9022,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
         } else {
             // Right swipe
             try {
+                event.stopPropagation();
                 shareMarko(bookmarkId, true);
             } catch (error) {
                 console.error('Error constructing link:', error);
