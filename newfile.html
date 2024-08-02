@@ -1456,12 +1456,7 @@ getId(installations).then((installationId) => {
 }).catch((error) => {
   console.error('Error getting installation ID:', error);
 });
-const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider('6LcxVx4qAAAAADOpAlnYx9JMn8oUh33HIAf6bxOv'),
 
-  // Optional argument. If true, the SDK automatically refreshes App Check tokens as needed.
-  isTokenAutoRefreshEnabled: true
-});
  // Handle foreground messages
 onMessage(messaging, (payload) => {
   console.log('Message received. ', payload);
