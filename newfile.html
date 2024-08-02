@@ -3413,7 +3413,13 @@ function markoExists(type, url, title, array = "bookmarks") {
 
 */
 
-
+function scrollDown() {
+window.scroll({
+    top: document.body.scrollHeight,
+    left: 0,
+    behavior: 'smooth'
+});
+}
       
       
   function createMarko(type, link, title, icon, color, array = "bookmarks") {
@@ -3519,6 +3525,7 @@ function markoExists(type, url, title, array = "bookmarks") {
                 // Set alertStatus back to 'on' for future alerts and skip showing the alert
                 sessionStorage.setItem('alertStatus', 'on');
             }
+    scrollDown();
     return linkData;
 }
 
@@ -3563,12 +3570,7 @@ function handleSharedLink(url, title, text) {
             // Check if the scroll parameter is present
             if (scrollRequest === 'down') {
                 console.log('Scroll to bottom requested');
-                window.scroll({
-    top: document.body.scrollHeight,
-    left: 0,
-    behavior: 'smooth' // Optional: Use 'smooth' for smooth scrolling
-});
-
+                scrollDown();
             }
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
