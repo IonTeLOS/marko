@@ -9332,14 +9332,31 @@ iconSearchInput.addEventListener('input', function() {
   const shareIcon = icon;
 
 
-    const userConfirmed = window.confirm('Create a shortlink?');
+   // const userConfirmed = window.confirm('Create a shortlink?');
 
-    if (userConfirmed) {
+   // if (userConfirmed) {
         // If the user confirms, call the function with the provided shareLink
-        initializeShortlinkWithTempMarkoLink(shareLink);
-        return;
+     //   initializeShortlinkWithTempMarkoLink(shareLink);
+     //   return;
       
-    }
+   // }
+    Notiflix.Confirm.show(
+                'Please confirm',
+                'Do you really want to remove this Marko?',
+                'Yes',
+                'No',
+                () => {
+                    try {
+                        initializeShortlinkWithTempMarkoLink(shareLink);
+                    } catch (error) {
+                        console.error('Error clearing link:', error);
+                    }
+                },
+                () => {
+                    // No action needed if 'No' is clicked
+                   return;
+                }
+            );
 
   if (navigator.share) {
     window.focus();
