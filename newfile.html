@@ -7,6 +7,7 @@
   <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
+  <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcxVx4qAAAAADOpAlnYx9JMn8oUh33HIAf6bxOv"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js" type="module"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js" type="module"></script>
@@ -1419,6 +1420,7 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js';
 import { getInstallations, getId } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js';
 import { getDatabase, ref, set, serverTimestamp, query, orderByChild, equalTo, remove, get } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+import { getAppCheck, initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
@@ -1446,7 +1448,12 @@ getId(installations).then((installationId) => {
 }).catch((error) => {
   console.error('Error getting installation ID:', error);
 });
+const appCheck = initializeAppCheck(app, {
+  provider: new ReCaptchaV3Provider('6LcxVx4qAAAAADOpAlnYx9JMn8oUh33HIAf6bxOv'),
 
+  // Optional argument. If true, the SDK automatically refreshes App Check tokens as needed.
+  isTokenAutoRefreshEnabled: true
+});
  // Handle foreground messages
 onMessage(messaging, (payload) => {
   console.log('Message received. ', payload);
@@ -3804,6 +3811,7 @@ function getBaseUrl(url) {
 }
     window.onload = function() {
     initializeGoogleIdentity();
+    grecaptcha.execute();
     loadArrayFromURL();  
     loadDonationParams();
     toggleBellIcons();
@@ -8775,7 +8783,11 @@ function fetchSearchResults(query) {
     <button id="close-yt">&times;</button>
     <div id="player"></div>
 </div>
- 
+ <div class="g-recaptcha"
+      data-sitekey="6LcxVx4qAAAAADOpAlnYx9JMn8oUh33HIAf6bxOv"
+      data-callback="onSubmit"
+      data-size="invisible">
+</div>
 
   <audio id="sound-swipe-left" src="https://github.com/IonTeLOS/marko/raw/main/nav_left.wav"></audio>
   <audio id="sound-swipe-right" src="https://github.com/IonTeLOS/marko/raw/main/nav_right.wav"></audio>  
