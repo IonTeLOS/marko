@@ -9107,7 +9107,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
 
                 if (deltaX < 0) {
             // Left swipe
-            Notiflix.Confirm.prompt(
+            Notiflix.Confirm.show(
                 'Please confirm',
                 'Do you really want to remove this Marko?',
                 'Yes',
