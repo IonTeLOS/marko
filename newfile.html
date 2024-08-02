@@ -162,19 +162,20 @@ background-color: #1f1b24;
 .bookmark:hover .bookmark-title {
   transform: scale(1.20);
 }
-/* Active state */
-.bookmark.active::before {
+/* Active state for all bookmarks except #main-bookmark */
+.bookmark.active:not(#main-bookmark)::before {
     background: blue;
     animation: blink 2s infinite;
 }
 
+
 /* Swiped left state */
-.bookmark.swipe-left::before {
+.bookmark.swipe-left:not(#main-bookmark)::before {
 background: linear-gradient(to right, #FF0000, rgba(255, 0, 0, 0.1));
 }
 
 /* Swiped right state */
-.bookmark.swipe-right::before {
+.bookmark.swipe-right:not(#main-bookmark)::before {
 background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));  
 }
 .icon-container {
@@ -9129,9 +9130,13 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
     if (deltaY > verticalThreshold) return;
 
     if (Math.abs(deltaX) > threshold) {
+        if (!bookmarkId) {
+        console.log('no bookmark id, this is probably main-bookmark being swiped, nothing to do');
+          return;
+        }
         isSwipeActionInProgress = true;
 
-                if (deltaX < 0) {
+          if (deltaX < 0) {
             // Left swipe
             Notiflix.Confirm.show(
                 'Please confirm',
