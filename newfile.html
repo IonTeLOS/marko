@@ -5704,9 +5704,10 @@ background-color: #1f1b24;
       transform: scale(1.1); /* Enlarge container on hover */
     }
     
+/* Keyframes for blinking animation */
 @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 /* Bookmark Styling */
@@ -5746,10 +5747,16 @@ background-color: #1f1b24;
   transition: background 0.3s ease, border 0.3s ease;
 }
 
-/* Apply breathing animation on active state */
+/* Apply blinking animation on active state */
 .bookmark.active::before {
   background: blue;
-  animation: blink infinite;
+  animation: blink 2s infinite; /* Ensure duration and iteration are set */
+}
+
+/* Hover effect (if needed, but make sure it doesn’t override swipe states) */
+.bookmark:hover::before {
+  background: blue;
+  animation: blink 2s infinite; /* Ensure duration and iteration are set */
 }
 
 /* Swipe states override hover effect */
