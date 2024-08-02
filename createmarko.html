@@ -893,6 +893,7 @@ body.dark-mode {
     <div class="onFinish-buttons"></div>
 
     <script>
+        let APP_LOGO = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg';
         function changeLanguage() {
             var translateSelect = document.getElementById("translate-select");
             var language = translateSelect.value;
@@ -964,7 +965,7 @@ Notiflix.Confirm.init({
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
             messageColor: '#0D47A1',
             svgColor: '#0D47A1',
-            customSvgUrl: 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg',
+            customSvgUrl: APP_LOGO,
             svgSize: '150px',
             clickToClose: true,
             messageFontSize: '24px',
@@ -1840,7 +1841,7 @@ async function chooseMarkoType() {
                                 const isYouTube = (newType === 'youtube');
                                 console.log('newType: ' + newType)
                                 if (selectedType === 'website') {
-                                    sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg'); 
+                                    sessionStorage.setItem('temp-marko-icon', APP_LOGO); 
                                 } else if (selectedType === 'email') {
                                     sessionStorage.setItem('temp-marko-icon', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/email/default/48px.svg');
                                 } else if (selectedType === 'phone') {
@@ -6638,7 +6639,7 @@ function selectIcon(iconName) {
             container.style.display = 'none';
         };
 
-        function chooseMarkoIconAndColor(defaultIcon = 'open_in_new', defaultColor = '#0D47A1') {
+        function chooseMarkoIconAndColor(defaultIcon = APP_LOGO, defaultColor = '#0D47A1') {
     return new Promise((resolve, reject) => {
         container.style.display = 'flex';
         chosenIcon.innerHTML = defaultIcon.startsWith('fa-') ? `<img src="${icons.find(i => i.name === defaultIcon)?.url || ''}" alt="${defaultIcon}">` : defaultIcon;
