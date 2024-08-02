@@ -163,11 +163,10 @@ background-color: #1f1b24;
   transform: scale(1.20);
 }
   
-.bookmark.active:not(#main-bookmark)::before {
+.bookmark.active::before {
     background: blue;
     animation: blink 2s infinite;
 }
-
 
 /* Swiped left state */
 .bookmark.swipe-left:not(#main-bookmark)::before {
@@ -178,6 +177,7 @@ background: linear-gradient(to right, #FF0000, rgba(255, 0, 0, 0.1));
 .bookmark.swipe-right:not(#main-bookmark)::before {
 background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));  
 }
+  
 .icon-container {
             width: 72px; /* Adjust as needed */
             height: 72px; /* Adjust as needed */
@@ -5738,11 +5738,10 @@ background-color: #1f1b24;
   transform: scale(1.20);
 }
   
-.bookmark.active:not(#main-bookmark)::before {
+.bookmark.active::before {
     background: blue;
     animation: blink 2s infinite;
 }
-
 
 /* Swiped left state */
 .bookmark.swipe-left:not(#main-bookmark)::before {
