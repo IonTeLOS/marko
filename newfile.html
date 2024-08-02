@@ -162,8 +162,8 @@ background-color: #1f1b24;
 .bookmark:hover .bookmark-title {
   transform: scale(1.20);
 }
-/* Active state for all bookmarks except #main-bookmark */
-.bookmark.active::before {
+  
+.bookmark.active:not(#main-bookmark)::before {
     background: blue;
     animation: blink 2s infinite;
 }
@@ -288,7 +288,12 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
 .body.dark-mode .bookmark:hover {
   background-color: #333; /* Darker background on hover */
 }
-
+  
+.bookmark:hover {
+  background: blue;
+  animation: blink 2s infinite;
+}
+  
 .context-menu {
     position: fixed;
     transform: translate(-50%, -50%);
@@ -5688,6 +5693,19 @@ background-color: #1f1b24;
       transform: scale(1.1); /* Enlarge container on hover */
     }
 
+.bookmark {    
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  margin-bottom: 8px;
+  border: 4px solid transparent;
+  background-clip: padding-box;
+}
+
 .bookmark::before {
     content: '';
     position: absolute;
@@ -5724,10 +5742,21 @@ background-color: #1f1b24;
 .bookmark:hover .bookmark-title {
   transform: scale(1.20);
 }
-/* Active state for all bookmarks except #main-bookmark */
-.bookmark.active::before {
+  
+.bookmark.active:not(#main-bookmark)::before {
     background: blue;
     animation: blink 2s infinite;
+}
+
+
+/* Swiped left state */
+.bookmark.swipe-left:not(#main-bookmark)::before {
+background: linear-gradient(to right, #FF0000, rgba(255, 0, 0, 0.1));
+}
+
+/* Swiped right state */
+.bookmark.swipe-right:not(#main-bookmark)::before {
+background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));  
 }
 
 .icon-container {
@@ -5844,6 +5873,10 @@ background-color: #1f1b24;
       font-size: 24px; /* Smaller than main icons */
     }
 
+.bookmark:hover {
+  background: blue;
+  animation: blink 2s infinite;
+}
     .bookmark:hover .delete-icon,
     .bookmark.long-press .delete-icon {
       opacity: 1; /* Show delete icon on hover or long press */
