@@ -4480,7 +4480,7 @@ bookmarkElement.innerHTML = `
         </div>
       <span id="share-me" class="material-icons delete-icon" 
           style="color: #ff5e00; cursor: pointer; font-size: 24px;"
-          onclick="sharePage(event)">share</span>    
+          onclick="sharePage(event); event.stopPropagation();">share</span>    
       </div>
 `;
 
@@ -5199,6 +5199,8 @@ function loadVideo(link) {
         init();
     }
 }
+
+   
 
 document.addEventListener('DOMContentLoaded', () => {
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
@@ -7957,7 +7959,24 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             showSearchContainer();
         }
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault(); // Prevent the default browser action (e.g., saving the page)
+        
+        // Perform the desired action
+        console.log('Ctrl + S was pressed');
+        toggleSearchContainer();
     }
+    if (event.ctrlKey && event.key === 'c') {
+        event.preventDefault(); // Prevent the default browser action (e.g., saving the page)
+        
+        // Perform the desired action
+        console.log('Ctrl + C was pressed');
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          window.location.href = 'https://teloslinux.org/marko/createmarko?fromApp&darkMode';
+        } else {
+          window.location.href = 'https://teloslinux.org/marko/createmarko?fromApp';
+    }   
+    }  
 
     // Event listeners
     // Close search container when clicking outside of it
