@@ -6742,7 +6742,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
         } else {
             // Right swipe
             try {
-                shareMarko(bookmarkId, true);
+                shareMarko(bookmarkId);
             } catch (error) {
                 console.error('Error constructing link:', error);
             }
