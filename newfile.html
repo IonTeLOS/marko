@@ -6162,27 +6162,39 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
         window.onload = checkIfLocalAndConfirm;
 
 function sharePage() {
-  if (navigator.share) {
-    window.focus();
-    navigator.share({
-      title: document.title,
-      url: window.location.href
-    })
-    .then(() => console.log('Shared successfully'))
-    .catch((error) => console.error('Error in sharing:', error));
-  } else {
-    // Fallback for browsers that do not support Web Share API
-    const url = window.location.href;
-    const tempInput = document.createElement('input');
-    tempInput.style.position = 'absolute';
-    tempInput.style.left = '-9999px';
-    tempInput.value = url;
-    document.body.appendChild(tempInput);
-    tempInput.select();
-    document.execCommand('copy');
-    document.body.removeChild(tempInput);
-    alert("Link has been copied to your clipboard.");
-  }
+if (navigator.share) {
+  window.focus();
+  navigator.share({
+    title: document.title,
+    url: window.location.href
+  })
+  .then(() => {
+    console.log('Shared successfully');
+    const nav = \`https://teloslinux.org/marko/newfile?type=friend&friendlink=\${window.location.href}&friendname=\${document.title}&createMarko=true\`;
+    window.location.href = nav;
+  })
+  .catch((error) => console.error('Error in sharing:', error));
+  const nav = \`https://teloslinux.org/marko/newfile?type=friend&friendlink=\${window.location.href}&friendname=\${document.title}&createMarko=true\`;
+   setTimeout(() => {
+      window.location.href = nav;
+    }, 4000);
+} else {
+  // Fallback for browsers that do not support Web Share API
+  const url = window.location.href;
+  const tempInput = document.createElement('input');
+  tempInput.style.position = 'absolute';
+  tempInput.style.left = '-9999px';
+  tempInput.value = url;
+  document.body.appendChild(tempInput);
+  tempInput.select();
+  document.execCommand('copy');
+  document.body.removeChild(tempInput);
+  Notiflix.Notify.success('Link copied to clipboard');
+  const nav = \`https://teloslinux.org/marko/newfile?type=friend&friendlink=\${window.location.href}&friendname=\${document.title}&createMarko=true\`;
+  setTimeout(() => {
+      window.location.href = nav;
+    }, 4000);
+}
 }
 
 
@@ -6319,7 +6331,30 @@ if (isMobileDevice()) {
         });
     }
 
-
+        Notiflix.Notify.init({
+            position: 'center-top',
+            timeout: '7000',
+            clickToClose: 'true',
+            zindex: 4003,
+            cssAnimationStyle: 'from-top',
+            fontFamily: 'Roboto, sans-serif', // Set font family
+            });
+   Notiflix.Confirm.init({
+    className: 'notiflix-prompt-custom',
+    position: 'center', // Position in the upper half of the screen in the middle
+    width: '360px', // Maximum width
+    borderRadius: '8px', // Border radius
+    useGoogleFont: true, // Disable Google Fonts to use custom font
+    fontFamily: 'Roboto, sans-serif', // Set font family
+    cssAnimationStyle: 'zoom', // Animation style
+    backOverlay: true,
+    plainText: true,
+    okButtonBackground: '#0D47A1',
+    titleColor: '#000000',
+    titleFontSize: '20px',
+    messageFontSize: '18px',
+    zindex: 4000, 
+});
 
 function clearFrame() {
     document.getElementById("lightbox-iframe").srcdoc = "";
@@ -6948,32 +6983,11 @@ function shareMarko(index) {
     url.searchParams.append('color', color);
     url.searchParams.append('createMarko', 'true');
 
-    const shareLink = url.toString();
-    const shareTitle = "Use Marko to open..";
-    const shareBody = title;
-    const shareIcon = icon;
+    const navLink = url.toString();
 
-        if (navigator.share) {
-            window.focus();
-            navigator.share({
-                title: shareTitle,
-                url: shareLink
-            })
-            .then(() => console.log('Shared successfully'))
-            .catch((error) => console.error('Error in sharing:', error));
-        } else {
-            // Fallback for browsers that do not support Web Share API
-            window.focus();
-            navigator.clipboard.writeText(shareLink)
-            .then(() => {
-                console.log('Link copied to clipboard');
-            })
-            .catch((error) => {
-                console.error('Error in copying link to clipboard:', error);
-            });
-        }
+    window.location.href = navLink;
         
-    return shareLink;
+    return navLink;
 }
 
     <\/script>
