@@ -4389,13 +4389,13 @@ function scheduleNotification(title, body, delay, icon, uuid) {
         }
     });
 }
-    
+*/
 document.addEventListener('DOMContentLoaded', (event) => {
     initializeDeviceToken()
         .then(() => window.requestNotificationPermission())
         .catch(error => console.error('Error initializing:', error));
 });
-*/
+
 // Function to check if an element is partially visible at the top, considering the main-bookmark
         function isPartiallyVisibleAtTop(el, offset) {
             const rect = el.getBoundingClientRect();
@@ -8777,8 +8777,8 @@ function fetchSearchResults(query) {
 </div>
  
 
-  <audio id="sound-swipe-left" src="https://github.com/IonTeLOS/marko/raw/main/nav_left.wav"</audio>
-  <audio id="sound-swipe-right" src="https://github.com/IonTeLOS/marko/raw/main/nav_right.wav"</audio>  
+  <audio id="sound-swipe-left" src="https://github.com/IonTeLOS/marko/raw/main/nav_left.wav"></audio>
+  <audio id="sound-swipe-right" src="https://github.com/IonTeLOS/marko/raw/main/nav_right.wav"></audio>  
     
     <!-- Placeholder div for Adobe PDF Embed API -->
     <div id="adobe-dc-view"></div>
