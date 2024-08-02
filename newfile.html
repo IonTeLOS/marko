@@ -1430,7 +1430,9 @@ const firebaseConfig = {
   messagingSenderId: "7036670175",
   appId: "1:7036670175:web:99992356716578ea13996a"
 };
-
+grecaptcha.ready(() => {
+      initializeAppCheckWithReCaptcha();
+});
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
