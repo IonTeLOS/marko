@@ -6117,31 +6117,40 @@ background-color: #1f1b24;
   outline: none;
   background-color: rgba(255, 255, 255, 0.3); /* Darker background on focus */
 }
-#powered-by-marko {
-    position: fixed;
-    bottom: 15px;
-    right: 30px;
-    font-size: 18px;
-    cursor: pointer;
-    color:  #0d47a1; /* Optional: To make the text stand out */
-    padding: 0; /* Optional: To add some padding around the text */
-    border-radius: 5px; /* Optional: To make the edges rounded */
-    transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition for transform and color */
-}
+ #powered-by-marko {
+      position: absolute;
+      bottom: -40px;
+      right: 30px;
+      font-size: 18px;
+      cursor: pointer;
+      color: #0d47a1; /* To make the text stand out */
+      padding: 0; /* Add some padding around the text */
+      border-radius: 5px; /* Make the edges rounded */
+      transition: transform 0.3s ease, color 0.3s ease; /* Smooth transition for transform and color */
+      display: flex;
+      align-items: center; /* Center items vertically */
+      gap: 12px; /* Space between SVG and text */
+    }
+    #powered-by-marko img {
+      vertical-align: middle; /* Center SVG vertically */
+      width: 36px; /* Set the width of the SVG */
+      height: 36px; /* Set the height of the SVG */
+    }
 
-#powered-by-marko:hover {
-    color: #f44336;
-    transform: scale(1.1);
-}
-@media screen and (max-width: 600px) {
-    #powered-by-marko {
+    #powered-by-marko:hover {
+      color: #f44336;
+      transform: scale(1.1);
+    }
+
+    @media screen and (max-width: 600px) {
+      #powered-by-marko {
         left: 50%;
-        bottom: 10px;
+        bottom: -30px;
         right: auto;
         transform: translateX(-50%);
         font-size: 16px;
+      }
     }
-}
 
   </style>
 </head>
@@ -6179,7 +6188,12 @@ background-color: #1f1b24;
         
     </div>
         <div id="marko-container" class="bookmarks-container" no-select>${linksHTML}</div>
-
+        
+    <div id="powered-by-marko" onclick="goToApp()">
+    <img src="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg" alt="Logo">
+    <span>Powered by Marko©</span>
+    </div>
+    
     <script>      
         // Call the function on page load
         window.onload = checkIfLocalAndConfirm;
@@ -6601,16 +6615,6 @@ function loadVideo(link) {
         init();
     }
 }
-function showPower() {
-const markoContainer = document.getElementById("marko-container");
-            const poweredBy = document.createElement("div");
-            poweredBy.id = "powered-by-marko";
-            poweredBy.innerHTML = "Powered by Marko©";
-            poweredBy.onclick = function() {
-                goToApp();
-            };
-            markoContainer.appendChild(poweredBy);
-}
   
 function updateSwipeClasses(wrapper, deltaX) {
     const bookmark = wrapper.closest('.bookmark');
@@ -6831,7 +6835,6 @@ document.addEventListener('DOMContentLoaded', () => {
     hideDeleted();
     detectTheme();
     checkConnection();
-    showPower();
     
     const ytlightboxContainer = document.getElementById("youtube-lightbox");
     const playerContainer = document.getElementById("player");
