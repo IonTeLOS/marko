@@ -8165,6 +8165,7 @@ function showResults(results) {
         item.addEventListener('click', () => {
             handleResultClick(result);
         });
+        item.addEventListener('contextmenu', handleRightClick);
 
         dropdown.appendChild(item);
     });
