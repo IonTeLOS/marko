@@ -9053,6 +9053,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
             try {
                 const confirmation = confirm("Do you really want to remove this Marko?");
                 if (confirmation) {
+                    event.preventDefault();
                     clearLink(bookmarkId);
                 }
             } catch (error) {
