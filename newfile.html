@@ -5703,10 +5703,10 @@ background-color: #1f1b24;
     .bookmark:hover .icon-container {
       transform: scale(1.1); /* Enlarge container on hover */
     }
-/* Blink Animation for Borders */
-@keyframes blink-border {
-  0%, 100% { border-color: transparent; }
-  50% { border-color: blue; }
+    
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 
 /* Bookmark Styling */
@@ -5749,7 +5749,7 @@ background-color: #1f1b24;
 /* Apply breathing animation on active state */
 .bookmark.active::before {
   background: blue;
-  animation: blink-border 2s ease-in-out infinite;
+  animation: blink infinite;
 }
 
 /* Swipe states override hover effect */
@@ -5767,12 +5767,6 @@ background-color: #1f1b24;
 /* Swiped right state */
 .bookmark.swipe-right::before {
   background: linear-gradient(to left, #00FF00, rgba(0, 255, 0, 0.1)) !important;
-}
-
-/* Hover effect for .bookmark */
-.bookmark:hover::before {
-  background: transparent; /* Existing hover effect */
-  border: 4px solid blue; /* Example hover border color */
 }
 
 .icon-container {
