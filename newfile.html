@@ -9356,8 +9356,7 @@ iconSearchInput.addEventListener('input', function() {
                 () => {
                     // No action needed if 'No' is clicked
                     console.log('user chose not to create shortlink, continuing..');
-                }
-            );
+
 
   if (navigator.share) {
     window.focus();
@@ -9380,6 +9379,8 @@ iconSearchInput.addEventListener('input', function() {
       });
   }
   return shareLink;
+                                  }
+            );
 }
 
 function constructLinkFromBookmark(index, full) {
