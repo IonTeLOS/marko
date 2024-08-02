@@ -9342,19 +9342,20 @@ iconSearchInput.addEventListener('input', function() {
    // }
     Notiflix.Confirm.show(
                 'Please confirm',
-                'Do you really want to remove this Marko?',
+                'Do you also want to create a shortlink?',
                 'Yes',
                 'No',
                 () => {
                     try {
                         initializeShortlinkWithTempMarkoLink(shareLink);
+                        return;
                     } catch (error) {
                         console.error('Error clearing link:', error);
                     }
                 },
                 () => {
                     // No action needed if 'No' is clicked
-                   return;
+                    console.log('user chose not to create shortlink, continuing..');
                 }
             );
 
