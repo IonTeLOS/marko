@@ -5658,7 +5658,22 @@ background-color: #1f1b24;
       flex-direction: column;
     }   
       
-     
+ 
+.bookmark .bookmark-title {
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+  transition: transform 0.2s ease-in-out;
+}
+
+
+.bookmark-title:hover {
+  font-weight: bold;
+  text-align: center;
+  flex: 1;
+  transition: transform 0.2s ease-in-out;
+  transform: scale(1.20);
+}    
 
 
 
@@ -5691,7 +5706,7 @@ background-color: #1f1b24;
 /* Blink Animation for Borders */
 @keyframes blink-border {
   0%, 100% { border-color: transparent; }
-  50% { border-color: blue; } /* Adjust color as needed */
+  50% { border-color: blue; }
 }
 
 /* Bookmark Styling */
@@ -5708,8 +5723,16 @@ background-color: #1f1b24;
   background-clip: padding-box;
 }
 
-/* Blinking border on hover */
-.bookmark:hover::before {
+.bookmark:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adjusted shadow color and intensity */
+}
+
+.bookmark.active {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Default ::before pseudo-element styling */
+.bookmark::before {
   content: '';
   position: absolute;
   top: -4px;
@@ -5719,27 +5742,37 @@ background-color: #1f1b24;
   z-index: -1;
   border-radius: inherit;
   border: 4px solid transparent;
-  animation: blink-border 1s infinite; /* Blink effect on hover */
+  background: transparent;
+  transition: background 0.3s ease, border 0.3s ease;
 }
 
-.bookmark:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adjusted shadow color and intensity */
+/* Apply breathing animation on active state */
+.bookmark.active::before {
+  background: blue;
+  animation: blink-border 2s ease-in-out infinite;
 }
 
-.bookmark.active {
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+/* Swipe states override hover effect */
+.bookmark.swipe-left::before,
+.bookmark.swipe-right::before {
+  background: transparent !important; /* Ensure swipe background is visible */
+  border: none !important; /* Optionally hide the border */
 }
-
-
 
 /* Swiped left state */
-.bookmark.swipe-left:not(#main-bookmark)::before {
-background: linear-gradient(to right, #FF0000, rgba(255, 0, 0, 0.1));
+.bookmark.swipe-left::before {
+  background: linear-gradient(to right, #FF0000, rgba(255, 0, 0, 0.1)) !important;
 }
 
 /* Swiped right state */
-.bookmark.swipe-right:not(#main-bookmark)::before {
-background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));  
+.bookmark.swipe-right::before {
+  background: linear-gradient(to left, #00FF00, rgba(0, 255, 0, 0.1)) !important;
+}
+
+/* Hover effect for .bookmark */
+.bookmark:hover::before {
+  background: transparent; /* Existing hover effect */
+  border: 4px solid blue; /* Example hover border color */
 }
 
 .icon-container {
@@ -6108,21 +6141,7 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
         font-size: 16px;
     }
 }
-.bookmark .bookmark-title {
-  font-weight: bold;
-  text-align: center;
-  flex: 1;
-  transition: transform 0.2s ease-in-out;
-}
 
-
-.bookmark-title:hover {
-  font-weight: bold;
-  text-align: center;
-  flex: 1;
-  transition: transform 0.2s ease-in-out;
-  transform: scale(1.20);
-}
   </style>
 </head>
 <body>
