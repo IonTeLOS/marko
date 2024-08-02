@@ -1440,8 +1440,6 @@ const firebaseConfig = {
         provider: new ReCaptchaEnterpriseProvider('6LcxVx4qAAAAADOpAlnYx9JMn8oUh33HIAf6bxOv'),
         isTokenAutoRefreshEnabled: true
       });
-// Initialize Firebase
-// const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Realtime Database
 const db = getDatabase(app);
@@ -3814,7 +3812,12 @@ function getBaseUrl(url) {
 }
     window.onload = function() {
     initializeGoogleIdentity();
-    grecaptcha.execute();
+ // Check if grecaptcha is available
+      if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
+        initializeAppCheckWithReCaptcha();
+      } else {
+        console.error('reCAPTCHA Enterprise script is not loaded or grecaptcha is not available.');
+      }
     loadArrayFromURL();  
     loadDonationParams();
     toggleBellIcons();
