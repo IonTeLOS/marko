@@ -9294,94 +9294,86 @@ iconSearchInput.addEventListener('input', function() {
     return null;
 }
   
-  function shareMarko(index) {
-  const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
-  console.log('Selected Marko to share: ', bookmark);
-  if (!bookmark) {
-    console.log(`No bookmark found with index ${index}`);
-    return null;
-  }
+function shareMarko(index) {
+    const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
+    console.log('Selected Marko to share: ', bookmark);
+    if (!bookmark) {
+        console.log(`No bookmark found with index ${index}`);
+        return null;
+    }
 
-  const bookmarkWrapper = bookmark.querySelector('.bookmark-wrapper');
-  const iconContainer = bookmarkWrapper.querySelector('.icon-container');
-  const bookmarkTitle = bookmarkWrapper.querySelector('.bookmark-title');
-  const bookmarkIcon = iconContainer.querySelector('img');
+    const bookmarkWrapper = bookmark.querySelector('.bookmark-wrapper');
+    const iconContainer = bookmarkWrapper.querySelector('.icon-container');
+    const bookmarkTitle = bookmarkWrapper.querySelector('.bookmark-title');
+    const bookmarkIcon = iconContainer.querySelector('img');
 
-  // Extract the required values
-  const onclickValue = bookmarkWrapper.getAttribute('onclick');
-  const actionMatch = getLinkFromValue(onclickValue);
-  console.log('actionMatch');
-  //const actionLink = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
-  const type = bookmarkWrapper.getAttribute('data-type') || '';
-  const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
-  const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
-  const color = iconContainer ? getComputedStyle(iconContainer).getPropertyValue('--ring-color').trim() : '';
+    // Extract the required values
+    const onclickValue = bookmarkWrapper.getAttribute('onclick');
+    const actionMatch = getLinkFromValue(onclickValue);
+    console.log('actionMatch');
+    //const actionLink = actionMatch ? actionMatch[1].replace(/'/g, '') : ''; // Extracted and stripped of single quotes
+    const type = bookmarkWrapper.getAttribute('data-type') || '';
+    const title = bookmarkTitle ? bookmarkTitle.textContent.trim() : '';
+    const icon = bookmarkIcon ? bookmarkIcon.getAttribute('src') : '';
+    const color = iconContainer ? getComputedStyle(iconContainer).getPropertyValue('--ring-color').trim() : '';
 
-  // Construct the URL for the shareable link
-  const url = new URL('https://teloslinux.org/marko/newfile');
-  url.searchParams.append('type', type);
-  url.searchParams.append('link', actionMatch);
-  url.searchParams.append('title', title);
-  url.searchParams.append('icon', icon);
-  url.searchParams.append('color', color);
-  url.searchParams.append('createMarko', 'true');
+    // Construct the URL for the shareable link
+    const url = new URL('https://teloslinux.org/marko/newfile');
+    url.searchParams.append('type', type);
+    url.searchParams.append('link', actionMatch);
+    url.searchParams.append('title', title);
+    url.searchParams.append('icon', icon);
+    url.searchParams.append('color', color);
+    url.searchParams.append('createMarko', 'true');
 
-  const shareLink = url.toString();
-  const shareTitle = "Use Marko to open..";
-  const shareBody = title;
-  const shareIcon = icon;
+    const shareLink = url.toString();
+    const shareTitle = "Use Marko to open..";
+    const shareBody = title;
+    const shareIcon = icon;
 
+    const handleNoConfirmation = () => {
+        console.log('User chose not to create shortlink, continuing...');
 
-   // const userConfirmed = window.confirm('Create a shortlink?');
+        if (navigator.share) {
+            window.focus();
+            navigator.share({
+                title: shareTitle,
+                url: shareLink
+            })
+            .then(() => console.log('Shared successfully'))
+            .catch((error) => console.error('Error in sharing:', error));
+        } else {
+            // Fallback for browsers that do not support Web Share API
+            window.focus();
+            navigator.clipboard.writeText(shareLink)
+            .then(() => {
+                console.log('Link copied to clipboard');
+            })
+            .catch((error) => {
+                console.error('Error in copying link to clipboard:', error);
+            });
+        }
+    };
 
-   // if (userConfirmed) {
-        // If the user confirms, call the function with the provided shareLink
-     //   initializeShortlinkWithTempMarkoLink(shareLink);
-     //   return;
-      
-   // }
     Notiflix.Confirm.show(
-                'Please confirm',
-                'Do you also want to create a shortlink?',
-                'Yes',
-                'No',
-                () => {
-                    try {
-                        initializeShortlinkWithTempMarkoLink(shareLink);
-                        return;
-                    } catch (error) {
-                        console.error('Error clearing link:', error);
-                    }
-                },
-                () => {
-                    // No action needed if 'No' is clicked
-                    console.log('user chose not to create shortlink, continuing..');
+        'Please confirm',
+        'Do you also want to create a shortlink?',
+        'Yes',
+        'No',
+        () => {
+            try {
+                initializeShortlinkWithTempMarkoLink(shareLink);
+            } catch (error) {
+                console.error('Error initializing shortlink:', error);
+                handleNoConfirmation();
+            }
+        },
+        handleNoConfirmation
+    );
 
-
-  if (navigator.share) {
-    window.focus();
-    navigator.share({
-      title: shareTitle,
-      url: shareLink
-    })
-    .then(() => console.log('Shared successfully'))
-    .catch((error) => console.error('Error in sharing:', error));
-  } else {
-    // Fallback for browsers that do not support Web Share API
-    window.focus();
-    navigator.clipboard.writeText(shareLink)
-      .then(() => {
-        console.log('Link copied to clipboard');
-        //alert('Link has been copied to your clipboard.');
-      })
-      .catch((error) => {
-        console.error('Error in copying link to clipboard:', error);
-      });
-  }
-  return shareLink;
-                                  }
-            );
+    return shareLink;
 }
+
 
 function constructLinkFromBookmark(index, full) {
   const bookmark = document.querySelector(`.bookmark[data-index="${index}"]`);
