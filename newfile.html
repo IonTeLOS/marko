@@ -9229,6 +9229,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
 
           if (deltaX < 0) {
             // Left swipe
+            playSound('sound-swipe-left');
             Notiflix.Confirm.show(
                 'Please confirm',
                 'Do you really want to remove this Marko?',
@@ -9236,7 +9237,6 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
                 'No',
                 () => {
                     try {
-                        playSound('sound-swipe-left');
                         clearLink(bookmarkId);
                     } catch (error) {
                         console.error('Error clearing link:', error);
