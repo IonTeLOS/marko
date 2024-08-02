@@ -8968,10 +8968,11 @@ function updateSwipeClasses(wrapper, deltaX) {
     }
 }
 
-function initSwipeDetection(event) {
+function initSwipeDetection() {
     document.querySelectorAll('.bookmark-wrapper').forEach(wrapper => {
         let touchstartX = 0;
         let touchstartY = 0;
+        let touchstartTime = 0;
         let isSwipeInProgress = false;
         const bookmarkId = wrapper.closest('.bookmark').getAttribute('data-index');
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
@@ -8979,6 +8980,7 @@ function initSwipeDetection(event) {
         const handleSwipeStart = (e) => {
             if (isSwipeInProgress) return;
             isSwipeInProgress = true;
+            touchstartTime = Date.now();
             if (isTouchDevice) {
                 touchstartX = e.touches[0].clientX;
                 touchstartY = e.touches[0].clientY;
@@ -9002,8 +9004,30 @@ function initSwipeDetection(event) {
             handleSwipe(wrapper, bookmarkId, touchstartX, currentX, touchstartY, currentY);
         };
 
-        const handleSwipeEnd = () => {
+        const handleSwipeEnd = (e) => {
             isSwipeInProgress = false;
+            const touchendTime = Date.now();
+            const elapsedTime = touchendTime - touchstartTime;
+
+            // Check if the movement is below the threshold for click detection
+            const threshold = 30;
+            let currentX, currentY;
+            if (isTouchDevice) {
+                currentX = e.changedTouches[0].clientX;
+                currentY = e.changedTouches[0].clientY;
+            } else {
+                currentX = e.clientX;
+                currentY = e.clientY;
+            }
+
+            const deltaX = Math.abs(currentX - touchstartX);
+            const deltaY = Math.abs(currentY - touchstartY);
+
+            if (deltaX < threshold && deltaY < threshold && elapsedTime < 200) {
+                // It's a click, not a swipe
+                return;
+            }
+
             updateSwipeClasses(wrapper, 0); // Reset classes
         };
 
@@ -9017,6 +9041,14 @@ function initSwipeDetection(event) {
             wrapper.addEventListener('mouseup', handleSwipeEnd);
             wrapper.addEventListener('mouseleave', handleSwipeEnd); // Add this line
         }
+
+        // Prevent click event if a swipe is detected
+        wrapper.addEventListener('click', (e) => {
+            if (isSwipeInProgress) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+            }
+        });
     });
 }
 
@@ -9053,7 +9085,6 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
             try {
                 const confirmation = confirm("Do you really want to remove this Marko?");
                 if (confirmation) {
-                    event.preventDefault();
                     clearLink(bookmarkId);
                 }
             } catch (error) {
@@ -9089,12 +9120,12 @@ function handleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY) {
 
     debouncedHandleSwipe(wrapper, bookmarkId, startX, currentX, startY, currentY);
 }
-  
+
 // Check if the DOM is already loaded for swipe detection initialization
 if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", initSwipeDetection);
 } else {
-    initSwipeDetection(event);
+    initSwipeDetection();
 }
 
 
