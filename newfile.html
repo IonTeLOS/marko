@@ -5593,6 +5593,8 @@ let currentState = `<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/notiflix@3/dist/notiflix-aio-3.2.7.min.js"><\/script>
+  <link href="https://cdn.jsdelivr.net/npm/notiflix@3/src/notiflix.min.css" rel="stylesheet">
        <style> 
 body {
   font-family: Roboto, sans-serif;
@@ -6162,6 +6164,30 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
         // Call the function on page load
         window.onload = checkIfLocalAndConfirm;
 
+Notiflix.Notify.init({
+            position: 'center-top',
+            timeout: '7000',
+            clickToClose: 'true',
+            zindex: 4003,
+            cssAnimationStyle: 'from-top',
+            fontFamily: 'Roboto, sans-serif', // Set font family
+            });
+   Notiflix.Confirm.init({
+    className: 'notiflix-prompt-custom',
+    position: 'center', // Position in the upper half of the screen in the middle
+    width: '360px', // Maximum width
+    borderRadius: '8px', // Border radius
+    useGoogleFont: true, // Disable Google Fonts to use custom font
+    fontFamily: 'Roboto, sans-serif', // Set font family
+    cssAnimationStyle: 'zoom', // Animation style
+    backOverlay: true,
+    plainText: true,
+    okButtonBackground: '#0D47A1',
+    titleColor: '#000000',
+    titleFontSize: '20px',
+    messageFontSize: '18px',
+    zindex: 4000, 
+});
 function sharePage() {
 if (navigator.share) {
   window.focus();
@@ -6332,30 +6358,7 @@ if (isMobileDevice()) {
         });
     }
 
-        Notiflix.Notify.init({
-            position: 'center-top',
-            timeout: '7000',
-            clickToClose: 'true',
-            zindex: 4003,
-            cssAnimationStyle: 'from-top',
-            fontFamily: 'Roboto, sans-serif', // Set font family
-            });
-   Notiflix.Confirm.init({
-    className: 'notiflix-prompt-custom',
-    position: 'center', // Position in the upper half of the screen in the middle
-    width: '360px', // Maximum width
-    borderRadius: '8px', // Border radius
-    useGoogleFont: true, // Disable Google Fonts to use custom font
-    fontFamily: 'Roboto, sans-serif', // Set font family
-    cssAnimationStyle: 'zoom', // Animation style
-    backOverlay: true,
-    plainText: true,
-    okButtonBackground: '#0D47A1',
-    titleColor: '#000000',
-    titleFontSize: '20px',
-    messageFontSize: '18px',
-    zindex: 4000, 
-});
+        
 
 function clearFrame() {
     document.getElementById("lightbox-iframe").srcdoc = "";
