@@ -7933,6 +7933,26 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  document.addEventListener('keydown', function(event) {
+      if (event.ctrlKey && event.key === 's') {
+        event.preventDefault(); // Prevent the default browser action (e.g., saving the page)
+        
+        // Perform the desired action
+        console.log('Ctrl + S was pressed');
+        toggleSearchContainer();
+    }
+    if (event.ctrlKey && event.key === 'c') {
+        event.preventDefault(); // Prevent the default browser action (e.g., saving the page)
+        
+        // Perform the desired action
+        console.log('Ctrl + C was pressed');
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+          window.location.href = 'https://teloslinux.org/marko/createmarko?fromApp&darkMode';
+        } else {
+          window.location.href = 'https://teloslinux.org/marko/createmarko?fromApp';
+    }   
+    }  
+  });
     const searchContainer = document.querySelector('.search-container');
     const overlay = document.getElementById('overlay');
     const searchToggle = document.getElementById('main-bookmark');
@@ -7960,24 +7980,6 @@ document.addEventListener('DOMContentLoaded', () => {
             showSearchContainer();
         }
     }
-    if (event.ctrlKey && event.key === 's') {
-        event.preventDefault(); // Prevent the default browser action (e.g., saving the page)
-        
-        // Perform the desired action
-        console.log('Ctrl + S was pressed');
-        toggleSearchContainer();
-    }
-    if (event.ctrlKey && event.key === 'c') {
-        event.preventDefault(); // Prevent the default browser action (e.g., saving the page)
-        
-        // Perform the desired action
-        console.log('Ctrl + C was pressed');
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-          window.location.href = 'https://teloslinux.org/marko/createmarko?fromApp&darkMode';
-        } else {
-          window.location.href = 'https://teloslinux.org/marko/createmarko?fromApp';
-    }   
-    }  
 
     // Event listeners
     // Close search container when clicking outside of it
