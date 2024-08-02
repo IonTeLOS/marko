@@ -4852,7 +4852,12 @@ function downloadFile(url, title) {
         openLink(url);
     }
       }    
-    
+   
+function playSound(which) {
+      var audio = document.getElementById(which);
+      audio.play();
+    }    
+   
 // Function to remove the bookmark element from DOM
 function removeMarko(index) {
             // Handle delete icon click with haptic feedback
@@ -8769,6 +8774,9 @@ function fetchSearchResults(query) {
     <button id="close-yt">&times;</button>
     <div id="player"></div>
 </div>
+  
+  <audio id="sound-swipe-left" src="https://github.com/IonTeLOS/marko/raw/main/nav_left.wav" preload="auto"</audio>
+  <audio id="sound-swipe-right" src="https://github.com/IonTeLOS/marko/raw/main/nav_right.wav" preload="auto"</audio>  
 
     <!-- Placeholder div for Adobe PDF Embed API -->
     <div id="adobe-dc-view"></div>
@@ -9227,6 +9235,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
                 'No',
                 () => {
                     try {
+                        playSound('sound-swipe-left');
                         clearLink(bookmarkId);
                     } catch (error) {
                         console.error('Error clearing link:', error);
@@ -9240,6 +9249,7 @@ const debouncedHandleSwipe = debounce((wrapper, bookmarkId, startX, currentX, st
         } else {
             // Right swipe
             try {
+                playSound('sound-swipe-right');
                 shareMarko(bookmarkId, true);
             } catch (error) {
                 console.error('Error constructing link:', error);
