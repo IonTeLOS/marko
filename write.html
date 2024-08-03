@@ -10,7 +10,7 @@
         <button id="submitBtn" style="display: none;">Submit</button>
         <div id="message"></div>
     </div>
-    <div id="lastMessages"></div>
+    <div id="allMessages"></div>
 
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client"></script>
@@ -177,8 +177,66 @@ async function readFromFile() {
     }
 }
 
+let lastReadTimestamp = null;
+
+async function readAndDisplayAllMessages() {
+    if (!gapi.client.getToken()) {
+        showSystemMessage('Not authorized. Please authorize first.');
+        return;
+    }
+
+    try {
+        // Read messages from FILE_ID (other person's messages)
+        const responseRead = await gapi.client.drive.files.get({
+            fileId: FILE_ID,
+            alt: 'media'
+        });
+
+        // Read messages from WRITE_ID (your own messages)
+        const responseWrite = await gapi.client.drive.files.get({
+            fileId: WRITE_ID,
+            alt: 'media'
+        });
+        
+        let jsonContentRead, jsonContentWrite;
+        try {
+            jsonContentRead = JSON.parse(responseRead.body);
+            jsonContentWrite = JSON.parse(responseWrite.body);
+        } catch {
+            showSystemMessage('Error parsing file content.');
+            return;
+        }
+
+        let allMessages = [];
+        if (Array.isArray(jsonContentRead.messages)) {
+            allMessages = allMessages.concat(jsonContentRead.messages);
+        }
+        if (Array.isArray(jsonContentWrite.messages)) {
+            allMessages = allMessages.concat(jsonContentWrite.messages.map(msg => [msg[0], 'Me', msg[2]]));
+        }
+
+        // Sort all messages by timestamp
+        allMessages.sort((a, b) => new Date(a[0]) - new Date(b[0]));
+
+        let newMessages = allMessages;
+        if (lastReadTimestamp) {
+            newMessages = newMessages.filter(msg => new Date(msg[0]) > new Date(lastReadTimestamp));
+        }
+
+        if (newMessages.length > 0) {
+            lastReadTimestamp = newMessages[newMessages.length - 1][0];
+            displayMessages(newMessages);
+        }
+
+        setTimeout(readAndDisplayAllMessages, 10000); // Repeat after 10 seconds
+    } catch (error) {
+        showSystemMessage('Error reading files: ' + error.message);
+        setTimeout(readAndDisplayAllMessages, 5000); // Repeat after 5 seconds if error
+    }
+}
+
 function displayMessages(messages) {
-    const messagesDiv = document.getElementById('lastMessages');
+    const messagesDiv = document.getElementById('allMessages');
     messages.forEach(msg => {
         const messageElement = document.createElement('p');
         messageElement.textContent = `[${msg[0]}] ${msg[1]}: ${msg[2]}`;
@@ -190,7 +248,7 @@ function startReading() {
     if (!gapi.client.getToken()) {
         tokenClient.requestAccessToken({prompt: ''});
     } else {
-        readFromFile();
+        readAndDisplayAllMessages();
     }
 }
         function showSystemMessage(msg) {
