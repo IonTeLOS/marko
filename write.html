@@ -3,6 +3,16 @@
 <head>
     <title>Google Drive Integration</title>
 </head>
+ <style>
+    @keyframes blink {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    .blinking {
+        animation: blink 1s linear infinite;
+    }
+</style>   
 <body>
     <div class="container">
         <input type="text" id="inputText" placeholder="Enter text to write">
@@ -76,14 +86,25 @@ function handleAuthCallback(resp) {
     document.getElementById('authorizeButton').innerText = 'Refresh';
     startReading(); // Start reading after successful authorization
 }
-
-        async function writeToFile() {
+async function writeToFile() {
     const content = document.getElementById('inputText').value;
-    const extras = 'none'; 
+    const extras = 'none';
     if (!content) {
         showSystemMessage('Please enter some text to write.');
         return;
     }
+
+    // Get current timestamp
+    const timestamp = new Date().toISOString();
+    // Get name from localStorage or use default
+    const name = localStorage.getItem('my-name') || 'Socrates';
+    // Create new message
+    const newMessage = [timestamp, 'Me', content, extras];
+
+    // Immediately display the message in blinking state
+    const messageId = Date.now(); // Use timestamp as a unique ID
+    displayMessage(newMessage, true, messageId);
+
     try {
         const response = await gapi.client.drive.files.get({
             fileId: WRITE_ID,
@@ -97,16 +118,6 @@ function handleAuthCallback(resp) {
             jsonContent = { messages: [], settings: [] };
         }
 
-        // Get current timestamp
-        const timestamp = new Date().toISOString();
-
-        // Get name from localStorage or use default
-        const name = localStorage.getItem('my-name') || 'Socrates';
-
-        // Create new message
-        const newMessage = [timestamp, name, content, extras];
-
-        // Add new message to the messages array
         if (!Array.isArray(jsonContent.messages)) {
             jsonContent.messages = [];
         }
@@ -126,14 +137,19 @@ function handleAuthCallback(resp) {
         });
         if (uploadResponse.ok) {
             showSystemMessage('Successfully written to file!');
+            stopBlinking(messageId); // Stop blinking if write is successful
         } else {
-            showSystemMessage('Error writing to file: ' + uploadResponse.statusText);
+            throw new Error(uploadResponse.statusText);
         }
     } catch (error) {
         showSystemMessage('Error: ' + error.message);
+        removeMessage(messageId); // Remove message if write fails
     }
-}
 
+    // Clear input field after attempting to write
+    document.getElementById('inputText').value = '';
+}
+        
 let lastReadTimestamp = null;
 
 async function readAndDisplayAllMessages() {
@@ -180,10 +196,10 @@ async function readAndDisplayAllMessages() {
             newMessages = newMessages.filter(msg => new Date(msg[0]) > new Date(lastReadTimestamp));
         }
 
-        if (newMessages.length > 0) {
-            lastReadTimestamp = newMessages[newMessages.length - 1][0];
-            displayMessages(newMessages);
-        }
+    if (newMessages.length > 0) {
+        lastReadTimestamp = newMessages[newMessages.length - 1][0];
+        newMessages.forEach(msg => displayMessage(msg));
+    }
 
         setTimeout(readAndDisplayAllMessages, 10000); // Repeat after 10 seconds
     } catch (error) {
@@ -192,13 +208,32 @@ async function readAndDisplayAllMessages() {
     }
 }
 
-function displayMessages(messages) {
+function displayMessage(msg, blinking = false, id = null) {
     const messagesDiv = document.getElementById('allMessages');
-    messages.forEach(msg => {
-        const messageElement = document.createElement('p');
-        messageElement.textContent = `[${msg[0]}] ${msg[1]}: ${msg[2]}`;
-        messagesDiv.appendChild(messageElement);
-    });
+    const messageElement = document.createElement('p');
+    messageElement.textContent = `[${msg[0]}] ${msg[1]}: ${msg[2]}`;
+    if (blinking) {
+        messageElement.classList.add('blinking');
+    }
+    if (id) {
+        messageElement.id = `msg-${id}`;
+    }
+    messagesDiv.appendChild(messageElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight; // Auto-scroll to bottom
+}
+
+function stopBlinking(id) {
+    const messageElement = document.getElementById(`msg-${id}`);
+    if (messageElement) {
+        messageElement.classList.remove('blinking');
+    }
+}
+
+function removeMessage(id) {
+    const messageElement = document.getElementById(`msg-${id}`);
+    if (messageElement) {
+        messageElement.remove();
+    }
 }
 
 function startReading() {
