@@ -4864,9 +4864,11 @@ iframe.srcdoc = `
         function openMarko(action, data, extras) {
             const menuOn = document.getElementById('contextMenu');
             if (menuOn) {
-                toggleMenuOff();
-                console.log('closed the menu');
-                return;
+               var menu = document.querySelector(".context-menu");
+               menu.style.display = 'none';
+               event.stopPropagation();                
+               console.log('closed the menu');
+               return;
             }
           
             if (action === loadVideo) {
