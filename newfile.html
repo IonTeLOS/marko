@@ -1189,7 +1189,7 @@ input:focus {
 .tooltip-scrolling {
     animation: scroll-text 10s linear infinite;
 }
-#current-link .ml-3 {
+#current-link .menu-text {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -9121,7 +9121,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Update the menu element with the currentLink text
     if (linkPlace) {
-        linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
+        linkPlace.querySelector('.menu-text').textContent = currentLink.substring(0, 30);
     }
     
     // Get viewport dimensions
