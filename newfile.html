@@ -296,9 +296,6 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
   
 .context-menu {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
     display: none;
     z-index: 9999; /* Apply a higher z-index */
     transition: left 0.2s, top 0.2s;
@@ -9152,15 +9149,26 @@ document.addEventListener("DOMContentLoaded", function () {
     // Ensure the menu is visible
     menu.classList.remove('hidden');
     */
-     const contextMenu = document.getElementById('contextMenu');
+        const contextMenu = document.getElementById('contextMenu');
         if (contextMenu) {
+            const linkPlace = document.getElementById('current-link');
+            // Update the menu element with the currentLink text
+            if (linkPlace) {
+              linkPlace.querySelector('.menu-text').textContent = currentLink.substring(0, 30);
+            }
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
             const menuWidth = contextMenu.offsetWidth;
             const menuHeight = contextMenu.offsetHeight;
 
-            const left = (viewportWidth - menuWidth) / 2;
-            const top = (viewportHeight - menuHeight) / 2;
+            let left = (viewportWidth - menuWidth) / 2;
+            let top = (viewportHeight - menuHeight) / 2;
+
+            // Adjust if the menu overflows the viewport
+            if (left < 0) left = 0;
+            if (top < 0) top = 0;
+            if (left + menuWidth > viewportWidth) left = viewportWidth - menuWidth;
+            if (top + menuHeight > viewportHeight) top = viewportHeight - menuHeight;
 
             contextMenu.style.left = `${left}px`;
             contextMenu.style.top = `${top}px`;
