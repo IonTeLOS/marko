@@ -317,7 +317,7 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
 .menu-item {
     display: flex;
     align-items: center;
-    padding: 8px 16px; /* Less padding for less space between items */
+    padding: 6px 12px; /* Less padding for less space between items */
     cursor: pointer;
     transition: background-color 0.2s;
 }
@@ -328,9 +328,9 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
 
 .icon {
     color: orange; /* Orange icon color */
-    font-size: 24px; /* Icon size */
-    width: 28px; /* Width for alignment */
-    height: 28px; /* Height for alignment */
+    font-size: 26px; /* Larger icon size */
+    width: 30px; /* Width for alignment */
+    height: 30px; /* Height for alignment */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -339,10 +339,13 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
 .menu-text {
     margin-left: 12px; /* Slightly less margin */
     flex: 1; /* Use remaining space */
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis; /* Ensure text does not overflow */
 }
 
 .menu-divider {
-    margin: 6px 0; /* Less margin for even spacing */
+    margin: 4px 0; /* Less margin for even spacing */
     border: none;
     border-top: 1px solid #e0e0e0;
 }
@@ -367,6 +370,7 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
         border-top-color: #555;
     }
 }
+
 
   
 input {
@@ -1186,11 +1190,7 @@ input:focus {
 .tooltip-scrolling {
     animation: scroll-text 10s linear infinite;
 }
-#current-link .menu-text {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
+
 .form-container-wrapper {
   position: fixed;
   top: 0;
@@ -8777,47 +8777,47 @@ function fetchSearchResults(query) {
     </div>
 <!-- Context Menu -->
 <div id="contextMenu" class="context-menu">
-    <div class="menu-container">
-        <div id="current-link" class="menu-item">
-            <span class="material-icons-outlined icon">cancel</span>
-            <div class="menu-text"></div>
-        </div>
-        <hr class="menu-divider" />
-        <div id="context-delete" class="menu-item" onclick="deleteLink(`${currentIndex}`)">
-            <span class="material-icons-outlined icon">delete</span>
-            <div class="menu-text">Delete Marko</div>
-        </div>
-        <div id="context-moveup" class="menu-item" onclick="moveMarkoUp(`${currentIndex}`)">
-            <span class="material-icons-outlined icon">arrow_upward</span>
-            <div class="menu-text">Move One Up</div>
-        </div>
-        <div id="context-movedown" class="menu-item" onclick="moveMarkoDown(`${currentIndex}`)">
-            <span class="material-icons-outlined icon">vertical_align_bottom</span>
-            <div class="menu-text">Move to Bottom</div>
-        </div>
-        <div id="context-movepublic" class="menu-item" onclick="moveMarkoTo(`${currentIndex}`)">
-            <span class="material-icons-outlined icon">publish</span>
-            <div class="menu-text">Move to Common</div>
-        </div>
-        <hr id="context-divider" class="menu-divider" />
-        <div id="context-share" class="menu-item" onclick="shareMarko(`${currentIndex}`, true)">
-            <span class="material-icons-outlined icon">link</span>
-            <div class="menu-text">Share Marko</div>
-        </div>
-        <div id="context-settings" class="menu-item" onclick="openSettings()">
-            <span class="material-icons-outlined icon">settings</span>
-            <div class="menu-text">Settings</div>
-        </div>
-        <div id="context-rename" class="menu-item" onclick="renameMarko(`${currentIndex}`)">
-            <span class="material-icons-outlined icon">edit</span>
-            <div class="menu-text">Rename</div>
-        </div>
-        <div id="context-reminder" class="menu-item" onclick="addReminderToMarko(`${currentIndex}`)">
-            <span class="material-icons-outlined icon">notifications</span>
-            <div class="menu-text">Add Reminder</div>
+        <div class="menu-container">
+            <div id="current-link" class="menu-item">
+                <span class="material-icons-outlined icon">cancel</span>
+                <div class="menu-text">Link Text</div>
+            </div>
+            <hr class="menu-divider" />
+            <div id="context-delete" class="menu-item" onclick="deleteLink(currentIndex)">
+                <span class="material-icons-outlined icon">delete</span>
+                <div class="menu-text">Delete Marko</div>
+            </div>
+            <div id="context-moveup" class="menu-item" onclick="moveMarkoUp(currentIndex)">
+                <span class="material-icons-outlined icon">arrow_upward</span>
+                <div class="menu-text">Move One Up</div>
+            </div>
+            <div id="context-movedown" class="menu-item" onclick="moveMarkoDown(currentIndex)">
+                <span class="material-icons-outlined icon">vertical_align_bottom</span>
+                <div class="menu-text">Move to Bottom</div>
+            </div>
+            <div id="context-movepublic" class="menu-item" onclick="moveMarkoTo(currentIndex)">
+                <span class="material-icons-outlined icon">publish</span>
+                <div class="menu-text">Move to Common</div>
+            </div>
+            <hr id="context-divider" class="menu-divider" />
+            <div id="context-share" class="menu-item" onclick="shareMarko(currentIndex, true)">
+                <span class="material-icons-outlined icon">link</span>
+                <div class="menu-text">Share Marko</div>
+            </div>
+            <div id="context-settings" class="menu-item" onclick="openSettings()">
+                <span class="material-icons-outlined icon">settings</span>
+                <div class="menu-text">Settings</div>
+            </div>
+            <div id="context-rename" class="menu-item" onclick="renameMarko(currentIndex)">
+                <span class="material-icons-outlined icon">edit</span>
+                <div class="menu-text">Rename</div>
+            </div>
+            <div id="context-reminder" class="menu-item" onclick="addReminderToMarko(currentIndex)">
+                <span class="material-icons-outlined icon">notifications</span>
+                <div class="menu-text">Add Reminder</div>
+            </div>
         </div>
     </div>
-</div>
 <!-- Context Menu --> 
 <div id="install-banner" class="install-banner">
     <span class="material-icons">install_desktop</span>
@@ -9070,7 +9070,7 @@ document.addEventListener("DOMContentLoaded", function () {
             targetElement = targetElement.parentElement;
         }
 
-        toggleMenuOn();
+        //toggleMenuOn();
         positionMenu(event);
     });
 
@@ -9156,6 +9156,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (linkPlace) {
               linkPlace.querySelector('.menu-text').textContent = currentLink.substring(0, 30);
             }
+                    if (contextMenu) {
             const viewportWidth = window.innerWidth;
             const viewportHeight = window.innerHeight;
             const menuWidth = contextMenu.offsetWidth;
@@ -9177,18 +9178,40 @@ document.addEventListener("DOMContentLoaded", function () {
             console.error('Context menu element not found.');
         }
 }
-  
+      function closeMenu() {
+        if (contextMenu) {
+            contextMenu.style.display = 'none';
+        }
+    }
+
+    // Close menu when clicking outside of it
+    document.addEventListener('click', function (event) {
+        if (!contextMenu.contains(event.target)) {
+            closeMenu();
+        }
+    });
+
+    // Close menu when clicking on any menu item
+    document.querySelectorAll('.menu-item').forEach(function (item) {
+        item.addEventListener('click', closeMenu);
+    });
+
+    // Close menu when clicking on current-link menu-text
+    const currentLink = document.getElementById('current-link');
+    if (currentLink) {
+        currentLink.addEventListener('click', closeMenu);
+    }
     document.addEventListener("click", (e) => {
         var button = e.which || e.button;
         if (button === 1) {
-            toggleMenuOff();
+            //toggleMenuOff();
             initSwipeDetection(event); // Reinitialize swipe detection after the menu is closed
         }
     });
 
     window.onkeyup = function (e) {
         if (e.keyCode === 27) {
-            toggleMenuOff();
+            //toggleMenuOff();
         }
     }
 });
