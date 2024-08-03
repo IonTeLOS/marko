@@ -4861,16 +4861,7 @@ iframe.srcdoc = `
             }
 }
         // function to open bookmark links in new tab. separate behavior for friends' links
-        function openMarko(action, data, extras) {
-            const menuOn = document.getElementById('contextMenu');
-            if (menuOn) {
-               var menu = document.querySelector(".context-menu");
-               menu.style.display = 'none';
-               event.stopPropagation();                
-               console.log('closed the menu');
-               return;
-            }
-          
+        function openMarko(action, data, extras) {    
             if (action === loadVideo) {
                loadVideo(data);
             } else if (action === showWindow) {
@@ -9135,6 +9126,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+   document.addEventListener('click', function(event) {
+    if (menu && !menu.contains(event.target)) {
+        toggleMenuOff();
+        }
+    });
+  
     window.onkeyup = function (e) {
         if (e.keyCode === 27) {
             toggleMenuOff();
