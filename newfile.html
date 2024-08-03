@@ -9073,7 +9073,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         toggleMenuOn();
-        //positionMenu(event);
+        positionMenu(event);
     });
 
     function toggleMenuOn() {
@@ -9139,13 +9139,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const top = (viewportHeight - menuHeight) / 2;
     
     // Apply Tailwind classes for centering
-    menu.classList.add('fixed', 'transform', '-translate-x-1/2', '-translate-y-1/2');
-    menu.style.left = '50%';
-    menu.style.top = '50%';
+   // menu.classList.add('fixed', 'transform', '-translate-x-1/2', '-translate-y-1/2');
+    // menu.style.left = '50%';
+    // menu.style.top = '50%';
     
     // Remove any inline width/height styles
-    menu.style.width = '';
-    menu.style.height = '';
+    // menu.style.width = '';
+    // menu.style.height = '';
     
     // Ensure the menu is visible
     menu.classList.remove('hidden');
