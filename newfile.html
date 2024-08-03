@@ -9088,7 +9088,15 @@ document.addEventListener("DOMContentLoaded", function () {
     // Update the menu element with the currentLink text
     if (linkPlace) {
         linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
-    }
+       
+        // Apply initial blue color
+        linkPlace.querySelector('.ml-3').style.color = 'blue';
+
+        // After 1 second, change text color to white
+        setTimeout(function() {
+            linkPlace.querySelector('.ml-3').style.color = 'white';
+            }, 1000); // 1000 milliseconds = 1 second
+        }
     
     // Get viewport dimensions
     const viewportWidth = window.innerWidth;
