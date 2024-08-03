@@ -297,23 +297,24 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
   
 .context-menu {
     position: fixed;
+    transform: translate(-50%, -50%);
     display: none;
-    z-index: 9999; /* Higher z-index to ensure it is on top */
-    transition: opacity 0.2s ease-in; /* Smooth fade-in transition */
-    opacity: 0;
+    z-index: 1000;
+    transition: left 0.2s, top 0.2s;
 }
 
 .menu-container {
     animation: dropIn 0.4s ease-out; /* Apply drop-in animation */
 }
   
-.menu-text {
+.current-link .ml-3 {
     margin-left: 12px; /* Slightly less margin */
     flex: 1; /* Use remaining space */
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis; /* Ensure text does not overflow */
 }
+  
 .context-menu .material-icons-outlined {
     color: orange; /* Set icon color to orange */
 }
@@ -9075,7 +9076,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
    function positionMenu(e) {
-    
     const menu = document.getElementById('contextMenu');
     const linkPlace = document.getElementById('current-link');
     
@@ -9113,7 +9113,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Remove any inline width/height styles
     menu.style.width = '';
     menu.style.height = '';
-
+    
     // Ensure the menu is visible
     menu.classList.remove('hidden');
 }
