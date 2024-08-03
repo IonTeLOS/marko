@@ -1733,7 +1733,7 @@ localforage.getItem('new-nav-request').then(function(value) {
   if (value !== null) {
     console.log('Retrieved value:', value);
     // Use the retrieved value in your application logic
-    window.open(value, '_blank');
+    // window.open(value, '_blank');
 
     // window.location.href = value;
         return localforage.removeItem('new-nav-request');
@@ -4743,7 +4743,8 @@ linkContainer.appendChild(bookmarkElement);
                 }
 
             });
-            scrollDown();
+            // TODO : decide if we always want to scroll down (to see most recently added Markos)
+            // scrollDown();
         }
 // detect if run on mobile or on desktop based on screen width. TODO use this function to make it more mobile friendly
     
