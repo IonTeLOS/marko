@@ -9109,6 +9109,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
    function positionMenu(e) {
+    /*
     const menu = document.getElementById('contextMenu');
     const linkPlace = document.getElementById('current-link');
     
@@ -9139,16 +9140,33 @@ document.addEventListener("DOMContentLoaded", function () {
     const top = (viewportHeight - menuHeight) / 2;
     
     // Apply Tailwind classes for centering
-   // menu.classList.add('fixed', 'transform', '-translate-x-1/2', '-translate-y-1/2');
+    menu.classList.add('fixed', 'transform', '-translate-x-1/2', '-translate-y-1/2');
     menu.style.left = '50%';
     menu.style.top = '50%';
     
     // Remove any inline width/height styles
-    // menu.style.width = '';
-    // menu.style.height = '';
-    
+    menu.style.width = '';
+    menu.style.height = '';
+
     // Ensure the menu is visible
     menu.classList.remove('hidden');
+    */
+     const contextMenu = document.getElementById('contextMenu');
+        if (contextMenu) {
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const menuWidth = contextMenu.offsetWidth;
+            const menuHeight = contextMenu.offsetHeight;
+
+            const left = (viewportWidth - menuWidth) / 2;
+            const top = (viewportHeight - menuHeight) / 2;
+
+            contextMenu.style.left = `${left}px`;
+            contextMenu.style.top = `${top}px`;
+            contextMenu.style.display = 'block';
+        } else {
+            console.error('Context menu element not found.');
+        }
 }
   
     document.addEventListener("click", (e) => {
