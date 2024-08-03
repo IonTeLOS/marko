@@ -303,6 +303,69 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
     z-index: 1000;
     transition: left 0.2s, top 0.2s;
 }
+
+.menu-container {
+    width: 256px;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    color: #333;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.menu-item:hover {
+    background-color: #f5f5f5;
+}
+
+.icon {
+    color: #555;
+    font-size: 20px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-text {
+    margin-left: 12px;
+}
+
+.menu-divider {
+    margin: 8px 0;
+    border: none;
+    border-top: 1px solid #e0e0e0;
+}
+
+/* Dark mode styles */
+@media (prefers-color-scheme: dark) {
+    .menu-container {
+        background-color: #333;
+        border-color: #555;
+        color: #e0e0e0;
+    }
+
+    .menu-item:hover {
+        background-color: #444;
+    }
+
+    .icon {
+        color: #ccc;
+    }
+
+    .menu-divider {
+        border-top-color: #555;
+    }
+}
   
 input {
   padding-right: 30px; /* Space for the clear button */
@@ -8712,55 +8775,47 @@ function fetchSearchResults(query) {
     </div>
 <!-- Context Menu -->
 <div id="contextMenu" class="context-menu">
-    <div class="bg-white dark:bg-gray-800 w-64 border border-gray-300 dark:border-gray-700 rounded-lg flex flex-col text-sm py-4 px-2 text-gray-700 dark:text-gray-300 shadow-lg">
-        <div id="current-link" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center">
-            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">cancel</span>
-            <div class="ml-3"></div>
+    <div class="menu-container">
+        <div id="current-link" class="menu-item">
+            <span class="material-icons-outlined icon">cancel</span>
+            <div class="menu-text"></div>
         </div>
-        <hr class="my-2 border-gray-300 dark:border-gray-700" />
-        <div id="context-delete" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
-            onclick="deleteLink(`${currentIndex}`)">
-            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">delete</span>
-            <div class="ml-3">Delete Marko</div>
+        <hr class="menu-divider" />
+        <div id="context-delete" class="menu-item" onclick="deleteLink(`${currentIndex}`)">
+            <span class="material-icons-outlined icon">delete</span>
+            <div class="menu-text">Delete Marko</div>
         </div>
-        <div id="context-moveup" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
-            onclick="moveMarkoUp(`${currentIndex}`)">
-            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">arrow_upward</span>
-            <div class="ml-3">Move One Up</div>
+        <div id="context-moveup" class="menu-item" onclick="moveMarkoUp(`${currentIndex}`)">
+            <span class="material-icons-outlined icon">arrow_upward</span>
+            <div class="menu-text">Move One Up</div>
         </div>
-        <div id="context-movedown" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
-            onclick="moveMarkoDown(`${currentIndex}`)">
-            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">vertical_align_bottom</span>
-            <div class="ml-3">Move to Bottom</div>
+        <div id="context-movedown" class="menu-item" onclick="moveMarkoDown(`${currentIndex}`)">
+            <span class="material-icons-outlined icon">vertical_align_bottom</span>
+            <div class="menu-text">Move to Bottom</div>
         </div>
-              <div id="context-movepublic" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
-            onclick="moveMarkoTo(`${currentIndex}`)">
-            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">publish</span>
-            <div class="ml-3">Move to Common</div>
+        <div id="context-movepublic" class="menu-item" onclick="moveMarkoTo(`${currentIndex}`)">
+            <span class="material-icons-outlined icon">publish</span>
+            <div class="menu-text">Move to Common</div>
         </div>
-        <hr id="context-divider" class="my-2 border-gray-300 dark:border-gray-700" />
-        <div id="context-share" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center" onclick="shareMarko(`${currentIndex}`, true)">
-            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">link</span>
-            <div class="ml-3">Share Marko</div>
+        <hr id="context-divider" class="menu-divider" />
+        <div id="context-share" class="menu-item" onclick="shareMarko(`${currentIndex}`, true)">
+            <span class="material-icons-outlined icon">link</span>
+            <div class="menu-text">Share Marko</div>
         </div>
-          <div id="context-settings" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
-            onclick="openSettings()">
-            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">settings</span>
-            <div class="ml-3">Settings</div>
+        <div id="context-settings" class="menu-item" onclick="openSettings()">
+            <span class="material-icons-outlined icon">settings</span>
+            <div class="menu-text">Settings</div>
         </div>
-              <div id="context-rename" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
-            onclick="renameMarko(`${currentIndex}`)">
-            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">edit</span>
-            <div class="ml-3">Rename</div>
+        <div id="context-rename" class="menu-item" onclick="renameMarko(`${currentIndex}`)">
+            <span class="material-icons-outlined icon">edit</span>
+            <div class="menu-text">Rename</div>
         </div>
-        <div id="context-reminder" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
-            onclick="addReminderToMarko(`${currentIndex}`)">
-            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">notifications</span>
-            <div class="ml-3">Add Reminder</div>
+        <div id="context-reminder" class="menu-item" onclick="addReminderToMarko(`${currentIndex}`)">
+            <span class="material-icons-outlined icon">notifications</span>
+            <div class="menu-text">Add Reminder</div>
         </div>
     </div>
 </div>
-
 <!-- Context Menu --> 
 <div id="install-banner" class="install-banner">
     <span class="material-icons">install_desktop</span>
