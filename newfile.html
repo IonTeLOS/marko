@@ -7,7 +7,6 @@
   <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
-  <script src="https://www.google.com/recaptcha/enterprise.js?render=6LcxVx4qAAAAADOpAlnYx9JMn8oUh33HIAf6bxOv"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js" type="module"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js" type="module"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js" type="module"></script>
@@ -1416,7 +1415,6 @@ input:focus {
 
 <script type=module>
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { initializeAppCheck, ReCaptchaV3Provider } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js';  
 import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js';
 import { getInstallations, getId } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js';
 import { getDatabase, ref, set, serverTimestamp, query, orderByChild, equalTo, remove, get } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
@@ -1430,15 +1428,8 @@ const firebaseConfig = {
   messagingSenderId: "7036670175",
   appId: "1:7036670175:web:99992356716578ea13996a"
 };
- // Function to initialize Firebase App Check with reCAPTCHA Enterprise
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-
-      // Initialize App Check with reCAPTCHA Enterprise
-      const appCheck = initializeAppCheck(app, {
-        provider: new ReCaptchaEnterpriseProvider('6LcxVx4qAAAAADOpAlnYx9JMn8oUh33HIAf6bxOv'),
-        isTokenAutoRefreshEnabled: true
-      });
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Realtime Database
 const db = getDatabase(app);
@@ -3811,12 +3802,6 @@ function getBaseUrl(url) {
 }
     window.onload = function() {
     initializeGoogleIdentity();
- // Check if grecaptcha is available
-      if (window.grecaptcha && typeof window.grecaptcha.render === 'function') {
-        initializeAppCheckWithReCaptcha();
-      } else {
-        console.error('reCAPTCHA Enterprise script is not loaded or grecaptcha is not available.');
-      }
     loadArrayFromURL();  
     loadDonationParams();
     toggleBellIcons();
@@ -8787,11 +8772,6 @@ function fetchSearchResults(query) {
 <div class="youtube-lightbox" id="youtube-lightbox">
     <button id="close-yt">&times;</button>
     <div id="player"></div>
-</div>
- <div class="g-recaptcha"
-      data-sitekey="6LcxVx4qAAAAADOpAlnYx9JMn8oUh33HIAf6bxOv"
-      data-callback="onSubmit"
-      data-size="invisible">
 </div>
 
   <audio id="sound-swipe-left" src="https://github.com/IonTeLOS/marko/raw/main/nav_left.wav"></audio>
