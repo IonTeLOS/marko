@@ -300,7 +300,7 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
     transform: translate(-50%, -50%);
     display: none;
     z-index: 1000;
-    animation: dropIn 0.4s ease-out; /* Apply drop-in animation */
+    animation: zoomIn 0.4s ease-out; /* Apply zoom-in animation */
 }
 
 #current-link .ml-3 {
@@ -315,20 +315,20 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
 /* Light mode styles */
 @media (prefers-color-scheme: light) {
     .context-menu {
-        background-color: #0D47A1; /* Set background color for light mode */
+        color: #0D47A1; /* Set background color for light mode */
     }
 }  
 /* Animation for the context menu */
-@keyframes dropIn {
+@keyframes zoomIn {
     0% {
-        transform: translateY(-20px);
+        transform: scale(0.8); /* Start scaled down */
         opacity: 0;
     }
     50% {
-        transform: translateY(10px);
+        transform: scale(1.05); /* Slightly zoom in beyond final scale */
     }
     100% {
-        transform: translateY(0);
+        transform: scale(1); /* Final scale */
         opacity: 1;
     }
 }
