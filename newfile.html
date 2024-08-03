@@ -297,45 +297,15 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
 .context-menu {
     position: fixed;
     display: none;
-    z-index: 9999; /* Apply a higher z-index */
-    transition: left 0.2s, top 0.2s;
+    z-index: 9999; /* Higher z-index to ensure it is on top */
+    transition: opacity 0.2s ease-in; /* Smooth fade-in transition */
+    opacity: 0;
 }
 
 .menu-container {
-    width: 280px; /* Adjusted width */
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    font-size: 16px; /* Adjusted font size */
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 10px; /* Padding at the bottom */
+    animation: dropIn 0.4s ease-out; /* Apply drop-in animation */
 }
-
-.menu-item {
-    display: flex;
-    align-items: center;
-    padding: 6px 12px; /* Less padding for less space between items */
-    cursor: pointer;
-    transition: background-color 0.2s;
-}
-
-.menu-item:hover {
-    background-color: #f5f5f5;
-}
-
-.icon {
-    color: orange; /* Orange icon color */
-    font-size: 26px; /* Larger icon size */
-    width: 30px; /* Width for alignment */
-    height: 30px; /* Height for alignment */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
+  
 .menu-text {
     margin-left: 12px; /* Slightly less margin */
     flex: 1; /* Use remaining space */
@@ -343,31 +313,21 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
     white-space: nowrap;
     text-overflow: ellipsis; /* Ensure text does not overflow */
 }
-
-.menu-divider {
-    margin: 4px 0; /* Less margin for even spacing */
-    border: none;
-    border-top: 1px solid #e0e0e0;
+.context-menu .material-icons-outlined {
+    color: orange; /* Set icon color to orange */
 }
-
-/* Dark mode styles */
-@media (prefers-color-scheme: dark) {
-    .menu-container {
-        background-color: #333;
-        border-color: #555;
-        color: #e0e0e0;
+/* Animation for the context menu */
+@keyframes dropIn {
+    0% {
+        transform: translateY(-20px);
+        opacity: 0;
     }
-
-    .menu-item:hover {
-        background-color: #444;
+    50% {
+        transform: translateY(10px);
     }
-
-    .icon {
-        color: orange; /* Orange icon color in dark mode */
-    }
-
-    .menu-divider {
-        border-top-color: #555;
+    100% {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 
@@ -8777,47 +8737,54 @@ function fetchSearchResults(query) {
     </div>
 <!-- Context Menu -->
 <div id="contextMenu" class="context-menu">
-        <div class="menu-container">
-            <div id="current-link" class="menu-item">
-                <span class="material-icons-outlined icon">cancel</span>
-                <div class="menu-text">Link Text</div>
-            </div>
-            <hr class="menu-divider" />
-            <div id="context-delete" class="menu-item" onclick="deleteLink(currentIndex)">
-                <span class="material-icons-outlined icon">delete</span>
-                <div class="menu-text">Delete Marko</div>
-            </div>
-            <div id="context-moveup" class="menu-item" onclick="moveMarkoUp(currentIndex)">
-                <span class="material-icons-outlined icon">arrow_upward</span>
-                <div class="menu-text">Move One Up</div>
-            </div>
-            <div id="context-movedown" class="menu-item" onclick="moveMarkoDown(currentIndex)">
-                <span class="material-icons-outlined icon">vertical_align_bottom</span>
-                <div class="menu-text">Move to Bottom</div>
-            </div>
-            <div id="context-movepublic" class="menu-item" onclick="moveMarkoTo(currentIndex)">
-                <span class="material-icons-outlined icon">publish</span>
-                <div class="menu-text">Move to Common</div>
-            </div>
-            <hr id="context-divider" class="menu-divider" />
-            <div id="context-share" class="menu-item" onclick="shareMarko(currentIndex, true)">
-                <span class="material-icons-outlined icon">link</span>
-                <div class="menu-text">Share Marko</div>
-            </div>
-            <div id="context-settings" class="menu-item" onclick="openSettings()">
-                <span class="material-icons-outlined icon">settings</span>
-                <div class="menu-text">Settings</div>
-            </div>
-            <div id="context-rename" class="menu-item" onclick="renameMarko(currentIndex)">
-                <span class="material-icons-outlined icon">edit</span>
-                <div class="menu-text">Rename</div>
-            </div>
-            <div id="context-reminder" class="menu-item" onclick="addReminderToMarko(currentIndex)">
-                <span class="material-icons-outlined icon">notifications</span>
-                <div class="menu-text">Add Reminder</div>
-            </div>
+    <div class="bg-white dark:bg-gray-800 w-64 border border-gray-300 dark:border-gray-700 rounded-lg flex flex-col text-sm py-4 px-2 text-gray-700 dark:text-gray-300 shadow-lg">
+        <div id="current-link" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">cancel</span>
+            <div class="ml-3"></div>
+        </div>
+        <hr class="my-2 border-gray-300 dark:border-gray-700" />
+        <div id="context-delete" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="deleteLink(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">delete</span>
+            <div class="ml-3">Delete Marko</div>
+        </div>
+        <div id="context-moveup" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="moveMarkoUp(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">arrow_upward</span>
+            <div class="ml-3">Move One Up</div>
+        </div>
+        <div id="context-movedown" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="moveMarkoDown(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">vertical_align_bottom</span>
+            <div class="ml-3">Move to Bottom</div>
+        </div>
+              <div id="context-movepublic" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="moveMarkoTo(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">publish</span>
+            <div class="ml-3">Move to Common</div>
+        </div>
+        <hr id="context-divider" class="my-2 border-gray-300 dark:border-gray-700" />
+        <div id="context-share" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center" onclick="shareMarko(`${currentIndex}`, true)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">link</span>
+            <div class="ml-3">Share Marko</div>
+        </div>
+          <div id="context-settings" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="openSettings()">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">settings</span>
+            <div class="ml-3">Settings</div>
+        </div>
+              <div id="context-rename" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="renameMarko(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">edit</span>
+            <div class="ml-3">Rename</div>
+        </div>
+        <div id="context-reminder" class="flex hover:bg-gray-100 dark:hover:bg-gray-700 py-2 px-3 rounded cursor-pointer items-center"
+            onclick="addReminderToMarko(`${currentIndex}`)">
+            <span class="material-icons-outlined text-gray-900 dark:text-gray-300">notifications</span>
+            <div class="ml-3">Add Reminder</div>
         </div>
     </div>
+</div>
 <!-- Context Menu --> 
 <div id="install-banner" class="install-banner">
     <span class="material-icons">install_desktop</span>
@@ -9070,7 +9037,7 @@ document.addEventListener("DOMContentLoaded", function () {
             targetElement = targetElement.parentElement;
         }
 
-        //toggleMenuOn();
+        toggleMenuOn();
         positionMenu(event);
     });
 
@@ -9107,7 +9074,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
    function positionMenu(e) {
-    /*
+    
     const menu = document.getElementById('contextMenu');
     const linkPlace = document.getElementById('current-link');
     
@@ -9119,7 +9086,7 @@ document.addEventListener("DOMContentLoaded", function () {
     
     // Update the menu element with the currentLink text
     if (linkPlace) {
-        linkPlace.querySelector('.menu-text').textContent = currentLink.substring(0, 30);
+        linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
     }
     
     // Get viewport dimensions
@@ -9148,70 +9115,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Ensure the menu is visible
     menu.classList.remove('hidden');
-    */
-        const contextMenu = document.getElementById('contextMenu');
-        if (contextMenu) {
-            const linkPlace = document.getElementById('current-link');
-            // Update the menu element with the currentLink text
-            if (linkPlace) {
-              linkPlace.querySelector('.menu-text').textContent = currentLink.substring(0, 30);
-            }
-                    if (contextMenu) {
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            const menuWidth = contextMenu.offsetWidth;
-            const menuHeight = contextMenu.offsetHeight;
-
-            let left = (viewportWidth - menuWidth) / 2;
-            let top = (viewportHeight - menuHeight) / 2;
-
-            // Adjust if the menu overflows the viewport
-            if (left < 0) left = 0;
-            if (top < 0) top = 0;
-            if (left + menuWidth > viewportWidth) left = viewportWidth - menuWidth;
-            if (top + menuHeight > viewportHeight) top = viewportHeight - menuHeight;
-
-            contextMenu.style.left = `${left}px`;
-            contextMenu.style.top = `${top}px`;
-            contextMenu.style.display = 'block';
-        } else {
-            console.error('Context menu element not found.');
-        }
 }
-      function closeMenu() {
-        if (contextMenu) {
-            contextMenu.style.display = 'none';
-        }
-    }
-
-    // Close menu when clicking outside of it
-    document.addEventListener('click', function (event) {
-        if (!contextMenu.contains(event.target)) {
-            closeMenu();
-        }
-    });
-
-    // Close menu when clicking on any menu item
-    document.querySelectorAll('.menu-item').forEach(function (item) {
-        item.addEventListener('click', closeMenu);
-    });
-
-    // Close menu when clicking on current-link menu-text
-    const currentLink = document.getElementById('current-link');
-    if (currentLink) {
-        currentLink.addEventListener('click', closeMenu);
-    }
+  
     document.addEventListener("click", (e) => {
         var button = e.which || e.button;
         if (button === 1) {
-            //toggleMenuOff();
+            toggleMenuOff();
             initSwipeDetection(event); // Reinitialize swipe detection after the menu is closed
         }
     });
 
     window.onkeyup = function (e) {
         if (e.keyCode === 27) {
-            //toggleMenuOff();
+            toggleMenuOff();
         }
     }
 });
