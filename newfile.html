@@ -1480,15 +1480,11 @@ getId(installations).then((installationId) => {
  // Handle foreground messages
 onMessage(messaging, (payload) => {
   console.log('Message received. ', payload);
-    if (payload.data) {
-    // Access your key/value pairs here
-    const navKey = payload.data.navKey;
-    const navValue = payload.data.navValue;
-    console.log('Received data:', navKey, navValue);
-    if (navKey === 'navigate') {
-        alert(navValue);
-    }
+  if (payload.data.goto) {
+    const navUrl = String(payload.data.goto);
+    window.open(navUrl, '_blank');
   }
+  if (payload.data.uuid) {
   const uuid = payload.data.uuid;
   const url = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
   localforage.getItem('notifications').then(function(notifications) {
@@ -1503,7 +1499,7 @@ onMessage(messaging, (payload) => {
   })
   window.location.href = 'https://teloslinux.org/marko/newfile';
   window.open(url, '_blank'); // Opens URL in a new tab or window
-
+  }
   //window.location.href = `https://teloslinux.org/marko/newfile?uuid=${payload.data.uuid}`;
 /*
   const notificationTitle = payload.notification.title;
@@ -1712,13 +1708,13 @@ function onWindowFocus() {
     // Your function code here
 
       // Retrieve a value using localForage
-localforage.getItem('newNot').then(function(value) {
+localforage.getItem('newUnopenedReminder').then(function(value) {
   if (value !== null) {
     console.log('Retrieved value:', value);
     // Use the retrieved value in your application logic
     window.location.href = value;
         loadArrayFromURL();
-        return localforage.removeItem('newNot');
+        return localforage.removeItem('newUnopenedReminder');
   } else {
     console.log('Value not found in localForage.');
     const url = new URL(window.location.href); // Create a URL object
@@ -1733,14 +1729,14 @@ localforage.getItem('newNot').then(function(value) {
   console.error('Error retrieving value from localForage:', err);
 });
   
-localforage.getItem('newNotUrl').then(function(value) {
+localforage.getItem('new-nav-request').then(function(value) {
   if (value !== null) {
     console.log('Retrieved value:', value);
     // Use the retrieved value in your application logic
     window.open(value, '_blank');
 
     // window.location.href = value;
-        return localforage.removeItem('newNotUrl');
+        return localforage.removeItem('new-nav-request');
   } else {
     console.log('Url Value not found in localForage.');
   }
@@ -1748,6 +1744,7 @@ localforage.getItem('newNotUrl').then(function(value) {
   console.error('Error retrieving value from localForage:', err);
 });  
 }
+   
 window.addEventListener('focus', onWindowFocus);
 
 function detectTheme() {
