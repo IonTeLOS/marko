@@ -1448,6 +1448,15 @@ getId(installations).then((installationId) => {
  // Handle foreground messages
 onMessage(messaging, (payload) => {
   console.log('Message received. ', payload);
+    if (payload.data) {
+    // Access your key/value pairs here
+    const navKey = payload.data.navKey;
+    const navValue = payload.data.navValue;
+    console.log('Received data:', navKey, navValue);
+    if (navKey === 'navigate') {
+        alert(navValue);
+    }
+  }
   const uuid = payload.data.uuid;
   const url = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
   localforage.getItem('notifications').then(function(notifications) {
