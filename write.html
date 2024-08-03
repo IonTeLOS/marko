@@ -30,37 +30,37 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapi
         let gisInited = false;
 
         function gapiLoaded() {
-            gapi.load('client', initializeGapiClient);
-        }
+    gapi.load('client', initializeGapiClient);
+}
 
-        async function initializeGapiClient() {
-            try {
-                await gapi.client.init({
-                    apiKey: API_KEY,
-                    discoveryDocs: [DISCOVERY_DOC],
-                });
-                gapiInited = true;
-                maybeEnableButtons();
-            } catch (error) {
-                showSystemMessage('Error initializing Google API client: ' + error.message);
-            }
-        }
+async function initializeGapiClient() {
+    try {
+        await gapi.client.init({
+            apiKey: API_KEY,
+            discoveryDocs: [DISCOVERY_DOC],
+        });
+        gapiInited = true;
+        maybeEnableButtons();
+    } catch (error) {
+        showSystemMessage('Error initializing Google API client: ' + error.message);
+    }
+}
 
-        function gisLoaded() {
-            tokenClient = google.accounts.oauth2.initTokenClient({
-                client_id: CLIENT_ID,
-                scope: SCOPES,
-                callback: handleAuthCallback
-            });
-            gisInited = true;
-            maybeEnableButtons();
-        }
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: handleAuthCallback
+    });
+    gisInited = true;
+    maybeEnableButtons();
+}
 
-        function maybeEnableButtons() {
-            if (gapiInited && gisInited) {
-                document.getElementById('authorizeButton').style.display = 'block';
-            }
-        }
+function maybeEnableButtons() {
+    if (gapiInited && gisInited) {
+        document.getElementById('authorizeButton').style.display = 'block';
+    }
+}
 
         function handleAuthClick() {
             tokenClient.requestAccessToken({prompt: 'consent'});
@@ -131,49 +131,6 @@ function handleAuthCallback(resp) {
         }
     } catch (error) {
         showSystemMessage('Error: ' + error.message);
-    }
-}
-let lastReadTimestamp = null;
-
-async function readFromFile() {
-    if (!gapi.client.getToken()) {
-        showSystemMessage('Not authorized. Please authorize first.');
-        return;
-    }
-
-    try {
-        const response = await gapi.client.drive.files.get({
-            fileId: FILE_ID,
-            alt: 'media'
-        });
-        
-        let jsonContent;
-        try {
-            jsonContent = JSON.parse(response.body);
-        } catch {
-            showSystemMessage('Error parsing file content.');
-            return;
-        }
-
-        if (!Array.isArray(jsonContent.messages)) {
-            showSystemMessage('No messages found in the file.');
-            return;
-        }
-
-        let newMessages = jsonContent.messages;
-        if (lastReadTimestamp) {
-            newMessages = newMessages.filter(msg => new Date(msg[0]) > new Date(lastReadTimestamp));
-        }
-
-        if (newMessages.length > 0) {
-            lastReadTimestamp = newMessages[newMessages.length - 1][0];
-            displayMessages(newMessages);
-        }
-
-        setTimeout(readFromFile, 10000); // Repeat after 10 seconds
-    } catch (error) {
-        showSystemMessage('Error reading file: ' + error.message);
-        setTimeout(readFromFile, 5000); // Repeat after 5 seconds if error
     }
 }
 
@@ -288,7 +245,7 @@ window.onload = function() {
     });
 };  
     </script>
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+<script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+<script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </body>
 </html>
