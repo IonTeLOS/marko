@@ -4862,6 +4862,12 @@ iframe.srcdoc = `
 }
         // function to open bookmark links in new tab. separate behavior for friends' links
         function openMarko(action, data, extras) {
+            const menuOn = document.getElementById('contextMenu');
+            if (menuOn) {
+                toggleMenuOff();
+                return;
+            }
+          
             if (action === loadVideo) {
                loadVideo(data);
             } else if (action === showWindow) {
