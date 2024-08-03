@@ -300,13 +300,9 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
     transform: translate(-50%, -50%);
     display: none;
     z-index: 1000;
-    transition: left 0.2s, top 0.2s;
-}
-
-.menu-container {
     animation: dropIn 0.4s ease-out; /* Apply drop-in animation */
 }
-  
+
 #current-link .ml-3 {
     overflow: hidden;
     white-space: nowrap;
@@ -316,6 +312,12 @@ background: linear-gradient(to left, #00FF00, rgba(0,255,0,0.1));
 .context-menu .material-icons-outlined {
     color: orange; /* Set icon color to orange */
 }
+/* Light mode styles */
+@media (prefers-color-scheme: light) {
+    .context-menu {
+        background-color: #0D47A1; /* Set background color for light mode */
+    }
+}  
 /* Animation for the context menu */
 @keyframes dropIn {
     0% {
