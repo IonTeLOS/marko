@@ -18,13 +18,14 @@
         // Replace with your actual client ID and API key
         const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
         const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
-        const FILE_ID = '18q2Wi81gqCe1Wu7o2dpDL6sDITmIyweK';
+        let FILE_ID = '18q2Wi81gqCe1Wu7o2dpDL6sDITmIyweK';
+        let WRITE_ID = '1ibK6nDzI25ivbIU64n8_RyHuD1IV0yIj'
 
         // Discovery doc URL for APIs used by the quickstart
         const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
 const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
 
-               let tokenClient;
+        let tokenClient;
         let gapiInited = false;
         let gisInited = false;
 
@@ -41,7 +42,7 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapi
                 gapiInited = true;
                 maybeEnableButtons();
             } catch (error) {
-                showMessage('Error initializing Google API client: ' + error.message);
+                showSystemMessage('Error initializing Google API client: ' + error.message);
             }
         }
 
@@ -67,7 +68,7 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapi
 
         function handleAuthCallback(resp) {
             if (resp.error) {
-                showMessage('Error during authentication: ' + resp.error);
+                showSystemMessage('Error during authentication: ' + resp.error);
                 return;
             }
             document.getElementById('submitBtn').style.display = 'block';
@@ -75,56 +76,91 @@ const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapi
         }
 
         async function writeToFile() {
-            const content = document.getElementById('inputText').value;
-            if (!content) {
-                showMessage('Please enter some text to write.');
-                return;
-            }
-
-            try {
-                const response = await gapi.client.drive.files.get({
-                    fileId: FILE_ID,
-                    alt: 'media'
-                });
-                
-                let jsonContent;
-                try {
-                    jsonContent = JSON.parse(response.body);
-                } catch {
-                    jsonContent = { entries: [] };
-                }
-
-                jsonContent.entries.push(content);
-                const blob = new Blob([JSON.stringify(jsonContent)], {type: 'application/json'});
-                
-                const form = new FormData();
-                form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
-                form.append('file', blob);
-
-                const uploadResponse = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${FILE_ID}?uploadType=multipart`, {
-                    method: 'PATCH',
-                    headers: {
-                        'Authorization': 'Bearer ' + gapi.auth.getToken().access_token,
-                    },
-                    body: form
-                });
-
-                if (uploadResponse.ok) {
-                    showMessage('Successfully written to file!');
-                } else {
-                    showMessage('Error writing to file: ' + uploadResponse.statusText);
-                }
-            } catch (error) {
-                showMessage('Error: ' + error.message);
-            }
+    const content = document.getElementById('inputText').value;
+    const extras = 'none'; 
+    if (!content) {
+        showSystemMessage('Please enter some text to write.');
+        return;
+    }
+    try {
+        const response = await gapi.client.drive.files.get({
+            fileId: WRITE_ID,
+            alt: 'media'
+        });
+        
+        let jsonContent;
+        try {
+            jsonContent = JSON.parse(response.body);
+        } catch {
+            jsonContent = { messages: [], settings: [] };
         }
 
-        function showMessage(msg) {
+        // Get current timestamp
+        const timestamp = new Date().toISOString();
+
+        // Get name from localStorage or use default
+        const name = localStorage.getItem('my-name') || 'Socrates';
+
+        // Create new message
+        const newMessage = [timestamp, name, content, extras];
+
+        // Add new message to the messages array
+        if (!Array.isArray(jsonContent.messages)) {
+            jsonContent.messages = [];
+        }
+        jsonContent.messages.push(newMessage);
+
+        const blob = new Blob([JSON.stringify(jsonContent)], {type: 'application/json'});
+        
+        const form = new FormData();
+        form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
+        form.append('file', blob);
+        const uploadResponse = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${WRITE_ID}?uploadType=multipart`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': 'Bearer ' + gapi.auth.getToken().access_token,
+            },
+            body: form
+        });
+        if (uploadResponse.ok) {
+            showSystemMessage('Successfully written to file!');
+        } else {
+            showSystemMessage('Error writing to file: ' + uploadResponse.statusText);
+        }
+    } catch (error) {
+        showSystemMessage('Error: ' + error.message);
+    }
+}
+
+        function showSystemMessage(msg) {
             document.getElementById('message').textContent = msg;
         }
+        
+         function loadParams() {
+    
+    const params = new URLSearchParams(window.location.search);
+    let friendData = [];
+    const friendName = params.get('friend-name');
+    const friendFile = params.get('main-file');
+    const commonFile = params.get('other-file');
+    friendData = [friendName, friendFile, commonFile, 'none for now'];
+
+    if (friendFile) {
+        FILE_ID = friendFile;
+        WRITE_ID = commonFile;
+        let friends = JSON.parse(localStorage.getItem('friends')) || [];
+        friends.push(friendData);
+        localStorage.setItem('friends', JSON.stringify(friends));
+        console.log('Friends saved: ', friends); 
+    }
+            }
 
         document.getElementById('authorizeButton').addEventListener('click', handleAuthClick);
         document.getElementById('submitBtn').addEventListener('click', writeToFile);
+        
+        window.onload = function() {
+           loadParams();  
+        };   
     </script>
     <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
     <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
