@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Profile</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            font-weight: 500;
+        }
+        .input-field {
+            margin-bottom: 30px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        input[type="text"], input[type="email"], input[type="date"], input[type="tel"], textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        textarea {
+            height: 100px;
+        }
+        button {
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        button:hover {
+            background-color: #1976D2;
+        }
+        .link-pair {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .link-pair input {
+            flex: 1;
+        }
+        #profilePicture {
+            display: none;
+        }
+        .profile-pic-label {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2196F3;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        #emoji-picker {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Your Profile</h1>
+        <form id="profileForm">
+            <div class="input-field">
+                <label for="profilePicture" class="profile-pic-label">
+                    <i class="material-icons">add_a_photo</i> Upload Profile Picture
+                </label>
+                <input type="file" id="profilePicture" accept="image/*">
+            </div>
+            <div class="input-field">
+                <label for="name">Name (required)</label>
+                <input type="text" id="name" required>
+            </div>
+            <div class="input-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="Write email or leave blank to show your Gmail address">
+            </div>
+            <div class="input-field">
+                <label for="phone">Phone Number</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="countryCode" style="width: 30%;">
+                        <!-- Country code options will be populated by JavaScript -->
+                    </select>
+                    <input type="tel" id="phone" style="width: 70%;" disabled>
+                </div>
+            </div>
+            <div id="messagingOptions" style="display: none;">
+                <button type="button" id="addWhatsapp">Add WhatsApp</button>
+                <button type="button" id="addViber">Add Viber</button>
+                <button type="button" id="addTelegram">Add Telegram</button>
+            </div>
+            <div class="input-field">
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob">
+            </div>
+            <div class="input-field">
+                <label for="language2">Second Language</label>
+                <select id="language2">
+                    <option value="">Select a language</option>
+                    <option value="en">English</option>
+                    <option value="es">Spanish</option>
+                    <option value="fr">French</option>
+                    <!-- Add more language options -->
+                </select>
+            </div>
+            <div class="input-field">
+                <label for="timezone">Timezone</label>
+                <select id="timezone">
+                    <!-- Timezone options will be populated by JavaScript -->
+                </select>
+            </div>
+            <div class="input-field">
+                <label for="emoji">Select Emoji</label>
+                <emoji-picker id="emoji-picker"></emoji-picker>
+            </div>
+            <div class="input-field">
+                <label for="color">Select Color</label>
+                <input type="color" id="color">
+            </div>
+            <div class="input-field">
+                <label for="bio">Bio (Markdown supported)</label>
+                <textarea id="bio"></textarea>
+            </div>
+            <button type="button" id="addCvData">Add CV Style Data</button>
+            <div id="cvData" style="display: none;">
+                <div class="input-field">
+                    <label for="experience">Professional Experience</label>
+                    <textarea id="experience"></textarea>
+                </div>
+                <div class="input-field">
+                    <label for="education">Education</label>
+                    <textarea id="education"></textarea>
+                </div>
+            </div>
+            <div id="links">
+                <div class="link-pair">
+                    <input type="text" placeholder="Link Name">
+                    <input type="url" placeholder="https://" pattern="https://.*">
+                </div>
+            </div>
+            <button type="button" id="addMoreLinks">Add More Links</button>
+            <div class="input-field">
+                <label for="listeningTo">Listening Now To (YouTube Link)</label>
+                <input type="url" id="listeningTo" placeholder="https://youtube.com/...">
+            </div>
+            <div class="input-field">
+                <label for="donation">Donation Link</label>
+                <input type="url" id="donation" placeholder="https://...">
+            </div>
+            <div class="input-field">
+                <label for="directComm">Accept Direct Communication</label>
+                <select id="directComm">
+                    <option value="no" selected>No</option>
+                    <option value="yes">Yes</option>
+                </select>
+            </div>
+            <div id="jitsiLink" style="display: none;">
+                <p>Your Jitsi Meet link: <span id="jitsiLinkText"></span></p>
+            </div>
+            <div class="input-field">
+                <label for="purpose">Purpose</label>
+                <select id="purpose">
+                    <option value="professional">Professional</option>
+                    <option value="personal">Personal</option>
+                    <option value="intimate">Intimate</option>
+                    <option value="combined">Combined</option>
+                </select>
+            </div>
+            <button type="submit">Create and Submit Profile</button>
+        </form>
+    </div>
+
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js"></script>
+    <script>
+        // Replace with your actual client ID and API key
+        const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
+        const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
+        const DISCOVERY_DOC = 'https://www.googleapis.com/discovery/v1/apis/drive/v3/rest';
+        const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
+
+        let tokenClient;
+        let gapiInited = false;
+        let gisInited = false;
+
+        function gapiLoaded() {
+            gapi.load('client', initializeGapiClient);
+        }
+
+        async function initializeGapiClient() {
+            await gapi.client.init({
+                apiKey: API_KEY,
+                discoveryDocs: [DISCOVERY_DOC],
+            });
+            gapiInited = true;
+            maybeEnableButtons();
+        }
+
+        function gisLoaded() {
+            tokenClient = google.accounts.oauth2.initTokenClient({
+                client_id: CLIENT_ID,
+                scope: SCOPES,
+                callback: ''
+            });
+            gisInited = true;
+            maybeEnableButtons();
+        }
+
+        function maybeEnableButtons() {
+            if (gapiInited && gisInited) {
+                document.getElementById('profileForm').addEventListener('submit', handleFormSubmit);
+            }
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const profileData = gatherProfileData();
+            localStorage.setItem('profile-data', JSON.stringify(profileData));
+            
+            if (!gapi.client.getToken()) {
+                tokenClient.callback = async (resp) => {
+                    if (resp.error) {
+                        throw resp;
+                    }
+                    await createOrUpdateProfile(profileData);
+                };
+                tokenClient.requestAccessToken({prompt: 'consent'});
+            } else {
+                await createOrUpdateProfile(profileData);
+            }
+        }
+
+        async function createOrUpdateProfile(profileData) {
+            let profileId = localStorage.getItem('my-profile');
+            if (!profileId) {
+                const file = await createProfileFile();
+                profileId = file.id;
+                localStorage.setItem('my-profile', profileId);
+            }
+
+            await updateProfileFile(profileId, profileData);
+        }
+
+        async function createProfileFile() {
+            const fileMetadata = {
+                name: 'Amanda_profile',
+                mimeType: 'application/json'
+            };
+            const response = await gapi.client.drive.files.create({
+                resource: fileMetadata,
+                fields: 'id'
+            });
+            await gapi.client.drive.permissions.create({
+                fileId: response.result.id,
+                resource: {
+                    role: 'reader',
+                    type: 'anyone'
+                }
+            });
+            return response.result;
+        }
+
+        async function updateProfileFile(fileId, content) {
+            const blob = new Blob([JSON.stringify(content)], {type: 'application/json'});
+            const form = new FormData();
+            form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
+            form.append('file', blob);
+
+            await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`, {
+                method: 'PATCH',
+                headers: new Headers({'Authorization': 'Bearer ' + gapi.auth.getToken().access_token}),
+                body: form
+            });
+        }
+
+        function gatherProfileData() {
+            return {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value || 'Use Gmail',
+                phone: document.getElementById('countryCode').value + document.getElementById('phone').value,
+                whatsapp: localStorage.getItem('whatsapp') || '',
+                viber: localStorage.getItem('viber') || '',
+                telegram: localStorage.getItem('telegram') || '',
+                dob: document.getElementById('dob').value,
+                language1: navigator.language,
+                language2: document.getElementById('language2').value,
+                timezone: document.getElementById('timezone').value,
+                emoji: document.getElementById('emoji-picker').value,
+                color: document.getElementById('color').value,
+                bio: document.getElementById('bio').value,
+                experience: document.getElementById('experience').value,
+                education: document.getElementById('education').value,
+                links: Array.from(document.querySelectorAll('.link-pair')).map(pair => ({
+                    name: pair.querySelector('input[type="text"]').value,
+                    url: pair.querySelector('input[type="url"]').value
+                })),
+                listeningTo: document.getElementById('listeningTo').value,
+                donation: document.getElementById('donation').value,
+                directComm: document.getElementById('directComm').value,
+                jitsiLink: document.getElementById('directComm').value === 'yes' ? document.getElementById('jitsiLinkText').textContent : '',
+                purpose: document.getElementById('purpose').value,
+                photo: localStorage.getItem('my-photo') || ''
+            };
+        }
+
+        // Add event listeners and initialize components
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('profilePicture').addEventListener('change', handleProfilePicture);
+            document.getElementById('countryCode').addEventListener('change', enablePhoneInput);
+            document.getElementById('addCvData').addEventListener('click', toggleCvData);
+            document.getElementById('addMoreLinks').addEventListener('click', addLinkPair);
+            document.getElementById('directComm').addEventListener('change', toggleJitsiLink);
+            document.getElementById('addWhatsapp').addEventListener('click', () => addMessagingApp('whatsapp'));
+            document.getElementById('addViber').addEventListener('click', () => addMessagingApp('viber'));
+            document.getElementById('addTelegram').addEventListener('click', () => addMessagingApp('telegram'));
+            populateTimezones();
+            populateCountryCodes();
+            setupEmojiPicker();
+        });
+
+        function handleProfilePicture(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem('my-photo', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function enablePhoneInput() {
+            document.getElementById('phone').disabled = false;
+        }
+
+        function toggleCvData() {
+            const cvData = document.getElementById('cvData');
+            cvData.style.display = cvData.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function addLinkPair() {
+            const linksContainer = document.getElementById('links');
+            const linkPairs = linksContainer.getElementsByClassName('link-pair');
+            if (linkPairs.length < 12) {
+                const newPair = document.createElement('div');
+                newPair.className = 'link-pair';
+                newPair.innerHTML = `
+                    <input type="text" placeholder="Link Name">
+                    <input type="url" placeholder="https://" pattern="https://.*">
+                `;
+                linksContainer.appendChild(newPair);
+            }
+        }
+
+        function populateTimezones() {
+            const timezoneSelect = document.getElementById('timezone');
+            const timezones = Intl.supportedValuesOf('timeZone');
+            timezones.forEach(tz => {
+                const option = document.createElement('option');
+                option.value = tz;
+                option.textContent = tz;
+                timezoneSelect.appendChild(option);
+            });
+            // Set default to user's timezone
+            const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            timezoneSelect.value = userTimezone;
+        }
+
+        function populateCountryCodes() {
+            const countryCodeSelect = document.getElementById('countryCode');
+            const countryCodes = [
+                {code: '+1', country: 'US'},
+                {code: '+44', country: 'UK'},
+                {code: '+33', country: 'FR'},
+                // Add more country codes
+            ];
+            countryCodes.forEach(cc => {
+                const option = document.createElement('option');
+                option.value = cc.code;
+                option.textContent = `${cc.country} (${cc.code})`;
+                countryCodeSelect.appendChild(option);
+            });
+        }
+
+        function setupEmojiPicker() {
+            const picker = document.querySelector('emoji-picker');
+            picker.addEventListener('emoji-click', event => {
+                picker.value = event.detail.unicode;
+            });
+        }
+
+        function toggleJitsiLink() {
+            const jitsiLinkDiv = document.getElementById('jitsiLink');
+            const jitsiLinkText = document.getElementById('jitsiLinkText');
+            if (document.getElementById('directComm').value === 'yes') {
+                const uuid = crypto.randomUUID();
+                const jitsiLink = `https://jitsi.mgrs.dev/${uuid}`;
+                jitsiLinkText.textContent = jitsiLink;
+                jitsiLinkDiv.style.display = 'block';
+            } else {
+                jitsiLinkDiv.style.display = 'none';
+            }
+        }
+
+        function addMessagingApp(app) {
+            const phoneNumber = document.getElementById('countryCode').value + document.getElementById('phone').value;
+            if (!phoneNumber) {
+                alert('Please enter a phone number first.');
+                return;
+            }
+            let link;
+            switch (app) {
+                case 'whatsapp':
+                    link = `https://wa.me/${phoneNumber}`;
+                    break;
+                case 'viber':
+                    link = `viber://chat?number=${phoneNumber}`;
+                    break;
+                case 'telegram':
+                    link = `https://t.me/${phoneNumber}`;
+                    break;
+            }
+            localStorage.setItem(app, link);
+            alert(`${app.charAt(0).toUpperCase() + app.slice(1)} link added!`);
+        }
+
+        document.getElementById('phone').addEventListener('input', function() {
+            const phoneNumber = this.value;
+            if (phoneNumber) {
+                document.getElementById('messagingOptions').style.display = 'block';
+            } else {
+                document.getElementById('messagingOptions').style.display = 'none';
+            }
+        });
+
+        function addBulletPoints(textarea) {
+            textarea.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const cursorPosition = this.selectionStart;
+                    const currentValue = this.value;
+                    const newValue = currentValue.slice(0, cursorPosition) + '\n• ' + currentValue.slice(cursorPosition);
+                    this.value = newValue;
+                    this.selectionStart = this.selectionEnd = cursorPosition + 3;
+                }
+            });
+        }
+
+        addBulletPoints(document.getElementById('experience'));
+        addBulletPoints(document.getElementById('education'));
+    </script>
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+</body>
+</html>
