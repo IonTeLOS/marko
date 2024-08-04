@@ -455,6 +455,7 @@ async function authenticateGoogleApi() {
                 profilePicture: photoPreview.src
             };
 
+            
             try {
                 await submitProfileData(profileData);
                 successMessage.textContent = 'Profile successfully created!';
@@ -523,6 +524,109 @@ async function uploadFile(file, idToken) {
         console.error('Error uploading file:', error);
     }
 }
+
+// Function to handle form submission
+async function handleFormSubmit(event) {
+    event.preventDefault();
+    const profileData = gatherProfileData();
+    localStorage.setItem('profile-data', JSON.stringify(profileData));
+    
+    const idToken = google.accounts.id.getAuthResponse().id_token;
+    if (!idToken) {
+        console.error('No ID token found');
+        return;
+    }
+    
+    // Exchange ID token for access token
+    const accessTokenResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+    const accessTokenData = await accessTokenResponse.json();
+    const accessToken = accessTokenData.access_token;
+
+    try {
+        await createOrUpdateProfile(profileData, accessToken);
+    } catch (error) {
+        console.error('Error creating or updating profile:', error);
+    }
+}
+
+// Function to create or update profile
+async function createOrUpdateProfile(profileData, accessToken) {
+    let profileId = localStorage.getItem('my-profile');
+    if (!profileId) {
+        const file = await createProfileFile(accessToken);
+        profileId = file.id;
+        localStorage.setItem('my-profile', profileId);
+    }
+
+    await updateProfileFile(profileId, profileData, accessToken);
+}
+
+// Function to create a new profile file
+async function createProfileFile(accessToken) {
+    const fileMetadata = {
+        name: 'Amanda_profile',
+        mimeType: 'application/json'
+    };
+
+    const response = await fetch('https://www.googleapis.com/drive/v3/files', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(fileMetadata)
+    });
+
+    const file = await response.json();
+
+    // Set file permissions to public
+    await fetch(`https://www.googleapis.com/drive/v3/files/${file.id}/permissions`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            type: 'anyone',
+            role: 'reader'
+        })
+    });
+
+    return file;
+}
+
+// Function to update an existing profile file
+async function updateProfileFile(fileId, content, accessToken) {
+    const blob = new Blob([JSON.stringify(content)], {type: 'application/json'});
+    const form = new FormData();
+    form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
+    form.append('file', blob);
+
+    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        },
+        body: form
+    });
+}
+
+// Function to gather profile data from the form
+function gatherProfileData() {
+    return {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        countryCode: document.getElementById('countryCode').value,
+        phone: document.getElementById('phone').value,
+        showAge: document.getElementById('showAge').checked,
+        showBirthday: document.getElementById('showBirthday').checked,
+        cvData: document.getElementById('cvData').style.display === 'block',
+        directComm: document.getElementById('directComm').value === 'yes',
+        conferenceLink: localStorage.getItem('conference-link') || '',
+        profilePicture: document.getElementById('profilePreview').src
+    };
+}
+        
 
 </script>
 </body>
