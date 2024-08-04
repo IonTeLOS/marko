@@ -264,6 +264,23 @@
     }
 
     window.onload = initializeGSI;
+let idToken = null;
+
+function onGoogleSignIn(response) {
+    idToken = response.credential;
+}
+
+window.onload = function() {
+    google.accounts.id.initialize({
+        client_id: CLIENT_ID,
+        callback: onGoogleSignIn
+    });
+
+    google.accounts.id.renderButton(
+        document.getElementById('signInButton'),
+        { theme: 'outline', size: 'large' }
+    );
+};
 
 async function authenticateGoogleApi() {
     const idToken = localStorage.getItem('id_token');
@@ -530,24 +547,24 @@ async function handleFormSubmit(profileData, event) {
     // event.preventDefault();
     //const profileData = gatherProfileData();
     localStorage.setItem('profile-data', JSON.stringify(profileData));
-    
-    const idToken = google.accounts.id.getAuthResponse().id_token;
+
     if (!idToken) {
-        console.error('No ID token found');
+        console.error('No ID token found. Please sign in first.');
         return;
     }
-    
-    // Exchange ID token for access token
-    const accessTokenResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
-    const accessTokenData = await accessTokenResponse.json();
-    const accessToken = accessTokenData.access_token;
 
     try {
+        // Exchange ID token for access token
+        const accessTokenResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+        const accessTokenData = await accessTokenResponse.json();
+        const accessToken = accessTokenData.access_token;
+
         await createOrUpdateProfile(profileData, accessToken);
     } catch (error) {
         console.error('Error creating or updating profile:', error);
     }
 }
+
 
 // Function to create or update profile
 async function createOrUpdateProfile(profileData, accessToken) {
@@ -561,7 +578,6 @@ async function createOrUpdateProfile(profileData, accessToken) {
     await updateProfileFile(profileId, profileData, accessToken);
 }
 
-// Function to create a new profile file
 async function createProfileFile(accessToken) {
     const fileMetadata = {
         name: 'Amanda_profile',
@@ -595,7 +611,6 @@ async function createProfileFile(accessToken) {
     return file;
 }
 
-// Function to update an existing profile file
 async function updateProfileFile(fileId, content, accessToken) {
     const blob = new Blob([JSON.stringify(content)], {type: 'application/json'});
     const form = new FormData();
@@ -610,6 +625,7 @@ async function updateProfileFile(fileId, content, accessToken) {
         body: form
     });
 }
+
 /*
 // Function to gather profile data from the form
 function gatherProfileData() {
