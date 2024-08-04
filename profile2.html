@@ -357,13 +357,7 @@
             }
         }
 
-        document.getElementById('uploadButton').addEventListener('click', () => {
-            const fileInput = document.getElementById('fileInput');
-            const file = fileInput.files[0];
-            if (file) {
-                uploadFile(file);
-            }
-        });
+
 
         window.onload = initializeGSI;
         // Populate country codes
