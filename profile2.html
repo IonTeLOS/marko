@@ -252,21 +252,17 @@
         const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
         const REDIRECT_URI = 'https://teloslinux.org/marko/profile2'; 
 
-        async function handleCredentialResponse(response) {
+        function handleCredentialResponse(response) {
             const idToken = response.credential;
             console.log('ID Token:', idToken);
-            
-            // If you need to use the ID token to interact with Google Drive API directly:
-            const accessToken = idToken; // For this example, assume ID token as access token
-            console.log('Access token is : ' + accessToken);
-            localStorage.setItem('access-token', accessToken);
-            //uploadFile(file, accessToken);
+            getAccessToken(idToken);
         }
 
         function initializeGSI() {
             google.accounts.id.initialize({
                 client_id: CLIENT_ID,
-                callback: handleCredentialResponse
+                callback: handleCredentialResponse,
+                scope: SCOPES
             });
 
             google.accounts.id.renderButton(
@@ -277,103 +273,89 @@
             google.accounts.id.prompt(); // Show the Google Sign-In prompt
         }
 
-        window.onload = initializeGSI;
+        async function getAccessToken(idToken) {
+            try {
+                const response = await fetch('https://oauth2.googleapis.com/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        client_id: CLIENT_ID,
+                        client_secret: CLIENT_SECRET, // Replace with your Client Secret
+                        grant_type: 'authorization_code', // This is required for authorization code exchange
+                        code: idToken, // Using idToken as authorization code for demonstration
+                        redirect_uri: 'https://teloslinux.org/marko/profile2' // This should match your registered redirect URI
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Error fetching access token:', errorText);
+                    throw new Error(`Error fetching access token: ${errorText}`);
+                }
+
+                const data = await response.json();
+                console.log('Access Token:', data.access_token);
+                // Use the access token to upload file
+                const file = new Blob(["Hello, world!"], { type: 'text/plain' });
+                await uploadFile(file, data.access_token);
+            } catch (error) {
+                console.error('Error fetching access token:', error);
+            }
+        }
         
-async function getAccessToken(idToken) {
-    try {
-        const response = await fetch('https://oauth2.googleapis.com/token', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: new URLSearchParams({
-                code: idToken,
-                client_id: CLIENT_ID,
-                client_secret: CLIENT_SECRET, 
-                redirect_uri: REDIRECT_URI
-            })
-        });
+ async function uploadFile(file, accessToken) {
+            try {
+                // Prepare file metadata
+                const metadata = {
+                    name: file.name,
+                    mimeType: file.type
+                };
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error fetching access token:', errorText);
-            throw new Error(`Error fetching access token: ${errorText}`);
+                const formData = new FormData();
+                formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+                formData.append('file', file);
+
+                // Upload file
+                const uploadResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    body: formData
+                });
+
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    console.error('Error uploading file:', errorText);
+                    throw new Error(`Error uploading file: ${errorText}`);
+                }
+
+                const uploadResult = await uploadResponse.json();
+                console.log('File uploaded:', uploadResult);
+
+                // Set file permissions to public
+                await fetch(`https://www.googleapis.com/drive/v3/files/${uploadResult.id}/permissions`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        type: 'anyone',
+                        role: 'reader'
+                    })
+                });
+
+                return uploadResult.id;
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                throw error;
+            }
         }
 
-        const data = await response.json();
-        return data.access_token;
-    } catch (error) {
-        console.error('Error fetching access token:', error);
-        throw error;
-    }
-}
-async function uploadFile(file, accessToken) {
-    try {
-        // Prepare file metadata
-        const metadata = {
-            name: file.name,
-            mimeType: file.type
-        };
-
-        const formData = new FormData();
-        formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-        formData.append('file', file);
-
-        // Upload file
-        const uploadResponse = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            },
-            body: formData
-        });
-
-        if (!uploadResponse.ok) {
-            const errorText = await uploadResponse.text();
-            console.error('Error uploading file:', errorText);
-            throw new Error(`Error uploading file: ${errorText}`);
-        }
-
-        const uploadResult = await uploadResponse.json();
-        console.log('File uploaded:', uploadResult);
-
-        // Set permissions to make the file publicly readable
-        const fileId = uploadResult.id;
-        await setPublicPermissions(fileId, accessToken);
-
-        return fileId;
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        throw error;
-    }
-}
-async function setPublicPermissions(fileId, accessToken) {
-    try {
-        const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                type: 'anyone',
-                role: 'reader'
-            })
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error setting permissions:', errorText);
-            throw new Error(`Error setting permissions: ${errorText}`);
-        }
-
-        const result = await response.json();
-        console.log('Permissions set:', result);
-    } catch (error) {
-        console.error('Error in setPublicPermissions:', error);
-        throw error;
-    }
-}
+        window.onload = initializeGSI;
 
 
         // Populate country codes
