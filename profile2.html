@@ -252,7 +252,7 @@
         const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
         const REDIRECT_URI = 'https://teloslinux.org/marko/profile2'; 
 
-        function handleCredentialResponse(response) {
+        async function handleCredentialResponse(response) {
             const idToken = response.credential;
             console.log('ID Token:', idToken);
             
