@@ -255,6 +255,16 @@
         console.log('User info:', user);
         // You can use user information for further actions
     }
+async function getAccessToken(idToken) {
+    try {
+        const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${idToken}`);
+        const data = await response.json();
+        return data.access_token;
+    } catch (error) {
+        console.error('Error fetching access token:', error);
+        throw error;
+    }
+}
 
     function initializeGSI() {
         google.accounts.id.initialize({
@@ -283,18 +293,6 @@ let idToken = null;
 function onGoogleSignIn(response) {
     idToken = response.credential;
 }
-
-window.onload = function() {
-    google.accounts.id.initialize({
-        client_id: CLIENT_ID,
-        callback: onGoogleSignIn
-    });
-
-    google.accounts.id.renderButton(
-        document.getElementById('signInButton'),
-        { theme: 'outline', size: 'large' }
-    );
-};
 
 async function authenticateGoogleApi() {
     const idToken = localStorage.getItem('id_token');
@@ -626,19 +624,35 @@ async function createProfileFile(accessToken) {
 }
 
 async function updateProfileFile(fileId, content, accessToken) {
-    const blob = new Blob([JSON.stringify(content)], {type: 'application/json'});
-    const form = new FormData();
-    form.append('metadata', new Blob([JSON.stringify({})], {type: 'application/json'}));
-    form.append('file', blob);
+    const blob = new Blob([JSON.stringify(content)], { type: 'application/json' });
+    const formData = new FormData();
+    formData.append('metadata', new Blob([JSON.stringify({})], { type: 'application/json' }));
+    formData.append('file', blob);
 
-    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`, {
-        method: 'PATCH',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        },
-        body: form
-    });
+    try {
+        const response = await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=multipart`, {
+            method: 'PATCH',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error updating file:', response.status, errorText);
+            throw new Error(`Error updating file: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        console.log('File updated successfully:', result);
+        return result;
+    } catch (error) {
+        console.error('Error in updateProfileFile:', error);
+        throw error;
+    }
 }
+
 
 /*
 // Function to gather profile data from the form
