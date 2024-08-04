@@ -246,7 +246,6 @@
 
         // Replace with your actual client ID and API key
         const CLIENT_ID = '7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com';
-        const CLIENT_SECRET = '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';
         const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
         const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
         const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
@@ -264,20 +263,19 @@ async function handleCredentialResponse(response) {
     }
 }
 
-        function initializeGSI() {
-            google.accounts.id.initialize({
-                client_id: CLIENT_ID,
-                callback: handleCredentialResponse,
-                scope: SCOPES
-            });
+function initializeGSI() {
+    google.accounts.id.initialize({
+        client_id: CLIENT_ID,
+        callback: handleCredentialResponse
+    });
 
-            google.accounts.id.renderButton(
-                document.getElementById('signInButton'),
-                { theme: 'outline', size: 'large' }
-            );
+    google.accounts.id.renderButton(
+        document.getElementById('signInButton'),
+        { theme: 'outline', size: 'large' }
+    );
 
-            google.accounts.id.prompt(); // Show the Google Sign-In prompt
-        }
+    google.accounts.id.prompt();
+}
 
 function getAccessToken() {
     return new Promise((resolve, reject) => {
