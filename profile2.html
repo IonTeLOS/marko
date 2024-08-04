@@ -255,8 +255,8 @@ async function handleCredentialResponse(response) {
     if (response.credential) {
         try {
             const accessToken = await getAccessToken();
-            const file = new Blob(["Hello, world2!"], { type: 'text/plain' });
-            await uploadFile(file, accessToken);
+            //const file = new Blob(["Hello, world2njlj!"], { type: 'text/plain' });
+            //await uploadFile(file, accessToken);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -285,7 +285,7 @@ function getAccessToken() {
             if (tokenResponse && tokenResponse.access_token) {
                 console.log('Access Token:', tokenResponse.access_token);
                 // Use this access token to make API calls
-                uploadFile(new Blob(["Hello, world!"], { type: 'text/plain' }), tokenResponse.access_token);
+                uploadFile(new Blob(["Hello, world4544545!"], { type: 'text/plain' }), tokenResponse.access_token);
             } else {
                 console.error('Error getting access token:', tokenResponse);
             }
