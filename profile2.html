@@ -444,11 +444,6 @@ async function authenticateGoogleApi() {
         profileForm.addEventListener('submit', async (event) => {
             event.preventDefault();
 
-            if (!gapiInited) {
-                console.error('Google API client is not initialized.');
-                return;
-            }
-
             const profileData = {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
