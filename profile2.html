@@ -250,12 +250,11 @@
         const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
         const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
 
-        let accessToken = null;
+let idToken = null;
 
         function handleCredentialResponse(response) {
-            const idToken = response.credential;
+            idToken = response.credential;
             console.log('ID Token:', idToken);
-            exchangeIdTokenForAccessToken(idToken);
         }
 
         function initializeGSI() {
@@ -272,42 +271,9 @@
             google.accounts.id.prompt(); // Show the Google Sign-In prompt
         }
 
-        async function exchangeIdTokenForAccessToken(idToken) {
-            try {
-                // Prepare the request body
-                const requestBody = new URLSearchParams({
-                    id_token: idToken,
-                    grant_type: 'authorization_code'
-                }).toString();
-
-                // Make the request to exchange ID token for access token
-                const response = await fetch('https://oauth2.googleapis.com/token', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: requestBody
-                });
-
-                // Check if the response is successful
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Error exchanging ID token for access token:', response.status, errorText);
-                    throw new Error(`Error exchanging token: ${response.statusText}`);
-                }
-
-                // Parse the response JSON
-                const data = await response.json();
-                console.log('Access Token:', data.access_token);
-                accessToken = data.access_token;
-            } catch (error) {
-                console.error('Error in exchangeIdTokenForAccessToken:', error);
-            }
-        }
-
         async function uploadFile(file) {
-            if (!accessToken) {
-                console.error('No access token available.');
+            if (!idToken) {
+                console.error('No ID token available.');
                 return;
             }
 
@@ -324,7 +290,7 @@
                 const response = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`
+                        'Authorization': `Bearer ${idToken}` // Use ID token directly
                     },
                     body: formData
                 });
@@ -342,7 +308,7 @@
                 await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}/permissions`, {
                     method: 'POST',
                     headers: {
-                        'Authorization': `Bearer ${accessToken}`,
+                        'Authorization': `Bearer ${idToken}`, // Use ID token directly
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
