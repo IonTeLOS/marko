@@ -457,7 +457,7 @@ async function authenticateGoogleApi() {
 
             
             try {
-                await submitProfileData(profileData);
+                await  handleFormSubmit(profileData);
                 successMessage.textContent = 'Profile successfully created!';
             } catch (error) {
                 console.error('Error creating profile:', error);
@@ -526,9 +526,9 @@ async function uploadFile(file, idToken) {
 }
 
 // Function to handle form submission
-async function handleFormSubmit(event) {
+async function handleFormSubmit(profileData, event) {
     event.preventDefault();
-    const profileData = gatherProfileData();
+    //const profileData = gatherProfileData();
     localStorage.setItem('profile-data', JSON.stringify(profileData));
     
     const idToken = google.accounts.id.getAuthResponse().id_token;
@@ -610,7 +610,7 @@ async function updateProfileFile(fileId, content, accessToken) {
         body: form
     });
 }
-
+/*
 // Function to gather profile data from the form
 function gatherProfileData() {
     return {
@@ -627,7 +627,7 @@ function gatherProfileData() {
     };
 }
         
-
+*/
 </script>
 </body>
 </html>
