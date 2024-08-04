@@ -245,11 +245,12 @@
     <script>
 
         // Replace with your actual client ID and API key
-        const CLIENT_ID = '371617464258-ntrqn44lfo1lpi294hmc5ebad5b9ok5a.apps.googleusercontent.com';
+        const CLIENT_ID = '7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com';
+        const CLIENT_SECRET = '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';
         const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
         const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
         const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
-        const REDIRECT_URI = 'https://teloslinux.org/marko/profile2'; // Replace with your Redirect URI
+        const REDIRECT_URI = 'https://teloslinux.org/marko/profile2'; 
 
         let accessToken = null;
 
@@ -284,7 +285,7 @@
                     body: new URLSearchParams({
                         code: idToken,
                         client_id: CLIENT_ID,
-                        client_secret: 'YOUR_CLIENT_SECRET', // Replace with your Client Secret
+                        client_secret: 'CLIENT_SECRET', // Replace with your Client Secret
                         redirect_uri: REDIRECT_URI,
                         grant_type: 'authorization_code'
                     })
