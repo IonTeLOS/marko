@@ -255,8 +255,6 @@ async function handleCredentialResponse(response) {
     if (response.credential) {
         try {
             const accessToken = await getAccessToken();
-            console.log('Access token now is: ' + accessToken);
-            localStorage.setItem('access-token', accessToken);
         } catch (error) {
             console.error('Error:', error);
         }
@@ -284,9 +282,9 @@ function getAccessToken() {
         callback: (tokenResponse) => {
             if (tokenResponse && tokenResponse.access_token) {
                 console.log('Access Token:', tokenResponse.access_token);
-                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('accessToken', tokenResponse.access_token);
                 // Use this access token to make API calls
-                uploadFile(new Blob(["Hello, world4544545!"], { type: 'text/plain' }), tokenResponse.access_token);
+                // uploadFile(new Blob(["Hello, world4544545!"], { type: 'text/plain' }), tokenResponse.access_token);
             } else {
                 console.error('Error getting access token:', tokenResponse);
             }
@@ -298,7 +296,7 @@ function getAccessToken() {
     tokenClient.requestAccessToken({prompt: 'consent'});
 }
 
-        async function uploadFile(file, accessToken) {
+        async function uploadFile(file, accessToken = localStorage.getItem('accessToken')) {
             try {
                 // Prepare file metadata
                 const metadata = {
