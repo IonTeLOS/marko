@@ -252,7 +252,7 @@
         const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
         const REDIRECT_URI = 'https://teloslinux.org/marko/profile2'; 
 
-        function handleCredentialResponse(response) {
+function handleCredentialResponse(response) {
             const idToken = response.credential;
             console.log('ID Token:', idToken);
             getAccessToken(idToken);
@@ -283,8 +283,8 @@
                     body: new URLSearchParams({
                         client_id: CLIENT_ID,
                         client_secret: CLIENT_SECRET, // Replace with your Client Secret
-                        grant_type: 'authorization_code', // This is required for authorization code exchange
-                        code: idToken, // Using idToken as authorization code for demonstration
+                        grant_type: 'authorization_code',
+                        code: idToken,
                         redirect_uri: 'https://teloslinux.org/marko/profile2' // This should match your registered redirect URI
                     })
                 });
@@ -304,8 +304,8 @@
                 console.error('Error fetching access token:', error);
             }
         }
-        
- async function uploadFile(file, accessToken) {
+
+        async function uploadFile(file, accessToken) {
             try {
                 // Prepare file metadata
                 const metadata = {
