@@ -135,11 +135,11 @@
                     <!-- Timezone options will be populated by JavaScript -->
                 </select>
             </div>
-            <div class="input-field">
-                <label for="emoji">Select Emoji</label>
-                <div id="emoji-container"></div>
-                <div>Selected Emoji: <span id="selected-emoji"></span></div>
-            </div>
+<div class="input-field">
+    <label for="emoji">Select Emoji</label>
+    <emoji-picker id="emoji-picker"></emoji-picker>
+    <div>Selected Emoji: <span id="selected-emoji"></span></div>
+</div>
             <div class="input-field">
                 <label for="color">Select Color</label>
                 <input type="color" id="color">
@@ -409,11 +409,8 @@
             });
         }
 
-        function setupEmojiPicker() {
-    const picker = new EmojiPickerElement.Picker({
-        emoji: '😀'
-    });
-    document.getElementById('emoji-container').appendChild(picker);
+function setupEmojiPicker() {
+    const picker = document.querySelector('emoji-picker');
     picker.addEventListener('emoji-click', event => {
         document.getElementById('selected-emoji').textContent = event.detail.unicode;
     });
