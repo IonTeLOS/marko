@@ -399,9 +399,7 @@ async function authenticateGoogleApi() {
             const file = photoInput.files[0];
             if (file) {
                 if (document.getElementById('addAsDriveLink').checked) {
-                    if (gapiInited) {
                         await uploadFile(file);
-                    } else {
                         console.error('Google API client is not initialized.');
                     }
                 } else {
