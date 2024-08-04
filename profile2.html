@@ -257,7 +257,7 @@
             console.log('ID Token:', idToken);
             
             // If you need to use the ID token to interact with Google Drive API directly:
-            const accessToken = await getAccessToken(idToken);
+            const accessToken = idToken; // For this example, assume ID token as access token
             console.log('Access token is : ' + accessToken);
             localStorage.setItem('access-token', accessToken);
             //uploadFile(file, accessToken);
