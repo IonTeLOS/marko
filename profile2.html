@@ -252,11 +252,17 @@
         const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email';
         const REDIRECT_URI = 'https://teloslinux.org/marko/profile2'; 
 
-function handleCredentialResponse(response) {
-            const idToken = response.credential;
-            console.log('ID Token:', idToken);
-            getAccessToken(idToken);
+async function handleCredentialResponse(response) {
+    if (response.credential) {
+        try {
+            const accessToken = await getAccessToken();
+            const file = new Blob(["Hello, world!"], { type: 'text/plain' });
+            await uploadFile(file, accessToken);
+        } catch (error) {
+            console.error('Error:', error);
         }
+    }
+}
 
         function initializeGSI() {
             google.accounts.id.initialize({
