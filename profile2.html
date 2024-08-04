@@ -263,7 +263,19 @@
         google.accounts.id.prompt(); // Display the Google Sign-In button
     }
 
-    window.onload = initializeGSI;
+        window.onload = function() {
+    google.accounts.id.initialize({
+        client_id: 'YOUR_CLIENT_ID',  // Replace with your Client ID
+        callback: onGoogleSignIn
+    });
+
+    google.accounts.id.renderButton(
+        document.getElementById('signInButton'),
+        { theme: 'outline', size: 'large' }
+    );
+
+    google.accounts.id.prompt(); // Show the Google Sign-In prompt
+};
 let idToken = null;
 
 function onGoogleSignIn(response) {
