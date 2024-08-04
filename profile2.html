@@ -255,7 +255,7 @@ async function handleCredentialResponse(response) {
     if (response.credential) {
         try {
             const accessToken = await getAccessToken();
-            const file = new Blob(["Hello, world!"], { type: 'text/plain' });
+            const file = new Blob(["Hello, world2!"], { type: 'text/plain' });
             await uploadFile(file, accessToken);
         } catch (error) {
             console.error('Error:', error);
