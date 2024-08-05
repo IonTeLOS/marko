@@ -106,7 +106,6 @@
             color: #333;
         }
         .dropdown {
-    display: none;
     position: absolute;
     z-index: 1000;
     border: 1px solid #ccc;
@@ -559,7 +558,7 @@ function showResults(results) {
         
 function adjustDropdownPosition() {
     const dropdown = document.getElementById('dropdown');
-    const searchBox = document.querySelector('.maps-search');
+    const searchBox = document.getElementById('mapsSearch'); // Use ID selector for mapsSearch
     
     if (!searchBox || !dropdown) return; // Ensure elements exist
 
@@ -585,6 +584,7 @@ function adjustDropdownPosition() {
     // Optional: Set the left position of the dropdown to align with the search box
     dropdown.style.left = `${searchBoxRect.left}px`;
 }
+
 
         window.onload = initializeGSI;
 
