@@ -248,7 +248,7 @@
                 <input type="url" id="donation" placeholder="https://...">
             </div>
             <div class="link-pair">
-                    <input id="mapsSearch" type="text" placeholder="Link Name">
+                    <input id="mapsSearch" class="map-search" type="text" placeholder="Link Name">
                        <div id="dropdown" class="dropdown"></div>
                     </div> 
                     <input id="mapsResult" type="url" placeholder="">
@@ -564,7 +564,7 @@ function showResults(results) {
     function adjustDropdownPosition() {
             const dropdown = document.getElementById('dropdown');
 
-        const searchBox = document.querySelector('mapsSearch');
+        const searchBox = document.querySelector('maps-search');
         const searchBoxRect = searchBox.getBoundingClientRect();
         const dropdownRect = dropdown.getBoundingClientRect();
 
