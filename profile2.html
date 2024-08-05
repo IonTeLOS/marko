@@ -248,7 +248,7 @@
                 <input type="url" id="donation" placeholder="https://...">
             </div>
             <div class="link-pair">
-                    <input id="mapsSearch" class="map-search" type="text" placeholder="Link Name">
+                    <input id="mapsSearch" class="maps-search" type="text" placeholder="Link Name">
                        <div id="dropdown" class="dropdown"></div>
                     </div> 
                     <input id="mapsResult" type="url" placeholder="">
@@ -561,23 +561,35 @@ function showResults(results) {
         document.getElementById('mapsResult').value = url;
     }       
         
-    function adjustDropdownPosition() {
-            const dropdown = document.getElementById('dropdown');
+function adjustDropdownPosition() {
+    const dropdown = document.getElementById('dropdown');
+    const searchBox = document.querySelector('.maps-search');
+    
+    if (!searchBox || !dropdown) return; // Ensure elements exist
 
-        const searchBox = document.querySelector('maps-search');
-        const searchBoxRect = searchBox.getBoundingClientRect();
-        const dropdownRect = dropdown.getBoundingClientRect();
+    const searchBoxRect = searchBox.getBoundingClientRect();
+    const dropdownRect = dropdown.getBoundingClientRect();
 
-        dropdown.style.width = `${searchBoxRect.width}px`;
+    // Set the width of the dropdown to match the width of the search box
+    dropdown.style.width = `${searchBoxRect.width}px`;
 
-        if (window.innerHeight - searchBoxRect.bottom > dropdownRect.height) {
-            dropdown.classList.remove('dropdown-top');
-            dropdown.classList.add('dropdown-bottom');
-        } else {
-            dropdown.classList.remove('dropdown-bottom');
-            dropdown.classList.add('dropdown-top');
-        }
+    // Check if there's enough space below the search box
+    if (window.innerHeight - searchBoxRect.bottom > dropdownRect.height) {
+        dropdown.style.top = `${searchBoxRect.bottom}px`; // Position dropdown below search box
+        dropdown.style.bottom = 'auto'; // Reset bottom to auto
+        dropdown.classList.remove('dropdown-top');
+        dropdown.classList.add('dropdown-bottom');
+    } else {
+        dropdown.style.top = 'auto'; // Reset top to auto
+        dropdown.style.bottom = `${window.innerHeight - searchBoxRect.top}px`; // Position dropdown above search box
+        dropdown.classList.remove('dropdown-bottom');
+        dropdown.classList.add('dropdown-top');
     }
+
+    // Optional: Set the left position of the dropdown to align with the search box
+    dropdown.style.left = `${searchBoxRect.left}px`;
+}
+
         window.onload = initializeGSI;
 
 
