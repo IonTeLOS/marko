@@ -3,13 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Profile</title>
+    <title>Marko Profile</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://apis.google.com/js/api.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
-    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
-
+    script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.css">
     <style>
         body {
@@ -246,10 +244,8 @@
 
         // Replace with your actual client ID and API key
         const CLIENT_ID = '7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com';
-        const API_KEY = 'AIzaSyAbf0IPLaP6Cbbx3NnFlfzcWQ-zxIc5S8E';
         const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
         const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email openid';
-        const REDIRECT_URI = 'https://teloslinux.org/marko/profile2'; 
 
 async function handleCredentialResponse(response) {
     if (response.credential) {
