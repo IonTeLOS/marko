@@ -254,14 +254,6 @@ async function handleCredentialResponse(response) {
             const { accessToken, userInfo } = await getAccessToken();
             console.log('Access Token:', accessToken);
             console.log('User Info:', userInfo);
-            // Set the user information
-            document.getElementById('email').value = userInfo.email;
-            document.getElementById('name').value = userInfo.name;
-            document.getElementById('detectedLanguage').textContent = userInfo.locale;
-            // Set the profile picture
-            const profilePreview = document.getElementById('profilePreview');
-            profilePreview.src = userInfo.picture;
-            profilePreview.style.display = 'block';
         } catch (error) {
             console.error('Error obtaining access token or user info:', error);
         }
@@ -351,10 +343,20 @@ async function getUserInfo(accessToken) {
         }
 
         const userInfo = await response.json();
+
+        // Set the user information
+        document.getElementById('email').value = userInfo.email;
+        document.getElementById('name').value = userInfo.name;
+        document.getElementById('detectedLanguage').textContent = userInfo.locale;
+        // Set the profile picture
+        const profilePreview = document.getElementById('profilePreview');
+        profilePreview.src = userInfo.picture;
+        profilePreview.style.display = 'block';
         return {
             email: userInfo.email,
             name: userInfo.name,
-            picture: userInfo.picture
+            picture: userInfo.picture,
+            locale: userInfo.locale
         };
     } catch (error) {
         console.error('Error fetching user info:', error);
