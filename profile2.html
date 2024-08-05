@@ -357,7 +357,7 @@ async function getUserInfo(accessToken) {
         const profilePreview = document.getElementById('profilePreview');
         profilePreview.src = userInfo.picture;
         profilePreview.style.display = 'block';
-        document.getElementById('saveGooglePhoto').style.display('block');
+        document.getElementById('saveGooglePhoto').style.display = 'block';
         localStorage.setItem('google-profile-photo', userInfo.picture);
         return {
             email: userInfo.email,
