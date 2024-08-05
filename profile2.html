@@ -251,9 +251,16 @@
 async function handleCredentialResponse(response) {
     if (response.credential) {
         try {
-            const accessToken = await getAccessToken();
+            const { accessToken, userInfo } = await getAccessToken();
+            console.log('Access Token:', accessToken);
+            console.log('User Info:', userInfo);
+
+            // Set the profile picture
+            const profilePreview = document.getElementById('profilePreview');
+            profilePreview.src = userInfo.picture;
+            profilePreview.style.display = 'block';
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error obtaining access token or user info:', error);
         }
     }
 }
@@ -297,16 +304,17 @@ function getAccessToken() {
         const tokenClient = google.accounts.oauth2.initTokenClient({
             client_id: CLIENT_ID,
             scope: SCOPES,
-            callback: async (tokenResponse) => {
+            callback: (tokenResponse) => {
                 if (tokenResponse && tokenResponse.access_token) {
                     console.log('Access Token obtained successfully');
                     localStorage.setItem('accessToken', tokenResponse.access_token);
-                    try {
-                        const userInfo = await getUserInfo(tokenResponse.access_token);
-                        resolve({ accessToken: tokenResponse.access_token, userInfo });
-                    } catch (error) {
-                        reject(error);
-                    }
+                    getUserInfo(tokenResponse.access_token)
+                        .then(userInfo => {
+                            resolve({ accessToken: tokenResponse.access_token, userInfo });
+                        })
+                        .catch(error => {
+                            reject(error);
+                        });
                 } else {
                     console.error('Failed to get access token:', tokenResponse);
                     reject(new Error('Failed to get access token'));
@@ -318,11 +326,12 @@ function getAccessToken() {
             }
         });
 
-        tokenClient.requestAccessToken({prompt: 'consent'})
-            .catch(error => {
-                console.error('Error requesting access token:', error);
-                reject(error);
-            });
+        try {
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+        } catch (error) {
+            console.error('Error requesting access token:', error);
+            reject(error);
+        }
     });
 }
 
@@ -339,11 +348,6 @@ async function getUserInfo(accessToken) {
         }
 
         const userInfo = await response.json();
-        document.getElementById('email').value = userInfo.email;
-        document.getElementById('name').value = userInfo.name;
-        var profilePreview = document.getElementById('profilePreview');
-        profilePreview.src = userInfo.picture;
-        profilePreview.style.display = 'block';
         return {
             email: userInfo.email,
             name: userInfo.name,
@@ -353,8 +357,7 @@ async function getUserInfo(accessToken) {
         console.error('Error fetching user info:', error);
         throw error;
     }
-}        
-        
+} 
 
         async function uploadFile(file, accessToken = localStorage.getItem('accessToken')) {
             try {
