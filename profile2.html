@@ -445,6 +445,7 @@ async function saveGoogleProfilePhoto() {
         }
         
         await uploadFile(photoBlob, accessToken);
+        document.querySelector('.photo-upload-options').style.display = 'none';
         document.getElementById('saveGooglePhoto').style.display = 'none';
         return photoBlob;
     } catch (error) {
