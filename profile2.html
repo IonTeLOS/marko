@@ -487,9 +487,21 @@ function handleInput() {
 
 async function fetchMapsResults(query) {
     const apiKey = 'AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww'; // Replace with your actual API key
-    const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(query)}&key=${apiKey}`;
-
-fetch(url)
+    const url = 'https://places.googleapis.com/v1/places:searchText';
+    const requestBody = {
+        textQuery: query,
+        languageCode: "en"
+    };
+    
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': apiKey,
+            'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.id'
+        },
+        body: JSON.stringify(requestBody)
+    })
     .then(response => {
         if (!response.ok) {
             throw new Error(`Places API error: ${response.status} ${response.statusText}`);
@@ -497,10 +509,10 @@ fetch(url)
         return response.json();
     })
     .then(data => {
-        if (data.predictions) {
-            showResults(data.predictions.map(prediction => ({
-                title: prediction.description,
-                link: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(prediction.description)}`,
+        if (data.places) {
+            showResults(data.places.map(place => ({
+                title: `${place.displayName.text} - ${place.formattedAddress}`,
+                link: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.displayName.text)}&query_place_id=${place.id}`,
                 source: 'maps'
             })));
         }
