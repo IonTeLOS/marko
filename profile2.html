@@ -125,7 +125,7 @@
                 </div>
                 <img id="profilePreview" style="display: none;">
             </div>
-            <div id="saveGooglePhoto" class="button-container" style="display: none; margin-top: 10px; margin-bottom: 10px;">>
+            <div id="saveGooglePhoto" class="button-container" style="display: none; margin-top: 10px; margin-bottom: 10px;">
         <button onclick="saveGoogleProfilePhoto()">
             <span class="material-icons">save</span>
             Use Photo
@@ -445,7 +445,7 @@ async function saveGoogleProfilePhoto() {
         }
         
         await uploadFile(photoBlob, accessToken);
-        document.getElementById('saveGooglePhoto').style.display('none');
+        document.getElementById('saveGooglePhoto').style.display = 'none';
         return photoBlob;
     } catch (error) {
         console.error('Error fetching or converting profile photo:', error);
