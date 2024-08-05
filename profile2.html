@@ -541,6 +541,7 @@ async function getUserInfo(accessToken) {
                     localStorage.setItem('photo-link', uploadedPhotoId);
                 }
                 showPhotoPreview(file);
+                document.querySelector('.photo-upload-options').style.display = 'none';
             }
         });
 
