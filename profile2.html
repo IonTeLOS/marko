@@ -120,8 +120,8 @@
                 </label>
                 <input type="file" id="profilePicture" accept="image/*">
                 <div class="photo-upload-options">
-                    <input type="checkbox" id="addAsDriveLink">
-                    <label for="addAsDriveLink">Upload to Google Drive</label>
+                    <input type="checkbox" id="addAsData">
+                    <label for="addAsData">Store as encoded data</label>
                 </div>
                 <img id="profilePreview" style="display: none;">
             </div>
@@ -533,13 +533,12 @@ async function getUserInfo(accessToken) {
         photoInput.addEventListener('change', async () => {
             const file = photoInput.files[0];
             if (file) {
-                if (document.getElementById('addAsDriveLink').checked) {
-                        await uploadFile(file);
-                        console.error('Google API client is not initialized.');
-                    }
-                else {
+                if (document.getElementById('addAsData').checked) {
                     const base64Data = await toBase64(file);
-                    // Handle base64 data if needed
+                    localStorage.setItem('photo-data', base64Data);
+                } else {
+                    const uploadedPhotoId = await uploadFile(file);
+                    localStorage.setItem('photo-link', uploadedPhotoId);
                 }
                 showPhotoPreview(file);
             }
