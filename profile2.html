@@ -487,7 +487,6 @@ function handleInput() {
 
 async function fetchMapsResults(query) {
     const apiKey = 'AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww'; // Replace with your actual API key
-    const url = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
     const url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(query)}&key=${apiKey}`;
 
 fetch(url)
