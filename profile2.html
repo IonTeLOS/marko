@@ -441,15 +441,6 @@ async function getUserInfo(accessToken) {
             }
         }
 
-const mapQuery = document.getElementById('mapsSearch');
-mapQuery.addEventListener('input', handleInput);
-        function handleInput() {
-        const query = mapQuery.value.trim();
-        if (query.length > 0) {
-            fetchMapsResults(query);
-        }
-        }
-            
 
 async function saveGoogleProfilePhoto() {
     try {
