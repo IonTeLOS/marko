@@ -560,7 +560,22 @@ function showResults(results) {
         const url = result.url;
         document.getElementById('mapsResult').value = url;
     }       
+        
+    function adjustDropdownPosition() {
+        const searchBox = document.querySelector('mapsSearch');
+        const searchBoxRect = searchBox.getBoundingClientRect();
+        const dropdownRect = dropdown.getBoundingClientRect();
 
+        dropdown.style.width = `${searchBoxRect.width}px`;
+
+        if (window.innerHeight - searchBoxRect.bottom > dropdownRect.height) {
+            dropdown.classList.remove('dropdown-top');
+            dropdown.classList.add('dropdown-bottom');
+        } else {
+            dropdown.classList.remove('dropdown-bottom');
+            dropdown.classList.add('dropdown-top');
+        }
+    }
         window.onload = initializeGSI;
 
 
