@@ -109,10 +109,10 @@
 </head>
 <body>
     <div class="container">
+        <div id="signInButtonContainer" style="display: none; width: 100%; height: 80px; margin-bottom: 20px;">
+    <div id="signInButton"></div>
+    </div>
         <h1>Create Your Profile</h1>
-<div id="signInButtonContainer" style="display: none; width: 100%; height: 50px;">
-  <div id="signInButton"></div>
-</div>
         <form id="profileForm">
             <div class="input-field">
                 <label for="profilePicture" class="profile-pic-label">
@@ -347,7 +347,6 @@ async function getUserInfo(accessToken) {
         // Set the user information
         document.getElementById('email').value = userInfo.email;
         document.getElementById('name').value = userInfo.name;
-        document.getElementById('detectedLanguage').textContent = userInfo.locale;
         // Set the profile picture
         const profilePreview = document.getElementById('profilePreview');
         profilePreview.src = userInfo.picture;
@@ -355,8 +354,7 @@ async function getUserInfo(accessToken) {
         return {
             email: userInfo.email,
             name: userInfo.name,
-            picture: userInfo.picture,
-            locale: userInfo.locale
+            picture: userInfo.picture
         };
     } catch (error) {
         console.error('Error fetching user info:', error);
