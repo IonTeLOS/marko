@@ -110,8 +110,9 @@
 <body>
     <div class="container">
         <h1>Create Your Profile</h1>
-            <div id="signInButton"></div>
-
+<div id="signInButtonContainer" style="display: none; width: 100%; height: 50px;">
+  <div id="signInButton"></div>
+</div>
         <form id="profileForm">
             <div class="input-field">
                 <label for="profilePicture" class="profile-pic-label">
@@ -260,15 +261,35 @@ async function handleCredentialResponse(response) {
 function initializeGSI() {
     google.accounts.id.initialize({
         client_id: CLIENT_ID,
-        callback: handleCredentialResponse
+        callback: handleCredentialResponse,
+        auto_select: true,
+        cancel_on_tap_outside: false
     });
 
-    google.accounts.id.renderButton(
-        document.getElementById('signInButton'),
-        { theme: 'outline', size: 'large' }
-    );
+    google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+            // The chip was not displayed, or the moment was skipped.
+            // You might want to display a manual sign-in button here.
+            console.log('One Tap prompt was not displayed');
+            showManualSignInButton();
+        }
+    });
+}
 
-    google.accounts.id.prompt();
+function showManualSignInButton() {
+    const signInButtonContainer = document.getElementById('signInButtonContainer');
+    const signInButton = document.getElementById('signInButton');
+    
+    // Show the container
+    signInButtonContainer.style.display = 'flex';
+    signInButtonContainer.style.justifyContent = 'center';
+    signInButtonContainer.style.alignItems = 'center';
+    
+    // Render the Google Sign-In button
+    google.accounts.id.renderButton(signInButton, { 
+        theme: 'outline', 
+        size: 'large'
+    });
 }
 
 function getAccessToken() {
