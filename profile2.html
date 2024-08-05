@@ -562,6 +562,8 @@ function showResults(results) {
     }       
         
     function adjustDropdownPosition() {
+            const dropdown = document.getElementById('dropdown');
+
         const searchBox = document.querySelector('mapsSearch');
         const searchBoxRect = searchBox.getBoundingClientRect();
         const dropdownRect = dropdown.getBoundingClientRect();
