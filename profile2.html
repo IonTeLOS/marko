@@ -125,6 +125,12 @@
                 </div>
                 <img id="profilePreview" style="display: none;">
             </div>
+            <div id="saveGooglePhoto" class="button-container" style="display: none; margin-top: 10px; margin-bottom: 10px;">>
+        <button onclick="saveGoogleProfilePhoto()">
+            <span class="material-icons">save</span>
+            Use Photo
+        </button>
+        </div>
             <div class="input-field">
                 <label for="name">Name (required)</label>
                 <input type="text" id="name" required>
@@ -351,6 +357,8 @@ async function getUserInfo(accessToken) {
         const profilePreview = document.getElementById('profilePreview');
         profilePreview.src = userInfo.picture;
         profilePreview.style.display = 'block';
+        document.getElementById('saveGooglePhoto').style.display('block');
+        localStorage.setItem('google-profile-photo', userInfo.picture);
         return {
             email: userInfo.email,
             name: userInfo.name,
@@ -411,6 +419,40 @@ async function getUserInfo(accessToken) {
                 throw error;
             }
         }
+
+
+async function saveGoogleProfilePhoto() {
+    try {
+        const profilePhotoUrl = localStorage.getItem('google-profile-photo');
+        
+        if (!profilePhotoUrl) {
+            throw new Error('Profile photo URL not found in localStorage');
+        }
+
+        // Fetch the profile photo
+        const photoResponse = await fetch(profilePhotoUrl);
+        if (!photoResponse.ok) {
+            throw new Error('Failed to fetch profile photo');
+        }
+
+        // Convert the photo to a Blob
+        const photoBlob = await photoResponse.blob();
+
+        // Call the upload function with the Blob
+        const accessToken = localStorage.getItem('accessToken');
+        if (!accessToken) {
+            throw new Error('Access token not found in localStorage');
+        }
+        
+        await uploadFile(photoBlob, accessToken);
+        document.getElementById('saveGooglePhoto').style.display('none');
+        return photoBlob;
+    } catch (error) {
+        console.error('Error fetching or converting profile photo:', error);
+        throw error;
+    }
+}
+
 
         window.onload = initializeGSI;
 
