@@ -105,27 +105,21 @@
             font-weight: bold;
             color: #333;
         }
-        .dropdown {
-    position: absolute;
-    z-index: 1000;
-    border: 1px solid #ccc;
-    background: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    max-height: 350px;
-    overflow-y: auto;
-    border-radius: 4px;
-    width: calc(100% - 120px); /* Full width minus buttons */
+/* Ensure the dropdown is positioned relative to its container */
+.dropdown {
+    position: absolute; /* Ensure positioning is correct */
+    z-index: 1000; /* Ensure it appears above other content */
+    display: none; /* Hide by default; show when needed */
 }
 
-.dropdown-item {
-    padding: 10px;
-    cursor: pointer;
-    font-size: 14px;
+.dropdown-bottom {
+    display: block; /* Display the dropdown when positioned below */
 }
 
-.dropdown-item:hover {
-    background-color: #f0f0f0;
+.dropdown-top {
+    display: block; /* Display the dropdown when positioned above */
 }
+
     </style>
 </head>
 <body>
