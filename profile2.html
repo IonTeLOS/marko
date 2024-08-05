@@ -254,7 +254,10 @@ async function handleCredentialResponse(response) {
             const { accessToken, userInfo } = await getAccessToken();
             console.log('Access Token:', accessToken);
             console.log('User Info:', userInfo);
-
+            // Set the user information
+            document.getElementById('email').value = userInfo.email;
+            document.getElementById('name').value = userInfo.name;
+            document.getElementById('detectedLanguage').textContent = userInfo.locale;
             // Set the profile picture
             const profilePreview = document.getElementById('profilePreview');
             profilePreview.src = userInfo.picture;
