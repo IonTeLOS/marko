@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maps Autocomplete Search</title>
+    <style>
+        /* Basic styles for autocomplete dropdown */
+        #autocomplete-results {
+            position: absolute;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #fff;
+            z-index: 1000;
+        }
+        .result-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .result-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Places</h1>
+    <div style="position: relative;">
+        <input type="text" id="search-input" placeholder="Enter place name" autocomplete="off">
+        <div id="autocomplete-results"></div>
+    </div>
+    
+    <div id="url-display"></div>
+
+    <script>
+        document.getElementById('search-input').addEventListener('input', () => {
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                fetchMapsResults(query);
+            } else {
+                clearResults();
+            }
+        });
+
+        function fetchMapsResults(query) {
+            const apiKey = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your actual API key
+            const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`;
+
+            fetch(url)
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`Places API error: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Data received:', data);
+                if (data.results && data.results.length > 0) {
+                    showResults(data.results.map(place => ({
+                        title: `${place.name} - ${place.formatted_address}`,
+                        link: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}&query_place_id=${place.place_id}`,
+                        source: 'maps'
+                    })));
+                } else {
+                    clearResults();
+                }
+            })
+            .catch(error => console.error('Error fetching Maps data:', error));
+        }
+
+        function showResults(results) {
+            const resultsContainer = document.getElementById('autocomplete-results');
+            resultsContainer.innerHTML = ''; // Clear previous results
+
+            results.forEach(result => {
+                const resultElement = document.createElement('div');
+                resultElement.classList.add('result-item');
+                resultElement.textContent = result.title;
+                resultElement.dataset.link = result.link;
+                
+                resultElement.addEventListener('click', () => {
+                    document.getElementById('url-display').innerHTML = `<a href="${resultElement.dataset.link}" target="_blank">${resultElement.dataset.link}</a>`;
+                    clearResults(); // Optionally clear results on selection
+                });
+
+                resultsContainer.appendChild(resultElement);
+            });
+        }
+
+        function clearResults() {
+            const resultsContainer = document.getElementById('autocomplete-results');
+            resultsContainer.innerHTML = '';
+        }
+    </script>
+</body>
+</html>
