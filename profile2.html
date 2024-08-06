@@ -121,7 +121,29 @@
         .result-item:hover {
             background-color: #f0f0f0;
         }
-    
+            .result {
+            padding: 10px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+        }
+        .url-button {
+            display: flex;
+            align-items: center;
+            background-color: #2196F3; /* Blue color */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .url-button i {
+            margin-right: 8px;
+        }
+        .url-button:hover {
+            background-color: #1976D2; /* Darker blue */
+        }
     </style>
 </head>
 <body>
@@ -572,8 +594,12 @@ function fetchMapsResults(query) {
                 resultElement.dataset.link = result.link;
                 
                 resultElement.addEventListener('click', () => {
-                    document.getElementById('url-display').innerHTML = `<a href="${resultElement.dataset.link}" target="_blank">${resultElement.dataset.link}</a>`;
-                    clearResults(); // Optionally clear results on selection
+                    const urlDisplay = document.getElementById('url-display');
+                    urlDisplay.innerHTML = `<a class="url-button" href="${resultElement.dataset.link}" target="_blank">
+                        <i class="material-icons">map</i>Chosen Location
+                    </a>`;
+                    // Optionally clear results on selection
+                    clearResults();
                 });
 
                 resultsContainer.appendChild(resultElement);
