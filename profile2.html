@@ -277,6 +277,7 @@
 
 async function handleCredentialResponse(response) {
     if (response.credential) {
+        document.getElementById('signInButtonContainer').style.display = 'none';
         try {
             const { accessToken, userInfo } = await getAccessToken();
             console.log('Access Token:', accessToken);
