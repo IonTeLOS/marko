@@ -869,26 +869,6 @@ async function updateProfileFile(fileId, content, accessToken) {
         throw error;
     }
 }
-
-
-/*
-// Function to gather profile data from the form
-function gatherProfileData() {
-    return {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        countryCode: document.getElementById('countryCode').value,
-        phone: document.getElementById('phone').value,
-        showAge: document.getElementById('showAge').checked,
-        showBirthday: document.getElementById('showBirthday').checked,
-        cvData: document.getElementById('cvData').style.display === 'block',
-        directComm: document.getElementById('directComm').value === 'yes',
-        conferenceLink: localStorage.getItem('conference-link') || '',
-        profilePicture: document.getElementById('profilePreview').src
-    };
-}
-        
-*/
 </script>
     <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script>
 </body>
