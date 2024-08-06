@@ -425,9 +425,17 @@ async function getUserInfo(accessToken) {
 
         async function uploadFile(file, accessToken = localStorage.getItem('accessToken')) {
             try {
+                // Check if file already exists
+                const existingFileId = await getFileIdByName('Marko_profile_pic', accessToken);
+        
+                // If it exists, delete it
+                if (existingFileId) {
+                    await deleteFile(existingFileId, accessToken);
+                }
+                
                 // Prepare file metadata
                 const metadata = {
-                    name: file.name,
+                    name: 'Marko_profile_pic',
                     mimeType: file.type
                 };
 
@@ -473,7 +481,39 @@ async function getUserInfo(accessToken) {
             }
         }
 
+async function getFileIdByName(fileName, accessToken) {
+    const searchResponse = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${fileName}'`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
 
+    if (!searchResponse.ok) {
+        const errorText = await searchResponse.text();
+        console.error('Error searching for file:', errorText);
+        throw new Error(`Error searching for file: ${errorText}`);
+    }
+
+    const searchResult = await searchResponse.json();
+    return searchResult.files.length > 0 ? searchResult.files[0].id : null;
+}
+
+async function deleteFile(fileId, accessToken) {
+    const deleteResponse = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`
+        }
+    });
+
+    if (!deleteResponse.ok) {
+        const errorText = await deleteResponse.text();
+        console.error('Error deleting file:', errorText);
+        throw new Error(`Error deleting file: ${errorText}`);
+    }
+}
+        
 async function saveProfilePhoto() {
     const file = photoInput.files[0];
             if (file) {
