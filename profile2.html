@@ -164,8 +164,8 @@
                 </div>
                 <img id="profilePreview" style="display: none;">
             </div>
-            <div id="saveGooglePhoto" class="button-container" style="display: none; margin-top: 10px; margin-bottom: 10px;">
-        <button onclick="saveGoogleProfilePhoto()">
+            <div id="savePhoto" class="button-container" style="display: none; margin-top: 10px; margin-bottom: 10px;">
+        <button onclick="saveProfilePhoto()">
             <span class="material-icons">save</span>
             Use Photo
         </button>
@@ -406,7 +406,7 @@ async function getUserInfo(accessToken) {
         const profilePreview = document.getElementById('profilePreview');
         profilePreview.src = userInfo.picture;
         profilePreview.style.display = 'block';
-        document.getElementById('saveGooglePhoto').style.display = 'block';
+        document.getElementById('savePhoto').style.display = 'block';
         document.querySelector('.photo-upload-options').style.display = 'block';
         localStorage.setItem('google-profile-photo', userInfo.picture);
         return {
@@ -471,7 +471,18 @@ async function getUserInfo(accessToken) {
         }
 
 
-async function saveGoogleProfilePhoto() {
+async function saveProfilePhoto() {
+    const file = photoInput.files[0];
+            if (file) {
+                if (document.getElementById('addAsData').checked) {
+                    const base64Data = await toBase64(file);
+                    localStorage.setItem('photo-data', base64Data);
+                } else {
+                    const uploadedPhotoId = await uploadFile(file);
+                    localStorage.setItem('photo-link', uploadedPhotoId);
+                }
+                return;
+            }
     try {
         const profilePhotoUrl = localStorage.getItem('google-profile-photo');
         
@@ -496,7 +507,7 @@ async function saveGoogleProfilePhoto() {
         
         await uploadFile(photoBlob, accessToken);
         document.querySelector('.photo-upload-options').style.display = 'none';
-        document.getElementById('saveGooglePhoto').style.display = 'none';
+        document.getElementById('savePhoto').style.display = 'none';
         return photoBlob;
     } catch (error) {
         console.error('Error fetching or converting profile photo:', error);
@@ -735,13 +746,6 @@ function fetchMapsResults(query) {
         photoInput.addEventListener('change', async () => {
             const file = photoInput.files[0];
             if (file) {
-                if (document.getElementById('addAsData').checked) {
-                    const base64Data = await toBase64(file);
-                    localStorage.setItem('photo-data', base64Data);
-                } else {
-                    const uploadedPhotoId = await uploadFile(file);
-                    localStorage.setItem('photo-link', uploadedPhotoId);
-                }
                 showPhotoPreview(file);
                 document.querySelector('.photo-upload-options').style.display = 'none';
             }
