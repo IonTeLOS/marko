@@ -481,6 +481,7 @@ async function saveProfilePhoto() {
                     const uploadedPhotoId = await uploadFile(file);
                     localStorage.setItem('photo-link', uploadedPhotoId);
                 }
+                document.querySelector('.photo-upload-options').style.display = 'none';
                 return;
             }
     try {
@@ -747,7 +748,7 @@ function fetchMapsResults(query) {
             const file = photoInput.files[0];
             if (file) {
                 showPhotoPreview(file);
-                document.querySelector('.photo-upload-options').style.display = 'none';
+                document.getElementById('savePhoto').style.display = 'block';
             }
         });
 
