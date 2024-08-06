@@ -517,7 +517,7 @@ async function fetchMapsResults(query) {
 }
 
 document.getElementById('search-maps-input').addEventListener('input', () => {
-            const query = document.getElementById('search-input').value.trim();
+            const query = document.getElementById('search-maps-input').value.trim();
             if (query) {
                 fetchMapsResults(query);
             } else {
@@ -870,6 +870,23 @@ async function updateProfileFile(fileId, content, accessToken) {
         throw error;
     }
 }
+        function addLinkPair() {
+            const linksContainer = document.getElementById('links');
+            const linkPairs = linksContainer.getElementsByClassName('link-pair');
+            if (linkPairs.length < 12) {
+                const newPair = document.createElement('div');
+                newPair.className = 'link-pair';
+                newPair.innerHTML = `
+                    <input type="text" placeholder="Link Name">
+                    <input type="url" placeholder="https://" pattern="https://.*">
+                `;
+                linksContainer.appendChild(newPair);
+            }
+        }
+        // Add event listeners and initialize components
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('addMoreLinks').addEventListener('click', addLinkPair);
+        });        
 </script>
     <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script>
 </body>
