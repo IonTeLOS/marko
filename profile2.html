@@ -84,7 +84,7 @@
             font-size: 24px;
         }
         .photo-upload-options {
-            display: flex;
+            display: none;
             align-items: center;
             margin-bottom: 10px;
         }
@@ -407,6 +407,7 @@ async function getUserInfo(accessToken) {
         profilePreview.src = userInfo.picture;
         profilePreview.style.display = 'block';
         document.getElementById('saveGooglePhoto').style.display = 'block';
+        document.querySelector('.photo-upload-options').style.display = 'none';
         localStorage.setItem('google-profile-photo', userInfo.picture);
         return {
             email: userInfo.email,
