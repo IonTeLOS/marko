@@ -480,9 +480,11 @@ async function saveProfilePhoto() {
                 if (document.getElementById('addAsData').checked) {
                     const base64Data = await toBase64(file);
                     localStorage.setItem('photo-data', base64Data);
+                    alert('Photo stored as data');
                 } else {
                     const uploadedPhotoId = await uploadFile(file);
                     localStorage.setItem('photo-link', uploadedPhotoId);
+                    alert('Photo saved to Google Drive');
                 }
                 document.querySelector('.photo-upload-options').style.display = 'none';
                 document.getElementById('savePhoto').style.display = 'none';
@@ -511,6 +513,7 @@ async function saveProfilePhoto() {
         }
         
         await uploadFile(photoBlob, accessToken);
+        alert('Photo saved to Google Drive');
         document.querySelector('.photo-upload-options').style.display = 'none';
         document.getElementById('savePhoto').style.display = 'none';
         return photoBlob;
