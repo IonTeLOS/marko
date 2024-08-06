@@ -11,20 +11,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.css">
     <style>
-        .input-field {
-            margin-bottom: 20px;
-        }
-        .editorjs-wrapper {
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 10px;
-            min-height: 200px;
-        }
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f5f5f5;
+            box-sizing: border-box;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         .container {
             max-width: 600px;
@@ -157,6 +153,26 @@
         .url-button:hover {
             background-color: #1976D2; /* Darker blue */
         }
+                .editor-container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .editor-input-field {
+            margin-bottom: 20px;
+        }
+        .editor-input-field label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        #editorjs {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -263,21 +279,12 @@
                 <label for="color">Select Color</label>
                 <input type="color" id="color">
             </div>
-            <div class="input-field">
-                <label for="bio">Bio (Markdown supported)</label>
-                <textarea id="bio"></textarea>
-            </div>
-            <button type="button" id="addCvData">Add CV Style Data</button>
-            <div id="cvData" style="display: none;">
-                <div class="input-field">
-                    <label for="experience">Professional Experience</label>
-                    <textarea id="experience"></textarea>
-                </div>
-                <div class="input-field">
-                    <label for="education">Education</label>
-                    <textarea id="education"></textarea>
-                </div>
-            </div>
+    <div class="editor-container">
+        <div class="editor-input-field">
+            <label for="editorjs">Bio</label>
+            <div id="bio"></div>
+        </div>
+    </div>
             <div id="links">
                 <div class="link-pair">
                     <input type="text" placeholder="Link Name">
@@ -976,16 +983,6 @@ function fetchMapsResults(query) {
             }
         });
 
-        // Handle CV data section
-        const addCvDataButton = document.getElementById('addCvData');
-        const cvDataSection = document.getElementById('cvData');
-        let cvDataVisible = false;
-
-        addCvDataButton.addEventListener('click', () => {
-            cvDataVisible = !cvDataVisible;
-            cvDataSection.style.display = cvDataVisible ? 'block' : 'none';
-        });
-
         // Handle direct communication and Jitsi link
         const directCommSelect = document.getElementById('directComm');
         const jitsiLinkSection = document.getElementById('jitsiLink');
@@ -1065,7 +1062,6 @@ function fetchMapsResults(query) {
                 phone: phoneInput.value,
                 showAge: showAgeCheckbox.checked,
                 showBirthday: showBirthdayCheckbox.checked,
-                cvData: cvDataSection.style.display === 'block',
                 directComm: directCommSelect.value === 'yes',
                 conferenceLink: localStorage.getItem('conference-link') || '',
                 profilePicture: photoPreview.src
@@ -1192,38 +1188,84 @@ async function updateProfileFile(fileId, content, accessToken) {
         // Add event listeners and initialize components
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('addMoreLinks').addEventListener('click', addLinkPair);
-        });        
-</script>
+        }); 
+    </script>
+<!-- Editor.js core -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.js"></script>
+    
+    <!-- Editor.js tools -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/personality@latest/dist/bundle.js"></script>
+    
     <script>
-    document.addEventListener("DOMContentLoaded", function() {
         const editor = new EditorJS({
             holder: 'editorjs',
             tools: {
                 header: {
                     class: Header,
-                    inlineToolbar: ['link']
+                    inlineToolbar: ['marker', 'link'],
+                    config: {
+                        placeholder: 'Enter a header'
+                    },
+                    shortcut: 'CMD+SHIFT+H'
                 },
                 list: {
                     class: List,
-                    inlineToolbar: true
+                    inlineToolbar: true,
+                    shortcut: 'CMD+SHIFT+L'
                 },
                 image: {
                     class: ImageTool,
                     config: {
                         endpoints: {
                             byFile: 'http://localhost:8008/uploadFile', // Your backend file uploader endpoint
-                            byUrl: 'http://localhost:8008/fetchUrl' // Your endpoint that provides image by URL
+                            byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides image by URL
                         }
                     }
+                },
+                delimiter: Delimiter,
+                marker: {
+                    class: Marker,
+                    shortcut: 'CMD+SHIFT+M'
+                },
+                inlineCode: {
+                    class: InlineCode,
+                    shortcut: 'CMD+SHIFT+C'
+                },
+                raw: RawTool,
+                warning: Warning,
+                personality: {
+                    class: Personality,
+                    config: {
+                        endpoint: 'http://localhost:8008/uploadFile' // Your backend for file uploading
+                    }
                 }
+            },
+            data: {
+                blocks: [
+                    {
+                        type: "header",
+                        data: {
+                            text: "Editor.js",
+                            level: 2
+                        }
+                    },
+                    {
+                        type: "paragraph",
+                        data: {
+                            text: "This is an example of Editor.js with all tools enabled."
+                        }
+                    }
+                ]
             }
         });
-    });
-</script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest/dist/bundle.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest/dist/bundle.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest/dist/bundle.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script>
+    </script>
 </body>
 </html>
