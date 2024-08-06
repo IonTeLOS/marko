@@ -481,16 +481,6 @@ async function saveGoogleProfilePhoto() {
     }
 }
 
-const mapQuery = document.getElementById('mapsSearch');
-mapQuery.addEventListener('input', handleInput);
-
-function handleInput() {
-    const query = mapQuery.value.trim();
-    if (query.length > 0) {
-        fetchMapsResults(query);
-    }
-}
-
 async function fetchMapsResults(query) {
     const apiKey = 'AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww'; // Replace with your actual API key
     const url = 'https://places.googleapis.com/v1/places:searchText';
