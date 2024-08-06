@@ -10,7 +10,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.css">
     <style>
-body {
+        body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 20px;
@@ -105,24 +105,21 @@ body {
             font-weight: bold;
             color: #333;
         }
-/* Ensure the dropdown is positioned relative to its container */
-.dropdown {
-    position: absolute; /* Ensure positioning is correct */
-    z-index: 1000; /* Ensure it appears above other content */
-}
-
-.dropdown-bottom {
-    display: block; /* Display the dropdown when positioned below */
-}
-
-.dropdown-top {
-    display: block; /* Display the dropdown when positioned above */
-}
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            font-size: 2.5em;
-            color: #2196F3;
+        #autocomplete-results {
+            position: absolute;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: #fff;
+            z-index: 1000;
+        }
+        .result-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+        .result-item:hover {
+            background-color: #f0f0f0;
         }
     
     </style>
@@ -245,12 +242,12 @@ body {
                 <label for="donation">Donation Link</label>
                 <input type="url" id="donation" placeholder="https://...">
             </div>
-            <div class="link-pair">
-                    <input id="mapsSearch" class="maps-search" type="text" placeholder="Link Name">
-                                        <div id="dropdown" class="dropdown"></div>
-
-                    <input id="mapsResult" type="url" placeholder="">
-            </div>
+    <div style="position: relative;">
+        <input type="text" id="search-maps-input" placeholder="Enter place name" autocomplete="off">
+        <div id="autocomplete-results"></div>
+    </div>
+    
+    <div id="url-display"></div>
     
             <div class="input-field">
                 <label for="directComm">Accept Direct Communication</label>
@@ -529,66 +526,74 @@ async function fetchMapsResults(query) {
     .catch(error => console.error('Error fetching Maps data:', error));
 }
 
-function showResults(results) {
-    const dropdown = document.getElementById('dropdown');
-    if (!dropdown) {
-        console.error('Dropdown element not found');
-        return;
-    }
-
-    dropdown.innerHTML = '';
-    if (results.length > 0) {
-        firstUrlInDropdown = results[0].link;
-    }
-    results.forEach(result => {
-        const item = document.createElement('div');
-        item.className = 'dropdown-item';
-        item.textContent = result.title;
-        item.dataset.url = result.link;
-        
-        item.addEventListener('click', () => {
-            handleResultClick(result);
+document.getElementById('search-maps-input').addEventListener('input', () => {
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                fetchMapsResults(query);
+            } else {
+                clearResults();
+            }
         });
 
-        dropdown.appendChild(item);
-    });
-    adjustDropdownPosition();
-    dropdown.style.display = results.length ? 'block' : 'none';
-}
-
-function handleResultClick(result) {
-    const url = result.link;
-    document.getElementById('mapsResult').value = url;
-}
-
-function adjustDropdownPosition() {
-    const dropdown = document.getElementById('dropdown');
-    const searchBox = document.getElementById('mapsSearch'); // Use ID selector for mapsSearch
+function fetchMapsResults(query) {
+    const apiKey = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo'; // Replace with your actual API key
+    const url = 'https://places.googleapis.com/v1/places:searchText';
+    const requestBody = {
+        textQuery: query,
+        languageCode: "en"
+    };
     
-    if (!searchBox || !dropdown) return; // Ensure elements exist
-
-    const searchBoxRect = searchBox.getBoundingClientRect();
-    const dropdownRect = dropdown.getBoundingClientRect();
-
-    // Set the width of the dropdown to match the width of the search box
-    dropdown.style.width = `${searchBoxRect.width}px`;
-
-    // Check if there's enough space below the search box
-    if (window.innerHeight - searchBoxRect.bottom > dropdownRect.height) {
-        dropdown.style.top = `${searchBoxRect.bottom}px`; // Position dropdown below search box
-        dropdown.style.bottom = 'auto'; // Reset bottom to auto
-        dropdown.classList.remove('dropdown-top');
-        dropdown.classList.add('dropdown-bottom');
-    } else {
-        dropdown.style.top = 'auto'; // Reset top to auto
-        dropdown.style.bottom = `${window.innerHeight - searchBoxRect.top}px`; // Position dropdown above search box
-        dropdown.classList.remove('dropdown-bottom');
-        dropdown.classList.add('dropdown-top');
-    }
-
-    // Optional: Set the left position of the dropdown to align with the search box
-    dropdown.style.left = `${searchBoxRect.left}px`;
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Goog-Api-Key': apiKey,
+            'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.id'
+        },
+        body: JSON.stringify(requestBody)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`Places API error: ${response.status} ${response.statusText}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.places) {
+            showResults(data.places.map(place => ({
+                title: `${place.displayName.text} - ${place.formattedAddress}`,
+                link: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.displayName.text)}&query_place_id=${place.id}`,
+                source: 'maps'
+            })));
+        }
+    })
+    .catch(error => console.error('Error fetching Maps data:', error));
 }
+
+
+        function showResults(results) {
+            const resultsContainer = document.getElementById('autocomplete-results');
+            resultsContainer.innerHTML = ''; // Clear previous results
+
+            results.forEach(result => {
+                const resultElement = document.createElement('div');
+                resultElement.classList.add('result-item');
+                resultElement.textContent = result.title;
+                resultElement.dataset.link = result.link;
+                
+                resultElement.addEventListener('click', () => {
+                    document.getElementById('url-display').innerHTML = `<a href="${resultElement.dataset.link}" target="_blank">${resultElement.dataset.link}</a>`;
+                    clearResults(); // Optionally clear results on selection
+                });
+
+                resultsContainer.appendChild(resultElement);
+            });
+        }
+
+        function clearResults() {
+            const resultsContainer = document.getElementById('autocomplete-results');
+            resultsContainer.innerHTML = '';
+        }
 
 
 
