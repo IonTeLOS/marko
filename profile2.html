@@ -267,6 +267,12 @@
 <option value="ur">Urdu</option>
                 </select>
             </div>
+    <div class="editor-container">
+        <div class="editor-input-field">
+            <label for="editorjs">Bio</label>
+            <div id="editorjs"></div>
+        </div>
+    </div>            
 <div class="input-field">
     <label for="emoji">Select Emoji</label>
     <emoji-picker id="emoji-picker"></emoji-picker>
@@ -276,12 +282,7 @@
                 <label for="color">Select Color</label>
                 <input type="color" id="color">
             </div>
-    <div class="editor-container">
-        <div class="editor-input-field">
-            <label for="editorjs">Bio</label>
-            <div id="bio"></div>
-        </div>
-    </div>
+
             <div id="links">
                 <div class="link-pair">
                     <input type="text" placeholder="Link Name">
@@ -326,10 +327,7 @@
             <button type="submit">Submit</button>
         </form>
     </div>
-<div class="input-field">
-    <label for="editorjs">Bio (Markdown supported)</label>
-    <div id="editorjs" class="editorjs-wrapper"></div>
-</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.js"></script>
     <script>
