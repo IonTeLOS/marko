@@ -10,6 +10,8 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.css">
+        <script src="https://cdn.jsdelivr.net/npm/editorjs-html@latest/build/edjsHTML.js"></script>
+
     <style>
         body {
             font-family: 'Roboto', sans-serif;
@@ -19,6 +21,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         .container {
             max-width: 600px;
@@ -166,10 +169,75 @@
             margin-bottom: 10px;
             font-weight: bold;
         }
-        #editorjs {
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .editor-container {
+            width: 100%;
+            max-width: 1000px;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+        .editor-input-field {
+            margin-bottom: 20px;
+        }
+        .editor-input-field label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+            /* Editor.js Container */
+    #editorjs {
+                border: 2px solid #ccc;
+            border-radius: 4px;
+      margin: 0 auto; /* Center the editor */
+      max-width: 100%; /* Ensure the editor width fits within the viewport */
+      box-sizing: border-box;
+    }
+        /* Material Design input styles */
+    .material-input {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .material-input input {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 16px;
+      width: 100%;
+      box-sizing: border-box;
+      outline: none;
+    }
+
+    .material-input input:focus {
+      border-color: #3f51b5;
+    }
+
+    /* iFrame container styling */
+    .iframe-container {
+      width: 100%;
+      overflow: hidden; /* Prevent horizontal scrolling */
+      background-color: #f0f0f0; /* Light grey background for better visibility */
+    }
+
+    iframe {
+      top: 0;
+      left: 0;
+      width: 100%;
+      border: none;
+    }
+
+    /* Hide horizontal scrollbar */
+    body {
+      overflow-x: hidden;
+    
+
+    /* Mobile-friendly adjustments */
+    @media (max-width: 600px) {
+      .material-input input {
+        font-size: 14px;
+      }
+    }
     </style>
 </head>
 <body>
@@ -272,7 +340,7 @@
             <label for="editorjs">Bio</label>
             <div id="editorjs"></div>
         </div>
-    </div>            
+    </div>      
 <div class="input-field">
     <label for="emoji">Select Emoji</label>
     <emoji-picker id="emoji-picker"></emoji-picker>
@@ -1185,7 +1253,7 @@ async function updateProfileFile(fileId, content, accessToken) {
             document.getElementById('addMoreLinks').addEventListener('click', addLinkPair);
         }); 
     </script>
-<!-- Editor.js core -->
+ <!-- Editor.js core -->
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.js"></script>
     
     <!-- Editor.js tools -->
@@ -1194,12 +1262,92 @@ async function updateProfileFile(fileId, content, accessToken) {
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest/dist/bundle.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest/dist/bundle.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest/dist/bundle.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest/dist/bundle.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@latest/dist/bundle.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/warning@latest/dist/bundle.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@editorjs/personality@latest/dist/bundle.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/editorjs-inline-image"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/editorjs-button@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/editorjs-html/build/index.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/editorjs-paragraph-with-alignment@3.0.0"></script>
     
     <script>
+            
+class IFrameTool {
+      static get toolbox() {
+        return {
+          title: 'iFrame',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M21 3H3v18h18V3zm-1 16H4V6h16v13z"/></svg>',
+        };
+      }
+
+      constructor({ data }) {
+        this.data = data || { url: '', height: 500 };
+      }
+
+      render() {
+        const container = document.createElement('div');
+        container.classList.add('iframe-container');
+
+        // URL Input
+        const urlInputContainer = document.createElement('div');
+        urlInputContainer.classList.add('material-input');
+        const urlInput = document.createElement('input');
+        urlInput.type = 'text';
+        urlInput.placeholder = 'Enter iFrame URL';
+        urlInput.value = this.data.url;
+        urlInput.addEventListener('input', (e) => {
+          this.data.url = e.target.value;
+          this.updateIframe();
+        });
+        urlInputContainer.appendChild(urlInput);
+        container.appendChild(urlInputContainer);
+
+        // Height Input
+        const heightInputContainer = document.createElement('div');
+        heightInputContainer.classList.add('material-input');
+        const heightInput = document.createElement('input');
+        heightInput.type = 'number';
+        heightInput.placeholder = 'Height (px)';
+        heightInput.value = this.data.height;
+        heightInput.addEventListener('input', (e) => {
+          this.data.height = e.target.value;
+          this.updateIframe();
+        });
+        heightInputContainer.appendChild(heightInput);
+        container.appendChild(heightInputContainer);
+
+        // iFrame
+        this.iframe = document.createElement('iframe');
+        this.updateIframe();
+
+        container.appendChild(this.iframe);
+
+        return container;
+      }
+
+      updateIframe() {
+        if (this.data.url) {
+          // Adjust URL for YouTube videos
+          const youtubeUrlPattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+          const isYoutube = youtubeUrlPattern.test(this.data.url);
+
+          // Convert to YouTube embed URL if necessary
+          if (isYoutube) {
+            const videoId = this.data.url.match(youtubeUrlPattern)[1];
+            this.iframe.src = `https://www.youtube.com/embed/${videoId}`;
+          } else {
+            this.iframe.src = this.data.url;
+          }
+
+          // Set the iframe height and ensure it is responsive
+          this.iframe.style.height = `${this.data.height}px`;
+        }
+      }
+
+      save() {
+        return this.data;
+      }
+    }
         const editor = new EditorJS({
             holder: 'editorjs',
             tools: {
@@ -1211,54 +1359,110 @@ async function updateProfileFile(fileId, content, accessToken) {
                     },
                     shortcut: 'CMD+SHIFT+H'
                 },
+                paragraph: {
+                        class: Paragraph,
+                        inlineToolbar: true,
+                        config: {
+                            placeholder: 'Enter a paragraph'
+                        }
+      
+                },
                 list: {
                     class: List,
                     inlineToolbar: true,
                     shortcut: 'CMD+SHIFT+L'
                 },
-                image: {
-                    class: ImageTool,
-                    config: {
-                        endpoints: {
-                            byFile: 'http://localhost:8008/uploadFile', // Your backend file uploader endpoint
-                            byUrl: 'http://localhost:8008/fetchUrl', // Your endpoint that provides image by URL
-                        }
-                    }
-                },
+                      image: {
+        class: InlineImage,
+        inlineToolbar: true,
+        config: {
+          embed: {
+            display: true,
+          },
+          unsplash: {
+            appName: 'your_app_name',
+            apiUrl: 'https://your-proxy-api-url.com',
+            maxResults: 30,
+          }
+        }
+      },
+      table: {
+      class: Table,
+      inlineToolbar: true,
+      config: {
+        rows: 2,
+        cols: 3,
+      },
+    },
+AnyButton: {
+          class: AnyButton,
+          inlineToolbar: false,
+          config:{
+            css:{
+              "btnColor": "btn--blue",
+            },
+            textValidation: (text) => {
+              console.log("error!", text)
+              return true;
+            },
+            linkValidation: (text) => {
+              console.log("error!", text)
+              return false;
+            }
+          }
+        },
+ 
+          iframe: IFrameTool,
+
+
                 delimiter: Delimiter,
                 marker: {
                     class: Marker,
                     shortcut: 'CMD+SHIFT+M'
                 },
-                inlineCode: {
-                    class: InlineCode,
-                    shortcut: 'CMD+SHIFT+C'
-                },
                 raw: RawTool,
-                warning: Warning,
-                personality: {
-                    class: Personality,
-                    config: {
-                        endpoint: 'http://localhost:8008/uploadFile' // Your backend for file uploading
-                    }
-                }
             },
             data: {
                 blocks: [
                     {
                         type: "header",
                         data: {
-                            text: "Editor.js",
+                            text: "Bio",
                             level: 2
                         }
                     },
                     {
                         type: "paragraph",
                         data: {
-                            text: "This is an example of Editor.js with all tools enabled."
+                            text: "You can create any content you wish here.."
+
                         }
                     }
                 ]
+            }
+        });
+        
+        document.getElementById('submitBio').addEventListener('click', function() {
+            editor.save().then((outputData) => {
+                console.log('Article data: ', outputData);
+
+                // Convert Editor.js data to HTML using editorjs-html
+                const edjsParser = edjsHTML();
+                const html = edjsParser.parse(outputData).join('');
+                document.getElementById('output').innerHTML = html;
+
+                // Save HTML to localStorage
+                localStorage.setItem('editorBio', html);
+            }).catch((error) => {
+                console.log('Saving failed: ', error);
+            });
+        });
+
+        // Load and display saved HTML from localStorage on page load
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const savedBio = localStorage.getItem('editorBio');
+            if (savedBio) {
+                document.getElementById('output').innerHTML = savedBio;
             }
         });
     </script>
