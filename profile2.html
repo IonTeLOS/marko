@@ -244,7 +244,16 @@
         align-items: center;
         gap: 10px; /* Adds space between checkboxes and labels */
 }
-     .my-emoji {
+     .duo-input-field {
+        display: flex;
+        align-items: center; /* Vertically align items */
+        gap: 10px; /* Optional: Adds space between elements */
+}
+
+.detected-info {
+    margin-right: auto; /* Pushes the next elements (checkbox and label) to the right */
+}
+ .my-emoji {
     padding: 10px 10px 10px 0; /* Top, Right, Bottom padding with Left padding as 0 */
     display: inline-block; /* Ensure the span respects height/width */
     width: 36px;
@@ -292,7 +301,7 @@
                 <label for="phone">Phone Number</label>
                 <div style="display: flex; gap: 10px;">
                     <select id="countryCode" style="width: 30%;">
-                        <option value="" selected disabled>Select country code</option>
+                        <option value="" selected disabled>Country code</option>
                         <!-- Country code options will be populated by JavaScript -->
                     </select>
                     <input type="tel" id="phone" style="width: 70%;" disabled maxlength="17" oninput="validatePhoneNumber(this)">
@@ -313,13 +322,13 @@
         <label for="showBirthday">Show only birthday</label>
     </div>
 </div>
-            <div class="input-field">
+            <div class="duo-input-field">
                 <label for="timezone">Timezone</label>
                 <span id="detectedTimezone" class="detected-info"></span>
                 <input type="checkbox" id="hideTimezone">
                 <label for="hideTimezone">Hide timezone</label>
             </div>
-            <div class="input-field">
+            <div class="duo-input-field">
                 <label for="language">Main Language</label>
                 <span id="detectedLanguage" class="detected-info"></span>
                 <input type="checkbox" id="hideLanguage">
