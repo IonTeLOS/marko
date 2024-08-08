@@ -244,6 +244,16 @@
         align-items: center;
         gap: 10px; /* Adds space between checkboxes and labels */
 }
+     .selected-emoji {
+    padding: 10px 10px 10px 0; /* Top, Right, Bottom padding with Left padding as 0 */
+    display: inline-block; /* Ensure the span respects height/width */
+    width: 36px;
+    height: 36px;
+    line-height: 36px; /* Vertically center the emoji inside the span */
+    text-align: center; /* Horizontally center the emoji inside the span */
+    box-sizing: border-box; /* Include padding within the width/height */
+}
+   
     </style>
 </head>
 <body>
@@ -251,11 +261,11 @@
         <div id="signInButtonContainer" style="display: none; width: 100%; height: 100px; margin-bottom: 20px;">
     <div id="signInButton"></div>
     </div>
-        <h1>Create Your Marko Profile</h1>
+        <h1>Create Marko Profile</h1>
         <form id="profileForm">
             <div class="input-field">
                 <label for="profilePicture" class="profile-pic-label">
-                    <i class="material-icons">add_a_photo</i> Upload Profile Photo
+                    <i class="material-icons">add_a_photo</i>Upload Profile Photo
                 </label>
                 <input type="file" id="profilePicture" accept="image/*">
                 <div class="photo-upload-options">
@@ -267,7 +277,7 @@
             <div id="savePhoto" class="button-container" style="display: none; margin-top: 10px; margin-bottom: 10px;">
         <button onclick="saveProfilePhoto()">
             <span class="material-icons">save</span>
-            Use Photo
+            Use this Photo
         </button>
         </div>
             <div class="input-field">
@@ -294,7 +304,7 @@
                 <button type="button" id="addTelegram">Add Telegram</button>
             </div>
 <div class="input-field">
-    <label for="dob">Date of Birth (optional)</label>
+    <label for="dob">Date of Birth</label>
     <input type="date" id="dob" max="">
     <div style="display: flex; align-items: center; gap: 10px;">
         <input type="checkbox" id="showAge">
@@ -1058,17 +1068,17 @@ document.addEventListener('DOMContentLoaded', function() {
         const addTelegram = document.getElementById('addTelegram');
 
         addWhatsapp.addEventListener('click', () => {
-            const number = countryCodeInput.value + phoneInput.value;
+            const number = countryCodeInput.value + phoneInput.value.trim();
             localStorage.setItem('whatsapp', `https://wa.me/${number}`);
         });
 
         addViber.addEventListener('click', () => {
-            const number = countryCodeInput.value + phoneInput.value;
+            const number = countryCodeInput.value + phoneInput.value.trim();
             localStorage.setItem('viber', `viber://chat?number=${number}`);
         });
 
         addTelegram.addEventListener('click', () => {
-            const number = countryCodeInput.value + phoneInput.value;
+            const number = countryCodeInput.value + phoneInput.value.trim();
             localStorage.setItem('telegram', `https://t.me/${number}`);
         });
 
