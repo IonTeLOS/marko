@@ -47,7 +47,7 @@
 
       eventSource.addEventListener("message", event => {
         const notification = JSON.parse(event.data);
-        sendNotification(notification.title, notification.message, topic);
+        sendNotification(notification.title, notification.body, topic);
       });
 
       eventSource.addEventListener("error", () => {
