@@ -670,7 +670,7 @@ async function saveProfilePhoto() {
 
         // Fetch profile avatar if available
         if (profileAvatarUrl) {
-            const avatarResponse = await fetch(profileAvatarUrl);
+            const avatarResponse = await fetch('https://corsproxy.io/?' + profileAvatarUrl);
             if (avatarResponse.ok) {
                 photoBlob = await avatarResponse.blob(); // Use profile avatar blob
             }
