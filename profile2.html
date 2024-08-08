@@ -238,6 +238,12 @@
         font-size: 14px;
       }
     }
+        /* Ensure checkboxes and labels are on the same line */
+    .input-field div {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Adds space between checkboxes and labels */
+}
     </style>
 </head>
 <body>
@@ -287,16 +293,16 @@
                 <button type="button" id="addViber">Add Viber</button>
                 <button type="button" id="addTelegram">Add Telegram</button>
             </div>
-            <div class="input-field">
-                <label for="dob">Date of Birth</label>
-                <input type="date" id="dob">
-                <div>
-                    <input type="checkbox" id="showAge">
-                    <label for="showAge">Show only age</label>
-                    <input type="checkbox" id="showBirthday">
-                    <label for="showBirthday">Show only birthday</label>
-                </div>
-            </div>
+<div class="input-field">
+    <label for="dob">Date of Birth (optional)</label>
+    <input type="date" id="dob" max="">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <input type="checkbox" id="showAge">
+        <label for="showAge">Show only age</label>
+        <input type="checkbox" id="showBirthday">
+        <label for="showBirthday">Show only birthday</label>
+    </div>
+</div>
             <div class="input-field">
                 <label for="timezone">Timezone</label>
                 <span id="detectedTimezone" class="detected-info"></span>
@@ -793,7 +799,26 @@ function validatePhoneNumber(input) {
         alert('this does not look like a phone number to me..');
     }
 }
+        
+document.addEventListener('DOMContentLoaded', function() {
+    const dobInput = document.getElementById('dob');
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Set the max attribute to today's date to prevent selecting future dates
+    dobInput.setAttribute('max', today);
 
+    // Event listeners for the checkboxes
+    const checkboxes = document.querySelectorAll('#showAge, #showBirthday');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            if (this.checked && !dobInput.value) {
+                alert('Pick a date');
+                dobInput.focus();  // Open the datepicker
+            }
+        });
+    });
+});
         // Populate country codes
        const countryCodes = [
     { name: "Afghanistan (افغانستان)", code: "+93" },
