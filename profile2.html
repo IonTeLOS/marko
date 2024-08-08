@@ -1276,7 +1276,7 @@ function disableInput(field) {
 
         profileForm.addEventListener('submit', async (event) => {
             event.preventDefault();
-
+            
             const profileData = {
                 name: document.getElementById('name').value,
                 email: document.getElementById('email').value,
@@ -1289,15 +1289,8 @@ function disableInput(field) {
                 profilePicture: localStorage.getItem('profile-photo-source') || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg'
             };
 
-            // Retrieve the existing 'profile-data' array from localStorage
-            let profileDataArray = JSON.parse(localStorage.getItem('profile-data')) || [];
+            localStorage.setItem('profile-data', JSON.stringify([profileData]));
 
-            // Add the new profileData object to the array
-            profileDataArray.push(profileData);
-
-            // Save the updated array back to localStorage
-            localStorage.setItem('profile-data', JSON.stringify(profileDataArray));
-            
             try {
                 await  handleFormSubmit(profileData);
                 successMessage.textContent = 'Profile successfully created!';
