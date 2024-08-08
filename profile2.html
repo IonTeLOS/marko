@@ -829,6 +829,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+function disableInput(field) {
+    const inputElement = document.getElementById(field);
+    inputElement.disabled = true;
+}        
+        
         // Populate country codes
        const countryCodes = [
     { name: "Afghanistan (افغانستان)", code: "+93" },
@@ -1070,16 +1076,19 @@ document.addEventListener('DOMContentLoaded', function() {
         addWhatsapp.addEventListener('click', () => {
             const number = countryCodeInput.value + phoneInput.value.trim();
             localStorage.setItem('whatsapp', `https://wa.me/${number}`);
+            disableInput('phone');
         });
 
         addViber.addEventListener('click', () => {
             const number = countryCodeInput.value + phoneInput.value.trim();
             localStorage.setItem('viber', `viber://chat?number=${number}`);
+            disableInput('phone');
         });
 
         addTelegram.addEventListener('click', () => {
             const number = countryCodeInput.value + phoneInput.value.trim();
             localStorage.setItem('telegram', `https://t.me/${number}`);
+            disableInput('phone');
         });
 
         // Handle DOB options
