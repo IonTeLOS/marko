@@ -283,7 +283,7 @@
         </div>
             <div id="createAvatar" class="button-container" style="margin-top: 10px; margin-bottom: 10px;">
         <button>
-            <span class="material-icons">contact</span>
+            <span class="material-icons">account_circle</span>
             Random Avatar
         </button>
         </div>
@@ -1221,6 +1221,7 @@ function disableInput(field) {
         document.getElementById('createAvatar').addEventListener('click', () => {
             const randomAvatar = generateRandomAvatarUrl();
             photoPreview.src = randomAvatar;
+            profilePreview.style.display = 'block';
             localStorage.setItem('avatar', randomAvatar);
         });
 
