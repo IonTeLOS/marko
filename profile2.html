@@ -544,6 +544,7 @@ async function getUserInfo(accessToken) {
         document.getElementById('savePhoto').style.display = 'block';
         document.querySelector('.photo-upload-options').style.display = 'block';
         localStorage.setItem('google-profile-photo', userInfo.picture);
+        localStorage.removeItem('avatar');
         return {
             email: userInfo.email,
             name: userInfo.name,
@@ -649,34 +650,39 @@ async function deleteFile(fileId, accessToken) {
 async function saveProfilePhoto() {
     const file = photoInput.files[0];
             if (file) {
-                if (document.getElementById('addAsData').checked) {
-                    const base64Data = await toBase64(file);
-                    localStorage.setItem('photo-data', base64Data);
-                    alert('Photo stored as data');
-                } else {
-                    const uploadedPhotoId = await uploadFile(file);
-                    localStorage.setItem('photo-link', uploadedPhotoId);
-                    alert('Photo saved to Google Drive');
-                }
+                const uploadedPhotoId = await uploadFile(file);
+                localStorage.setItem('photo-link', uploadedPhotoId);
+                alert('Photo saved to Google Drive');
                 document.querySelector('.photo-upload-options').style.display = 'none';
                 document.getElementById('savePhoto').style.display = 'none';
                 return;
             }
     try {
         const profilePhotoUrl = localStorage.getItem('google-profile-photo');
-        
+        const profileAvatarUrl = localStorage.getItem('avatar');
+
         if (!profilePhotoUrl) {
             throw new Error('Profile photo URL not found in localStorage');
         }
+        if (!profileAvatarUrl) {
+            throw new Error('Profile avatar URL not found in localStorage');
+        }
 
+        let photoBlob = null;
+        // Fetch the profile photo
+        const avatarResponse = await fetch(profileAvatarUrl);
+        if (!avatarResponse.ok) {
+            throw new Error('Failed to fetch profile avatar');
+        } else {
+            photoBlob = await avatarResponse.blob();
+        }
         // Fetch the profile photo
         const photoResponse = await fetch(profilePhotoUrl);
         if (!photoResponse.ok) {
             throw new Error('Failed to fetch profile photo');
+        } else {
+            photoBlob = await photoResponse.blob();
         }
-
-        // Convert the photo to a Blob
-        const photoBlob = await photoResponse.blob();
 
         // Call the upload function with the Blob
         const accessToken = localStorage.getItem('accessToken');
@@ -1154,6 +1160,7 @@ function disableInput(field) {
             const file = photoInput.files[0];
             if (file) {
                 showPhotoPreview(file);
+                localStorage.removeItem('avatar');
                 document.getElementById('savePhoto').style.display = 'block';
             }
         });
