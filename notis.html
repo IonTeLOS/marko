@@ -42,7 +42,7 @@
         }
       });
 
-      const url = `https://ntfy.sh/${topic}`;
+      const url = `https://corsproxy.io?https://ntfy.sh/${topic}`;
       eventSource = new EventSource(url);
 
       eventSource.addEventListener("message", event => {
