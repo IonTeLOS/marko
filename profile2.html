@@ -244,7 +244,7 @@
         align-items: center;
         gap: 10px; /* Adds space between checkboxes and labels */
 }
-     .selected-emoji {
+     .my-emoji {
     padding: 10px 10px 10px 0; /* Top, Right, Bottom padding with Left padding as 0 */
     display: inline-block; /* Ensure the span respects height/width */
     width: 36px;
@@ -362,12 +362,12 @@
         </div>
     </div>      
 <div class="input-field">
-    <label for="emoji">Select Emoji</label>
+    <label for="emoji">Mood of the day</label>
     <emoji-picker id="emoji-picker"></emoji-picker>
-    <div>Selected Emoji: <span id="selected-emoji"></span></div>
+    <div id="my-emoji">Selected Emoji: <span id="selected-emoji"></span></div>
 </div>
             <div class="input-field">
-                <label for="color">Select Color</label>
+                <label for="color">Select Color (for page theme)</label>
                 <input type="color" id="color">
             </div>
 
