@@ -1305,7 +1305,7 @@ function disableInput(field) {
 async function handleFormSubmit(profileData, event) {
     
     const token = localStorage.getItem('accessToken');
-    if (token) {
+    if (!token) {
         console.error('No access token token found. Please sign in first.');
         return;
     }
