@@ -606,7 +606,12 @@ async function getUserInfo(accessToken) {
                         role: 'reader'
                     })
                 });
-
+                
+        // Construct the file URL
+        const fileUrl = `https://drive.google.com/uc?export=view&id=${uploadResult.id}`;
+        console.log('img src is: ' + fileUrl);        
+        // Save the URL to localStorage
+        localStorage.setItem('profile-picture-source', fileUrl);
                 return uploadResult.id;
             } catch (error) {
                 console.error('Error uploading file:', error);
@@ -670,17 +675,15 @@ async function saveProfilePhoto() {
 
         // Fetch profile avatar if available
         if (profileAvatarUrl) {
-            const avatarResponse = await fetch('https://corsproxy.io/?' + profileAvatarUrl);
-            if (avatarResponse.ok) {
-                photoBlob = await avatarResponse.blob(); // Use profile avatar blob
-            }
+            localStorage.setItem('profile-picture-source', profileAvatarUrl);
         }
 
-        // If avatar is not available or fetch failed, fall back to profile photo
-        if (!photoBlob && profilePhotoUrl) {
+        // If avatar is not available or fetch failed, fall back to profile photo or default photo
+        if (profilePhotoUrl) {
             const photoResponse = await fetch(profilePhotoUrl);
             if (!photoResponse.ok) {
                 throw new Error('Failed to fetch profile photo');
+                localStorage.setItem('profile-picture-source', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg');
             }
             photoBlob = await photoResponse.blob(); // Use profile photo blob
         }
@@ -688,6 +691,7 @@ async function saveProfilePhoto() {
         // If no blob was fetched, handle the error
         if (!photoBlob) {
             throw new Error('No photo blob fetched');
+            localStorage.setItem('profile-picture-source', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg');
         }
 
         // Retrieve access token
