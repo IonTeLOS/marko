@@ -609,13 +609,14 @@ async function getUserInfo(accessToken) {
                 });
                 
         // Construct the file URL
-        const fileUrl = `<img src="https://drive.google.com/thumbnail?id=${uploadResult.id}`;
+        const fileUrl = `https://drive.google.com/thumbnail?id=${uploadResult.id}`;
         console.log('img src is: ' + fileUrl);        
         // Save the URL to localStorage
         localStorage.setItem('profile-picture-source', fileUrl);
                 return uploadResult.id;
             } catch (error) {
                 console.error('Error uploading file:', error);
+                localStorage.setItem('profile-picture-source', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg');
                 throw error;
             }
         }
@@ -657,7 +658,6 @@ async function saveProfilePhoto() {
     const file = photoInput.files[0];
             if (file) {
                 const uploadedPhotoId = await uploadFile(file);
-                localStorage.setItem('photo-link', uploadedPhotoId);
                 alert('Photo saved to Google Drive');
                 document.querySelector('.photo-upload-options').style.display = 'none';
                 document.getElementById('savePhoto').style.display = 'none';
@@ -670,17 +670,23 @@ async function saveProfilePhoto() {
 
         if (!profileAvatarUrl && !profilePhotoUrl) {
             throw new Error('No profile URL found in localStorage');
+            localStorage.setItem('profile-picture-source', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg');
         }
 
         let photoBlob = null;
 
         // Fetch profile avatar if available
         if (profileAvatarUrl) {
-            localStorage.setItem('profile-picture-source', profileAvatarUrl);
+            const avatarResponse = await fetch('https://corsproxy.io/?' + profileAvatarUrl);
+            if (avatarResponse.ok) {
+                photoBlob = await avatarResponse.blob(); // Use profile avatar blob
+            } else {
+                localStorage.setItem('profile-picture-source', profileAvatarUrl);
+            }
         }
 
-        // If avatar is not available or fetch failed, fall back to profile photo or default photo
-        if (profilePhotoUrl) {
+        // If avatar is not available or fetch failed, fall back to profile photo
+        if (!photoBlob && profilePhotoUrl) {
             const photoResponse = await fetch(profilePhotoUrl);
             if (!photoResponse.ok) {
                 throw new Error('Failed to fetch profile photo');
@@ -699,6 +705,7 @@ async function saveProfilePhoto() {
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) {
             throw new Error('Access token not found in localStorage');
+            alert('login to upload to Google drive');
         }
 
         // Upload the photo blob
@@ -712,9 +719,10 @@ async function saveProfilePhoto() {
         return photoBlob;
     } catch (error) {
         console.error('Error:', error);
+        localStorage.setItem('profile-picture-source', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg');    
     }
 }
-
+        
 async function fetchMapsResults(query) {
     const apiKey = 'AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww'; // Replace with your actual API key
     const url = 'https://places.googleapis.com/v1/places:searchText';
