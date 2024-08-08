@@ -33,6 +33,8 @@
       }
     });
 
+    let eventSource;
+
     function subscribeToTopic() {
       const topic = document.getElementById("topic").value;
       if (topic.trim() === "") {
@@ -41,7 +43,7 @@
       }
 
       const url = `https://ntfy.sh/${topic}`;
-      const eventSource = new EventSource(url);
+      eventSource = new EventSource(url);
 
       eventSource.addEventListener("message", event => {
         const notification = JSON.parse(event.data);
@@ -59,8 +61,7 @@
         const options = {
           body: body,
           icon: "https://ntfy.sh/favicon.ico",
-          tag: topic,
-          renotify: true
+          tag: topic
         };
         new Notification(title, options);
       } else {
