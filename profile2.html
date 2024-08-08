@@ -1275,9 +1275,17 @@ function disableInput(field) {
                 showBirthday: showBirthdayCheckbox.checked,
                 directComm: directCommSelect.value === 'yes',
                 conferenceLink: localStorage.getItem('conference-link') || '',
-                profilePicture: photoPreview.src
+                profilePicture: localStorage.getItem('profile-photo-source') || 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg'
             };
 
+            // Retrieve the existing 'profile-data' array from localStorage
+            let profileDataArray = JSON.parse(localStorage.getItem('profile-data')) || [];
+
+            // Add the new profileData object to the array
+            profileDataArray.push(profileData);
+
+            // Save the updated array back to localStorage
+            localStorage.setItem('profile-data', JSON.stringify(profileDataArray));
             
             try {
                 await  handleFormSubmit(profileData);
@@ -1291,16 +1299,14 @@ function disableInput(field) {
 
 
 async function handleFormSubmit(profileData, event) {
-    localStorage.setItem('profile-data', JSON.stringify(profileData));
-
+    
     const token = localStorage.getItem('accessToken');
-    if (!idToken) {
+    if (token) {
         console.error('No access token token found. Please sign in first.');
         return;
     }
 
     try {
-
         await createOrUpdateProfile(profileData, token);
     } catch (error) {
         console.error('Error creating or updating profile:', error);
