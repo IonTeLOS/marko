@@ -657,47 +657,56 @@ async function saveProfilePhoto() {
                 document.getElementById('savePhoto').style.display = 'none';
                 return;
             }
-    try {
-        const profilePhotoUrl = localStorage.getItem('google-profile-photo');
+        try {
+        // Retrieve URLs from localStorage
         const profileAvatarUrl = localStorage.getItem('avatar');
+        const profilePhotoUrl = localStorage.getItem('google-profile-photo');
 
-        if (!profilePhotoUrl) {
-            throw new Error('Profile photo URL not found in localStorage');
-        }
-        if (!profileAvatarUrl) {
-            throw new Error('Profile avatar URL not found in localStorage');
+        if (!profileAvatarUrl && !profilePhotoUrl) {
+            throw new Error('No profile URL found in localStorage');
         }
 
         let photoBlob = null;
-        // Fetch the profile photo
-        const avatarResponse = await fetch(profileAvatarUrl);
-        if (!avatarResponse.ok) {
-            throw new Error('Failed to fetch profile avatar');
-        } else {
-            photoBlob = await avatarResponse.blob();
-        }
-        // Fetch the profile photo
-        const photoResponse = await fetch(profilePhotoUrl);
-        if (!photoResponse.ok) {
-            throw new Error('Failed to fetch profile photo');
-        } else {
-            photoBlob = await photoResponse.blob();
+
+        // Fetch profile avatar if available
+        if (profileAvatarUrl) {
+            const avatarResponse = await fetch(profileAvatarUrl);
+            if (avatarResponse.ok) {
+                photoBlob = await avatarResponse.blob(); // Use profile avatar blob
+            }
         }
 
-        // Call the upload function with the Blob
+        // If avatar is not available or fetch failed, fall back to profile photo
+        if (!photoBlob && profilePhotoUrl) {
+            const photoResponse = await fetch(profilePhotoUrl);
+            if (!photoResponse.ok) {
+                throw new Error('Failed to fetch profile photo');
+            }
+            photoBlob = await photoResponse.blob(); // Use profile photo blob
+        }
+
+        // If no blob was fetched, handle the error
+        if (!photoBlob) {
+            throw new Error('No photo blob fetched');
+        }
+
+        // Retrieve access token
         const accessToken = localStorage.getItem('accessToken');
         if (!accessToken) {
             throw new Error('Access token not found in localStorage');
         }
-        
+
+        // Upload the photo blob
         await uploadFile(photoBlob, accessToken);
         alert('Photo saved to Google Drive');
+
+        // Hide photo upload options
         document.querySelector('.photo-upload-options').style.display = 'none';
         document.getElementById('savePhoto').style.display = 'none';
+
         return photoBlob;
     } catch (error) {
-        console.error('Error fetching or converting profile photo:', error);
-        throw error;
+        console.error('Error:', error);
     }
 }
 
