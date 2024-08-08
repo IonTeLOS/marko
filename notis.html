@@ -57,18 +57,41 @@
       });
     }
 
-    function sendNotification(title, body, topic) {
-      if (Notification.permission === "granted") {
-        const options = {
-          body: body,
-          icon: "https://ntfy.sh/favicon.ico",
-          tag: topic
-        };
-        new Notification(title, options);
-      } else {
-        console.log("Notification permission not granted.");
+function sendNotification(title, body, topic) {
+  if (Notification.permission === "granted") {
+    // Send the notification locally (only to the current client)
+    const options = {
+      body: body,
+      icon: "https://ntfy.sh/favicon.ico",
+      tag: topic
+    };
+    new Notification(title, options);
+
+    // Publish the notification to the ntfy.sh topic for other subscribers
+    const url = `https://ntfy.sh/${topic}`;
+    fetch(url, {
+      method: "POST",
+      body: body,
+      headers: {
+        "Title": title,
+        "Priority": "default" // You can set priority to "default", "high", or "max"
       }
-    }
+    })
+    .then(response => {
+      if (response.ok) {
+        console.log("Notification sent to topic subscribers.");
+      } else {
+        console.log("Failed to send notification to topic subscribers.");
+      }
+    })
+    .catch(error => {
+      console.error("Error sending notification to topic subscribers:", error);
+    });
+  } else {
+    console.log("Notification permission not granted.");
+  }
+}
+
   </script>
 </body>
 </html>
