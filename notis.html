@@ -15,7 +15,7 @@
   <div>
     <label for="message">Message:</label>
     <input type="text" id="message" placeholder="Enter message">
-    <button onclick="sendNotification()">Send Notification</button>
+    <button onclick="sendNotification('Manual Message', document.getElementById('message').value, 'manual')">Send Notification</button>
   </div>
 
   <script>
@@ -23,15 +23,6 @@
     if (!("Notification" in window)) {
       alert("This browser does not support desktop notifications.");
     }
-
-    // Request Notification permission
-    Notification.requestPermission().then(permission => {
-      if (permission === "granted") {
-        console.log("Notification permission granted.");
-      } else {
-        console.log("Notification permission denied.");
-      }
-    });
 
     let eventSource;
 
@@ -42,12 +33,22 @@
         return;
       }
 
+      // Request Notification permission on subscribe
+      Notification.requestPermission().then(permission => {
+        if (permission === "granted") {
+          console.log("Notification permission granted.");
+        } else {
+          console.log("Notification permission denied.");
+        }
+      });
+
       const url = `https://ntfy.sh/${topic}`;
       eventSource = new EventSource(url);
 
       eventSource.addEventListener("message", event => {
+        console.log("Received event data:", event.data);
         const notification = JSON.parse(event.data);
-        sendNotification(notification.title, notification.body, topic);
+        sendNotification(notification.title || "No title", notification.body || "No body", topic);
       });
 
       eventSource.addEventListener("error", () => {
