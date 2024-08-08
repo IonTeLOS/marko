@@ -263,7 +263,6 @@
     <div id="signInButton"></div>
     </div>
         <h1>Create Marko Profile</h1>
-<img src="https://drive.google.com/thumbnail?id=1Rfe-_smki9Zj4Npxo019yPPOx-o8KVKR" alt="My Google Drive Image">
         <form id="profileForm">
             <div class="input-field">
                 <label for="profilePicture" class="profile-pic-label">
@@ -296,6 +295,11 @@
                 <label for="email">Email</label>
                 <input type="email" id="email" placeholder="Write email or leave blank to show your Gmail address">
             </div>
+            <div class="input-field">
+            <label for="tweetInput">Enter your tweet:</label><br>
+            <textarea id="tweetInput" maxlength="280" rows="4" cols="50" placeholder="What's happening?"></textarea><br>
+            <span id="charCount">280 characters remaining</span>
+            </div>    
             <div class="input-field">
                 <label for="phone">Phone Number</label>
                 <div style="display: flex; gap: 10px;">
@@ -850,6 +854,13 @@ function validatePhoneNumber(input) {
 }
         
 document.addEventListener('DOMContentLoaded', function() {
+  const tweetInput = document.getElementById('tweetInput');
+  const charCount = document.getElementById('charCount');
+
+  tweetInput.addEventListener('input', () => {
+    const remaining = 280 - tweetInput.value.length;
+    charCount.textContent = `${remaining} characters remaining`;
+  });
     const dobInput = document.getElementById('dob');
     const today = new Date().toISOString().split('T')[0];
     
