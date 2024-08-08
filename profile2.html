@@ -281,6 +281,12 @@
             Use this Photo
         </button>
         </div>
+            <div id="createAvatar" class="button-container" style="margin-top: 10px; margin-bottom: 10px;">
+        <button>
+            <span class="material-icons">contact</span>
+            Random Avatar
+        </button>
+        </div>
             <div class="input-field">
                 <label for="name">Name (required)</label>
                 <input type="text" id="name" required>
@@ -839,6 +845,7 @@ function disableInput(field) {
     const inputElement = document.getElementById(field);
     inputElement.disabled = true;
 }        
+
         
         // Populate country codes
        const countryCodes = [
@@ -1173,7 +1180,52 @@ function disableInput(field) {
                 reader.readAsDataURL(file);
             });
         }
+        // Define the possible values for each parameter
+        const avatarParams = {
+            avatarStyle: ['Circle', 'Transparent'],
+            topType: ['NoHair', 'Eyepatch', 'Hat', 'Hijab', 'Turban', 'WinterHat1', 'WinterHat2', 'WinterHat3', 'WinterHat4', 'LongHairBigHair', 'LongHairBob', 'LongHairBun', 'LongHairCurly', 'LongHairCurvy', 'LongHairDreads', 'LongHairFrida', 'LongHairFro', 'LongHairFroBand', 'LongHairNotTooLong', 'LongHairShavedSides', 'LongHairMiaWallace', 'LongHairStraight', 'LongHairStraight2', 'LongHairStraightStrand', 'ShortHairDreads01', 'ShortHairDreads02', 'ShortHairFrizzle', 'ShortHairShaggyMullet', 'ShortHairShortCurly', 'ShortHairShortFlat', 'ShortHairShortRound', 'ShortHairShortWaved', 'ShortHairSides', 'ShortHairTheCaesar', 'ShortHairTheCaesarSidePart'],
+            accessoriesType: ['Blank', 'Kurt', 'Prescription01', 'Prescription02', 'Round', 'Sunglasses', 'Wayfarers'],
+            hairColor: ['Auburn', 'Black', 'Blonde', 'BlondeGolden', 'Brown', 'BrownDark', 'PastelPink', 'Blue', 'Platinum', 'Red', 'SilverGray'],
+            facialHairType: ['Blank', 'BeardMedium', 'BeardLight', 'BeardMajestic', 'MoustacheFancy', 'MoustacheMagnum'],
+            facialHairColor: ['Auburn', 'Black', 'Blonde', 'BlondeGolden', 'Brown', 'BrownDark', 'PastelPink', 'Blue', 'Platinum', 'Red', 'SilverGray'],
+            clotheType: ['BlazerShirt', 'BlazerSweater', 'CollarSweater', 'GraphicShirt', 'Hoodie', 'Overall', 'ShirtCrewNeck', 'ShirtScoopNeck', 'ShirtVNeck'],
+            eyeType: ['Close', 'Cry', 'Default', 'Dizzy', 'EyeRoll', 'Happy', 'Hearts', 'Side', 'Squint', 'Surprised', 'Wink', 'WinkWacky'],
+            eyebrowType: ['Angry', 'AngryNatural', 'Default', 'DefaultNatural', 'FlatNatural', 'RaisedExcited', 'RaisedExcitedNatural', 'SadConcerned', 'SadConcernedNatural', 'UnibrowNatural', 'UpDown', 'UpDownNatural'],
+            mouthType: ['Concerned', 'Default', 'Disbelief', 'Eating', 'Grimace', 'Sad', 'ScreamOpen', 'Serious', 'Smile', 'Tongue', 'Twinkle', 'Vomit'],
+            skinColor: ['Tanned', 'Yellow', 'Pale', 'Light', 'Brown', 'DarkBrown', 'Black']
+        };
 
+        function getRandomElement(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        function generateRandomAvatarUrl() {
+            const params = {
+                avatarStyle: getRandomElement(avatarParams.avatarStyle),
+                topType: getRandomElement(avatarParams.topType),
+                accessoriesType: getRandomElement(avatarParams.accessoriesType),
+                hairColor: getRandomElement(avatarParams.hairColor),
+                facialHairType: getRandomElement(avatarParams.facialHairType),
+                facialHairColor: getRandomElement(avatarParams.facialHairColor),
+                clotheType: getRandomElement(avatarParams.clotheType),
+                eyeType: getRandomElement(avatarParams.eyeType),
+                eyebrowType: getRandomElement(avatarParams.eyebrowType),
+                mouthType: getRandomElement(avatarParams.mouthType),
+                skinColor: getRandomElement(avatarParams.skinColor)
+            };
+
+            const queryString = new URLSearchParams(params).toString();
+            return `https://avataaars.io/?${queryString}`;
+        }
+
+        document.getElementById('createAvatar').addEventListener('click', () => {
+            const randomAvatar = generateRandomAvatarUrl();
+            photoPreview.src = randomAvatar;
+            localStorage.setItem('avatar', randomAvatar);
+        });
+
+        // Generate an initial avatar when the page loads
+       // document.getElementById('profile-pic').src = generateRandomAvatarUrl();
         // Handle form submission and success button
         const profileForm = document.getElementById('profileForm');
         const successButton = document.getElementById('successButton');
