@@ -225,13 +225,6 @@
           document.body.removeChild(notification);
         }
       }, 5000);
-
-      // Open a new tab when the notification is clicked
-      notification.addEventListener('click', () => {
-        if (action) {
-          window.open(action, '_blank');
-        }
-      });
     }
 
     // Handle incoming messages when the web page is in the foreground
