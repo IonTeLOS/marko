@@ -411,6 +411,7 @@ function onUserLoggedIn() {
         try {
           const { accessToken: token } = await getAccessToken();
           accessToken = token;
+          localStorage.setItem('accessToken', accessToken);
           console.log('Access Token:', accessToken);
         } catch (error) {
           console.error('Error obtaining access token:', error);
