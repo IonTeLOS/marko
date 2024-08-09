@@ -3,8 +3,12 @@
 <head>
   <title>Firebase Cloud Function Notifications</title>
   <meta name="google-signin-client_id" content="7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com">
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-messaging.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://apis.google.com/js/api.js" async defer></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notiflix@3.2.4/dist/notiflix-3.2.4.min.css">
+<script src="https://cdn.jsdelivr.net/npm/notiflix@3.2.4/dist/notiflix-3.2.4.min.js"></script>
 </head>
 <body>
   <h1>Firebase Cloud Function Notifications</h1>
@@ -208,6 +212,118 @@
 
     // Initialize the GSI after the page loads
     window.onload = initializeGSI;
+  </script>
+  <script>
+    // Your Firebase configuration object
+const firebaseConfig = {
+  apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
+  authDomain: "marko-be9a9.firebaseapp.com",
+  projectId: "marko-be9a9",
+  storageBucket: "marko-be9a9.appspot.com",
+  messagingSenderId: "7036670175",
+  appId: "1:7036670175:web:99992356716578ea13996a"
+};
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Retrieve Firebase Messaging object
+    const messaging = firebase.messaging();
+
+    // Request permission for notifications
+    messaging.requestPermission()
+      .then(() => messaging.getToken())
+      .then(token => {
+        console.log('FCM Token:', token);
+        // Send the token to your server
+      })
+      .catch(error => {
+        console.error('Error getting notification permission or token:', error);
+      });
+
+// Handle background messages
+messaging.onBackgroundMessage((payload) => {
+  console.log('Received background message:', payload);
+
+  const { title, body, icon, click_action } = payload.notification;
+
+  const options = {
+    body: body,
+    icon: icon,
+    actions: click_action ? [
+      {
+        action: 'open_url',
+        title: 'Open'
+      }
+    ] : []
+  };
+
+  self.registration.showNotification(title, options);
+
+  self.addEventListener('notificationclick', (event) => {
+    if (event.action === 'open_url') {
+      event.waitUntil(
+        clients.openWindow(click_action)
+      );
+    }
+  });
+});
+
+    // Foreground message handler
+    messaging.onMessage(payload => {
+      console.log('Received foreground message:', payload);
+        // Extract the notification data from the payload
+        const { title, body, icon, click_action } = payload.notification;
+
+        // Define an action button if click_action is present
+        const actionButton = click_action ? { text: 'Open', url: click_action } : null;
+
+        // Call the showNotification function with the extracted data
+        showNotification(title, body, icon, actionButton);
+    });
+    // Initialize Notiflix with default options
+Notiflix.Notify.init({
+  width: '300px',
+  position: 'right-bottom',
+  distance: '10px',
+  timeout: 5000,
+});
+
+// Function to show a notification
+function showNotification(title, body, icon, action) {
+  // Set up the notification options
+  const options = {
+    title: title,
+    text: body,
+    svg: icon ? `<img src="${icon}" style="width: 24px; height: 24px;">` : null,
+    clickToClose: true,
+  };
+
+  // Add an action button if it exists
+  if (action) {
+    options.buttons = [
+      {
+        text: action.text || 'Action',
+        callback: () => {
+          // Handle the action button click
+          window.open(action.url || '#', '_blank');
+        },
+      },
+    ];
+  }
+
+  // Show the notification
+  Notiflix.Notify.custom(options);
+}
+
+// Example usage
+showNotification(
+  'Notification Title',
+  'This is the body of the notification.',
+  'https://example.com/icon.png',
+  { text: 'Go to Site', url: 'https://example.com' }
+);
+
   </script>
 </body>
 </html>
