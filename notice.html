@@ -112,36 +112,38 @@
       showNotification(title, body, icon, actionButton);
     });
 
-    // Initialize Notiflix with default options
-    Notiflix.Notify.init({
-      width: '300px',
-      position: 'right-bottom',
-      distance: '10px',
-      timeout: 5000,
-    });
+// Initialize Notiflix with default options
+Notiflix.Notify.init({
+  width: '300px',
+  position: 'right-bottom',
+  distance: '10px',
+  timeout: 5000,
+});
 
-    // Function to show a notification
-    function showNotification(title, body, icon, action) {
-      const options = {
-        title: title,
-        text: body,
-        svg: icon ? `<img src="${icon}" style="width: 24px; height: 24px;">` : null,
-        clickToClose: true,
-      };
+// Function to show a notification
+function showNotification(title, body, icon, action) {
+  const notificationOptions = {
+    title: title,
+    text: body,
+    svg: icon ? `<img src="${icon}" style="width: 24px; height: 24px;">` : null,
+    clickToClose: true,
+  };
 
-      if (action) {
-        options.buttons = [
-          {
-            text: action.text || 'Action',
-            callback: () => {
-              window.open(action.url || '#', '_blank');
-            },
-          },
-        ];
-      }
+  if (action) {
+    notificationOptions.buttons = [
+      {
+        text: action.text || 'Action',
+        callback: () => {
+          window.open(action.url || '#', '_blank');
+        },
+      },
+    ];
+  }
 
-      Notiflix.Notify.custom(options);
-    }
+  // Use the most appropriate Notiflix Notify method
+  Notiflix.Notify.info(notificationOptions.text); // Example using `info`, adjust as needed
+}
+
 
     // Request permission for notifications and get the token
     async function requestNotificationPermission() {
