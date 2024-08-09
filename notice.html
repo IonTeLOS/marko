@@ -3,16 +3,16 @@
 <head>
   <title>Firebase Cloud Function Notifications</title>
   <meta name="google-signin-client_id" content="7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com">
- <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js" type="module"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js" type="module"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js" type="module"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js" type="module"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js" type="module"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="https://apis.google.com/js/api.js" async defer></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notiflix@3.2.4/dist/notiflix-3.2.4.min.css">
-<script src="https://cdn.jsdelivr.net/npm/notiflix@3.2.4/dist/notiflix-3.2.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/notiflix@3.2.4/dist/notiflix-3.2.4.min.js"></script>
 </head>
 <body>
   <h1>Firebase Cloud Function Notifications</h1>
@@ -61,27 +61,144 @@
     <button onclick="sendNotification()">Send Notification</button>
   </div>
 
-  <script>
-    const CLIENT_ID = '7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com';
-    const SCOPES = 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid';
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js';
 
-    let accessToken = '';
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
+      authDomain: "marko-be9a9.firebaseapp.com",
+      projectId: "marko-be9a9",
+      storageBucket: "marko-be9a9.appspot.com",
+      messagingSenderId: "7036670175",
+      appId: "1:7036670175:web:99992356716578ea13996a"
+    };
 
-    async function handleCredentialResponse(response) {
-      if (response.credential) {
-        document.getElementById('signInButtonContainer').style.display = 'none';
-        document.getElementById('notificationForm').style.display = 'block';
-        
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+
+    // Request permission for notifications and get the FCM token
+    async function requestNotificationPermission() {
+      console.log('Requesting notification permission...');
+      const permission = await Notification.requestPermission();
+      if (permission === 'granted') {
+        console.log('Notification permission granted.');
         try {
-          const { accessToken: token } = await getAccessToken();
-          accessToken = token;
-          console.log('Access Token:', accessToken);
+          const fcmToken = await getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' });
+          if (fcmToken) {
+            console.log('FCM Token:', fcmToken);
+            localStorage.setItem('fcmt', fcmToken);
+          } else {
+            console.log('No registration token available.');
+          }
         } catch (error) {
-          console.error('Error obtaining access token:', error);
+          console.error('Error retrieving FCM token:', error);
         }
+      } else {
+        console.log('Notification permission denied.');
       }
     }
 
+    // Subscribe to topic
+    async function subscribeToTopic() {
+      const topic = document.getElementById('topic').value;
+      const token = localStorage.getItem('fcmt');
+
+      if (!topic || !token) {
+        alert('Please enter a topic and ensure you have an FCM token.');
+        return;
+      }
+
+      try {
+        const response = await fetch('https://us-central1-marko-be9a9.cloudfunctions.net/handleTopic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'subscribe',
+            topic: topic,
+            token: token
+          })
+        });
+
+        if (response.ok) {
+          console.log(`Subscribed to topic: ${topic}`);
+        } else {
+          console.error('Error subscribing to topic:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error subscribing to topic:', error);
+      }
+    }
+
+    // Send notification
+    async function sendNotification() {
+      const topic = document.getElementById('topic').value;
+      const title = document.getElementById('title').value;
+      const body = document.getElementById('body').value;
+      const icon = document.getElementById('icon').value;
+      const key1 = document.getElementById('key1').value;
+      const value1 = document.getElementById('value1').value;
+      const key2 = document.getElementById('key2').value;
+      const value2 = document.getElementById('value2').value;
+
+      if (!topic || !title || !body) {
+        alert('Please enter the topic, title, and body.');
+        return;
+      }
+
+      try {
+        const response = await fetch('https://us-central1-marko-be9a9.cloudfunctions.net/handleTopic', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'send',
+            topic: topic,
+            title: title,
+            body: body,
+            icon: icon,
+            data: {
+              [key1]: value1,
+              [key2]: value2
+            },
+          })
+        });
+
+        if (response.ok) {
+          console.log('Message sent to topic');
+        } else {
+          console.error('Error sending message to topic:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error sending message to topic:', error);
+      }
+    }
+
+    // Initialize the service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/marko/newfile/' })
+        .then((registration) => {
+          console.log('Service Worker registered with scope:', registration.scope);
+
+          navigator.serviceWorker.addEventListener('message', (event) => {
+            if (event.data && event.data.action === 'open_url') {
+              const url = event.data.url;
+              console.log('Received URL to open:', url);
+              window.location.href = url;
+            }
+          });
+        })
+        .catch((error) => {
+          console.error('Service Worker registration failed:', error);
+        });
+    }
+
+    // Initialize Google Sign-In
     function initializeGSI() {
       google.accounts.id.initialize({
         client_id: CLIENT_ID,
@@ -100,13 +217,9 @@
 
     function showManualSignInButton() {
       const signInButtonContainer = document.getElementById('signInButtonContainer');
-      
-      // Show the container
       signInButtonContainer.style.display = 'flex';
       signInButtonContainer.style.justifyContent = 'center';
       signInButtonContainer.style.alignItems = 'center';
-      
-      // Render the Google Sign-In button
       google.accounts.id.renderButton(signInButtonContainer, { 
         theme: 'filled_blue', 
         size: 'large',         
@@ -115,227 +228,16 @@
       });
     }
 
-    function getAccessToken() {
-      return new Promise((resolve, reject) => {
-        const tokenClient = google.accounts.oauth2.initTokenClient({
-          client_id: CLIENT_ID,
-          scope: SCOPES,
-          callback: (tokenResponse) => {
-            if (tokenResponse && tokenResponse.access_token) {
-              console.log('Access Token obtained successfully');
-              resolve({ accessToken: tokenResponse.access_token });
-            } else {
-              console.error('Failed to get access token:', tokenResponse);
-              reject(new Error('Failed to get access token'));
-            }
-          },
-          error_callback: (error) => {
-            console.error('Token client error:', error);
-            reject(error);
-          }
-        });
-
-        try {
-          tokenClient.requestAccessToken({ prompt: 'consent' });
-        } catch (error) {
-          console.error('Error requesting access token:', error);
-          reject(error);
-        }
-      });
-    }
-
-    function subscribeToTopic() {
-      const topic = document.getElementById('topic').value;
-
-      if (!topic) {
-        alert('Please enter a topic.');
-        return;
+    function handleCredentialResponse(response) {
+      if (response.credential) {
+        document.getElementById('signInButtonContainer').style.display = 'none';
+        document.getElementById('notificationForm').style.display = 'block';
       }
-
-      fetch('https://us-central1-marko-be9a9.cloudfunctions.net/handleTopic', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          action: 'subscribe',
-          topic: topic,
-          token: accessToken
-        })
-      }).then(response => {
-        if (response.ok) {
-          console.log(`Subscribed to topic: ${topic}`);
-        } else {
-          console.error('Error subscribing to topic');
-        }
-      });
-    }
-
-    function sendNotification() {
-      const topic = document.getElementById('topic').value;
-      const title = document.getElementById('title').value;
-      const body = document.getElementById('body').value;
-      const icon = document.getElementById('icon').value;
-      const key1 = document.getElementById('key1').value;
-      const value1 = document.getElementById('value1').value;
-      const key2 = document.getElementById('key2').value;
-      const value2 = document.getElementById('value2').value;
-
-      if (!topic || !title || !body) {
-        alert('Please enter the topic, title, and body.');
-        return;
-      }
-
-      fetch('https://us-central1-marko-be9a9.cloudfunctions.net/handleTopic', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${accessToken}`
-        },
-        body: JSON.stringify({
-          action: 'send',
-          topic: topic,
-          title: title,
-          body: body,
-          icon: icon,
-          data: {
-            [key1]: value1,
-            [key2]: value2
-          },
-        })
-      }).then(response => {
-        if (response.ok) {
-          console.log('Message sent to topic');
-        } else {
-          console.error('Error sending message to topic');
-        }
-      });
     }
 
     // Initialize the GSI after the page loads
     window.onload = initializeGSI;
+    window.requestNotificationPermission = requestNotificationPermission;
   </script>
-
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js';
-import { getInstallations, getId } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
-  authDomain: "marko-be9a9.firebaseapp.com",
-  projectId: "marko-be9a9",
-  storageBucket: "marko-be9a9.appspot.com",
-  messagingSenderId: "7036670175",
-  appId: "1:7036670175:web:99992356716578ea13996a"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-
-// Initialize Firebase Cloud Messaging
-const messaging = getMessaging(app);
-
-// Get the installation ID
-const installations = getInstallations(app);
-getId(installations).then((installationId) => {
-  console.log('Installation ID:', installationId);
-}).catch((error) => {
-  console.error('Error getting installation ID:', error);
-});
-
-// Foreground message handler
-onMessage(messaging, (payload) => {
-  console.log('Received foreground message:', payload);
-
-  const { title, body, icon, click_action } = payload.notification;
-
-  const actionButton = click_action ? { text: 'Open', url: click_action } : null;
-
-  showNotification(title, body, icon, actionButton);
-});
-
-// Initialize Notiflix with default options
-Notiflix.Notify.init({
-  width: '300px',
-  position: 'right-bottom',
-  distance: '10px',
-  timeout: 5000,
-});
-
-// Function to show a notification
-function showNotification(title, body, icon, action) {
-  const options = {
-    title: title,
-    text: body,
-    svg: icon ? `<img src="${icon}" style="width: 24px; height: 24px;">` : null,
-    clickToClose: true,
-  };
-
-  if (action) {
-    options.buttons = [
-      {
-        text: action.text || 'Action',
-        callback: () => {
-          window.open(action.url || '#', '_blank');
-        },
-      },
-    ];
-  }
-
-  Notiflix.Notify.custom(options);
-}
-
-// Request permission for notifications and get the token
-function requestNotificationPermission() {
-  console.log('Requesting notification permission...');
-  Notification.requestPermission().then((permission) => {
-    if (permission === 'granted') {
-      console.log('Notification permission granted.');
-
-      getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' }).then((fcmToken) => {
-        if (fcmToken) {
-          console.log('FCM Token:', fcmToken);
-          localStorage.setItem('fcmt', fcmToken);
-          // Save the token to the database here (assuming `db` is defined elsewhere)
-          // set(ref(db, 'tokens/' + fcmToken), {
-          //   token: fcmToken,
-          //   lastSeen: serverTimestamp()
-          // });
-        } else {
-          console.log('No registration token available.');
-        }
-      }).catch((error) => {
-        console.error('An error occurred while retrieving token.', error);
-      });
-    } else {
-      console.log('Notification permission denied.');
-    }
-  });
-}
-
-      // Register the service worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-    scope: '/marko/newfile/'
-  }).then(function(registration) {
-    console.log('Service Worker registered with scope:', registration.scope);
-
-    navigator.serviceWorker.addEventListener('message', (event) => {
-      if (event.data && event.data.action === 'open_url') {
-        const url = event.data.url;
-        // Handle the URL as needed in your application
-        console.log('Received URL to open:', url);
-        window.location.href = url; // Navigate to the URL
-      }
-    });
-  }).catch(function(error) {
-    console.error('Service Worker registration failed:', error);
-  });
-}
-
-window.requestNotificationPermission = requestNotificationPermission;
-</script>
 </body>
 </html>
