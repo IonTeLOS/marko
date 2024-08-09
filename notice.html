@@ -358,9 +358,29 @@
       }
     };
 
-    window.onload = async function() {
-      await initializeGSI();
-    };
+window.onload = async function() {
+  // Check if the user is already logged in
+  await checkLoginStatus();
+};
+    // Add this new function to check the login status
+async function checkLoginStatus() {
+  // You can use various methods to check if the user is logged in
+  // For example, checking if an access token exists in localStorage
+  const existingToken = localStorage.getItem('accessToken');
+  
+  if (existingToken) {
+    isUserLoggedIn = true;
+    onUserLoggedIn();
+  } else {
+    await initializeGSI();
+  }
+}
+
+function onUserLoggedIn() {
+  document.getElementById('signInButtonContainer').classList.add('hidden');
+  document.getElementById('notificationForm').classList.remove('hidden');
+  // We can add here any other action we want to perform when the user is logged in
+}    
 
     function initializeGSI() {
       google.accounts.id.initialize({
