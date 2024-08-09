@@ -133,6 +133,7 @@
       <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" onclick="sendNotification()">Send Notification</button>
     </div>
   </div>
+
   <script type="module">
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
     import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js';
@@ -160,18 +161,18 @@
     }).catch((error) => {
       console.error('Error getting installation ID:', error);
     });
-    
-(async () => {
-  try {
-    const fcmToken = await getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' });
-    if (fcmToken) {
-      console.log('FCM Token:', fcmToken);
-      localStorage.setItem('fcmt', fcmToken);
-    }
-  } catch (error) {
-    console.error('Error retrieving FCM token:', error);
-  }
-})();
+
+    (async () => {
+      try {
+        const fcmToken = await getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' });
+        if (fcmToken) {
+          console.log('FCM Token:', fcmToken);
+          localStorage.setItem('fcmt', fcmToken);
+        }
+      } catch (error) {
+        console.error('Error retrieving FCM token:', error);
+      }
+    })();
 
     // Function to create and show a custom notification
     function showCustomNotification(title, body, icon, action) {
@@ -182,6 +183,11 @@
       // Create and style the icon
       const iconElement = document.createElement('img');
       iconElement.src = icon || 'https://via.placeholder.com/40'; // Placeholder icon if no icon provided
+      iconElement.style.width = '40px';
+      iconElement.style.height = '40px';
+      iconElement.style.borderRadius = '50%';
+      iconElement.style.marginRight = '10px';
+      iconElement.style.objectFit = 'cover';
 
       // Create and style the content
       const content = document.createElement('div');
@@ -203,7 +209,6 @@
         const actionButton = document.createElement('button');
         actionButton.className = 'notification-button';
         actionButton.innerText = action.text || 'Action';
-        
         actionButton.addEventListener('click', () => {
           window.open(action.url || '#', '_blank');
           notification.remove(); // Remove notification after action
@@ -381,23 +386,13 @@
 
     function showManualSignInButton() {
       const signInButtonContainer = document.getElementById('signInButtonContainer');
-      
-      // Show the container
       signInButtonContainer.classList.remove('hidden');
-      
-      // Render the Google Sign-In button
-      google.accounts.id.renderButton(signInButtonContainer, { 
-        theme: 'filled_blue', 
-        size: 'large',         
-        width: 300,            
-        shape: 'pill'          
-      });
     }
 
     async function handleCredentialResponse(response) {
       if (response.credential) {
-        document.getElementById('signInButtonContainer').style.display = 'none';
-        document.getElementById('notificationForm').style.display = 'block';
+        document.getElementById('signInButtonContainer').classList.add('hidden');
+        document.getElementById('notificationForm').classList.remove('hidden');
         
         try {
           const { accessToken: token } = await getAccessToken();
