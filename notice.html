@@ -197,7 +197,8 @@
           console.error('Service Worker registration failed:', error);
         });
     }
-
+    const CLIENT_ID = '7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com';
+    const SCOPES = 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid';
     // Initialize Google Sign-In
     function initializeGSI() {
       google.accounts.id.initialize({
