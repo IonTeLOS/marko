@@ -14,10 +14,8 @@
   <!-- Material Design Lite CSS -->
   <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
   <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-  </head>
   <style>
-
-body {
+    body {
       font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
       margin: 0;
       padding: 0;
@@ -33,15 +31,68 @@ body {
       max-width: 600px;
       padding: 16px;
       box-sizing: border-box;
+      text-align: center;
     }
     .mdl-textfield {
       width: 100%;
+      margin-bottom: 16px;
     }
     .mdl-button {
       margin-top: 16px;
     }
     .hidden {
       display: none;
+    }
+    #signInButtonContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #notificationForm {
+      display: block;
+    }
+    /* Notification styles */
+    .notification {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      padding: 10px;
+      width: 300px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: Arial, sans-serif;
+    }
+    .notification img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      margin-right: 10px;
+      object-fit: cover;
+    }
+    .notification-content {
+      flex: 1;
+    }
+    .notification-title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    .notification-body {
+      margin: 0;
+    }
+    .notification-button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 10px;
+      cursor: pointer;
+      margin-left: 10px;
     }
   </style>
 </head>
@@ -141,91 +192,67 @@ body {
 })();
 
     // Function to create and show a custom notification
-function showCustomNotification(title, body, icon, action) {
-  // Create the notification container
-  const notification = document.createElement('div');
-  notification.style.position = 'fixed';
-  notification.style.bottom = '10px';
-  notification.style.right = '10px';
-  notification.style.backgroundColor = '#fff';
-  notification.style.border = '1px solid #ddd';
-  notification.style.borderRadius = '5px';
-  notification.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
-  notification.style.padding = '10px';
-  notification.style.width = '300px';
-  notification.style.zIndex = '1000';
-  notification.style.display = 'flex';
-  notification.style.alignItems = 'center';
-  notification.style.justifyContent = 'space-between';
-  notification.style.fontFamily = 'Arial, sans-serif';
+    function showCustomNotification(title, body, icon, action) {
+      // Create the notification container
+      const notification = document.createElement('div');
+      notification.className = 'notification';
 
-  // Create and style the icon
-  const iconElement = document.createElement('img');
-  iconElement.src = icon || 'https://via.placeholder.com/40'; // Placeholder icon if no icon provided
-  iconElement.style.width = '40px';
-  iconElement.style.height = '40px';
-  iconElement.style.borderRadius = '50%';
-  iconElement.style.marginRight = '10px';
-  iconElement.style.objectFit = 'cover';
+      // Create and style the icon
+      const iconElement = document.createElement('img');
+      iconElement.src = icon || 'https://via.placeholder.com/40'; // Placeholder icon if no icon provided
 
-  // Create and style the content
-  const content = document.createElement('div');
-  content.style.flex = '1';
+      // Create and style the content
+      const content = document.createElement('div');
+      content.className = 'notification-content';
 
-  const titleElement = document.createElement('div');
-  titleElement.innerText = title;
-  titleElement.style.fontWeight = 'bold';
-  titleElement.style.marginBottom = '5px';
+      const titleElement = document.createElement('div');
+      titleElement.className = 'notification-title';
+      titleElement.innerText = title;
 
-  const bodyElement = document.createElement('div');
-  bodyElement.innerText = body;
+      const bodyElement = document.createElement('div');
+      bodyElement.className = 'notification-body';
+      bodyElement.innerText = body;
 
-  content.appendChild(titleElement);
-  content.appendChild(bodyElement);
+      content.appendChild(titleElement);
+      content.appendChild(bodyElement);
 
-  // Create and style the action button (if needed)
-  if (action) {
-    const actionButton = document.createElement('button');
-    actionButton.innerText = action.text || 'Action';
-    actionButton.style.backgroundColor = '#007bff';
-    actionButton.style.color = '#fff';
-    actionButton.style.border = 'none';
-    actionButton.style.borderRadius = '5px';
-    actionButton.style.padding = '5px 10px';
-    actionButton.style.cursor = 'pointer';
-    actionButton.style.marginLeft = '10px';
+      // Create and style the action button (if needed)
+      if (action) {
+        const actionButton = document.createElement('button');
+        actionButton.className = 'notification-button';
+        actionButton.innerText = action.text || 'Action';
+        
+        actionButton.addEventListener('click', () => {
+          window.open(action.url || '#', '_blank');
+          notification.remove(); // Remove notification after action
+        });
 
-    actionButton.addEventListener('click', () => {
-      window.open(action.url || '#', '_blank');
-      notification.remove(); // Remove notification after action
+        notification.appendChild(actionButton);
+      }
+
+      // Append elements
+      notification.appendChild(iconElement);
+      notification.appendChild(content);
+
+      // Append notification to the body
+      document.body.appendChild(notification);
+
+      // Automatically remove the notification after a timeout (e.g., 10 seconds)
+      setTimeout(() => {
+        notification.remove();
+      }, 10000); // 10 seconds
+    }
+
+    // Usage Example:
+    onMessage(messaging, (payload) => {
+      console.log('Received foreground message:', payload);
+
+      const { title, body, icon, click_action } = payload.notification;
+
+      const actionButton = click_action ? { text: 'Open', url: click_action } : null;
+
+      showCustomNotification(title, body, icon, actionButton);
     });
-
-    notification.appendChild(actionButton);
-  }
-
-  // Append elements
-  notification.appendChild(iconElement);
-  notification.appendChild(content);
-
-  // Append notification to the body
-  document.body.appendChild(notification);
-
-  // Automatically remove the notification after a timeout (e.g., 10 seconds)
-  setTimeout(() => {
-    notification.remove();
-  }, 10000); // 10 seconds
-}
-
-// Usage Example:
-onMessage(messaging, (payload) => {
-  console.log('Received foreground message:', payload);
-
-  const { title, body, icon, click_action } = payload.notification;
-
-  const actionButton = click_action ? { text: 'Open', url: click_action } : null;
-
-  showCustomNotification(title, body, icon, actionButton);
-});
 
     // Request permission for notifications and get the token
     async function requestNotificationPermission() {
@@ -350,10 +377,9 @@ onMessage(messaging, (payload) => {
       }
     };
 
-window.onload = async function() {
-  await initializeGSI();
-};
-
+    window.onload = async function() {
+      await initializeGSI();
+    };
 
     function initializeGSI() {
       google.accounts.id.initialize({
@@ -375,9 +401,7 @@ window.onload = async function() {
       const signInButtonContainer = document.getElementById('signInButtonContainer');
       
       // Show the container
-      signInButtonContainer.style.display = 'flex';
-      signInButtonContainer.style.justifyContent = 'center';
-      signInButtonContainer.style.alignItems = 'center';
+      signInButtonContainer.classList.remove('hidden');
       
       // Render the Google Sign-In button
       google.accounts.id.renderButton(signInButtonContainer, { 
