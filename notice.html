@@ -80,7 +80,7 @@
 </head>
 <body>
   <div class="container">
-    <h1 class="mdl-typography--headline">Firebase Cloud Function Notifications</h1>
+    <h1 class="mdl-typography--headline">Notify Me</h1>
 
     <div id="signInButtonContainer" class="hidden">
       <!-- The Google Sign-In button will be rendered here -->
@@ -103,11 +103,6 @@
       <div class="mdl-textfield mdl-js-textfield">
         <input class="mdl-textfield__input" type="text" id="body" placeholder="Enter notification body">
         <label class="mdl-textfield__label" for="body">Body</label>
-      </div>
-
-      <div class="mdl-textfield mdl-js-textfield">
-        <input class="mdl-textfield__input" type="text" id="icon" placeholder="Enter icon URL">
-        <label class="mdl-textfield__label" for="icon">Icon URL</label>
       </div>
 
       <div class="mdl-textfield mdl-js-textfield">
@@ -182,7 +177,7 @@
 
       // Create and style the icon
       const iconElement = document.createElement('img');
-      iconElement.src = icon || 'https://via.placeholder.com/40'; // Placeholder icon if no icon provided
+      iconElement.src = icon || 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg'; // Default icon
       iconElement.style.width = '40px';
       iconElement.style.height = '40px';
       iconElement.style.borderRadius = '50%';
@@ -204,41 +199,45 @@
       content.appendChild(titleElement);
       content.appendChild(bodyElement);
 
-      // Create and style the action button (if needed)
-      if (action) {
-        const actionButton = document.createElement('button');
-        actionButton.className = 'notification-button';
-        actionButton.innerText = action.text || 'Action';
-        actionButton.addEventListener('click', () => {
-          window.open(action.url || '#', '_blank');
-          notification.remove(); // Remove notification after action
-        });
+      // Create and style the close button
+      const closeButton = document.createElement('button');
+      closeButton.className = 'mdl-button mdl-js-button mdl-button--icon';
+      closeButton.innerHTML = '<i class="material-icons">close</i>';
+      closeButton.onclick = () => {
+        document.body.removeChild(notification);
+      };
 
-        notification.appendChild(actionButton);
-      }
-
-      // Append elements
+      // Append icon, content, and close button to the notification
       notification.appendChild(iconElement);
       notification.appendChild(content);
+      notification.appendChild(closeButton);
 
-      // Append notification to the body
+      // Append the notification to the body
       document.body.appendChild(notification);
 
-      // Automatically remove the notification after a timeout (e.g., 10 seconds)
+      // Automatically hide the notification after 5 seconds
       setTimeout(() => {
-        notification.remove();
-      }, 10000); // 10 seconds
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 5000);
+
+      // Open a new tab when the notification is clicked
+      notification.addEventListener('click', () => {
+        if (action) {
+          window.open(action, '_blank');
+        }
+      });
     }
 
-    // Usage Example:
+    // Handle incoming messages when the web page is in the foreground
     onMessage(messaging, (payload) => {
-      console.log('Received foreground message:', payload);
+      console.log('Message received. ', payload);
+      const { title, body } = payload.notification;
+      const action = payload.data.action || null;
+      const iconUrl = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg'; // Default icon for foreground notifications
 
-      const { title, body, icon, click_action } = payload.notification;
-
-      const actionButton = click_action ? { text: 'Open', url: click_action } : null;
-
-      showCustomNotification(title, body, icon, actionButton);
+      showCustomNotification(title, body, iconUrl, action);
     });
 
     // Request permission for notifications and get the token
@@ -325,7 +324,6 @@
       const topic = document.getElementById('topic').value;
       const title = document.getElementById('title').value;
       const body = document.getElementById('body').value;
-      const icon = document.getElementById('icon').value;
       const key1 = document.getElementById('key1').value;
       const value1 = document.getElementById('value1').value;
       const key2 = document.getElementById('key2').value;
@@ -347,7 +345,6 @@
             topic: topic,
             title: title,
             body: body,
-            icon: icon,
             data: {
               [key1]: value1,
               [key2]: value2
