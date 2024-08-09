@@ -88,7 +88,11 @@
     }).catch((error) => {
       console.error('Error getting installation ID:', error);
     });
-
+    const fcmToken = await getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' });
+          if (fcmToken) {
+            console.log('FCM Token:', fcmToken);
+            localStorage.setItem('fcmt', fcmToken);
+          }
     // Foreground message handler
     onMessage(messaging, (payload) => {
       console.log('Received foreground message:', payload);
