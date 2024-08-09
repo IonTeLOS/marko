@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Firebase Cloud Function Notifications</title>
+  <meta name="google-signin-client_id" content="7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="https://apis.google.com/js/api.js" async defer></script>
+</head>
+<body>
+  <h1>Firebase Cloud Function Notifications</h1>
+
+  <div id="signInButtonContainer">
+    <!-- The Google Sign-In button will be rendered here -->
+    <div id="signInButton"></div>
+  </div>
+
+  <div style="display:none;" id="notificationForm">
+    <div>
+      <label for="topic">Topic:</label>
+      <input type="text" id="topic" placeholder="Enter topic name">
+      <button onclick="subscribeToTopic()">Subscribe</button>
+    </div>
+
+    <div>
+      <label for="title">Title:</label>
+      <input type="text" id="title" placeholder="Enter notification title">
+    </div>
+
+    <div>
+      <label for="body">Body:</label>
+      <input type="text" id="body" placeholder="Enter notification body">
+    </div>
+
+    <div>
+      <label for="icon">Icon URL:</label>
+      <input type="text" id="icon" placeholder="Enter icon URL">
+    </div>
+
+    <div>
+      <label for="key1">Data Key 1:</label>
+      <input type="text" id="key1" placeholder="Enter key 1">
+      <label for="value1">Value 1:</label>
+      <input type="text" id="value1" placeholder="Enter value 1">
+    </div>
+
+    <div>
+      <label for="key2">Data Key 2:</label>
+      <input type="text" id="key2" placeholder="Enter key 2">
+      <label for="value2">Value 2:</label>
+      <input type="text" id="value2" placeholder="Enter value 2">
+    </div>
+
+    <button onclick="sendNotification()">Send Notification</button>
+  </div>
+
+  <script>
+    const CLIENT_ID = '7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com';
+    const SCOPES = 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid';
+
+    let accessToken = '';
+
+    async function handleCredentialResponse(response) {
+      if (response.credential) {
+        document.getElementById('signInButtonContainer').style.display = 'none';
+        document.getElementById('notificationForm').style.display = 'block';
+        
+        try {
+          const { accessToken: token } = await getAccessToken();
+          accessToken = token;
+          console.log('Access Token:', accessToken);
+        } catch (error) {
+          console.error('Error obtaining access token:', error);
+        }
+      }
+    }
+
+    function initializeGSI() {
+      google.accounts.id.initialize({
+        client_id: CLIENT_ID,
+        callback: handleCredentialResponse,
+        auto_select: true,
+        cancel_on_tap_outside: false
+      });
+
+      google.accounts.id.prompt((notification) => {
+        if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+          console.log('One Tap prompt was not displayed');
+          showManualSignInButton();
+        }
+      });
+    }
+
+    function showManualSignInButton() {
+      const signInButtonContainer = document.getElementById('signInButtonContainer');
+      
+      // Show the container
+      signInButtonContainer.style.display = 'flex';
+      signInButtonContainer.style.justifyContent = 'center';
+      signInButtonContainer.style.alignItems = 'center';
+      
+      // Render the Google Sign-In button
+      google.accounts.id.renderButton(signInButtonContainer, { 
+        theme: 'filled_blue', 
+        size: 'large',         
+        width: 300,            
+        shape: 'pill'          
+      });
+    }
+
+    function getAccessToken() {
+      return new Promise((resolve, reject) => {
+        const tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: CLIENT_ID,
+          scope: SCOPES,
+          callback: (tokenResponse) => {
+            if (tokenResponse && tokenResponse.access_token) {
+              console.log('Access Token obtained successfully');
+              resolve({ accessToken: tokenResponse.access_token });
+            } else {
+              console.error('Failed to get access token:', tokenResponse);
+              reject(new Error('Failed to get access token'));
+            }
+          },
+          error_callback: (error) => {
+            console.error('Token client error:', error);
+            reject(error);
+          }
+        });
+
+        try {
+          tokenClient.requestAccessToken({ prompt: 'consent' });
+        } catch (error) {
+          console.error('Error requesting access token:', error);
+          reject(error);
+        }
+      });
+    }
+
+    function subscribeToTopic() {
+      const topic = document.getElementById('topic').value;
+
+      if (!topic) {
+        alert('Please enter a topic.');
+        return;
+      }
+
+      fetch('https://us-central1-marko-be9a9-id.cloudfunctions.net/handleTopic', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          action: 'subscribe',
+          topic: topic,
+          token: accessToken
+        })
+      }).then(response => {
+        if (response.ok) {
+          console.log(`Subscribed to topic: ${topic}`);
+        } else {
+          console.error('Error subscribing to topic');
+        }
+      });
+    }
+
+    function sendNotification() {
+      const topic = document.getElementById('topic').value;
+      const title = document.getElementById('title').value;
+      const body = document.getElementById('body').value;
+      const icon = document.getElementById('icon').value;
+      const key1 = document.getElementById('key1').value;
+      const value1 = document.getElementById('value1').value;
+      const key2 = document.getElementById('key2').value;
+      const value2 = document.getElementById('value2').value;
+
+      if (!topic || !title || !body) {
+        alert('Please enter the topic, title, and body.');
+        return;
+      }
+
+      fetch('https://us-central1-marko-be9a9-id.cloudfunctions.net/handleTopic', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({
+          action: 'send',
+          topic: topic,
+          title: title,
+          body: body,
+          icon: icon,
+          data: {
+            [key1]: value1,
+            [key2]: value2
+          },
+          delay: 10  // Delay in seconds
+        })
+      }).then(response => {
+        if (response.ok) {
+          console.log('Message sent to topic');
+        } else {
+          console.error('Error sending message to topic');
+        }
+      });
+    }
+
+    // Initialize the GSI after the page loads
+    window.onload = initializeGSI;
+  </script>
+</body>
+</html>
