@@ -170,16 +170,15 @@
     })();
 
     // Function to create and show a custom notification
-    function showCustomNotification(title, body, icon, action) {
+    function showCustomNotification(title, body, icon, url) {
       // Create the notification container
       const notification = document.createElement('div');
       notification.className = 'notification';
       
-      if (action && action.url) {
-        notification.addEventListener('click', () => {
-        window.open(action.url, '_blank');  // Open the URL in a new tab
-        });
-      }
+      notification.addEventListener('click', () => {
+          window.open(url, '_blank');  // Open the URL in a new tab
+      });
+      
       // Create and style the icon
       const iconElement = document.createElement('img');
       iconElement.src = icon || 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg'; // Default icon
@@ -239,10 +238,10 @@
     onMessage(messaging, (payload) => {
       console.log('Message received. ', payload);
       const { title, body } = payload.notification;
-      const action = payload.data.action || null;
+      const clickAction = payload.data.url || 'https://teloslinux.org/marko/newfile'; // Default URL if not provided
       const iconUrl = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg'; // Default icon for foreground notifications
 
-      showCustomNotification(title, body, iconUrl, action);
+      showCustomNotification(title, body, iconUrl, clickAction);
     });
 
     // Request permission for notifications and get the token
