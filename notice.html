@@ -213,8 +213,13 @@
     // Initialize the GSI after the page loads
     window.onload = initializeGSI;
   </script>
-  <script>
-    // Your Firebase configuration object
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getMessaging, getToken, onMessage } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js';
+import { getInstallations, getId } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-installations.js';
+import Notiflix from 'https://cdn.jsdelivr.net/npm/notiflix@3.2.7/dist/notiflix-aio-3.2.7.min.js';
+
 const firebaseConfig = {
   apiKey: "AIzaSyD96IBVqGKVEdmXIVCYL_7kvlBhJNSD1Ww",
   authDomain: "marko-be9a9.firebaseapp.com",
@@ -224,64 +229,32 @@ const firebaseConfig = {
   appId: "1:7036670175:web:99992356716578ea13996a"
 };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
-    // Retrieve Firebase Messaging object
-    const messaging = firebase.messaging();
+// Initialize Firebase Cloud Messaging
+const messaging = getMessaging(app);
 
-    // Request permission for notifications
-    messaging.requestPermission()
-      .then(() => messaging.getToken())
-      .then(token => {
-        console.log('FCM Token:', token);
-        // Send the token to your server
-      })
-      .catch(error => {
-        console.error('Error getting notification permission or token:', error);
-      });
+// Get the installation ID
+const installations = getInstallations(app);
+getId(installations).then((installationId) => {
+  console.log('Installation ID:', installationId);
+}).catch((error) => {
+  console.error('Error getting installation ID:', error);
+});
 
-// Handle background messages
-messaging.onBackgroundMessage((payload) => {
-  console.log('Received background message:', payload);
+// Foreground message handler
+onMessage(messaging, (payload) => {
+  console.log('Received foreground message:', payload);
 
   const { title, body, icon, click_action } = payload.notification;
 
-  const options = {
-    body: body,
-    icon: icon,
-    actions: click_action ? [
-      {
-        action: 'open_url',
-        title: 'Open'
-      }
-    ] : []
-  };
+  const actionButton = click_action ? { text: 'Open', url: click_action } : null;
 
-  self.registration.showNotification(title, options);
-
-  self.addEventListener('notificationclick', (event) => {
-    if (event.action === 'open_url') {
-      event.waitUntil(
-        clients.openWindow(click_action)
-      );
-    }
-  });
+  showNotification(title, body, icon, actionButton);
 });
 
-    // Foreground message handler
-    messaging.onMessage(payload => {
-      console.log('Received foreground message:', payload);
-        // Extract the notification data from the payload
-        const { title, body, icon, click_action } = payload.notification;
-
-        // Define an action button if click_action is present
-        const actionButton = click_action ? { text: 'Open', url: click_action } : null;
-
-        // Call the showNotification function with the extracted data
-        showNotification(title, body, icon, actionButton);
-    });
-    // Initialize Notiflix with default options
+// Initialize Notiflix with default options
 Notiflix.Notify.init({
   width: '300px',
   position: 'right-bottom',
@@ -291,7 +264,6 @@ Notiflix.Notify.init({
 
 // Function to show a notification
 function showNotification(title, body, icon, action) {
-  // Set up the notification options
   const options = {
     title: title,
     text: body,
@@ -299,31 +271,68 @@ function showNotification(title, body, icon, action) {
     clickToClose: true,
   };
 
-  // Add an action button if it exists
   if (action) {
     options.buttons = [
       {
         text: action.text || 'Action',
         callback: () => {
-          // Handle the action button click
           window.open(action.url || '#', '_blank');
         },
       },
     ];
   }
 
-  // Show the notification
   Notiflix.Notify.custom(options);
 }
 
-// Example usage
-showNotification(
-  'Notification Title',
-  'This is the body of the notification.',
-  'https://example.com/icon.png',
-  { text: 'Go to Site', url: 'https://example.com' }
-);
+// Request permission for notifications and get the token
+function requestNotificationPermission() {
+  console.log('Requesting notification permission...');
+  Notification.requestPermission().then((permission) => {
+    if (permission === 'granted') {
+      console.log('Notification permission granted.');
 
-  </script>
+      getToken(messaging, { vapidKey: 'BNbpZ8MoJQ0OvODtVFtqBmiH81lNdGMSU87ISkIMoRGCVN2gHdxnemVqfW1MlAzO5qQqTi_I_QdKo7qpdyFq3tw' }).then((fcmToken) => {
+        if (fcmToken) {
+          console.log('FCM Token:', fcmToken);
+          localStorage.setItem('fcmt', fcmToken);
+          // Save the token to the database here (assuming `db` is defined elsewhere)
+          // set(ref(db, 'tokens/' + fcmToken), {
+          //   token: fcmToken,
+          //   lastSeen: serverTimestamp()
+          // });
+        } else {
+          console.log('No registration token available.');
+        }
+      }).catch((error) => {
+        console.error('An error occurred while retrieving token.', error);
+      });
+    } else {
+      console.log('Notification permission denied.');
+    }
+  });
+}
+
+// Register the service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/firebase-messaging-sw.js', { scope: '/' })
+    .then((registration) => {
+      console.log('Service Worker registered with scope:', registration.scope);
+
+      navigator.serviceWorker.addEventListener('message', (event) => {
+        if (event.data && event.data.action === 'open_url') {
+          const url = event.data.url;
+          console.log('Received URL to open:', url);
+          window.location.href = url; // Navigate to the URL
+        }
+      });
+    })
+    .catch((error) => {
+      console.error('Service Worker registration failed:', error);
+    });
+}
+
+window.requestNotificationPermission = requestNotificationPermission;
+</script>
 </body>
 </html>
