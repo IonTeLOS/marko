@@ -2216,7 +2216,7 @@ function showPostFieldAndWait(name) {
       placeholder: "Write your post here... (max 10000 characters)",
       maxLength: 10000
     });
-*/
+
     // Function to handle post submission
     function handleSubmitPost() {
         editor.save().then((outputData) => {
@@ -2238,9 +2238,9 @@ function showPostFieldAndWait(name) {
       // Optionally hide the post field after submission
       postField.style.display = 'none';
       postContent.style.display = 'none';
-                submitButton.addEventListener('click', handleSubmitPost, { once: true });
+      submitButton.addEventListener('click', handleSubmitPost, { once: true });
 
-    /*
+    
         // Get the markdown content from EasyMDE editor
       const markdownContent = easyMDE.value().trim();
       
@@ -2263,9 +2263,9 @@ function showPostFieldAndWait(name) {
 
     // Attach click event listener to the submit button
     submitButton.addEventListener('click', handleSubmitPost, { once: true });
-    */
+    
   }
-  
+  */
 });
 }
 
@@ -7081,30 +7081,32 @@ AnyButton: {
                 ]
             }
         });
-        
-        document.getElementById('submit-post-button').addEventListener('click', function() {
-            editor.save().then((outputData) => {
+            // Function to handle post submission
+    function handleSubmitPost() {
+        editor.save().then((outputData) => {
                 console.log('Article data: ', outputData);
 
                 // Convert Editor.js data to HTML using editorjs-html
                 const edjsParser = edjsHTML();
                 const html = edjsParser.parse(outputData).join('');
-                // document.getElementById('output').innerHTML = html;
+                //document.getElementById('output').innerHTML = html;
 
                 // Save HTML to localStorage
                 localStorage.setItem('editorBio', html);
             }).catch((error) => {
                 console.log('Saving failed: ', error);
             });
+      postField.style.display = 'none';
+      postContent.style.display = 'none';
+      //submitButton.addEventListener('click', handleSubmitPost, { once: true });
+        // Attach click event listener to the submit button
+      resolve(html);
+  }
+        
+        document.getElementById('submit-post-button').addEventListener('click', function() {
+            handleSubmitPost();
         });
 
-        // Load and display saved HTML from localStorage on page load
-        document.addEventListener('DOMContentLoaded', (event) => {
-            const savedBio = localStorage.getItem('editorBio');
-            if (savedBio) {
-                document.getElementById('output').innerHTML = savedBio;
-            }
-        });
     </script>
 </body>
 </html>
