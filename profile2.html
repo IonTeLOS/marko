@@ -266,7 +266,50 @@
     line-height: 32px;
     vertical-align: middle; /* Align the emoji with the text */
 }
-   
+   /* Styles for the button */
+        #dynamicButton {
+            display: inline-block;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            border: 5px solid transparent; /* Placeholder for dynamic border color */
+            background-color: transparent; /* Placeholder for dynamic background color */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            position: fixed; /* Fixed positioning for visibility */
+            bottom: 20px; /* Adjust position as needed */
+            right: 20px;  /* Adjust position as needed */
+            z-index: 9999; /* Ensure it stays on top of other content */
+            transition: all 0.3s ease-in-out;
+        }
+
+        #dynamicButton img {
+            width: 50%;
+            height: 50%;
+        }
+
+        #dynamicButton.expanded {
+            border-radius: 25px;
+            width: auto;
+            padding: 0 20px;
+            background-color: white;
+            border: 2px solid; /* Will be set dynamically by script */
+        }
+
+        #dynamicButton.expanded img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        #dynamicButton.expanded::after {
+            content: attr(data-text);
+            color: var(--compColor);
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
@@ -445,8 +488,10 @@
             <button type="submit">Submit</button>
         </form>
     </div>
-                <div id="buttonMarkoContainer" style="width: 64px; height: 64px;"></div>
-
+  <!-- Directly include the button element -->
+    <button id="dynamicButton">
+        <img src="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg" alt="Icon">
+    </button>
 <button id="dynamicLink">Open Dynamic URL</button>
 
 
