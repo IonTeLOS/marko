@@ -12,7 +12,6 @@
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <style>
-        /* General Styling */
         body {
             font-family: 'Roboto', sans-serif;
             margin: 0;
@@ -27,7 +26,6 @@
             box-sizing: border-box;
         }
 
-/* Dark Mode Styling */
 body.dark-mode {
     background-color: #292929;
 }
@@ -40,7 +38,7 @@ body.dark-mode {
   height: 50%; 
   display: none;
   padding: 20px; 
-  box-sizing: border-box; /* Ensure padding is included in height and width */
+  box-sizing: border-box;
   background-color: #fff;
   resize: none;   
   z-index: 1000;
@@ -60,34 +58,33 @@ body.dark-mode {
   resize: none; 
 }
 
-/* Button styles */
 .submit-note-button,
 .submit-post-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(100% - 40px); /* Full width of the container minus padding */
+  width: calc(100% - 40px); 
   padding: 10px;
   font-size: 16px;
-  color: #fff; /* Text color */
-  background-color: #0D47A1; /* Primary color (Material Design Indigo) */
+  color: #fff; 
+  background-color: #0D47A1; 
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px; /* Space between textarea and button */
+  margin-top: 10px; 
   box-sizing: border-box;
-  transition: background-color 0.3s ease; /* Smooth color transition on hover */
-  gap: 8px; /* Space between icon and text */
+  transition: background-color 0.3s ease;
+  gap: 8px; 
   position: absolute;
-  bottom: 20px; /* Ensure it is placed at the bottom with padding */
-  left: 20px; /* Align to the left with padding */
-  right: 20px; /* Align to the right with padding */
+  bottom: 20px; 
+  left: 20px; 
+  right: 20px; 
 }
 
 .input-field .textarea-wrapper {
-  height: calc(100% - 60px); /* Adjust height to ensure the submit button is visible */
-  overflow: auto; /* Allow scrolling within the textarea area */
-  margin-bottom: 10px; /* Space for the submit button */
+  height: calc(100% - 60px); 
+  overflow: auto; 
+  margin-bottom: 10px; 
   display: flex;
   flex-direction: column;
 }
@@ -99,15 +96,14 @@ body.dark-mode {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  height: 100%; /* Full height of the wrapper */
-  resize: none; /* Disable resizing */
-  flex: 1; /* Make textarea take up remaining space in the wrapper */
+  height: 100%; 
+  resize: none; 
+  flex: 1; 
 }
 
 .input-field .submit-note-button i {
-  font-size: 18px; /* Size of the icon */
+  font-size: 18px; 
 }
-        /* TODO check what unused stuff to remove */
         .create-buttons { 
             background-color: #4CAF50;
             color: white;
@@ -135,8 +131,8 @@ body.dark-mode {
         #defaultButton,
         #default2Button,
         #default3Button {
-            background-color: #0D47A1; /* Default blue color */
-            transition: background-color 0.3s, transform 0.1s; /* Smooth transition for hover and click */
+            background-color: #0D47A1; 
+            transition: background-color 0.3s, transform 0.1s;
         }
 
         #defaultButton:hover,
@@ -148,8 +144,8 @@ body.dark-mode {
         #defaultButton:active,
         #default2Button:active,
         #default3Button:active {
-            background-color: #0D47A1; /* Darker blue on click */
-            transform: scale(0.95); /* Slightly reduce size on click */
+            background-color: #0D47A1; 
+            transform: scale(0.95); 
         }
         #form-buttons {
             display: flex;
@@ -160,13 +156,12 @@ body.dark-mode {
             font-size: 20px;
             margin-bottom: 20px;
         }
-        /* Hide the Yandex Translate banner */
         .tr-stripe {
             display: none !important;
         }
-        /* Marko creation Forms */
-#aliasForm, #markoTypeForm, #markoIconTypeForm {
-    position: relative; /* Make the form relative for absolute positioning of elements */
+
+        #aliasForm, #markoTypeForm, #markoIconTypeForm {
+    position: relative; 
     top: 10px;
     margin-left: 10px;
     margin-right: 10px;
@@ -182,7 +177,7 @@ body.dark-mode {
     background-color: white;
     font-size: 18px;
     z-index: 4001;
-    display: none; /* Hide by default */
+    display: none;
 }
 
 #aliasForm input[type="text"], #aliasForm input[type="checkbox"] {
@@ -190,7 +185,7 @@ body.dark-mode {
 }
 
 #formOverlay {
-    display: none; /* Hide by default */
+    display: none; 
     position: fixed;
     top: 0;
     left: 0;
@@ -199,61 +194,55 @@ body.dark-mode {
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
- /* Ensure the dropdown is visible */
-        select {
-            width: 85%; /* Large width to ensure it's easily clickable */
-            padding: 10px; /* Adequate padding for better readability */
-            border: 1px solid #ddd; /* Light border for better visibility */
-            border-radius: 4px; /* Rounded corners */
-            background-color: white; /* Background color to ensure it stands out */
-            font-size: 16px; /* Increase font size for better readability */
-            appearance: none; /* Remove default styling in some browsers */
-            cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+        .select {
+            width: 85%; 
+            padding: 10px; 
+            border: 1px solid #ddd;
+            border-radius: 4px; 
+            background-color: white; 
+            font-size: 16px; 
+            appearance: none; 
+            cursor: pointer; 
         }
 
-        /* Style the container */
         .form-group {
-            margin-bottom: 20px; /* Space between elements */
+            margin-bottom: 20px; 
         }
 
-        /* Ensure visibility of the select element */
-        select:focus {
-            border-color: #4CAF50; /* Border color change on focus */
-            outline: none; /* Remove default outline */
+        .select:focus {
+            border-color: #4CAF50; 
+            outline: none; 
         }
 
-/* Modal overlay */
         .help-modal {
-            display: none; /* Hidden by default, shown via JavaScript */
-            position: fixed; /* Fixed position to cover the viewport */
-            z-index: 4002; /* Ensure it is above other content */
+            display: none; 
+            position: fixed; 
+            z-index: 4002;
             left: 0;
             top: 0;
             width: 100%;
             height: 100%;
-            overflow: auto; /* Enable scrolling if content is too large */
-            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
-            animation: fadeIn 0.5s; /* Smooth fade-in effect */
+            overflow: auto; 
+            background-color: rgba(0, 0, 0, 0.5); 
+            animation: fadeIn 0.5s; 
         }
 
-        /* Modal content */
         .help-modal-content {
-            background-color: #fefefe; /* White background for the modal */
-            margin: 5% auto; /* Adjust margin for better centering */
-            padding: 20px; /* Padding inside the modal */
-            border: 1px solid #888; /* Light gray border */
-            border-radius: 8px; /* Rounded corners */
-            width: 90%; /* Responsive width */
-            max-width: 600px; /* Maximum width */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-            position: relative; /* Relative positioning for close button */
-            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+            background-color: #fefefe;
+            margin: 5% auto; 
+            padding: 20px;
+            border: 1px solid #888; 
+            border-radius: 8px; 
+            width: 90%; 
+            max-width: 600px; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+            position: relative; 
+            box-sizing: border-box; 
         }
 
-        /* Modal text styling */
         .help-modal-content p {
             font-size: 16px;
-            line-height: 1.6; /* Improve readability */
+            line-height: 1.6; 
             color: #333;
             margin: 0;
         }
@@ -280,22 +269,20 @@ body.dark-mode {
             }
         }
         
-                /* Responsive Design */
         @media (max-width: 768px) {
             .help-modal-content {
                 width: 95%;
-                margin: 10% auto; /* More margin for better visibility on small screens */
+                margin: 10% auto; 
             }
         }
 
         @media (max-width: 480px) {
             .help-modal-content {
-                font-size: 14px; /* Smaller font size for better readability on small screens */
+                font-size: 14px; 
                 padding: 15px;
             }
         }
 
-/* Close Button */
 .close-help,
 .close-help2,
 .close-help3 {
@@ -544,7 +531,7 @@ body.dark-mode {
                 grid-template-columns: repeat(3, 1fr);
             }
         }
-        /* Material Button */
+
 .material-help-button,
 .material-help2-button,
 .material-help3-button {
@@ -564,37 +551,35 @@ body.dark-mode {
     cursor: pointer;
     z-index: 10;
 }
-/* Button styles */
+
 .submit-note-button,
 .submit-post-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: calc(100% - 40px); /* Full width of the container minus padding */
+  width: calc(100% - 40px); 
   padding: 10px;
   font-size: 16px;
-  color: #fff; /* Text color */
-  background-color: #0D47A1; /* Primary color (Material Design Indigo) */
+  color: #fff; 
+  background-color: #0D47A1; 
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: 10px; /* Space between textarea and button */
+  margin-top: 10px;
   box-sizing: border-box;
-  transition: background-color 0.3s ease; /* Smooth color transition on hover */
-  gap: 8px; /* Space between icon and text */
+  transition: background-color 0.3s ease;
+  gap: 8px; 
 }
 
-/* Button hover state */
 .submit-note-button:hover,
 .submit-post-button:hover {
-  background-color: #3700b3; /* Darker shade for hover effect */
+  background-color: #3700b3; 
 }
 
-/* Button focus state */
 .submit-note-button:focus,
 .submit-post-button:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.5); /* Add focus ring */
+  box-shadow: 0 0 0 2px rgba(98, 0, 234, 0.5);
 }
 #line-separator {
     border-top: 1px solid #d3d3d3; 
@@ -648,44 +633,42 @@ body.dark-mode {
 
 .onFinish-buttons {
     position: fixed;
-    width: 90vw; /* Ensures container is 90% of viewport width */
-    max-width: 100vw; /* Ensure it does not exceed viewport width */
+    width: 90vw; 
+    max-width: 100vw;
     max-height: 20vh;
     bottom: 80px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    justify-content: space-around; /* Space between buttons */
+    justify-content: space-around; 
     gap: 10px;
-    padding: 0 5vw; /* Add padding to ensure buttons don't touch the edges */
+    padding: 0 5vw; 
     box-sizing: border-box;
 }
 
-/* Additional styles for buttons to prevent them from expanding too much */
 .onFinish-buttons button {
-    flex-grow: 1; /* Allow buttons to grow and fill available space */
-    max-width: calc(100% / 3 - 20px); /* Adjust based on the number of buttons */
-    padding: 8px 12px; /* Adjust padding as needed */
-    font-size: 14px; /* Adjust font size as needed */
+    flex-grow: 1;
+    max-width: calc(100% / 3 - 20px); 
+    padding: 8px 12px;
+    font-size: 14px; 
     box-sizing: border-box;
-    white-space: nowrap; /* Prevent text from wrapping */
-    background-color: #0D47A1; /* Set button background color */
-    overflow: hidden; /* Hide overflow text */
-    text-overflow: ellipsis; /* Show ellipsis for overflow text */
-    min-width: 90px; /* Set a minimum width to prevent buttons from shrinking too much */
-    color: white; /* Set text color to white for contrast */
-    border: none; /* Remove default border */
-    border-radius: 12px; /* Add border-radius for rounded corners */
-    cursor: pointer; /* Change cursor to pointer on hover */
+    white-space: nowrap; 
+    background-color: #0D47A1; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    min-width: 90px;
+    color: white; 
+    border: none; 
+    border-radius: 12px;
+    cursor: pointer;
 }
 
-/* Optional: Add hover and active styles for better UX */
 .onFinish-buttons button:hover {
-    background-color: #0b3c91; /* Slightly darker shade for hover effect */
+    background-color: #0b3c91; 
 }
 
 .onFinish-buttons button:active {
-    background-color: #092d73; /* Even darker shade for active effect */
+    background-color: #092d73;
 }
 
 
