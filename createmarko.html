@@ -1610,14 +1610,14 @@ async function getFavicon(url) {
       
     img.onload = function() {
       if (this.width < expectedSize || this.height < expectedSize) {
-        resolve(fallbackIcon);
+        resolve(fallbackIcon.src);
       } else {
         resolve(this.src);
       }
     };
 
     img.onerror = function() {
-      resolve(fallbackIcon);
+      resolve(fallbackIcon.src);
     };
 
     img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=${expectedSize}`;
