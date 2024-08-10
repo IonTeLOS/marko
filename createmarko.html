@@ -10,6 +10,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/notiflix@3/dist/notiflix-aio-3.2.7.min.js"></script>
       <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">  
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.css">
+        <script src="https://cdn.jsdelivr.net/npm/editorjs-html@latest/build/edjsHTML.js"></script>
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
     <style>
@@ -674,7 +676,36 @@ body.dark-mode {
 .onFinish-buttons button:active {
     background-color: #092d73;
 }
-
+        .container,
+        .editor-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .editor-container {
+            padding: 5px
+            margin-bottom: 30px;
+        }
+        .editor-input-field {
+            margin-bottom: 20px;
+        }
+        .editor-input-field label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+            /* Editor.js Container */
+    #editorjs {
+                border: 2px solid #ccc;
+            border-radius: 4px;
+      margin: 0 auto; /* Center the editor */
+      max-width: 100%; /* Ensure the editor width fits within the viewport */
+      box-sizing: border-box;
+    }
 
 
     </style>
@@ -761,11 +792,12 @@ body.dark-mode {
         </button>
     </div>
     <div id="formOverlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 999;"></div>
-
-<div id="post-field" class="input-field">
-  <div class="mde-textarea-wrapper">
-    <textarea id="post-content" placeholder="Create your post here.. (max 10.000 characters)" maxlength="10000"></textarea>
-  </div>
+    <div id=post-field class="editor-container">
+        <div class="editor-input-field">
+            <label for="editorjs"></label>
+            <div id="editorjs"></div>
+        </div>
+    </div>    
   <button id="submit-post-button" class="submit-post-button">
     <i class="material-icons">send</i>
     Submit
@@ -878,7 +910,8 @@ body.dark-mode {
     
     <!-- Container for dynamic buttons -->
     <div class="onFinish-buttons"></div>
-
+<script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.js"></script>
     <script>
         let APP_LOGO = "https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg";
         function changeLanguage() {
@@ -2166,7 +2199,7 @@ function showPostFieldAndWait(name) {
   return new Promise((resolve, reject) => {
     // Get the elements
     const postField = document.getElementById('post-field');
-    const postContent = document.getElementById('post-content');
+    const postContent = document.getElementById('editorjs');
     const submitButton = document.getElementById('submit-post-button');
 
     // Display the post field and content
@@ -6451,7 +6484,7 @@ function handleClipboardAndSharing(shortlink) {
         const noteField = document.getElementById('note-field');
         const noteContent = document.getElementById('note-content');
         const postField = document.getElementById('post-field');
-        const postContent = document.getElementById('post-content');
+        const postContent = document.getElementById('editorjs');
 
         let searchTimeout;
 
@@ -6839,5 +6872,217 @@ window.onfocus = checkVisibilityAndReload;
             }
         });
 </script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.js"></script>
+    
+    <!-- Editor.js tools -->
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest/dist/bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@latest/dist/bundle.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/editorjs-inline-image"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/editorjs-button@latest"></script>
+        <script src="https://cdn.jsdelivr.net/npm/editorjs-html/build/index.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/editorjs-paragraph-with-alignment@3.0.0"></script>
+    
+    <script>
+            
+class IFrameTool {
+      static get toolbox() {
+        return {
+          title: 'iFrame',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M21 3H3v18h18V3zm-1 16H4V6h16v13z"/></svg>',
+        };
+      }
+
+      constructor({ data }) {
+        this.data = data || { url: '', height: 500 };
+      }
+
+      render() {
+        const container = document.createElement('div');
+        container.classList.add('iframe-container');
+
+        // URL Input
+        const urlInputContainer = document.createElement('div');
+        urlInputContainer.classList.add('material-input');
+        const urlInput = document.createElement('input');
+        urlInput.type = 'text';
+        urlInput.placeholder = 'Enter iFrame URL';
+        urlInput.value = this.data.url;
+        urlInput.addEventListener('input', (e) => {
+          this.data.url = e.target.value;
+          this.updateIframe();
+        });
+        urlInputContainer.appendChild(urlInput);
+        container.appendChild(urlInputContainer);
+
+        // Height Input
+        const heightInputContainer = document.createElement('div');
+        heightInputContainer.classList.add('material-input');
+        const heightInput = document.createElement('input');
+        heightInput.type = 'number';
+        heightInput.placeholder = 'Height (px)';
+        heightInput.value = this.data.height;
+        heightInput.addEventListener('input', (e) => {
+          this.data.height = e.target.value;
+          this.updateIframe();
+        });
+        heightInputContainer.appendChild(heightInput);
+        container.appendChild(heightInputContainer);
+
+        // iFrame
+        this.iframe = document.createElement('iframe');
+        this.updateIframe();
+
+        container.appendChild(this.iframe);
+
+        return container;
+      }
+
+      updateIframe() {
+        if (this.data.url) {
+          // Adjust URL for YouTube videos
+          const youtubeUrlPattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+          const isYoutube = youtubeUrlPattern.test(this.data.url);
+
+          // Convert to YouTube embed URL if necessary
+          if (isYoutube) {
+            const videoId = this.data.url.match(youtubeUrlPattern)[1];
+            this.iframe.src = `https://www.youtube.com/embed/${videoId}`;
+          } else {
+            this.iframe.src = this.data.url;
+          }
+
+          // Set the iframe height and ensure it is responsive
+          this.iframe.style.height = `${this.data.height}px`;
+        }
+      }
+
+      save() {
+        return this.data;
+      }
+    }
+        const editor = new EditorJS({
+            holder: 'editorjs',
+            tools: {
+                header: {
+                    class: Header,
+                    inlineToolbar: ['marker', 'link'],
+                    config: {
+                        placeholder: 'Enter a header'
+                    },
+                    shortcut: 'CMD+SHIFT+H'
+                },
+                paragraph: {
+                        class: Paragraph,
+                        inlineToolbar: true,
+                        config: {
+                            placeholder: 'Enter a paragraph'
+                        }
+      
+                },
+                list: {
+                    class: List,
+                    inlineToolbar: true,
+                    shortcut: 'CMD+SHIFT+L'
+                },
+                      image: {
+        class: InlineImage,
+        inlineToolbar: true,
+        config: {
+          embed: {
+            display: true,
+          },
+          unsplash: {
+            appName: 'your_app_name',
+            apiUrl: 'https://your-proxy-api-url.com',
+            maxResults: 30,
+          }
+        }
+      },
+      table: {
+      class: Table,
+      inlineToolbar: true,
+      config: {
+        rows: 2,
+        cols: 3,
+      },
+    },
+AnyButton: {
+          class: AnyButton,
+          inlineToolbar: false,
+          config:{
+            css:{
+              "btnColor": "btn--blue",
+            },
+            textValidation: (text) => {
+              console.log("error!", text)
+              return true;
+            },
+            linkValidation: (text) => {
+              console.log("error!", text)
+              return false;
+            }
+          }
+        },
+ 
+          iframe: IFrameTool,
+
+
+                delimiter: Delimiter,
+                marker: {
+                    class: Marker,
+                    shortcut: 'CMD+SHIFT+M'
+                },
+                raw: RawTool,
+            },
+            data: {
+                blocks: [
+                    {
+                        type: "header",
+                        data: {
+                            text: "Bio",
+                            level: 2
+                        }
+                    },
+                    {
+                        type: "paragraph",
+                        data: {
+                            text: "You can create any content you wish here.."
+
+                        }
+                    }
+                ]
+            }
+        });
+        
+        document.getElementById('submitBio').addEventListener('click', function() {
+            editor.save().then((outputData) => {
+                console.log('Article data: ', outputData);
+
+                // Convert Editor.js data to HTML using editorjs-html
+                const edjsParser = edjsHTML();
+                const html = edjsParser.parse(outputData).join('');
+                document.getElementById('output').innerHTML = html;
+
+                // Save HTML to localStorage
+                localStorage.setItem('editorBio', html);
+            }).catch((error) => {
+                console.log('Saving failed: ', error);
+            });
+        });
+
+        // Load and display saved HTML from localStorage on page load
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const savedBio = localStorage.getItem('editorBio');
+            if (savedBio) {
+                document.getElementById('output').innerHTML = savedBio;
+            }
+        });
+    </script>
 </body>
 </html>
