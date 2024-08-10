@@ -1736,10 +1736,7 @@ localforage.getItem('newUnopenedReminder').then(function(value) {
 localforage.getItem('new-nav-request').then(function(value) {
   if (value !== null) {
     console.log('Retrieved value:', value);
-    // Use the retrieved value in your application logic
-    const match = value.match(/nav=([^&]+)/);
-    const navUrl = match ? decodeURIComponent(match[1]) : null;
-    window.open(navUrl, '_blank');
+    window.open(value, '_blank');
         return localforage.removeItem('new-nav-request');
   } else {
     console.log('Url Value not found in localForage.');
@@ -3613,6 +3610,11 @@ function handleSharedLink(url, title, text) {
     const link = decodeURIComponent(theLink || '').replace(/\n/g, '<br>');
     const scrollRequest = params.get('scroll');
     const randomColor = getColor();
+    const navUrl = params.get('nav');  // Extract the value associated with 'nav'
+
+    if (navUrl) {
+        window.open(navUrl, '_blank');
+    }
             
             // Check if the scroll parameter is present
             if (scrollRequest === 'down') {
