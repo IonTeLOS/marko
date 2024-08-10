@@ -2201,23 +2201,7 @@ function showPostFieldAndWait(name) {
     postField.style.display = 'block';
     postContent.style.display = 'block';
 
-      /*
-    // Initialize EasyMDE editor
-    const easyMDE = new EasyMDE({
-      element: postContent,
-      autoDownloadFontAwesome: true,
-      scrollbarStyle: null,
-      promptURLs: true,
-      toolbar: [
-        "bold", "italic", "heading", "|",
-        "unordered-list", "table", "horizontal-rule", "|",
-        "link", "image", "preview"
-      ],
-      placeholder: "Write your post here... (max 10000 characters)",
-      maxLength: 10000
-    });
-
-    // Function to handle post submission
+           // Function to handle post submission
     function handleSubmitPost() {
         editor.save().then((outputData) => {
                 console.log('Article data: ', outputData);
@@ -2232,40 +2216,17 @@ function showPostFieldAndWait(name) {
             }).catch((error) => {
                 console.log('Saving failed: ', error);
             });
-        // Attach click event listener to the submit button
-        resolve(html);
-
-      // Optionally hide the post field after submission
       postField.style.display = 'none';
       postContent.style.display = 'none';
-      submitButton.addEventListener('click', handleSubmitPost, { once: true });
-
-    
-        // Get the markdown content from EasyMDE editor
-      const markdownContent = easyMDE.value().trim();
-      
-      // Convert markdown to HTML using Showdown
-      showdown.setFlavor('github');
-      const converter = new showdown.Converter();
-      converter.setOption('backslashEscapesHTMLTags', true);
-      const htmlContent = converter.makeHtml(markdownContent);
-      
-      // Store the HTML content in sessionStorage
-      sessionStorage.setItem('temp-marko-link', htmlContent);  
-      
-      // Resolve the promise with the HTML content
-      resolve(htmlContent);
-
-      // Optionally hide the post field after submission
-      postField.style.display = 'none';
-      postContent.style.display = 'none';
-    }
-
-    // Attach click event listener to the submit button
-    submitButton.addEventListener('click', handleSubmitPost, { once: true });
-    
+      submitButton.style.display = 'none';  
+      resolve(html);
   }
-  */
+              submitButton.addEventListener('click', handleSubmitPost, { once: true });
+
+        //document.getElementById('submit-post-button').addEventListener('click', function() {
+         //   handleSubmitPost();
+        //});
+
 });
 }
 
@@ -7081,32 +7042,7 @@ AnyButton: {
                 ]
             }
         });
-            // Function to handle post submission
-    function handleSubmitPost() {
-        editor.save().then((outputData) => {
-                console.log('Article data: ', outputData);
-
-                // Convert Editor.js data to HTML using editorjs-html
-                const edjsParser = edjsHTML();
-                const html = edjsParser.parse(outputData).join('');
-                //document.getElementById('output').innerHTML = html;
-
-                // Save HTML to localStorage
-                localStorage.setItem('editorBio', html);
-            }).catch((error) => {
-                console.log('Saving failed: ', error);
-            });
-      postField.style.display = 'none';
-      postContent.style.display = 'none';
-      //submitButton.addEventListener('click', handleSubmitPost, { once: true });
-        // Attach click event listener to the submit button
-      resolve(html);
-  }
-        
-        document.getElementById('submit-post-button').addEventListener('click', function() {
-            handleSubmitPost();
-        });
-
+    
     </script>
 </body>
 </html>
