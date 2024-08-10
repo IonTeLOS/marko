@@ -478,7 +478,7 @@
             // 5. Fallback to Google Favicon service
             return `https://www.google.com/s2/favicons?domain=${baseUrl}&sz=64`;
         }
-        
+
         function getMostCommonColor() {
             const elements = document.querySelectorAll('*');
             const colorCounts = {};
@@ -505,7 +505,7 @@
             return mostCommonColor;
         }
 
-        document.getElementById('myButton').addEventListener('click', function(event) {
+        document.getElementById('dynamicLink').addEventListener('click', async function(event) {
             event.preventDefault();
 
             const url = encodeURIComponent(window.location.href);
