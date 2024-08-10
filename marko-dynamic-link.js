@@ -155,88 +155,26 @@ function getTranslatedText() {
 
 
 // Function to create and style the button dynamically
-async function createDynamicButton(containerId) {
-    const container = document.getElementById(containerId);
-    if (!container) {
-        console.error(`Container with ID "${containerId}" not found.`);
+async function styleButton() {
+    const button = document.getElementById('dynamicButton');
+    if (!button) {
+        console.error('Button with ID "dynamicButton" not found.');
         return;
     }
 
-    const button = document.createElement('button');
-    button.id = 'dynamicMarkoButton';
-    button.className = 'circle-button';
-
-    const icon = document.createElement('img');
-    icon.src = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg';
-    icon.alt = 'Icon';
-    button.appendChild(icon);
-
-    button.onclick = handleMarkoButtonClick;
-
-    container.appendChild(button);
-
     const { finalColor, compColor } = computeAndStoreColors();
 
-    const style = document.createElement('style');
-    style.innerHTML = `
-        #${containerId} {
-            position: relative;
-            z-index: 9999;
-            width: 64px;
-            height: 64px;
-        }
+    button.style.borderColor = compColor;
+    button.style.backgroundColor = finalColor;
 
-        #dynamicButton.circle-button {
-            display: inline-block;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 5px solid ${compColor};
-            background-color: ${finalColor};
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease-in-out;
-            cursor: pointer;
-            overflow: hidden;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
+    button.addEventListener('click', handleButtonClick);
 
-        #dynamicButton.circle-button img {
-            width: 50%;
-            height: 50%;
-        }
-
-        #dynamicButton.expanded {
-            border-radius: 25px;
-            width: auto;
-            padding: 0 20px;
-            background-color: white;
-            border: 2px solid ${compColor};
-        }
-
-        #dynamicButton.expanded img {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-        }
-
-        #dynamicButton.expanded::after {
-            content: "${getTranslatedText()}";
-            color: ${compColor};
-            white-space: nowrap;
-        }
-    `;
-
-    document.head.appendChild(style);
+    // Set the text data attribute for the expanded button
+    button.setAttribute('data-text', getTranslatedText());
 }
 
 // Load tinycolor for color manipulation
 const script = document.createElement('script');
 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.2/tinycolor.min.js';
-script.onload = function() {
-    createDynamicButton('buttonMarkoContainer'); // ID of the container element in your HTML
-};
+script.onload = styleButton;
 document.head.appendChild(script);
