@@ -7096,7 +7096,7 @@ AnyButton: {
                 // Convert Editor.js data to HTML using editorjs-html
                 const edjsParser = edjsHTML();
                 const html = edjsParser.parse(outputData).join('');
-                document.getElementById('output').innerHTML = html;
+                // document.getElementById('output').innerHTML = html;
 
                 // Save HTML to localStorage
                 localStorage.setItem('editorBio', html);
