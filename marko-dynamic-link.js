@@ -98,7 +98,7 @@ async function getFavicon() {
             return mostCommonColor;
         }
 
-        async function handleButtonClick(event) {
+        async function handleMarkoButtonClick(event) {
         event.preventDefault();
     const button = event.currentTarget;
 
@@ -153,7 +153,8 @@ function getTranslatedText() {
     return translations[language] || translations['en'];
 }
 
-// Function to create and style the button dynamically (slightly modified)
+
+// Function to create and style the button dynamically
 async function createDynamicButton(containerId) {
     const container = document.getElementById(containerId);
     if (!container) {
@@ -165,30 +166,27 @@ async function createDynamicButton(containerId) {
     button.id = 'dynamicMarkoButton';
     button.className = 'circle-button';
 
-    // Adding SVG icon inside the button
     const icon = document.createElement('img');
     icon.src = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg';
     icon.alt = 'Icon';
     button.appendChild(icon);
 
-    // Adding the onclick event directly to the button
-    button.onclick = handleButtonClick;
+    button.onclick = handleMarkoButtonClick;
 
-    // Append the button to the container
     container.appendChild(button);
 
-    // Compute and store colors, and use them for styling
     const { finalColor, compColor } = computeAndStoreColors();
 
-    // Add styles
     const style = document.createElement('style');
     style.innerHTML = `
         #${containerId} {
             position: relative;
             z-index: 9999;
+            width: 64px;
+            height: 64px;
         }
 
-        #dynamicMarkoButton.circle-button {
+        #dynamicButton.circle-button {
             display: inline-block;
             width: 100%;
             height: 100%;
@@ -206,12 +204,12 @@ async function createDynamicButton(containerId) {
             left: 0;
         }
 
-        #dynamicMarkoButton.circle-button img {
+        #dynamicButton.circle-button img {
             width: 50%;
             height: 50%;
         }
 
-        #dynamicMarkoButton.expanded {
+        #dynamicButton.expanded {
             border-radius: 25px;
             width: auto;
             padding: 0 20px;
@@ -219,13 +217,13 @@ async function createDynamicButton(containerId) {
             border: 2px solid ${compColor};
         }
 
-        #dynamicMarkoButton.expanded img {
+        #dynamicButton.expanded img {
             width: 24px;
             height: 24px;
             margin-right: 10px;
         }
 
-        #dynamicMarkoButton.expanded::after {
+        #dynamicButton.expanded::after {
             content: "${getTranslatedText()}";
             color: ${compColor};
             white-space: nowrap;
@@ -235,7 +233,7 @@ async function createDynamicButton(containerId) {
     document.head.appendChild(style);
 }
 
-// Load tinycolor for color manipulation (you can download and host it locally or use a CDN)
+// Load tinycolor for color manipulation
 const script = document.createElement('script');
 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.2/tinycolor.min.js';
 script.onload = function() {
