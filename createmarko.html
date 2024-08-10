@@ -6933,28 +6933,37 @@ class IFrameTool {
     container.classList.add('iframe-container');
 
     // URL Input with Material Design styling
-    const urlInputContainer = document.createElement('div');
-    urlInputContainer.classList.add('material-input');
+    this.urlInputContainer = document.createElement('div');
+    this.urlInputContainer.classList.add('material-input');
     
     const urlLabel = document.createElement('label');
     urlLabel.textContent = 'Enter iFrame URL';
     
-    const urlInput = document.createElement('input');
-    urlInput.type = 'text';
-    urlInput.value = this.data.url;
+    this.urlInput = document.createElement('input');
+    this.urlInput.type = 'text';
+    this.urlInput.value = this.data.url;
     
-    urlInput.addEventListener('input', (e) => {
+    this.urlInput.addEventListener('input', (e) => {
       this.data.url = e.target.value;
       this.updateIframe();
     });
+
+    // Hide input on Enter key press
+    this.urlInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.hideInput();
+      }
+    });
     
-    urlInputContainer.appendChild(urlInput);
-    urlInputContainer.appendChild(urlLabel);
-    container.appendChild(urlInputContainer);
+    this.urlInputContainer.appendChild(this.urlInput);
+    this.urlInputContainer.appendChild(urlLabel);
+    container.appendChild(this.urlInputContainer);
 
     // iFrame
     this.iframe = document.createElement('iframe');
     this.iframe.style.width = '100%'; // Make iframe take full width of the container
+    this.iframe.style.display = 'none'; // Hide iframe initially
     this.updateIframe();
 
     container.appendChild(this.iframe);
@@ -6974,8 +6983,13 @@ class IFrameTool {
         this.iframe.src = this.data.url;
       }
 
-      this.iframe.style.height = '500px'; // Fixed height, can be adjusted or made dynamic later
+      this.iframe.style.height = '500px'; // Fixed height
     }
+  }
+
+  hideInput() {
+    this.urlInputContainer.style.display = 'none';
+    this.iframe.style.display = 'block'; // Show the iframe
   }
 
   save() {
@@ -7015,7 +7029,7 @@ class IFrameTool {
             display: true,
           },
           unsplash: {
-            appName: 'your_app_name',
+            appName: 'Marko',
             apiUrl: 'https://your-proxy-api-url.com',
             maxResults: 30,
           }
@@ -7046,10 +7060,7 @@ AnyButton: {
             }
           }
         },
- 
           iframe: IFrameTool,
-
-
                 delimiter: Delimiter,
                 marker: {
                     class: Marker,
