@@ -431,7 +431,26 @@
             <button type="submit">Submit</button>
         </form>
     </div>
+<button id="myButton">Open Dynamic URL</button>
 
+    <script>
+        document.getElementById('myButton').addEventListener('click', function() {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.title);
+
+            // Get favicon
+            const favicon = document.getElementById('favicon') ? document.getElementById('favicon').href : '';
+
+            // Generate a random color if needed
+            const randomColor = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+
+            // Construct the URL with parameters
+            const finalUrl = `https://example.com?type=website&link=${url}&title=${title}&icon=${favicon}&color=${randomColor}`;
+
+            // Open the constructed URL in a new window/tab
+            window.open(finalUrl, '_blank');
+        });
+    </script>
 <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.js"></script>
     <script>
