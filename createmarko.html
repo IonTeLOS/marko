@@ -48,29 +48,6 @@ body.dark-mode {
   overflow: hidden; 
 }
 
-.submit-note-button,
-.submit-post-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: calc(100% - 40px); 
-  padding: 10px;
-  font-size: 16px;
-  color: #fff; 
-  background-color: #0D47A1; 
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 10px; 
-  box-sizing: border-box;
-  transition: background-color 0.3s ease;
-  gap: 8px; 
-  position: absolute;
-  bottom: 20px; 
-  left: 20px; 
-  right: 20px; 
-}
-
 .input-field .textarea-wrapper {
   height: calc(100% - 60px); 
   overflow: auto; 
@@ -545,8 +522,7 @@ body.dark-mode {
     z-index: 10;
 }
 
-.submit-note-button,
-.submit-post-button {
+.submit-note-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -664,38 +640,68 @@ body.dark-mode {
     background-color: #092d73;
 }
     
-        .editor-container {
-            display: none;
-            max-width: 600px;
-            width: 95vw;
-            margin: 0 auto;
-            background-color: white;
-            padding: 10px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .editor-container {
-            padding: 5px
-            margin-bottom: 30px;
-        }
-        .editor-input-field {
-            display: flex;
-            margin-bottom: 20px;
-        }
-        .editor-input-field label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-            /* Editor.js Container */
-    #editorjs {
-                border: 2px solid #ccc;
-            border-radius: 4px;
-      margin: 0 auto; /* Center the editor */
-      width: 100%; /* Ensure the editor width fits within the viewport */
-      box-sizing: border-box;
-    }
+/* Container styling */
+.editor-container {
+    display: none; /* Hide by default, shown based on your logic */
+    max-width: 600px;
+    width: 95vw;
+    margin: 0 auto;
+    background-color: white;
+    padding: 10px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    position: relative; /* To allow positioning of button inside */
+}
+
+/* Ensure button is always positioned at the bottom inside the container */
+.editor-input-field {
+    display: flex;
+    flex-direction: column; /* Stack content vertically */
+    margin-bottom: 20px;
+}
+
+.editor-input-field label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+/* Editor.js Container */
+#editorjs {
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    margin: 0 auto; /* Center the editor */
+    width: 100%; /* Ensure the editor width fits within the viewport */
+    box-sizing: border-box;
+}
+
+/* Button inside the container */
+.submit-post-button {
+    display: block;
+    width: 100%; /* Full width to match the container */
+    max-width: 600px; /* Match the container's maximum width */
+    margin: 0 auto; /* Center the button */
+    padding: 10px; /* Button padding */
+    background-color: #3f51b5; /* Background color */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size for readability */
+    text-align: center; /* Center text within button */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Add shadow for better appearance */
+    position: absolute; /* Position it at the bottom of the container */
+    bottom: 10px; /* Space from the bottom */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust for centering */
+}
+
+.submit-post-button i.material-icons {
+    margin-right: 8px; /* Space between icon and text */
+}
+
 /* Basic Material Design input styling */
 .material-input {
   position: relative;
