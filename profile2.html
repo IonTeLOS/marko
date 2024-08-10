@@ -436,6 +436,49 @@
 
 
     <script>
+        async function getFavicon() {
+            // 1. Try to get favicon from current page
+            let faviconElement = document.querySelector('link[rel="icon"], link[rel="shortcut icon"]');
+            if (faviconElement) {
+                return faviconElement.href;
+            }
+
+            // 2. Try to get favicon from home page
+            const baseUrl = window.location.origin; // Root of the domain
+            try {
+                const response = await fetch(`${baseUrl}/favicon.ico`);
+                if (response.ok) {
+                    return `${baseUrl}/favicon.ico`;
+                }
+            } catch (e) {
+                console.log("Error fetching favicon from home page:", e);
+            }
+
+            // 3. Try to get icon from manifest
+            const manifestLink = document.querySelector('link[rel="manifest"]');
+            if (manifestLink) {
+                try {
+                    const manifestUrl = manifestLink.href;
+                    const response = await fetch(manifestUrl);
+                    const manifest = await response.json();
+                    if (manifest.icons && manifest.icons.length > 0) {
+                        return new URL(manifest.icons[0].src, baseUrl).href; // Resolve the relative URL if needed
+                    }
+                } catch (e) {
+                    console.log("Error fetching icon from manifest:", e);
+                }
+            }
+
+            // 4. Try to get og:image
+            const ogImageElement = document.querySelector('meta[property="og:image"]');
+            if (ogImageElement) {
+                return ogImageElement.content;
+            }
+
+            // 5. Fallback to Google Favicon service
+            return `https://www.google.com/s2/favicons?domain=${baseUrl}&sz=64`;
+        }
+        
         function getMostCommonColor() {
             const elements = document.querySelectorAll('*');
             const colorCounts = {};
@@ -468,9 +511,8 @@
             const url = encodeURIComponent(window.location.href);
             const title = encodeURIComponent(document.title);
 
-            // Get favicon, use default if not found
-            const faviconElement = document.getElementById('favicon');
-            const favicon = encodeURIComponent(faviconElement ? faviconElement.href : 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/facebook-square-brands.svg');
+            // Get the best available icon
+            const favicon = encodeURIComponent(await getFavicon());
 
             // Detect theme-color from meta tag
             const themeColorMeta = document.querySelector('meta[name="theme-color"]');
