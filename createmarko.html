@@ -696,6 +696,46 @@ body.dark-mode {
       width: 100%; /* Ensure the editor width fits within the viewport */
       box-sizing: border-box;
     }
+/* Basic Material Design input styling */
+.material-input {
+  position: relative;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.material-input input {
+  font-size: 16px;
+  padding: 10px 5px;
+  display: block;
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #ccc;
+  background: none;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.material-input input:focus {
+  border-bottom: 2px solid #3f51b5;
+}
+
+.material-input label {
+  position: absolute;
+  top: 10px;
+  left: 5px;
+  font-size: 16px;
+  color: #999;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.material-input input:focus + label,
+.material-input input:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 5px;
+  font-size: 12px;
+  color: #3f51b5;
+}
 
 
     </style>
@@ -6906,81 +6946,72 @@ window.onfocus = checkVisibilityAndReload;
     <script>
             
 class IFrameTool {
-      static get toolbox() {
-        return {
-          title: 'iFrame',
-          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M21 3H3v18h18V3zm-1 16H4V6h16v13z"/></svg>',
-        };
+  static get toolbox() {
+    return {
+      title: 'iFrame',
+      icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M21 3H3v18h18V3zm-1 16H4V6h16v13z"/></svg>',
+    };
+  }
+
+  constructor({ data }) {
+    this.data = data || { url: 'https://google.com' };
+  }
+
+  render() {
+    const container = document.createElement('div');
+    container.classList.add('iframe-container');
+
+    // URL Input with Material Design styling
+    const urlInputContainer = document.createElement('div');
+    urlInputContainer.classList.add('material-input');
+    
+    const urlLabel = document.createElement('label');
+    urlLabel.textContent = 'Enter iFrame URL';
+    
+    const urlInput = document.createElement('input');
+    urlInput.type = 'text';
+    urlInput.value = this.data.url;
+    
+    urlInput.addEventListener('input', (e) => {
+      this.data.url = e.target.value;
+      this.updateIframe();
+    });
+    
+    urlInputContainer.appendChild(urlInput);
+    urlInputContainer.appendChild(urlLabel);
+    container.appendChild(urlInputContainer);
+
+    // iFrame
+    this.iframe = document.createElement('iframe');
+    this.iframe.style.width = '100%'; // Make iframe take full width of the container
+    this.updateIframe();
+
+    container.appendChild(this.iframe);
+
+    return container;
+  }
+
+  updateIframe() {
+    if (this.data.url) {
+      const youtubeUrlPattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+      const isYoutube = youtubeUrlPattern.test(this.data.url);
+
+      if (isYoutube) {
+        const videoId = this.data.url.match(youtubeUrlPattern)[1];
+        this.iframe.src = `https://www.youtube.com/embed/${videoId}`;
+      } else {
+        this.iframe.src = this.data.url;
       }
 
-      constructor({ data }) {
-        this.data = data || { url: '', height: 500 };
-      }
-
-      render() {
-        const container = document.createElement('div');
-        container.classList.add('iframe-container');
-
-        // URL Input
-        const urlInputContainer = document.createElement('div');
-        urlInputContainer.classList.add('material-input');
-        const urlInput = document.createElement('input');
-        urlInput.type = 'text';
-        urlInput.placeholder = 'Enter iFrame URL';
-        urlInput.value = this.data.url;
-        urlInput.addEventListener('input', (e) => {
-          this.data.url = e.target.value;
-          this.updateIframe();
-        });
-        urlInputContainer.appendChild(urlInput);
-        container.appendChild(urlInputContainer);
-
-        // Height Input
-        const heightInputContainer = document.createElement('div');
-        heightInputContainer.classList.add('material-input');
-        const heightInput = document.createElement('input');
-        heightInput.type = 'number';
-        heightInput.placeholder = 'Height (px)';
-        heightInput.value = this.data.height;
-        heightInput.addEventListener('input', (e) => {
-          this.data.height = e.target.value;
-          this.updateIframe();
-        });
-        heightInputContainer.appendChild(heightInput);
-        container.appendChild(heightInputContainer);
-
-        // iFrame
-        this.iframe = document.createElement('iframe');
-        this.updateIframe();
-
-        container.appendChild(this.iframe);
-
-        return container;
-      }
-
-      updateIframe() {
-        if (this.data.url) {
-          // Adjust URL for YouTube videos
-          const youtubeUrlPattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-          const isYoutube = youtubeUrlPattern.test(this.data.url);
-
-          // Convert to YouTube embed URL if necessary
-          if (isYoutube) {
-            const videoId = this.data.url.match(youtubeUrlPattern)[1];
-            this.iframe.src = `https://www.youtube.com/embed/${videoId}`;
-          } else {
-            this.iframe.src = this.data.url;
-          }
-
-          // Set the iframe height and ensure it is responsive
-          this.iframe.style.height = `${this.data.height}px`;
-        }
-      }
-
-      save() {
-        return this.data;
-      }
+      this.iframe.style.height = '500px'; // Fixed height, can be adjusted or made dynamic later
     }
+  }
+
+  save() {
+    return this.data;
+  }
+}
+
         const editor = new EditorJS({
             holder: 'editorjs',
             tools: {
