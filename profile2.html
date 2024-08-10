@@ -435,6 +435,32 @@
 
 
     <script>
+        function getMostCommonColor() {
+            const elements = document.querySelectorAll('*');
+            const colorCounts = {};
+
+            elements.forEach(element => {
+                const style = window.getComputedStyle(element);
+                const color = style.getPropertyValue('color');
+
+                if (color) {
+                    colorCounts[color] = (colorCounts[color] || 0) + 1;
+                }
+            });
+
+            let mostCommonColor = null;
+            let maxCount = 0;
+
+            for (const color in colorCounts) {
+                if (colorCounts[color] > maxCount) {
+                    mostCommonColor = color;
+                    maxCount = colorCounts[color];
+                }
+            }
+
+            return mostCommonColor;
+        }
+
         document.getElementById('myButton').addEventListener('click', function(event) {
             event.preventDefault();
 
@@ -445,11 +471,28 @@
             const faviconElement = document.getElementById('favicon');
             const favicon = encodeURIComponent(faviconElement ? faviconElement.href : 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/facebook-square-brands.svg');
 
-            // Generate and encode a random color
-            const randomColor = encodeURIComponent(`#${Math.floor(Math.random() * 16777215).toString(16)}`);
+            // Detect theme-color from meta tag
+            const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+            let finalColor = themeColorMeta ? themeColorMeta.content : null;
+
+            // If no theme-color, check for the most common color in the document
+            if (!finalColor) {
+                const mostCommonColor = getMostCommonColor();
+                if (mostCommonColor) {
+                    finalColor = mostCommonColor;
+                }
+            }
+
+            // If no common color found, generate a random color
+            if (!finalColor) {
+                finalColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+            }
+
+            // Encode final color
+            const encodedColor = encodeURIComponent(finalColor);
 
             // Construct the URL with parameters
-            const finalUrl = `https://teloslinux.org/marko/newfile?type=website&link=${url}&title=${title}&icon=${favicon}&color=${randomColor}&createMarko=true`;
+            const finalUrl = `https://teloslinux.org/marko/newfile?type=website&link=${url}&title=${title}&icon=${favicon}&color=${encodedColor}&createMarko=true`;
 
             // Open the constructed URL in a new window/tab
             window.open(finalUrl, '_blank');
