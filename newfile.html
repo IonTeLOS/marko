@@ -1484,6 +1484,10 @@ onMessage(messaging, (payload) => {
     const navUrl = String(payload.data.goto);
     window.open(navUrl, '_blank');
   }
+  if (payload.data.url) {
+    const navUrl = String(payload.data.url);
+    window.open(navUrl, '_blank');
+  }
   if (payload.data.uuid) {
   const uuid = payload.data.uuid;
   const url = `https://teloslinux.org/marko/newfile?uuid=${uuid}`;
@@ -1733,7 +1737,9 @@ localforage.getItem('new-nav-request').then(function(value) {
   if (value !== null) {
     console.log('Retrieved value:', value);
     // Use the retrieved value in your application logic
-    window.open(value, '_blank');
+    const match = value.match(/nav=([^&]+)/);
+    const navUrl = match ? decodeURIComponent(match[1]) : null;
+    window.open(navUrl, '_blank');
         return localforage.removeItem('new-nav-request');
   } else {
     console.log('Url Value not found in localForage.');
