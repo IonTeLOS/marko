@@ -2204,6 +2204,7 @@ function showPostFieldAndWait(name) {
                 //document.getElementById('output').innerHTML = html;
 
                 // Save HTML to localStorage
+                sessionStorage.setItem('temp-marko-link', html);
                 localStorage.setItem('editorBio', html);
                   resolve(html);
 
