@@ -267,7 +267,7 @@
     vertical-align: middle; /* Align the emoji with the text */
 }
    /* Styles for the button */
-        #dynamicButton {
+        #dynamicMarkoButton {
             display: inline-block;
             width: 64px;
             height: 64px;
@@ -286,12 +286,12 @@
             transition: all 0.3s ease-in-out;
         }
 
-        #dynamicButton img {
+        #dynamicMarkoButton img {
             width: 50%;
             height: 50%;
         }
 
-        #dynamicButton.expanded {
+        #dynamicMarkoButton.expanded {
             border-radius: 25px;
             width: auto;
             padding: 0 20px;
@@ -299,13 +299,13 @@
             border: 2px solid; /* Will be set dynamically by script */
         }
 
-        #dynamicButton.expanded img {
+        #dynamicMarkoButton.expanded img {
             width: 24px;
             height: 24px;
             margin-right: 10px;
         }
 
-        #dynamicButton.expanded::after {
+        #dynamicMarkoButton.expanded::after {
             content: attr(data-text);
             color: var(--compColor);
             white-space: nowrap;
@@ -489,7 +489,7 @@
         </form>
     </div>
   <!-- Directly include the button element -->
-    <button id="dynamicButton">
+    <button id="dynamicMarkoButton">
         <img src="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg" alt="Icon">
     </button>
 <button id="dynamicLink">Open Dynamic URL</button>
