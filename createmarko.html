@@ -1813,7 +1813,10 @@ async function chooseMarkoType() {
 
                             // Determine the URL based on the modified string
                             let iconUrl;
-                            if (icon.startsWith('fa-')) {
+                            if (icon.startsWith('fa-marko')) {
+                            	iconUrl = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg';
+                            	sessionStorage.setItem('temp-marko-icon', iconUrl);
+                            else if (icon.startsWith('fa-')) {
                             	iconUrl = `https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/${modifiedString}.svg`;
                             	sessionStorage.setItem('temp-marko-icon', iconUrl);
                             } else {
@@ -6594,7 +6597,7 @@ function selectIcon(iconName) {
     }
 }
 
-       function showIconName(name) {
+function showIconName(name) {
     iconName.textContent = name;
     title.style.display = 'none';
     iconName.style.display = 'block';
@@ -6626,7 +6629,7 @@ function selectIcon(iconName) {
             container.style.display = 'none';
         };
 
-        function chooseMarkoIconAndColor(defaultIcon = 'fa-marko', defaultColor = '#0D47A1') {
+function chooseMarkoIconAndColor(defaultIcon = 'fa-marko', defaultColor = '#ffa426') {
     return new Promise((resolve, reject) => {
         container.style.display = 'flex';
         chosenIcon.innerHTML = defaultIcon.startsWith('fa-') ? `<img src="${icons.find(i => i.name === defaultIcon)?.url || ''}" alt="${defaultIcon}">` : defaultIcon;
