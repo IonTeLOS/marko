@@ -266,59 +266,6 @@
     line-height: 32px;
     vertical-align: middle; /* Align the emoji with the text */
 }
-           /* Styles for the button */
-        #dynamicMarkoButton {
-            display: inline-block;
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            border: 6px solid transparent; /* Thicker border */
-            background-color: transparent; /* Placeholder for dynamic background color */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            overflow: hidden;
-            position: fixed; /* Fixed positioning for visibility */
-            bottom: 20px; /* Adjust position as needed */
-            right: 20px;  /* Adjust position as needed */
-            z-index: 9999; /* Ensure it stays on top of other content */
-            transition: all 0.3s ease-in-out;
-        }
-
-        #dynamicMarkoButton img {
-            width: 50%;
-            height: 50%;
-            transition: transform 0.3s ease;
-        }
-
-        #dynamicMarkoButton:hover {
-            transform: scale(1.1);
-        }
-
-        #dynamicMarkoButton.expanded {
-            border-radius: 25px;
-            width: auto;
-            padding: 0 20px;
-            background-color: var(--button-bg);
-            border: 8px solid var(--compColor); /* Thicker border with shine effect */
-            box-shadow: 0 0 15px var(--compColor); /* Shine effect */
-            transition: all 0.3s ease-in-out;
-        }
-
-        #dynamicMarkoButton.expanded img {
-            width: 24px;
-            height: 24px;
-            margin-right: 10px;
-        }
-
-        #dynamicMarkoButton.expanded::after {
-            content: attr(data-text);
-            color: var(--textColor);
-            white-space: nowrap;
-            margin-left: 10px;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
@@ -498,8 +445,8 @@
         </form>
     </div>
   <!-- Directly include the button element -->
-    <button id="dynamicMarkoButton">
-        <img src="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg" alt="Icon">
+    <button id="dynamicMarkoButton" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; width: 64px; height: 64px;">
+        <img src="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg" alt="Icon" />
     </button>
 <script src="https://aquamarine-opaline-72.tiiny.site/marko-dynamic-link.js" defer></script>
 
