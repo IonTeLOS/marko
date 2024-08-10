@@ -156,9 +156,9 @@ function getTranslatedText() {
 
 // Function to create and style the button dynamically
 async function styleButton() {
-    const button = document.getElementById('dynamicButton');
+    const button = document.getElementById('dynamicMarkoButton');
     if (!button) {
-        console.error('Button with ID "dynamicButton" not found.');
+        console.error('Button with ID "dynamicMarkoButton" not found.');
         return;
     }
 
@@ -167,7 +167,7 @@ async function styleButton() {
     button.style.borderColor = compColor;
     button.style.backgroundColor = finalColor;
 
-    button.addEventListener('click', handleButtonClick);
+    button.addEventListener('click', handleMarkoButtonClick);
 
     // Set the text data attribute for the expanded button
     button.setAttribute('data-text', getTranslatedText());
