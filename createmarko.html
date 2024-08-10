@@ -194,15 +194,27 @@ body.dark-mode {
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
 }
-
-        .form-group {
-            margin-bottom: 20px; 
+ /* Ensure the dropdown is visible */
+        select {
+            width: 85%; /* Large width to ensure it's easily clickable */
+            padding: 10px; /* Adequate padding for better readability */
+            border: 1px solid #ddd; /* Light border for better visibility */
+            border-radius: 4px; /* Rounded corners */
+            background-color: white; /* Background color to ensure it stands out */
+            font-size: 16px; /* Increase font size for better readability */
+            appearance: none; /* Remove default styling in some browsers */
+            cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
         }
 
-        .select:focus {
-            border-color: #4CAF50; 
-            outline: none; 
-            cursor: pointer; 
+        /* Style the container */
+        .form-group {
+            margin-bottom: 20px; /* Space between elements */
+        }
+
+        /* Ensure visibility of the select element */
+        select:focus {
+            border-color: #4CAF50; /* Border color change on focus */
+            outline: none; /* Remove default outline */
         }
 
         .help-modal {
