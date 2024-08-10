@@ -433,19 +433,23 @@
     </div>
 <button id="myButton">Open Dynamic URL</button>
 
+
     <script>
-        document.getElementById('myButton').addEventListener('click', function() {
+        document.getElementById('myButton').addEventListener('click', function(event) {
+            event.preventDefault();
+
             const url = encodeURIComponent(window.location.href);
             const title = encodeURIComponent(document.title);
 
             // Get favicon
-            const favicon = document.getElementById('favicon') ? document.getElementById('favicon').href : '';
+            const faviconElement = document.getElementById('favicon');
+            const favicon = faviconElement ? faviconElement.href : 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/facebook-square-brands.svg';
 
-            // Generate a random color if needed
+            // Generate a random color
             const randomColor = `#${Math.floor(Math.random()*16777215).toString(16)}`;
 
             // Construct the URL with parameters
-            const finalUrl = `https://example.com?type=website&link=${url}&title=${title}&icon=${favicon}&color=${randomColor}`;
+            const finalUrl = `https://teloslinux.org/marko/newfile?type=website&link=${url}&title=${title}&icon=${favicon}&color=${randomColor}`;
 
             // Open the constructed URL in a new window/tab
             window.open(finalUrl, '_blank');
