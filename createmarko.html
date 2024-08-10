@@ -48,7 +48,8 @@ body.dark-mode {
   overflow: hidden; 
 }
 
-.input-field .mde-textarea-wrapper {
+.input-field .mde-textarea-wrapper,
+.editor-container .editor-input-field {
   height: calc(100% - 60px); 
   overflow: auto; 
   margin-bottom: 10px; 
@@ -680,6 +681,7 @@ body.dark-mode {
         .editor-container {
             max-width: 600px;
             margin: 0 auto;
+            display: none;
             background-color: white;
             padding: 20px;
             background: #fff;
