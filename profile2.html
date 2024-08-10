@@ -441,15 +441,15 @@
             const url = encodeURIComponent(window.location.href);
             const title = encodeURIComponent(document.title);
 
-            // Get favicon
+            // Get favicon, use default if not found
             const faviconElement = document.getElementById('favicon');
-            const favicon = faviconElement ? faviconElement.href : 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/facebook-square-brands.svg';
+            const favicon = encodeURIComponent(faviconElement ? faviconElement.href : 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/facebook-square-brands.svg');
 
-            // Generate a random color
-            const randomColor = `#${Math.floor(Math.random()*16777215).toString(16)}`;
+            // Generate and encode a random color
+            const randomColor = encodeURIComponent(`#${Math.floor(Math.random() * 16777215).toString(16)}`);
 
             // Construct the URL with parameters
-            const finalUrl = `https://teloslinux.org/marko/newfile?type=website&link=${url}&title=${title}&icon=${favicon}&color=${randomColor}`;
+            const finalUrl = `https://teloslinux.org/marko/newfile?type=website&link=${url}&title=${title}&icon=${favicon}&color=${randomColor}&createMarko=true`;
 
             // Open the constructed URL in a new window/tab
             window.open(finalUrl, '_blank');
