@@ -2223,10 +2223,32 @@ function showPostFieldAndWait(name) {
       placeholder: "Write your post here... (max 10000 characters)",
       maxLength: 10000
     });
-
+*/
     // Function to handle post submission
     function handleSubmitPost() {
-      // Get the markdown content from EasyMDE editor
+        editor.save().then((outputData) => {
+                console.log('Article data: ', outputData);
+
+                // Convert Editor.js data to HTML using editorjs-html
+                const edjsParser = edjsHTML();
+                const html = edjsParser.parse(outputData).join('');
+                document.getElementById('output').innerHTML = html;
+
+                // Save HTML to localStorage
+                localStorage.setItem('editorBio', html);
+            }).catch((error) => {
+                console.log('Saving failed: ', error);
+            });
+        // Attach click event listener to the submit button
+        resolve(html);
+
+      // Optionally hide the post field after submission
+      postField.style.display = 'none';
+      postContent.style.display = 'none';
+                submitButton.addEventListener('click', handleSubmitPost, { once: true });
+
+    /*
+        // Get the markdown content from EasyMDE editor
       const markdownContent = easyMDE.value().trim();
       
       // Convert markdown to HTML using Showdown
@@ -2236,7 +2258,8 @@ function showPostFieldAndWait(name) {
       const htmlContent = converter.makeHtml(markdownContent);
       
       // Store the HTML content in sessionStorage
-      sessionStorage.setItem('temp-marko-link', htmlContent);      
+      sessionStorage.setItem('temp-marko-link', htmlContent);  
+      
       // Resolve the promise with the HTML content
       resolve(htmlContent);
 
@@ -2248,7 +2271,7 @@ function showPostFieldAndWait(name) {
     // Attach click event listener to the submit button
     submitButton.addEventListener('click', handleSubmitPost, { once: true });
     */
-  });
+  }
   
 }
 
@@ -7065,7 +7088,7 @@ AnyButton: {
             }
         });
         
-        document.getElementById('submitBio').addEventListener('click', function() {
+        document.getElementById('submit-post-bu').addEventListener('click', function() {
             editor.save().then((outputData) => {
                 console.log('Article data: ', outputData);
 
