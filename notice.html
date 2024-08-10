@@ -234,7 +234,7 @@
       console.log('Message received. ', payload);
       const { title, body } = payload.notification;
       const clickAction = payload.data.url || 'https://teloslinux.org/marko/newfile'; // Default URL if not provided
-      const iconUrl = 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg'; // Default icon for foreground notifications
+      const iconUrl = payload.data.icon || 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg'; // Default icon for foreground notifications
 
       showCustomNotification(title, body, iconUrl, clickAction);
     });
