@@ -2199,9 +2199,17 @@ function showPostFieldAndWait(name) {
     function handleSubmitPost() {
         editor.save().then((outputData) => {
                 console.log('Article data: ', outputData);
+              // Define the custom parser for the 'iframe' block
+              const customParsers = {
+                iframe: (block) => {
+                  const url = block.data.url;
+                  return `<iframe src="${url}" frameborder="0" allowfullscreen></iframe>`;
+                 }
+               };
 
-                // Convert Editor.js data to HTML using editorjs-html
-                const edjsParser = edjsHTML();
+                // Initialize the parser with the custom block
+                const edjsParser = edjsHTML(customParsers);
+
                 const html = edjsParser.parse(outputData).join('');
                 //document.getElementById('output').innerHTML = html;
 
