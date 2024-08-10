@@ -177,4 +177,5 @@ async function styleButton() {
 const script = document.createElement('script');
 script.src = 'https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.4.2/tinycolor.min.js';
 script.onload = styleButton;
+console.log('ok');
 document.head.appendChild(script);
