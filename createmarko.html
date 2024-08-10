@@ -1601,14 +1601,14 @@ async function getFavicon(url) {
       
     img.onload = function() {
       if (this.width < expectedSize || this.height < expectedSize) {
-        resolve(fallbackIcon.src);
+        resolve(fallbackIcon);
       } else {
         resolve(this.src);
       }
     };
 
     img.onerror = function() {
-      resolve(fallbackIcon.src);
+      resolve(fallbackIcon);
     };
 
     img.src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(url)}&sz=${expectedSize}`;
@@ -2643,6 +2643,7 @@ function handleClipboardAndSharing(shortlink) {
 { name: 'fa-mailchimp brands', url: 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/mailchimp-brands.svg' },
 { name: 'fa-mandalorian brands', url: 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/mandalorian-brands.svg' },
 { name: 'fa-markdown brands', url: 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/markdown-brands.svg' },
+{ name: 'fa-marko', url: 'https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg' },
 { name: 'fa-mastodon brands', url: 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/mastodon-brands.svg' },
 { name: 'fa-maxcdn brands', url: 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/maxcdn-brands.svg' },
 { name: 'fa-medapps brands', url: 'https://raw.githubusercontent.com/seanyeh/fontawesome-svgs/master/svg/medapps-brands.svg' },
@@ -6613,7 +6614,7 @@ function selectIcon(iconName) {
             container.style.display = 'none';
         };
 
-        function chooseMarkoIconAndColor(defaultIcon = APP_LOGO, defaultColor = '#0D47A1') {
+        function chooseMarkoIconAndColor(defaultIcon = 'fa-marko', defaultColor = '#0D47A1') {
     return new Promise((resolve, reject) => {
         container.style.display = 'flex';
         chosenIcon.innerHTML = defaultIcon.startsWith('fa-') ? `<img src="${icons.find(i => i.name === defaultIcon)?.url || ''}" alt="${defaultIcon}">` : defaultIcon;
