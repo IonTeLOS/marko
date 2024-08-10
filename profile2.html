@@ -266,13 +266,13 @@
     line-height: 32px;
     vertical-align: middle; /* Align the emoji with the text */
 }
-   /* Styles for the button */
+           /* Styles for the button */
         #dynamicMarkoButton {
             display: inline-block;
             width: 64px;
             height: 64px;
             border-radius: 50%;
-            border: 5px solid transparent; /* Placeholder for dynamic border color */
+            border: 8px solid transparent; /* Thicker border */
             background-color: transparent; /* Placeholder for dynamic background color */
             display: flex;
             align-items: center;
@@ -289,14 +289,21 @@
         #dynamicMarkoButton img {
             width: 50%;
             height: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        #dynamicMarkoButton:hover {
+            transform: scale(1.1);
         }
 
         #dynamicMarkoButton.expanded {
             border-radius: 25px;
             width: auto;
             padding: 0 20px;
-            background-color: white;
-            border: 2px solid; /* Will be set dynamically by script */
+            background-color: var(--button-bg);
+            border: 8px solid var(--compColor); /* Thicker border with shine effect */
+            box-shadow: 0 0 10px var(--compColor);
+            transition: all 0.3s ease-in-out;
         }
 
         #dynamicMarkoButton.expanded img {
@@ -307,8 +314,9 @@
 
         #dynamicMarkoButton.expanded::after {
             content: attr(data-text);
-            color: var(--compColor);
+            color: var(--textColor);
             white-space: nowrap;
+            margin-left: 10px;
         }
     </style>
 </head>
