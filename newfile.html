@@ -8078,6 +8078,9 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  if (loggedIn !== 'true') {
+      return;
+  }
   document.addEventListener('keydown', function(event) {
       if (event.ctrlKey && event.key === 's') {
         event.preventDefault(); // Prevent the default browser action (e.g., saving the page)
@@ -8119,9 +8122,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function toggleSearchContainer() {
         const loggedIn = sessionStorage.getItem('loggedIn');
-        if (loggedIn !== 'true') {
-            return;
-        }
         if (searchContainer.classList.contains('show')) {
             hideSearchContainer();
         } else {
