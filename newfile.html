@@ -4442,7 +4442,7 @@ function scheduleNotification(title, body, delay, icon, uuid) {
     });
 }
 */
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => { 
     initializeDeviceToken()
         .then(() => window.requestNotificationPermission())
         .catch(error => console.error('Error initializing:', error));
@@ -4456,6 +4456,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         // Function to scroll the element into view
         function adjustScroll() {
+            const loggedIn = sessionStorage.getItem('loggedIn');
             if (loggedIn !== 'true') {
                 return;
             }
@@ -8078,6 +8079,7 @@ window.loggedInUserEmail = loggedInUserEmail; // Expose the email globally for o
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+  const loggedIn = sessionStorage.getItem('loggedIn');
   if (loggedIn !== 'true') {
       return;
   }
@@ -8121,7 +8123,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function toggleSearchContainer() {
-        const loggedIn = sessionStorage.getItem('loggedIn');
         if (searchContainer.classList.contains('show')) {
             hideSearchContainer();
         } else {
