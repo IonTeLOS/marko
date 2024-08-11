@@ -2294,9 +2294,8 @@ function handleSubmitPost() {
 
 // Add event listener to the submit button
 submitButton.addEventListener('click', handleSubmitPost, { once: true });
-
-
-// Example usage
+});
+}
 async function processPost(name) {
   try {
     const postContent = await showPostFieldAndWait(name);
