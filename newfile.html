@@ -9026,7 +9026,6 @@ console.log("Script tag reached");
 var currentIndex = null;
 var allIndex = null;
     
-// Function to handle the context menu
 document.addEventListener("DOMContentLoaded", function () {
     var menu = document.querySelector(".context-menu");
     var menuState = 0;
@@ -9035,14 +9034,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const linkContainer = document.querySelector('.bookmarks-container');
     const mainBookmark = document.getElementById('main-bookmark');
 
-
-    document.addEventListener("contextmenu", function (event) {
+    // Function to handle showing the context menu
+    function showContextMenu(event) {
         if (!linkContainer.contains(event.target)) {
             return;
         }
         if (event.target.closest('#main-bookmark')) {
-        event.preventDefault(); // Prevent context menu on main bookmark
-        return;
+            event.preventDefault(); // Prevent context menu on main bookmark
+            return;
         }
         event.preventDefault();
 
@@ -9058,6 +9057,31 @@ document.addEventListener("DOMContentLoaded", function () {
 
         toggleMenuOn();
         positionMenu(event);
+    }
+
+    // Event listener for context menu (Right-click)
+    document.addEventListener("contextmenu", function (event) {
+        showContextMenu(event);
+    });
+
+    // Event listener for touchstart (Long press on iOS)
+    document.addEventListener("touchstart", function (event) {
+        let touchTimeout;
+        if (!linkContainer.contains(event.target)) {
+            return;
+        }
+
+        touchTimeout = setTimeout(() => {
+            showContextMenu(event);
+        }, 500); // Adjust this value as necessary for the long-press duration
+
+        document.addEventListener("touchend", function () {
+            clearTimeout(touchTimeout);
+        }, { once: true });
+
+        document.addEventListener("touchmove", function () {
+            clearTimeout(touchTimeout); // Cancel the menu if the user starts moving
+        }, { once: true });
     });
 
     function toggleMenuOn() {
@@ -9075,74 +9099,74 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-        function getPosition(e) {
-            let posx = 0;
-            let posy = 0;
+    function getPosition(e) {
+        let posx = 0;
+        let posy = 0;
 
-            if (!e) e = window.event;
+        if (!e) e = window.event;
 
-            if (e.pageX || e.pageY) {
-                posx = e.pageX;
-                posy = e.pageY;
-            } else if (e.clientX || e.clientY) {
-                posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
-                posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
-            }
-
-            return { x: posx, y: posy };
+        if (e.pageX || e.pageY) {
+            posx = e.pageX;
+            posy = e.pageY;
+        } else if (e.clientX || e.clientY) {
+            posx = e.clientX + document.body.scrollLeft + document.documentElement.scrollLeft;
+            posy = e.clientY + document.body.scrollTop + document.documentElement.scrollTop;
         }
 
-   function positionMenu(e) {
-    const menu = document.getElementById('contextMenu');
-    const linkPlace = document.getElementById('current-link');
-    
-    // Ensure the menu element exists
-    if (!menu) {
-        console.error('Menu element not found');
-        return;
+        return { x: posx, y: posy };
     }
-    
-    // Update the menu element with the currentLink text
-    if (linkPlace) {
-        linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
-       
-        // Apply initial blue color
-        linkPlace.querySelector('.ml-3').style.color = 'orange';
 
-        // After 1 second, change text color to white
-        setTimeout(function() {
-            linkPlace.querySelector('.ml-3').style.color = 'white';
-            }, 1200); 
+    function positionMenu(e) {
+        const menu = document.getElementById('contextMenu');
+        const linkPlace = document.getElementById('current-link');
+
+        // Ensure the menu element exists
+        if (!menu) {
+            console.error('Menu element not found');
+            return;
         }
-    
-    // Get viewport dimensions
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    // Ensure the menu is visible to get its dimensions
-    menu.classList.remove('hidden');
-    
-    // Get menu dimensions
-    const menuWidth = menu.offsetWidth;
-    const menuHeight = menu.offsetHeight;
-    
-    // Calculate centered position
-    const left = (viewportWidth - menuWidth) / 2;
-    const top = (viewportHeight - menuHeight) / 2;
-    
-    // Apply Tailwind classes for centering
-    menu.classList.add('fixed', 'transform', '-translate-x-1/2', '-translate-y-1/2');
-    menu.style.left = '50%';
-    menu.style.top = '50%';
-    
-    // Remove any inline width/height styles
-    menu.style.width = '';
-    menu.style.height = '';
-    
-    // Ensure the menu is visible
-    menu.classList.remove('hidden');
-}
-  
+
+        // Update the menu element with the currentLink text
+        if (linkPlace) {
+            linkPlace.querySelector('.ml-3').textContent = currentLink.substring(0, 30);
+
+            // Apply initial blue color
+            linkPlace.querySelector('.ml-3').style.color = 'orange';
+
+            // After 1 second, change text color to white
+            setTimeout(function () {
+                linkPlace.querySelector('.ml-3').style.color = 'white';
+            }, 1200);
+        }
+
+        // Get viewport dimensions
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // Ensure the menu is visible to get its dimensions
+        menu.classList.remove('hidden');
+
+        // Get menu dimensions
+        const menuWidth = menu.offsetWidth;
+        const menuHeight = menu.offsetHeight;
+
+        // Calculate centered position
+        const left = (viewportWidth - menuWidth) / 2;
+        const top = (viewportHeight - menuHeight) / 2;
+
+        // Apply Tailwind classes for centering
+        menu.classList.add('fixed', 'transform', '-translate-x-1/2', '-translate-y-1/2');
+        menu.style.left = '50%';
+        menu.style.top = '50%';
+
+        // Remove any inline width/height styles
+        menu.style.width = '';
+        menu.style.height = '';
+
+        // Ensure the menu is visible
+        menu.classList.remove('hidden');
+    }
+
     document.addEventListener("click", (e) => {
         var button = e.which || e.button;
         if (button === 1) {
@@ -9151,18 +9175,19 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-   document.addEventListener('click', function(event) {
-    if (menu && !menu.contains(event.target)) {
-        toggleMenuOff();
+    document.addEventListener('click', function (event) {
+        if (menu && !menu.contains(event.target)) {
+            toggleMenuOff();
         }
     });
-  
+
     window.onkeyup = function (e) {
         if (e.keyCode === 27) {
             toggleMenuOff();
         }
     }
 });
+
   
 function updateSwipeClasses(wrapper, deltaX) {
     const bookmark = wrapper.closest('.bookmark');
