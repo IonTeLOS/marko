@@ -3854,6 +3854,18 @@ function getBaseUrl(url) {
     }
     return baseUrl;
 }
+
+   function countBookmarkElements() {
+    // Select all elements with an ID that starts with 'bookmark-'
+    const elements = document.querySelectorAll('[id^="bookmark-"]');
+    
+    // Return the number of such elements
+    return elements.length;
+}
+
+// Example usage:
+console.log('You have ' + countBookmarkElements() + ' Markos');  // Logs the count of elements with IDs starting with 'bookmark-'
+
     window.onload = function() {
     initializeGoogleIdentity();
     loadArrayFromURL();  
