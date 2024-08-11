@@ -2241,43 +2241,60 @@ function showPostFieldAndWait(name) {
     postField.style.display = 'block';
     postContent.style.display = 'block';
 
-           // Function to handle post submission
-    function handleSubmitPost() {
-        editor.save().then((outputData) => {
-                console.log('Article data: ', outputData);
-                // Define the custom parser for the 'iframe' block
-                 const customParsers = {
-                    iframe: (block) => {
-                    const url = block.data.url;
-                    return `<iframe src="${url}" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone" allowfullscreen></iframe>`;
-                 }
-               };
-                // Initialize the parser with the custom block
-                const edjsParser = edjsHTML(customParsers);
+// Function to handle post submission
+function handleSubmitPost() {
+    editor.save().then((outputData) => {
+        console.log('Article data: ', outputData);
 
-                const html = edjsParser.parse(outputData).join('');
-                //document.getElementById('output').innerHTML = html;
+        // Define the custom parser for the 'iframe' block
+        const customParsers = {
+            iframe: (block) => {
+                const url = block.data.url;
 
-                // Save HTML to localStorage
-                sessionStorage.setItem('temp-marko-link', html);
-                localStorage.setItem('editorBio', html);
-                  resolve(html);
+                // Regular expression to match YouTube video URLs
+                const youtubeUrlPattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+                const isYoutube = youtubeUrlPattern.test(url);
 
-            }).catch((error) => {
-                console.log('Saving failed: ', error);
-            });
-      postField.style.display = 'none';
-      postContent.style.display = 'none';
-      submitButton.style.display = 'none';  
-  }
-              submitButton.addEventListener('click', handleSubmitPost, { once: true });
+                let embedUrl = url; // Default to the provided URL
 
-        //document.getElementById('submit-post-button').addEventListener('click', function() {
-         //   handleSubmitPost();
-        //});
+                if (isYoutube) {
+                    // Extract video ID and construct the embed URL
+                    const videoId = url.match(youtubeUrlPattern)[1];
+                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
+                }
 
-});
+                // Return the iframe HTML with the appropriate src
+                return `<iframe src="${embedUrl}" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone" allowfullscreen></iframe>`;
+            }
+        };
+
+        // Initialize the parser with the custom block
+        const edjsParser = edjsHTML(customParsers);
+
+        const html = edjsParser.parse(outputData).join('');
+        // Optionally, you can update the document with the generated HTML
+        // document.getElementById('output').innerHTML = html;
+
+        // Save HTML to localStorage
+        sessionStorage.setItem('temp-marko-link', html);
+        localStorage.setItem('editorBio', html);
+
+        // Ensure the promise resolves
+        resolve(html);
+
+    }).catch((error) => {
+        console.log('Saving failed: ', error);
+    });
+
+    // Hide elements after processing
+    postField.style.display = 'none';
+    postContent.style.display = 'none';
+    submitButton.style.display = 'none';  
 }
+
+// Add event listener to the submit button
+submitButton.addEventListener('click', handleSubmitPost, { once: true });
+
 
 // Example usage
 async function processPost(name) {
