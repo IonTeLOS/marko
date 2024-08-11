@@ -4456,6 +4456,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
         // Function to scroll the element into view
         function adjustScroll() {
+            if (loggedIn !== 'true') {
+                return;
+            }
             const mainBookmark = document.getElementById('main-bookmark');
             const mainBookmarkHeight = mainBookmark.getBoundingClientRect().height;
             const paddingOffset = 10; // Adjust this value to match your bookmark padding
@@ -8114,8 +8117,11 @@ document.addEventListener('DOMContentLoaded', () => {
         overlay.style.display = 'none';
     }
 
-    // Example function to toggle the search container visibility
     function toggleSearchContainer() {
+        const loggedIn = sessionStorage.getItem('loggedIn');
+        if (loggedIn !== 'true') {
+            return;
+        }
         if (searchContainer.classList.contains('show')) {
             hideSearchContainer();
         } else {
