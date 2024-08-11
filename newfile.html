@@ -4558,7 +4558,7 @@ function addAd() {
                 bookmarkElement.id = `bookmark-99999`;
                 bookmarkElement.innerHTML = `
      <div class="bookmark-wrapper" data-uuid='99999' data-type='ad' onmouseover="showTooltip('Promoted content')"
-     onmouseout="hideTooltip()" onclick='openMarko(openLink, 'http://tiny.cc/gsnfzz')' style="cursor: pointer;">
+     onmouseout="hideTooltip()" onclick="openMarko(openLink, 'http://tiny.cc/gsnfzz')" style="cursor: pointer;">
         <div class="icon-wrapper">
             <div class="icon-container" style="--ring-color: 'orange';">
                 <img src="${iconUrl}" alt="Promotion" class="bookmark-icon" style="width: 42px; height: 42px;">
@@ -4581,7 +4581,6 @@ function renderLinks() {
             linkContainer.innerHTML = ''; // Clear the container
             // Add no-select class to prevent text selection
             document.body.classList.add('no-select');
-            addAd();
             const defaultIconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg';  // Replace with a better default icon URL
 const bookmarkElement = document.createElement('div');
 bookmarkElement.className = 'bookmark';
@@ -4609,7 +4608,7 @@ bookmarkElement.style.position = 'sticky';
 bookmarkElement.style.top = '0';
 bookmarkElement.style.zIndex = '1000';
 linkContainer.appendChild(bookmarkElement);
-
+addAd();
                 links.forEach((link, index) => {
                 if (link[0] === "youtube") {
                 //const iconUrl = link[3] || defaultIconUrl; 
