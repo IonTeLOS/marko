@@ -3855,7 +3855,7 @@ function getBaseUrl(url) {
     return baseUrl;
 }
 
-function countBookmarkElementsAndAddStar() {
+function countAchievements() {
     // Select all elements with an ID that starts with 'bookmark-'
     const elements = document.querySelectorAll('[id^="bookmark-"]');
     
@@ -3878,9 +3878,6 @@ function countBookmarkElementsAndAddStar() {
     return count;
 }
 
-// Example usage:
-console.log(countBookmarkElementsAndAddStar());  // Logs the count and adds the star if applicable
-
 
 
 
@@ -3889,7 +3886,7 @@ console.log(countBookmarkElementsAndAddStar());  // Logs the count and adds the 
     loadArrayFromURL();  
     loadDonationParams();
     toggleBellIcons();
-    console.log('You have ' + countBookmarkElements() + ' Markos');  // Logs the count of elements with IDs starting with 'bookmark-'
+    console.log('You have ' + countAchievements() + ' Markos');  // Logs the count of elements with IDs starting with 'bookmark-'
   
 };   
    // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
