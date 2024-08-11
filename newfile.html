@@ -3863,14 +3863,15 @@ function getBaseUrl(url) {
     return elements.length;
 }
 
-// Example usage:
-console.log('You have ' + countBookmarkElements() + ' Markos');  // Logs the count of elements with IDs starting with 'bookmark-'
+
 
     window.onload = function() {
     initializeGoogleIdentity();
     loadArrayFromURL();  
     loadDonationParams();
     toggleBellIcons();
+    console.log('You have ' + countBookmarkElements() + ' Markos');  // Logs the count of elements with IDs starting with 'bookmark-'
+  
 };   
    // TODO document.getElementById('download-button').addEventListener('click', downloadPage);
     
