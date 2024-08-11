@@ -3855,13 +3855,32 @@ function getBaseUrl(url) {
     return baseUrl;
 }
 
-   function countBookmarkElements() {
+function countBookmarkElementsAndAddStar() {
     // Select all elements with an ID that starts with 'bookmark-'
     const elements = document.querySelectorAll('[id^="bookmark-"]');
     
-    // Return the number of such elements
-    return elements.length;
+    // Count the number of such elements
+    const count = elements.length;
+    
+    // Check if the count is more than 5
+    if (count > 5) {
+        // Select the element with ID 'main-title'
+        const mainTitleElement = document.getElementById('main-title');
+        
+        // Check if the mainTitleElement exists to avoid errors
+        if (mainTitleElement) {
+            // Add a star emoji (⭐) next to the main title
+            mainTitleElement.textContent += ' ⭐';
+        }
+    }
+
+    // Return the count of elements
+    return count;
 }
+
+// Example usage:
+console.log(countBookmarkElementsAndAddStar());  // Logs the count and adds the star if applicable
+
 
 
 
