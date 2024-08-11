@@ -4550,17 +4550,16 @@ function openReminder(uuid) {
 function addAd() {
                 const linkContainer = document.querySelector('.bookmarks-container');
 
-                const iconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/ads_click/default/48px.svg';
+                const iconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/kid_star/default/48px.svg';
                 const bookmarkElement = document.createElement('div');
                 bookmarkElement.className = 'bookmark';
-                bookmarkElement.dataset.index = 99999; // Store the index as a data attribute
 
-                bookmarkElement.id = `bookmark-99999`;
+                bookmarkElement.id = `bookmark-genericAd`;
                 bookmarkElement.innerHTML = `
-     <div class="bookmark-wrapper" data-uuid='99999' data-type='ad' onmouseover="showTooltip('Promoted content')"
+     <div class="bookmark-wrapper" data-type='ad' onmouseover="showTooltip('Promoted content')"
      onmouseout="hideTooltip()" onclick="openMarko(openLink, 'http://tiny.cc/gsnfzz')" style="cursor: pointer;">
         <div class="icon-wrapper">
-            <div class="icon-container" style="--ring-color: 'orange';">
+            <div class="icon-container" style="--ring-color: orange;">
                 <img src="${iconUrl}" alt="Promotion" class="bookmark-icon" style="width: 42px; height: 42px;">
             </div>
             <span class="bookmark-title">This is an ad</span>
