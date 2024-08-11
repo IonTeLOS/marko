@@ -4548,6 +4548,8 @@ function openReminder(uuid) {
     });
 }
 function addAd() {
+                const linkContainer = document.querySelector('.bookmarks-container');
+
                 const iconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/ads_click/default/48px.svg';
                 const bookmarkElement = document.createElement('div');
                 bookmarkElement.className = 'bookmark';
@@ -4573,13 +4575,13 @@ function addAd() {
 //localStorage.clear();
 // main function to show the bookmarks that are stored as arrays in local storage as visual elements    
 function renderLinks() {
-            addAd();
             let title = document.title;
             let pageUrl = window.location.href;
             const linkContainer = document.querySelector('.bookmarks-container');
             linkContainer.innerHTML = ''; // Clear the container
             // Add no-select class to prevent text selection
             document.body.classList.add('no-select');
+            addAd();
             const defaultIconUrl = 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/open_in_new/default/48px.svg';  // Replace with a better default icon URL
 const bookmarkElement = document.createElement('div');
 bookmarkElement.className = 'bookmark';
