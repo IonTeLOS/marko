@@ -3606,6 +3606,7 @@ function handleSharedLink(url, title, text) {
     const icon = params.get('icon');
     const color = params.get('color');
     const isNewMarko = params.get('createMarko');
+    const noConfirmation = params.get('noConfirm');
     // Decode the action parameter
     const link = decodeURIComponent(theLink || '').replace(/\n/g, '<br>');
     const scrollRequest = params.get('scroll');
@@ -3623,7 +3624,6 @@ function handleSharedLink(url, title, text) {
             }
     // Check if createMarko=true is present in the URL parameters
     if (isNewMarko === 'true' && type && link && title && icon && color) {
-      const noCorfirmation = params.get('noConfirm');
       if (noConfirmation === 'true') {
             console.log("User is adding a Marko.");
             createMarko(type, link, title, icon, color);
