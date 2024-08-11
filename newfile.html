@@ -3627,6 +3627,7 @@ function handleSharedLink(url, title, text) {
       if (noConfirmation === 'true') {
             console.log("User is adding a Marko.");
             createMarko(type, link, title, icon, color);
+            return;
       }
         if (confirm(`Do you want to add a Marko for ${title}?`)) {
             console.log("User is adding a Marko.");
