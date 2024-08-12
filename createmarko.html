@@ -2287,13 +2287,12 @@ const customParsers = {
         </video>`;
     },
 
-    AnyButton: (block) => {
-        const text = block.data.text || 'Click Here';
+    button: (block) => {
         const url = block.data.url || '#';
-        const target = block.data.target ? `target="${block.data.target}"` : '';
-        const rel = block.data.rel ? `rel="${block.data.rel}"` : '';
+        const label = block.data.label || 'Click Here';
+        const target = block.data.targetBlank ? 'target="_blank" rel="noopener noreferrer"' : '';
 
-        return `<a href="${url}" ${target} ${rel} class="btn">${text}</a>`;
+        return `<a href="${url}" ${target} class="btn">${label}</a>`;
     },
 
     delimiter: (block) => {
