@@ -2266,7 +2266,40 @@ const customParsers = {
         // Return the iframe HTML with the appropriate src
         return `<iframe src="${embedUrl}" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone" allowfullscreen></iframe>`;
     },
+    
+    audio: (block) => {
+        const sources = block.data.sources || [];
+        const sourceTags = sources.map(source => `<source src="${source.src}" type="${source.type}" />`).join('');
+        return `
+        <audio controls>
+            ${sourceTags}
+            Your browser does not support the audio element.
+        </audio>`;
+    },
 
+    video: (block) => {
+        const url = block.data.url;
+        const poster = block.data.poster || '';
+        return `
+        <video controls poster="${poster}" width="100%">
+            <source src="${url}" type="video/mp4" />
+            Your browser does not support the video element.
+        </video>`;
+    },
+
+    AnyButton: (block) => {
+        const text = block.data.text || 'Click Here';
+        const url = block.data.url || '#';
+        const target = block.data.target ? `target="${block.data.target}"` : '';
+        const rel = block.data.rel ? `rel="${block.data.rel}"` : '';
+
+        return `<a href="${url}" ${target} ${rel} class="btn">${text}</a>`;
+    },
+
+    delimiter: (block) => {
+        return `<hr />`;
+    },
+    
     table: (block) => {
         const { content } = block.data;
         let tableHtml = '<table>';
