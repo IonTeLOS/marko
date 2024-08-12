@@ -2288,8 +2288,12 @@ const customParsers = {
     },
 
     button: (block) => {
-        const url = block.data.url || '#';
-        const label = block.data.label || 'Click Here';
+        if (!block.data || !block.data.url || !block.data.label) {
+            return ''; // Return empty string if data is incomplete
+        }
+
+        const url = block.data.url;
+        const label = block.data.label;
         const target = block.data.targetBlank ? 'target="_blank" rel="noopener noreferrer"' : '';
 
         return `<a href="${url}" ${target} class="btn">${label}</a>`;
