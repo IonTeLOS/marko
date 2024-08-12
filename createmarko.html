@@ -936,10 +936,12 @@ body.dark-mode {
             <div id="icon-grid"></div>
         </div>
         <div id="footer">
-            <button id="color-button">
-                <i class="material-icons">color_lens</i>
-                Select Color
-            </button>
+<button id="color-button">
+    <i class="material-icons">color_lens</i>
+    Select Color
+    <!-- Hidden color input -->
+    <input type="color" id="color-picker" style="display:none;" />
+</button>
         </div>
     </div>
     
@@ -6772,6 +6774,18 @@ function showIconName(name) {
     }
 }
 
+        // Trigger the color input click when the button is clicked
+    colorButton.onclick = () => {
+        colorPicker.click(); // This opens the color picker
+    };
+
+    // Update the border color and sessionStorage when the color is changed
+    colorPicker.onchange = (e) => {
+        const color = e.target.value;
+        chosenIconRing.style.borderColor = color;
+        sessionStorage.setItem('temp-marko-color', color);
+    };
+/*
         colorButton.onclick = () => {
             const colorInput = document.createElement('input');
             colorInput.type = 'color';
@@ -6783,7 +6797,7 @@ function showIconName(name) {
             };
             colorInput.click();
         };
-
+*/
         closeButton.onclick = () => {
             container.style.display = 'none';
         };
