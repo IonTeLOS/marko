@@ -2277,6 +2277,30 @@ const customParsers = {
         </audio>`;
     },
 
+        alert: (block) => {
+        // Default values for alertType and message
+        const alertType = block.data.alertType || 'primary'; // Default to 'primary' if not provided
+        const message = block.data.message || 'No message provided';
+
+        // Map of alert types to Bootstrap classes (or other CSS classes)
+        const alertClasses = {
+            primary: 'alert-primary',
+            secondary: 'alert-secondary',
+            info: 'alert-info',
+            success: 'alert-success',
+            warning: 'alert-warning',
+            danger: 'alert-danger',
+            light: 'alert-light',
+            dark: 'alert-dark'
+        };
+
+        // Get the corresponding class
+        const alertClass = alertClasses[alertType] || alertClasses['primary'];
+
+        // Generate HTML for the alert
+        return `<div class="alert ${alertClass}" role="alert">${message}</div>`;
+    },
+
     video: (block) => {
         const url = block.data.url;
         const poster = block.data.poster || '';
@@ -6985,7 +7009,7 @@ window.onfocus = checkVisibilityAndReload;
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest/dist/bundle.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest/dist/bundle.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/raw@latest/dist/bundle.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/editorjs-alert@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/editorjs-inline-image"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/editorjs-button@latest"></script>
@@ -7099,6 +7123,17 @@ class IFrameTool {
                     inlineToolbar: true,
                     shortcut: 'CMD+SHIFT+L'
                 },
+                    alert: {
+      class: Alert,
+      inlineToolbar: true,
+      shortcut: 'CMD+SHIFT+A',
+      config: {
+        alertTypes: ['primary', 'secondary', 'info', 'success', 'warning', 'danger', 'light', 'dark'],
+        defaultType: 'primary',
+        messagePlaceholder: 'Enter something',
+      },
+    },
+
                       image: {
         class: InlineImage,
         inlineToolbar: true,
