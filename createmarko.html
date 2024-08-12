@@ -2246,27 +2246,47 @@ function handleSubmitPost() {
     editor.save().then((outputData) => {
         console.log('Article data: ', outputData);
 
-        // Define the custom parser for the 'iframe' block
-        const customParsers = {
-            iframe: (block) => {
-                const url = block.data.url;
+// Define custom parsers for each block type
+const customParsers = {
+    iframe: (block) => {
+        const url = block.data.url;
 
-                // Regular expression to match YouTube video URLs
-                const youtubeUrlPattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
-                const isYoutube = youtubeUrlPattern.test(url);
+        // Regular expression to match YouTube video URLs
+        const youtubeUrlPattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+        const isYoutube = youtubeUrlPattern.test(url);
 
-                let embedUrl = url; // Default to the provided URL
+        let embedUrl = url; // Default to the provided URL
 
-                if (isYoutube) {
-                    // Extract video ID and construct the embed URL
-                    const videoId = url.match(youtubeUrlPattern)[1];
-                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                }
+        if (isYoutube) {
+            // Extract video ID and construct the embed URL
+            const videoId = url.match(youtubeUrlPattern)[1];
+            embedUrl = `https://www.youtube.com/embed/${videoId}`;
+        }
 
-                // Return the iframe HTML with the appropriate src
-                return `<iframe src="${embedUrl}" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone" allowfullscreen></iframe>`;
-            }
-        };
+        // Return the iframe HTML with the appropriate src
+        return `<iframe src="${embedUrl}" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone" allowfullscreen></iframe>`;
+    },
+
+    table: (block) => {
+        const { content } = block.data;
+        let tableHtml = '<table>';
+
+        content.forEach(row => {
+            tableHtml += '<tr>';
+            row.forEach(cell => {
+                tableHtml += `<td>${cell}</td>`;
+            });
+            tableHtml += '</tr>';
+        });
+
+        tableHtml += '</table>';
+        return tableHtml;
+    },
+
+    raw: (block) => {
+        return block.data.html; // 'raw' block contains HTML directly
+    }
+};
 
         // Initialize the parser with the custom block
         const edjsParser = edjsHTML(customParsers);
