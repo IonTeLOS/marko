@@ -1446,6 +1446,7 @@ async function fetchPDF(fileId, accessToken = localStorage.getItem('accessToken'
         method: 'GET',
         headers: new Headers({ 
             'Authorization': `Bearer ${accessToken}` 
+            'Accept': 'application/pdf' // Specify the expected response type
         }),
     });
     
