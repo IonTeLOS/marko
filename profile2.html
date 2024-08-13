@@ -1764,6 +1764,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+
 document.addEventListener('DOMContentLoaded', () => {
             const playButton = document.getElementById('play-button');
             const iframe = document.getElementById('youtube-player');
@@ -1772,7 +1773,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const videoId = 'uxjhN_Donfw'; // Replace with your YouTube video ID
 
             // Set the iframe src with the video ID
-            iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+            iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1&controls=1`; // Add controls
 
             // Load the IFrame API
             const script = document.createElement('script');
@@ -1785,6 +1786,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     height: '0',
                     width: '0',
                     videoId: videoId,
+                    playerVars: {
+                        'controls': 1,
+                        'autoplay': 0,
+                        'modestbranding': 1
+                    },
                     events: {
                         'onReady': onPlayerReady,
                         'onStateChange': onPlayerStateChange,
@@ -1798,44 +1804,45 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log("YouTube player is ready.");
                 playButton.addEventListener('click', () => {
                     console.log(`Button clicked, current player state: ${playerState}`);
-                    if (playerState === 'stopped') {
-                        player.playVideo();
-                        playButton.innerHTML = '<i class="material-icons">pause</i>';
-                        playButton.title = 'Pause';
-                        playerState = 'playing';
-                    } else if (playerState === 'playing') {
-                        player.pauseVideo();
-                        playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
-                        playButton.title = 'Play';
-                        playerState = 'paused';
-                    } else if (playerState === 'paused') {
-                        player.stopVideo();
-                        playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
-                        playButton.title = 'Play';
-                        playerState = 'stopped';
+                    switch (playerState) {
+                        case 'stopped':
+                            player.playVideo();
+                            playButton.innerHTML = '<i class="material-icons">pause</i>';
+                            playButton.title = 'Pause';
+                            playerState = 'playing';
+                            break;
+                        case 'playing':
+                            player.pauseVideo();
+                            playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
+                            playButton.title = 'Play';
+                            playerState = 'paused';
+                            break;
+                        case 'paused':
+                            player.stopVideo();
+                            playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
+                            playButton.title = 'Play';
+                            playerState = 'stopped';
+                            break;
                     }
                 });
             }
 
             // Handle player state change event
             function onPlayerStateChange(event) {
-                // Check if the state is correctly reflected
                 console.log(`Player state changed: ${event.data}`);
-                if (event.data === YT.PlayerState.PLAYING) {
-                    if (playerState !== 'playing') {
+                switch (event.data) {
+                    case YT.PlayerState.PLAYING:
                         playerState = 'playing';
                         playButton.innerHTML = '<i class="material-icons">pause</i>';
-                    }
-                } else if (event.data === YT.PlayerState.PAUSED) {
-                    if (playerState !== 'paused') {
+                        break;
+                    case YT.PlayerState.PAUSED:
                         playerState = 'paused';
                         playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
-                    }
-                } else if (event.data === YT.PlayerState.ENDED) {
-                    if (playerState !== 'stopped') {
+                        break;
+                    case YT.PlayerState.ENDED:
                         playerState = 'stopped';
                         playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
-                    }
+                        break;
                 }
             }
 
@@ -1844,7 +1851,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("YouTube player error:", event.data);
             }
         });
-
 
     </script>
 </body>
