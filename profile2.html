@@ -1441,7 +1441,8 @@ function embedPDF(blob) {
     reader.readAsDataURL(blob);
 }
 async function fetchPDF(fileId, accessToken = localStorage.getItem('accessToken')) {
-    const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+    const apiKey = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo';
+    const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=mediakey=${apiKey}`, {
         method: 'GET',
         headers: new Headers({ 
             'Authorization': `Bearer ${accessToken}` 
