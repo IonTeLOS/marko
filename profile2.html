@@ -1787,6 +1787,7 @@ document.addEventListener('DOMContentLoaded', () => {
             videoId: videoId,
             events: {
                 'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange,
                 'onError': onPlayerError
             }
         });
@@ -1818,6 +1819,21 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
             }
         });
+    }
+
+    // Handle player state change event
+    function onPlayerStateChange(event) {
+        // Sync the state of the button with the player's state
+        if (event.data === YT.PlayerState.PLAYING) {
+            playerState = 'playing';
+            playButton.innerHTML = '<i class="material-icons">pause</i>';
+        } else if (event.data === YT.PlayerState.PAUSED) {
+            playerState = 'paused';
+            playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
+        } else if (event.data === YT.PlayerState.ENDED) {
+            playerState = 'stopped';
+            playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
+        }
     }
 
     // Handle player error event
