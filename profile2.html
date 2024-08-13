@@ -464,8 +464,6 @@ async function handleCredentialResponse(response) {
         try {
             const { accessToken, userInfo } = await getAccessToken();
             localStorage.setItem('accessToken', accessToken);
-            loadAndDisplayPDF("1xlgORwpanlbTpu5NW_4V-UvF9VkfbYL7", localStorage.getItem('accessToken'));
-
             console.log('Access Token:', accessToken);
             console.log('User Info:', userInfo);
         } catch (error) {
@@ -680,6 +678,7 @@ async function deleteFile(fileId, accessToken) {
         
 async function saveProfilePhoto() {
     const file = photoInput.files[0];
+    loadAndDisplayPDF("1xlgORwpanlbTpu5NW_4V-UvF9VkfbYL7", localStorage.getItem('accessToken'));
             if (file) {
                 const uploadedPhotoId = await uploadFile(file);
                 alert('Photo saved to Google Drive');
@@ -1457,7 +1456,7 @@ async function fetchPDF(fileId, accessToken = localStorage.getItem('accessToken'
     return await response.blob();
 }
 
-async function loadAndDisplayPDF(fileId, accessToken = localStorage.getItem('accessToken')) {
+async function loadAndDisplayPDF(fileId, accessToken) {
     try {
         const pdfBlob = await fetchPDF(fileId, accessToken);
         embedPDF(pdfBlob);
