@@ -1440,27 +1440,33 @@ function embedPDF(blob) {
     
     reader.readAsDataURL(blob);
 }
-async function fetchPDF(fileId, accessToken = localStorage.getItem('accessToken')) {
+async function fetchPDF(fileId) {
     const apiKey = 'AIzaSyBc75KlBm10rP8vB0u3yDsM4vdMqSNfdzo';
-    const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`, {
-        method: 'GET',
-        headers: new Headers({ 
-            'Authorization': `Bearer ${accessToken}`,
-            'Accept': 'application/pdf' // Specify the expected response type
-        }),
-    });
-    
-    if (!response.ok) {
-        throw new Error(`Failed to fetch file: ${response.statusText}`);
+    const url = `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: new Headers({
+                'Accept': 'application/pdf'
+            })
+        });
+        if (!response.ok) {
+            const errorResponse = await response.text();
+            console.error("Error response from API:", errorResponse);
+            throw new Error(`Failed to fetch file: ${response.statusText}`);
+        }
+
+        return await response.blob();
+    } catch (error) {
+        console.error('Error fetching PDF:', error);
+        throw error;
     }
-    
-    // Return the response as a Blob
-    return await response.blob();
 }
 
-async function loadAndDisplayPDF(fileId, accessToken) {
+async function loadAndDisplayPDF(fileId) {
     try {
-        const pdfBlob = await fetchPDF(fileId, accessToken);
+        const pdfBlob = await fetchPDF(fileId);
         embedPDF(pdfBlob);
     } catch (error) {
         console.error("Error loading PDF:", error);
