@@ -10,6 +10,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <meta name="theme-color" content="#0d47a1">
 <script src="https://aquamarine-opaline-72.tiiny.site/marko-dynamic-link.js" defer></script>
+<script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
 
     <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -122,12 +123,12 @@
     margin-top: 20px; /* Space between picker and selected emoji */
 }
         }
-        .photo-upload-options {
+        .hide-my-email {
             display: none;
             align-items: center;
             margin-bottom: 10px;
         }
-        .photo-upload-options label {
+        .hide-my-email label {
             margin-left: 10px;
             color: #666;
         }
@@ -276,24 +277,19 @@
         <div id="signInButtonContainer" style="display: none; width: 100%; height: 100px; margin-bottom: 20px;">
     <div id="signInButton"></div>
     </div>
-
-        <h1>Create Marko Profile</h1>
+        <h1>My Marko Profile</h1>
         <form id="profileForm">
             <div class="input-field">
                 <label for="profilePicture" class="profile-pic-label">
                     <i class="material-icons">add_a_photo</i>Upload Profile Photo
                 </label>
                 <input type="file" id="profilePicture" accept="image/*">
-                <div class="photo-upload-options">
-                    <input type="checkbox" id="addAsData">
-                    <label for="addAsData">Store photo as data</label>
-                </div>
                 <img id="profilePreview" style="display: none;">
             </div>
             <div id="savePhoto" class="button-container" style="display: none; margin-top: 10px; margin-bottom: 10px;">
         <button onclick="saveProfilePhoto()">
             <span class="material-icons">save</span>
-            Use this Photo
+            Use this Pic
         </button>
         </div>
             <div id="createAvatar" class="button-container" style="margin-top: 10px; margin-bottom: 10px;">
@@ -308,11 +304,15 @@
             </div>
             <div class="input-field">
                 <label for="email">Email</label>
-                <input type="email" id="email" placeholder="Write email or leave blank to show your Gmail address">
+                <input type="email" id="email" placeholder="email">
             </div>
+                <div class="hide-my-email">
+                    <input type="checkbox" id="hideEmail">
+                    <label for="hideEmail">Hide my email</label>
+                </div>
             <div class="input-field">
-            <label for="tweetInput">Enter your tweet:</label><br>
-            <textarea id="tweetInput" maxlength="280" rows="4" cols="50" placeholder="What's happening?"></textarea><br>
+            <label for="introInput">Introduce yourself:</label><br>
+            <textarea id="tweetInput" maxlength="280" rows="4" cols="50" placeholder="Describe yourself in a few words—what makes you, you? How do you plan to use Marko?"></textarea><br>
             <span id="charCount">280 characters remaining</span>
             </div>    
             <div class="input-field">
@@ -335,9 +335,9 @@
     <input type="date" id="dob" max="">
     <div style="display: flex; align-items: center; gap: 10px;">
         <input type="checkbox" id="showAge">
-        <label for="showAge">Show only age</label>
+        <label for="showAge">Show only my age</label>
         <input type="checkbox" id="showBirthday">
-        <label for="showBirthday">Show only birthday</label>
+        <label for="showBirthday">Show only my birthday</label>
     </div>
 </div>
             <div class="duo-input-field">
@@ -353,7 +353,7 @@
                 <label for="hideLanguage">Hide language</label>
             </div>
             <div class="input-field">
-                <label for="language2">Second Language</label>
+                <label for="language2">Spoken second language</label>
                 <select id="language2">
                     <option value="">Select a language</option>
 <option value="">Select a language</option>
@@ -414,11 +414,11 @@
                 <input type="url" id="listeningTo" placeholder="https://youtube.com/...">
             </div>
             <div class="link-input-field">
-                <label for="donation">Donation Link</label>
+                <label for="donation">Payment or Donation link</label>
                 <input type="url" id="donation" placeholder="https://...">
             </div>
     <div style="position: relative;">
-        <input type="text" id="search-maps-input" placeholder="Enter place name" autocomplete="off">
+        <input type="text" id="search-maps-input" placeholder="search for location" autocomplete="off">
         <div id="autocomplete-results"></div>
     </div>
     
@@ -447,8 +447,9 @@
         </form>
     </div>
 
-<script src="https://aquamarine-opaline-72.tiiny.site/marko-dynamic-link.js" defer></script>
+<div id="adobe-dc-view" style="height: 500px;"></div>
 
+<script src="https://aquamarine-opaline-72.tiiny.site/marko-dynamic-link.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js" type="module"></script>
 <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest/dist/editor.js"></script>
     <script>
@@ -463,6 +464,8 @@ async function handleCredentialResponse(response) {
         try {
             const { accessToken, userInfo } = await getAccessToken();
             localStorage.setItem('accessToken', accessToken);
+            loadAndDisplayPDF("1xlgORwpanlbTpu5NW_4V-UvF9VkfbYL7", localStorage.getItem('accessToken'));
+
             console.log('Access Token:', accessToken);
             console.log('User Info:', userInfo);
         } catch (error) {
@@ -564,7 +567,7 @@ async function getUserInfo(accessToken) {
         profilePreview.src = userInfo.picture;
         profilePreview.style.display = 'block';
         document.getElementById('savePhoto').style.display = 'block';
-        document.querySelector('.photo-upload-options').style.display = 'block';
+        document.querySelector('.hide-my-email').style.display = 'block';
         localStorage.setItem('google-profile-photo', userInfo.picture);
         localStorage.removeItem('avatar');
         return {
@@ -680,7 +683,6 @@ async function saveProfilePhoto() {
             if (file) {
                 const uploadedPhotoId = await uploadFile(file);
                 alert('Photo saved to Google Drive');
-                document.querySelector('.photo-upload-options').style.display = 'none';
                 document.getElementById('savePhoto').style.display = 'none';
                 return;
             }
@@ -732,9 +734,7 @@ async function saveProfilePhoto() {
         // Upload the photo blob
         await uploadFile(photoBlob, accessToken);
         alert('Photo saved to Google Drive');
-
-        // Hide photo upload options
-        document.querySelector('.photo-upload-options').style.display = 'none';
+ 
         document.getElementById('savePhoto').style.display = 'none';
 
         return photoBlob;
@@ -871,11 +871,11 @@ function validatePhoneNumber(input) {
 }
         
 document.addEventListener('DOMContentLoaded', function() {
-  const tweetInput = document.getElementById('tweetInput');
+  const introInput = document.getElementById('introInput');
   const charCount = document.getElementById('charCount');
 
-  tweetInput.addEventListener('input', () => {
-    const remaining = 280 - tweetInput.value.length;
+  introInput.addEventListener('input', () => {
+    const remaining = 280 - introInput.value.length;
     charCount.textContent = `${remaining} characters remaining`;
   });
     const dobInput = document.getElementById('dob');
@@ -1421,6 +1421,52 @@ async function updateProfileFile(fileId, content, accessToken) {
                 linksContainer.appendChild(newPair);
             }
         }
+function embedPDF(blob) {
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const base64Data = event.target.result.split(',')[1];
+        
+        var adobeDCView = new AdobeDC.View({clientId: "YOUR_ADOBE_CLIENT_ID", divId: "adobe-dc-view"});
+        adobeDCView.previewFile({
+            content: { 
+                location: {
+                    url: `data:application/pdf;base64,${base64Data}`,
+                } 
+            },
+            metaData: { 
+                fileName: "YourFileName.pdf" 
+            }
+        }, { embedMode: "SIZED_CONTAINER" });
+    };
+    
+    reader.readAsDataURL(blob);
+}
+async function fetchPDF(fileId, accessToken = localStorage.getItem('accessToken)) {
+    const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+        method: 'GET',
+        headers: new Headers({ 
+            'Authorization': `Bearer ${accessToken}` 
+        }),
+    });
+    
+    if (!response.ok) {
+        throw new Error(`Failed to fetch file: ${response.statusText}`);
+    }
+    
+    // Return the response as a Blob
+    return await response.blob();
+}
+
+async function loadAndDisplayPDF(fileId, accessToken = localStorage.getItem('accessToken')) {
+    try {
+        const pdfBlob = await fetchPDF(fileId, accessToken);
+        embedPDF(pdfBlob);
+    } catch (error) {
+        console.error("Error loading PDF:", error);
+    }
+}
+
+
         // Add event listeners and initialize components
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('addMoreLinks').addEventListener('click', addLinkPair);
