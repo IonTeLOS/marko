@@ -1445,7 +1445,7 @@ async function fetchPDF(fileId, accessToken = localStorage.getItem('accessToken'
     const response = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media&key=${apiKey}`, {
         method: 'GET',
         headers: new Headers({ 
-            'Authorization': `Bearer ${accessToken}` 
+            'Authorization': `Bearer ${accessToken}`,
             'Accept': 'application/pdf' // Specify the expected response type
         }),
     });
