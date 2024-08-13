@@ -50,7 +50,13 @@
             color: #2196F3;
         }
         .input-field {
+            margin-top: 20px;
             margin-bottom: 20px;
+        }
+        .profile-pdf {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
         }
         label {
             display: block;
@@ -269,6 +275,11 @@
     line-height: 32px;
     vertical-align: middle; /* Align the emoji with the text */
 }
+
+#pdf-file-name {
+    margin-top: 10px;
+    font-weight: bold;
+}
     </style>
 </head>
 <body>
@@ -314,7 +325,14 @@
             <label for="introInput">Introduce yourself:</label><br>
             <textarea id="introInput" maxlength="280" rows="4" cols="50" placeholder="Describe yourself in a few words—what makes you, you? How do you plan to use Marko?"></textarea><br>
             <span id="charCount">280 characters remaining</span>
-            </div>    
+            </div>
+            <div class="input-field">
+                <label for="profilePDF" class="profile-pdf">
+                    <i class="material-icons">picture_as_pdf</i>Upload PDF (CV or whatever)
+                </label>
+                    <input type="file" id="pdf-file-input" accept=".pdf">
+                    <div id="pdf-file-name"></div>           
+            </div>
             <div class="input-field">
                 <label for="phone">Phone Number</label>
                 <div style="display: flex; gap: 10px;">
@@ -579,10 +597,10 @@ async function getUserInfo(accessToken) {
     }
 } 
 
-        async function uploadFile(file, accessToken = localStorage.getItem('accessToken')) {
+        async function uploadFile(file, useAs, accessToken = localStorage.getItem('accessToken')) {
             try {
                 // Check if file already exists
-                const existingFileId = await getFileIdByName('Marko_profile_pic', accessToken);
+                const existingFileId = await getFileIdByName(useAs, accessToken);
         
                 // If it exists, delete it
                 if (existingFileId) {
@@ -591,7 +609,7 @@ async function getUserInfo(accessToken) {
                 
                 // Prepare file metadata
                 const metadata = {
-                    name: 'Marko_profile_pic',
+                    name: useAs,
                     mimeType: file.type
                 };
 
@@ -632,13 +650,16 @@ async function getUserInfo(accessToken) {
                 
         // Construct the file URL
         const fileUrl = `https://drive.google.com/thumbnail?id=${uploadResult.id}`;
-        console.log('img src is: ' + fileUrl);        
+        console.log('src is: ' + fileUrl);        
         // Save the URL to localStorage
-        localStorage.setItem('profile-picture-source', fileUrl);
+        localStorage.setItem(useAs, fileUrl);
                 return uploadResult.id;
             } catch (error) {
                 console.error('Error uploading file:', error);
+                if (useAs === 'profile-picture-source') {
+                // default pic if uploading fails    
                 localStorage.setItem('profile-picture-source', 'https://fonts.gstatic.com/s/i/short-term/release/materialsymbolsoutlined/person/default/48px.svg');
+                }
                 throw error;
             }
         }
@@ -678,9 +699,9 @@ async function deleteFile(fileId, accessToken) {
         
 async function saveProfilePhoto() {
     const file = photoInput.files[0];
-    loadAndDisplayPDF("");
+    //loadAndDisplayPDF("");
             if (file) {
-                const uploadedPhotoId = await uploadFile(file);
+                const uploadedPhotoId = await uploadFile(file, 'profile-picture-source');
                 alert('Photo saved to Google Drive');
                 document.getElementById('savePhoto').style.display = 'none';
                 return;
@@ -731,7 +752,7 @@ async function saveProfilePhoto() {
         }
 
         // Upload the photo blob
-        await uploadFile(photoBlob, accessToken);
+        await uploadFile(photoBlob, 'profile-picture-source', accessToken);
         alert('Photo saved to Google Drive');
  
         document.getElementById('savePhoto').style.display = 'none';
@@ -1692,6 +1713,25 @@ AnyButton: {
             }
         });
         */
+document.addEventListener('DOMContentLoaded', () => {
+    const pdfFileInput = document.getElementById('pdf-file-input');
+    const pdfFileNameDiv = document.getElementById('pdf-file-name');
+
+    // Handle file selection
+    pdfFileInput.addEventListener('change', () => {
+        const file = pdfFileInput.files[0];
+        if (file) {
+            // Show the file name
+            pdfFileNameDiv.textContent = `Selected file: ${file.name}`;
+            uploadFile(file, 'profile-pdf-source');
+        } else {
+            // Clear the file name if no file is selected
+            pdfFileNameDiv.textContent = '';
+        }
+    });
+});
+
+
     </script>
 </body>
 </html>
