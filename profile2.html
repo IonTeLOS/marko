@@ -320,7 +320,7 @@
         <button id="play-button" title="Play">
             <i class="material-icons">play_arrow</i>
         </button>
-        <iframe id="youtube-player" src="https://www.youtube.com/embed/YOUR_VIDEO_ID?enablejsapi=1" frameborder="0"></iframe>
+        <iframe id="youtube-player" src="" frameborder="0"></iframe>
     </div>
         <form id="profileForm">
             <div class="input-field">
@@ -1763,12 +1763,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
-        
+
 document.addEventListener('DOMContentLoaded', () => {
     const playButton = document.getElementById('play-button');
     const iframe = document.getElementById('youtube-player');
     let player;
     let playerState = 'stopped'; // Possible states: stopped, playing, paused
+    const videoId = 'uxjhN_Donfw'; // Replace with your YouTube video ID
+
+    // Set the iframe src with the video ID
+    iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
 
     // Load the IFrame API
     const script = document.createElement('script');
@@ -1780,16 +1784,19 @@ document.addEventListener('DOMContentLoaded', () => {
         player = new YT.Player('youtube-player', {
             height: '0',
             width: '0',
-            videoId: 'uxjhN_Donfw', // Replace with your YouTube video ID
+            videoId: videoId,
             events: {
-                'onReady': onPlayerReady
+                'onReady': onPlayerReady,
+                'onError': onPlayerError
             }
         });
     };
 
-    // This function is called when the player is ready
+    // Handle player ready event
     function onPlayerReady(event) {
+        console.log("YouTube player is ready.");
         playButton.addEventListener('click', () => {
+            console.log(`Current player state: ${playerState}`);
             switch (playerState) {
                 case 'stopped':
                     player.playVideo();
@@ -1811,6 +1818,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     break;
             }
         });
+    }
+
+    // Handle player error event
+    function onPlayerError(event) {
+        console.error("YouTube player error:", event.data);
     }
 });
 
