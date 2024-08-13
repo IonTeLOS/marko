@@ -280,6 +280,33 @@
     margin-top: 10px;
     font-weight: bold;
 }
+.button-container {
+            position: relative;
+        }
+
+        #play-button {
+            background-color: #00796b; /* Teal color */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s;
+        }
+
+        #play-button:hover {
+            background-color: #004d40; /* Darker teal */
+        }
+
+        #youtube-player {
+            display: none; /* Hide the iframe */
+        }        
     </style>
 </head>
 <body>
@@ -289,6 +316,12 @@
     <div id="signInButton"></div>
     </div>
         <h1>My Marko Profile</h1>
+        <div class="button-container">
+        <button id="play-button" title="Play">
+            <i class="material-icons">play_arrow</i>
+        </button>
+        <iframe id="youtube-player" src="https://www.youtube.com/embed/YOUR_VIDEO_ID?enablejsapi=1" frameborder="0"></iframe>
+    </div>
         <form id="profileForm">
             <div class="input-field">
                 <label for="profilePicture" class="profile-pic-label">
@@ -1729,6 +1762,56 @@ document.addEventListener('DOMContentLoaded', () => {
             pdfFileNameDiv.textContent = '';
         }
     });
+});
+        
+document.addEventListener('DOMContentLoaded', () => {
+    const playButton = document.getElementById('play-button');
+    const iframe = document.getElementById('youtube-player');
+    let player;
+    let playerState = 'stopped'; // Possible states: stopped, playing, paused
+
+    // Load the IFrame API
+    const script = document.createElement('script');
+    script.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(script);
+
+    // Create YouTube player once the API is ready
+    window.onYouTubeIframeAPIReady = function() {
+        player = new YT.Player('youtube-player', {
+            height: '0',
+            width: '0',
+            videoId: 'uxjhN_Donfw', // Replace with your YouTube video ID
+            events: {
+                'onReady': onPlayerReady
+            }
+        });
+    };
+
+    // This function is called when the player is ready
+    function onPlayerReady(event) {
+        playButton.addEventListener('click', () => {
+            switch (playerState) {
+                case 'stopped':
+                    player.playVideo();
+                    playButton.innerHTML = '<i class="material-icons">pause</i>';
+                    playButton.title = 'Pause';
+                    playerState = 'playing';
+                    break;
+                case 'playing':
+                    player.pauseVideo();
+                    playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
+                    playButton.title = 'Play';
+                    playerState = 'paused';
+                    break;
+                case 'paused':
+                    player.stopVideo();
+                    playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
+                    playButton.title = 'Play';
+                    playerState = 'stopped';
+                    break;
+            }
+        });
+    }
 });
 
 
