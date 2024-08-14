@@ -311,21 +311,16 @@
         /* Custom style for the Google Translate widget */
 
 
-        /* Centered Horizontal Strip */
-        #google_translate_strip {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #f5f5f5;
-            text-align: center;
-            padding: 10px 0;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-        #google_translate_element {
-            display: inline-block;
-        }
+#google_translate_element {
+    display: block; /* Makes the widget a block element */
+    font-size: 18px; /* Increases the font size */
+    color: #333;
+    transform: scale(1.2); /* Scales up the widget */
+    margin: 20px auto; /* Centers the widget and adds margin around it */
+    text-align: center; /* Ensures the content inside is centered */
+    max-width: 400px; /* Optional: Limits the width of the widget */
+}
+
 
 *[class*="skiptranslate"] {
     display: none !important;
