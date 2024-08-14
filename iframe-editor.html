@@ -153,16 +153,14 @@
         <tr><td>51</td><td>70</td><td>90</td></tr>
     </table>
     <a href="https://slpress.gr" class="btn">click me</a>
-    <iframe src="https://tovima.gr" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone"  allowfullscreen></iframe>
-    
+    <iframe src="https://corsproxy.io?https://tovima.gr" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone"  allowfullscreen></iframe>
     <hr />
-    
     <canvas id="myCanvas">Your browser does not support the canvas tag.</canvas>
     <details>
       <summary>Epcot Center</summary>
       <p>Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international pavilions, award-winning fireworks and seasonal special events.</p>
     </details>
-
+<h2>Bio</h2><p style="text-align:left;">You can create any content you wish here..</p><img src="https://www.kathimerini.gr/wp-content/uploads/2024/08/2024-08-11T183838Z_203485221_RC2ND9AYLO49_RTRMADP_3_UKRAINE-CRISIS-RUSSIA-KURSK-BORDER.jpg?v=1723571209" alt="vg" />
     <!-- Floating Action Button (FAB) -->
     <div class="fab" id="fab">
         <i class="material-icons">download</i>
@@ -184,28 +182,73 @@
                 fab.classList.add('hidden');
             }
         });
-
-
-fab.addEventListener('click', () => {
-    try {
-        const element = document.body;
-        const options = {
-            margin: 0.5,
-            filename: 'marko-content.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-        };
-        html2pdf().from(element).set(options).save();
-    } catch (error) {
-        console.error('Failed to download PDF:', error);
+// Function to replace iframes with clickable text links
+    function replaceIframesWithLinks() {
+        // Select all iframe elements in the document
+        const iframes = document.querySelectorAll('iframe');
+        
+        iframes.forEach((iframe) => {
+            // Get the URL from the iframe's src attribute
+            const iframeUrl = iframe.src;
+            
+            // Create a link element
+            const link = document.createElement('a');
+            link.href = iframeUrl;
+            link.target = '_blank'; // Open link in a new tab
+            link.textContent = `View content at ${iframeUrl}`;
+            link.style.display = 'block'; // Make link a block element
+            link.style.margin = '10px 0'; // Add margin for spacing
+            link.style.color = '#007bff'; // Bootstrap primary color for link
+            link.style.textDecoration = 'underline'; // Underline the link
+            
+            // Replace the iframe with the link
+            iframe.parentNode.replaceChild(link, iframe);
+        });
     }
-});
+    
+        document.getElementById('fab').addEventListener('click', () => {
+                        // Define options for html2canvas
+            const options = {
+                scale: 2, // Increase to improve image quality
+                useCORS: true, // Enable CORS to handle cross-origin images
+                logging: true // For debugging purposes
+            };
+
+            // Capture the HTML content using html2canvas
+            html2canvas(document.body, options).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 1.0); // Image format and quality
+                const pdf = new jsPDF('p', 'mm', 'a4'); // Page format
+
+                // Calculate dimensions for A4 size
+                const imgWidth = 210; // A4 width in mm
+                const pageHeight = 295; // A4 height in mm
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+
+                let position = 0;
+
+                // Add image to PDF, handle multi-page content
+                while (heightLeft >= 0) {
+                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                    position -= pageHeight;
+
+                    // Add new page if more content
+                    if (heightLeft >= 0) {
+                        pdf.addPage();
+                    }
+                }
+
+                // Save the PDF
+                pdf.save('content.pdf');
+            });
+        });
 
     </script>
 
     <!-- Importing external scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </body>
 </html>
