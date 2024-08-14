@@ -330,15 +330,6 @@
             }, 'google_translate_element');
         }
 
-        // Load the Google Translate script
-        (function() {
-            var gtScript = document.createElement('script');
-            gtScript.type = 'text/javascript';
-            gtScript.async = true;
-            gtScript.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.head.appendChild(gtScript);
-        })();
-
         // Function to hide the translate element when translated
         function checkForTranslation() {
             var translateElement = document.getElementById('google_translate_element');
