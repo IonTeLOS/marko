@@ -310,14 +310,31 @@
         }
         /* Custom style for the Google Translate widget */
 #google_translate_element {
-    margin: 10px 0;
+    margin: 10px auto; /* Centers the element horizontally */
     font-size: 16px;
     color: #333;
+    padding: 10px 20px; /* Adds some padding for a better look */
+    background-color: #f5f5f5; /* Light gray background for a subtle contrast */
+    border: 1px solid #ddd; /* Thin border to define the element's boundaries */
+    border-radius: 8px; /* Rounds the corners for a modern look */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Adds a soft shadow for depth */
+    text-align: center; /* Centers the text inside the element */
+    max-width: 300px; /* Limits the width of the element */
 }
 
-.goog-te-banner-frame.skiptranslate {
+/* Ensures that the dropdown and other elements inside are styled consistently */
+#google_translate_element select {
+    border: 1px solid #ccc; /* Borders around the dropdown */
+    padding: 5px 10px; /* Padding inside the dropdown */
+    border-radius: 4px; /* Slight rounding for consistency */
+    background-color: #fff; /* White background for the dropdown */
+    color: #333; /* Text color */
+    font-size: 14px; /* Font size of the dropdown */
+}
+
+*[class*="skiptranslate"] {
     display: none !important;
-} 
+}
     </style>
     <script type="text/javascript">
         function googleTranslateElementInit() {
