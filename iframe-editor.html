@@ -140,61 +140,26 @@
 </head>
 <body>
 
-    <h1>Bio</h1><p style="text-align:center;"><mark class="cdx-marker"><a href="https://in.gr">You can create any content you wish here..</a></mark><b><i></i></b></p><h2><mark class="cdx-marker">test</mark></h2><ol><li>a</li><li>b</li><li>c</li></ol><div class="alert alert-primary" role="alert">buy now</div><img src="https://images.unsplash.com/photo-1648588239278-344cabf16ade?crop=entropy&amp;cs=srgb&amp;fm=jpg&amp;ixid=M3w2NDIzMzV8MHwxfHNlYXJjaHwxfHxwb3N0JTIwb2ZmaWNlfGVufDB8Mnx8fDE3MjM2MzkzOTV8MA&amp;ixlib=rb-4.0.3&amp;q=85" alt="in the snow" /><table><tr><td>al</td><td>be</td><td>ce</td></tr><tr><td>12</td><td>32</td><td>25</td></tr><tr><td>51</td><td>70</td><td>90</td></tr></table><a href="https://slpress.gr" class="btn">click me</a><iframe src="https://in.gr" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone" allowfullscreen></iframe><hr /><canvas id="myCanvas">
-Your browser does not support the canvas tag.
-</canvas>
-
-<script>
-let canvas = document.getElementById("myCanvas");
-let ctx = canvas.getContext("2d");
-ctx.fillStyle = "#FF0000";
-ctx.fillRect(0, 0, 80, 80);
-</script>
-<details>
-  <summary>Epcot Center</summary>
-  <p>Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international pavilions, award-winning fireworks and seasonal special events.</p>
-</details>
-<form action="/action_page.php">
- <fieldset>
-  <legend>Personalia:</legend>
-  <label for="fname">First name:</label>
-  <input type="text" id="fname" name="fname"><br><br>
-  <label for="lname">Last name:</label>
-  <input type="text" id="lname" name="lname"><br><br>
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email"><br><br>
-  <label for="birthday">Birthday:</label>
-  <input type="date" id="birthday" name="birthday"><br><br>
-  <input type="submit" value="Submit">
- </fieldset>
-</form>
-<form action="/action_page.php">
-  <input type="radio" id="html" name="fav_language" value="HTML">
-  <label for="html">HTML</label><br>
-  <input type="radio" id="css" name="fav_language" value="CSS">
-  <label for="css">CSS</label><br>
-  <input type="radio" id="javascript" name="fav_language" value="JavaScript">
-  <label for="javascript">JavaScript</label><br><br>
-  <input type="submit" value="Submit">
-</form>
-<label for="cars">Choose a car:</label>
-
-<select id="cars">
-  <option value="volvo">Volvo</option>
-  <option value="saab">Saab</option>
-  <option value="opel">Opel</option>
-  <option value="audi">Audi</option>
-</select>
-<label for="file">Downloading progress:</label>
-<progress id="file" value="32" max="100"> 32% </progress>
-<p>This text contains <sub>subscript</sub> text.</p>
-<p>This text contains <sup>superscript</sup> text.</p>
-<label for="w3review">Review of W3Schools:</label>
-
-<textarea id="w3review" name="w3review" rows="4" cols="50">
-At w3schools.com you will learn how to make a website. They offer free tutorials in all web development technologies.
-</textarea><img src="https://www.kathimerini.gr/wp-content/uploads/2024/08/shutterstock_1431973736_1-1080x607.jpg?v=1723632239" alt="pool" /> I now create iframe to show this html in my website like that iframe.srcdoc = 
-<div style="display: flex; justify-content: center; align-items: center; height: auto; overflow-y: auto; background-color: lightcyan; flex-direction: column; overflow-x: hidden; font-family: 'Roboto', sans-serif;">
+    <!-- Your content will be inserted here -->
+    <h1>Bio</h1>
+    <p style="text-align:center;"><mark class="cdx-marker"><a href="https://in.gr">You can create any content you wish here..</a></mark></p>
+    <h2><mark class="cdx-marker">test</mark></h2>
+    <ol><li>a</li><li>b</li><li>c</li></ol>
+    <div class="alert alert-primary" role="alert">buy now</div>
+    <img src="https://images.unsplash.com/photo-1648588239278-344cabf16ade?crop=entropy&amp;cs=srgb&amp;fm=jpg&amp;ixid=M3w2NDIzMzV8MHwxfHNlYXJjaHwxfHxwb3N0JTIwb2ZmaWNlfGVufDB8Mnx8fDE3MjM2MzkzOTV8MA&amp;ixlib=rb-4.0.3&amp;q=85" alt="in the snow" />
+    <table>
+        <tr><td>al</td><td>be</td><td>ce</td></tr>
+        <tr><td>12</td><td>32</td><td>25</td></tr>
+        <tr><td>51</td><td>70</td><td>90</td></tr>
+    </table>
+    <a href="https://slpress.gr" class="btn">click me</a>
+    <iframe src="https://corsproxy.io?https://tovima.gr" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone"  allowfullscreen></iframe>
+    <hr />
+    <canvas id="myCanvas">Your browser does not support the canvas tag.</canvas>
+    <details>
+      <summary>Epcot Center</summary>
+      <p>Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international pavilions, award-winning fireworks and seasonal special events.</p>
+    </details>
 
     <!-- Floating Action Button (FAB) -->
     <div class="fab" id="fab">
@@ -218,11 +183,29 @@ At w3schools.com you will learn how to make a website. They offer free tutorials
             }
         });
 
-        // FAB Click Event to Download PDF
-        fab.addEventListener('click', () => {
-            const element = document.body;
-            html2pdf().from(element).save('marko-content.pdf');
-        });
+
+fab.addEventListener('click', () => {
+    try {
+        const element = document.body;
+        const options = {
+            margin: 0.5,
+            filename: 'marko-content.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        html2pdf().from(element).set(options).save();
+    } catch (error) {
+        console.error('Failed to download PDF:', error);
+    }
+});
+
+window.addEventListener('unhandledrejection', function(event) {
+    console.warn('Unhandled promise rejection:', event.reason);
+    event.preventDefault();
+});
+
+
     </script>
 
     <!-- Importing external scripts -->
