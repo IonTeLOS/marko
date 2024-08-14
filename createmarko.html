@@ -742,7 +742,38 @@ body.dark-mode {
   font-size: 12px;
   color: #3f51b5;
 }
-
+.color-strip {
+            display: none;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 100vw;
+            height: 80px;
+            background-color: white;
+            overflow-x: auto;
+            overflow-y: hidden;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 5px;
+            -ms-overflow-style: none;  /* Internet Explorer 10+ */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .color-strip::-webkit-scrollbar {
+            display: none;  /* Safari and Chrome */
+        }
+        .color-square {
+            width: 70px;
+            height: 70px;
+            display: inline-block;
+            margin-right: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.2s;
+            flex-shrink: 0;
+        }
+        .color-square:hover {
+            transform: scale(1.1);
+        }
 
     </style>
 </head>
@@ -936,12 +967,12 @@ body.dark-mode {
             <div id="icon-grid"></div>
         </div>
         <div id="footer">
-<button id="color-button">
-    <i class="material-icons">color_lens</i>
-    Select Color
-    <!-- Hidden color input -->
-    <input type="color" id="color-picker" style="display:none;" />
-</button>
+    <button class="color-button" id="color-button">
+        <i class="material-icons">palette</i>
+    </button>
+    <div class="color-strip" id="color-strip">
+        <!-- Color squares will be inserted here -->
+</div>
         </div>
     </div>
     
@@ -6774,7 +6805,68 @@ function showIconName(name) {
         iconName.style.fontSize = `${fontSize}px`;
     }
 }
+document.addEventListener('DOMContentLoaded', function() {
+const colors = [
+  "#FF0000", // Red
+  "#FF7F00", // Orange
+  "#FFFF00", // Yellow
+  "#00FF00", // Green
+  "#00FFFF", // Cyan
+  "#0000FF", // Blue
+  "#FF00FF", // Magenta
+  "#800080", // Purple
+  "#FFA500", // Orange
+  "#FFFFE0", // Light Yellow
+  "#008000", // Dark Green
+  "#00FFFF", // Aqua
+  "#000080", // Navy Blue
+  "#800080", // Purple
+  "#FFC0CB", // Pink
+  "#FFD700", // Gold
+  "#FFA07A", // Light Salmon
+  "#F08080", // Light Coral
+  "#CD853F", // Dark Olive Green
+  "#808000", // Olive
+  "#008080", // Teal
+  "#483D8B", // Dark Slate Blue
+  "#2F4F4F", // Dark Slate Gray
+  "#A020F0", // Purple
+  "#9400D3", // Dark Violet
+  "#FF1493", // Deep Pink
+  "#DC143C", // Crimson
+  "#00CED1", // Dark Turquoise
+  "#00BFFF", // Deep Sky Blue
+];
 
+
+        const colorStrip = document.getElementById('color-strip');
+        const selectedColorDiv = document.getElementById('selected-color');
+
+        // Generate color squares
+        colors.forEach(color => {
+            const colorSquare = document.createElement('div');
+            colorSquare.className = 'color-square';
+            colorSquare.style.backgroundColor = color;
+            colorSquare.addEventListener('click', () => selectColor(color));
+            colorStrip.appendChild(colorSquare);
+        });
+
+        // Show the color strip and hide the button
+        colorButton.addEventListener('click', () => {
+            colorButton.style.display = 'none';
+            colorStrip.style.display = 'flex';
+        });
+
+        // Handle color selection
+        function selectColor(color) {
+            sessionStorage.setItem('temp-marko-color', color);
+            //selectedColorDiv.textContent = `Selected Color: ${color}`;
+            chosenIconRing.style.borderColor = color;
+            colorStrip.style.display = 'none';
+            colorButton.style.display = 'block';
+        }
+    });
+        /*
         // Trigger the color input click when the button is clicked
     colorButton.onclick = () => {
         colorPicker.click(); // This opens the color picker
@@ -6786,7 +6878,7 @@ function showIconName(name) {
         chosenIconRing.style.borderColor = color;
         sessionStorage.setItem('temp-marko-color', color);
     };
-/*
+
         colorButton.onclick = () => {
             const colorInput = document.createElement('input');
             colorInput.type = 'color';
