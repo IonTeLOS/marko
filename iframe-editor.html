@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Content</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Roboto', sans-serif;
+            background-color: lightcyan;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, p, ol, ul, table, form, img, iframe, canvas, details, progress, textarea, label, select {
+            max-width: 100%;
+            margin: 10px 0;
+            padding: 0 10px;
+            box-sizing: border-box;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        /* Responsive images */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+        }
+
+        /* Alert styles */
+        .alert {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .alert-primary { background-color: #cce5ff; color: #004085; }
+        .alert-secondary { background-color: #e2e3e5; color: #383d41; }
+        .alert-success { background-color: #d4edda; color: #155724; }
+        .alert-danger { background-color: #f8d7da; color: #721c24; }
+        .alert-warning { background-color: #fff3cd; color: #856404; }
+        .alert-info { background-color: #d1ecf1; color: #0c5460; }
+        .alert-light { background-color: #fefefe; color: #818182; }
+        .alert-dark { background-color: #d6d8d9; color: #1b1e21; }
+
+        /* Button styles */
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        /* Horizontal line (delimiter) */
+        hr {
+            border: none;
+            height: 1px;
+            background-color: grey;
+            margin: 20px 0;
+        }
+
+        /* Floating Action Button (FAB) */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            background-color: #007bff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .fab:hover {
+            background-color: #0056b3;
+        }
+
+        .fab i {
+            font-size: 24px;
+            color: white;
+        }
+
+        /* Hide FAB by default */
+        .fab.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Bio</h1><p style="text-align:center;"><mark class="cdx-marker"><a href="https://in.gr">You can create any content you wish here..</a></mark><b><i></i></b></p><h2><mark class="cdx-marker">test</mark></h2><ol><li>a</li><li>b</li><li>c</li></ol><div class="alert alert-primary" role="alert">buy now</div><img src="https://images.unsplash.com/photo-1648588239278-344cabf16ade?crop=entropy&amp;cs=srgb&amp;fm=jpg&amp;ixid=M3w2NDIzMzV8MHwxfHNlYXJjaHwxfHxwb3N0JTIwb2ZmaWNlfGVufDB8Mnx8fDE3MjM2MzkzOTV8MA&amp;ixlib=rb-4.0.3&amp;q=85" alt="in the snow" /><table><tr><td>al</td><td>be</td><td>ce</td></tr><tr><td>12</td><td>32</td><td>25</td></tr><tr><td>51</td><td>70</td><td>90</td></tr></table><a href="https://slpress.gr" class="btn">click me</a><iframe src="https://in.gr" width="100%" height="500px" frameborder="0" loading="lazy" allow="camera; microphone" allowfullscreen></iframe><hr /><canvas id="myCanvas">
+Your browser does not support the canvas tag.
+</canvas>
+
+<script>
+let canvas = document.getElementById("myCanvas");
+let ctx = canvas.getContext("2d");
+ctx.fillStyle = "#FF0000";
+ctx.fillRect(0, 0, 80, 80);
+</script>
+<details>
+  <summary>Epcot Center</summary>
+  <p>Epcot is a theme park at Walt Disney World Resort featuring exciting attractions, international pavilions, award-winning fireworks and seasonal special events.</p>
+</details>
+<form action="/action_page.php">
+ <fieldset>
+  <legend>Personalia:</legend>
+  <label for="fname">First name:</label>
+  <input type="text" id="fname" name="fname"><br><br>
+  <label for="lname">Last name:</label>
+  <input type="text" id="lname" name="lname"><br><br>
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email"><br><br>
+  <label for="birthday">Birthday:</label>
+  <input type="date" id="birthday" name="birthday"><br><br>
+  <input type="submit" value="Submit">
+ </fieldset>
+</form>
+<form action="/action_page.php">
+  <input type="radio" id="html" name="fav_language" value="HTML">
+  <label for="html">HTML</label><br>
+  <input type="radio" id="css" name="fav_language" value="CSS">
+  <label for="css">CSS</label><br>
+  <input type="radio" id="javascript" name="fav_language" value="JavaScript">
+  <label for="javascript">JavaScript</label><br><br>
+  <input type="submit" value="Submit">
+</form>
+<label for="cars">Choose a car:</label>
+
+<select id="cars">
+  <option value="volvo">Volvo</option>
+  <option value="saab">Saab</option>
+  <option value="opel">Opel</option>
+  <option value="audi">Audi</option>
+</select>
+<label for="file">Downloading progress:</label>
+<progress id="file" value="32" max="100"> 32% </progress>
+<p>This text contains <sub>subscript</sub> text.</p>
+<p>This text contains <sup>superscript</sup> text.</p>
+<label for="w3review">Review of W3Schools:</label>
+
+<textarea id="w3review" name="w3review" rows="4" cols="50">
+At w3schools.com you will learn how to make a website. They offer free tutorials in all web development technologies.
+</textarea><img src="https://www.kathimerini.gr/wp-content/uploads/2024/08/shutterstock_1431973736_1-1080x607.jpg?v=1723632239" alt="pool" /> I now create iframe to show this html in my website like that iframe.srcdoc = 
+<div style="display: flex; justify-content: center; align-items: center; height: auto; overflow-y: auto; background-color: lightcyan; flex-direction: column; overflow-x: hidden; font-family: 'Roboto', sans-serif;">
+
+    <!-- Floating Action Button (FAB) -->
+    <div class="fab" id="fab">
+        <i class="material-icons">download</i>
+    </div>
+
+    <!-- Script for Canvas and FAB PDF Download -->
+    <script>
+        let canvas = document.getElementById("myCanvas");
+        let ctx = canvas.getContext("2d");
+        ctx.fillStyle = "#FF0000";
+        ctx.fillRect(0, 0, 80, 80);
+
+        // FAB Visibility Control
+        const fab = document.getElementById('fab');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                fab.classList.remove('hidden');
+            } else {
+                fab.classList.add('hidden');
+            }
+        });
+
+        // FAB Click Event to Download PDF
+        fab.addEventListener('click', () => {
+            const element = document.body;
+            html2pdf().from(element).save('marko-content.pdf');
+        });
+    </script>
+
+    <!-- Importing external scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</body>
+</html>
