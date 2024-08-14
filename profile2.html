@@ -314,19 +314,9 @@
         }
         /* Custom style for the Google Translate widget */
 
-/* Ensure that skiptranslate elements are responsive */
-.skiptranslate {
-    display: block; /* Make sure it is displayed correctly */
-    width: 100%;     /* Adjust width to be responsive */
-    max-width: 100%; /* Prevent overflow */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
-}
-
-/* Optional: Add padding or margin to ensure content does not touch edges */
-.skiptranslate p, .skiptranslate h1, .skiptranslate h2, .skiptranslate h3 {
-    margin: 0;
-    padding: 10px;
-    box-sizing: border-box; /* Ensure padding is included in the element's width and height */
+.skiptranslate * {
+  max-width: 100% !important;
+  height: auto !important;
 }
 
 #google_translate_element {
