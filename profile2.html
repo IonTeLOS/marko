@@ -309,28 +309,45 @@
             display: none; /* Hide the iframe */
         }
         /* Custom style for the Google Translate widget */
-#google_translate_element {
-    margin: 10px auto; /* Centers the element horizontally */
-    font-size: 16px;
-    color: #333;
-    padding: 10px 20px; /* Adds some padding for a better look */
-    background-color: #f5f5f5; /* Light gray background for a subtle contrast */
-    border: 1px solid #ddd; /* Thin border to define the element's boundaries */
-    border-radius: 8px; /* Rounds the corners for a modern look */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Adds a soft shadow for depth */
-    text-align: center; /* Centers the text inside the element */
-    max-width: 300px; /* Limits the width of the element */
+#google_translate_container {
+    position: fixed; /* Keeps the button in a fixed position on the screen */
+    bottom: 20px; /* Position it 20px from the bottom of the screen */
+    right: 20px; /* Position it 20px from the right edge of the screen */
+    z-index: 1000; /* Ensures the button stays on top of other elements */
+    background-color: #4285f4; /* Google Blue background color */
+    border-radius: 50%; /* Makes the container circular */
+    padding: 15px; /* Padding around the element */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); /* Adds a shadow for depth */
+    cursor: pointer; /* Changes cursor to pointer to indicate it's clickable */
+    transition: transform 0.3s ease; /* Smooth scaling effect on hover */
 }
 
-/* Ensures that the dropdown and other elements inside are styled consistently */
-#google_translate_element select {
-    border: 1px solid #ccc; /* Borders around the dropdown */
-    padding: 5px 10px; /* Padding inside the dropdown */
-    border-radius: 4px; /* Slight rounding for consistency */
-    background-color: #fff; /* White background for the dropdown */
-    color: #333; /* Text color */
-    font-size: 14px; /* Font size of the dropdown */
+#google_translate_container:hover {
+    transform: scale(1.1); /* Slightly enlarges the button on hover */
 }
+
+#google_translate_element {
+    display: none; /* Initially hides the translate element */
+}
+
+#google_translate_container.active #google_translate_element {
+    display: block; /* Shows the translate element when the container is active */
+    position: absolute;
+    bottom: 70px; /* Positions the dropdown above the button */
+    right: 0;
+    background-color: white; /* White background for dropdown */
+    border-radius: 8px; /* Rounded corners for the dropdown */
+    padding: 10px; /* Padding inside the dropdown */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+}
+
+/* Optional: Add an icon or text to the floating button */
+#google_translate_container::before {
+    content: "🌐"; /* Add a globe icon */
+    font-size: 24px; /* Size of the icon */
+    color: white; /* Icon color */
+}
+
 
 *[class*="skiptranslate"] {
     display: none !important;
