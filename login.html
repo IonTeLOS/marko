@@ -182,7 +182,10 @@
                 en: "Terms and conditions... <a href='https://example.com/eula' target='_blank'>SHOW MORE</a>... More details here...",
                 es: "Términos y condiciones... <a href='https://example.com/eula' target='_blank'>MOSTRAR MÁS</a>... Más detalles aquí..."
             };
-            document.getElementById('eulaContent').innerHTML = eulaTexts[language] || eulaTexts.en;
+            const eulaContent = document.getElementById('eulaContent');
+            if (eulaContent) {
+                eulaContent.innerHTML = eulaTexts[language] || eulaTexts.en;
+            }
         }
 
         function getTranslations(language) {
