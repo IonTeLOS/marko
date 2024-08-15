@@ -21,6 +21,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         .notranslate {
@@ -806,18 +807,6 @@ function handleEULA() {
 function navImageClick() {
     window.open('https://teloslinux.org/marko/newfile', '_blank'); 
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const loginContainer = document.querySelector('.login-container');
-    const eulaContainer = document.querySelector('.eula-container');
-
-    if (loginContainer && eulaContainer) {
-        // Sync EULA container scroll with login container scroll
-        loginContainer.addEventListener('scroll', () => {
-            eulaContainer.scrollTop = loginContainer.scrollTop;
-        });
-    }
-});
         
 // on load it starts by checking EULA acceptance        
 window.onload = handleEULA;
