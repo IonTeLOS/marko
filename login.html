@@ -24,6 +24,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
             max-width: 90%;
             width: 350px;
+            position: relative;
         }
 
         .logo {
@@ -36,7 +37,7 @@
             margin-bottom: 20px;
             color: #333;
         }
-        
+
         .button-container {
             display: flex;
             justify-content: center;
@@ -44,7 +45,7 @@
             margin-top: 20px;
             width: 100%;
         }
-        
+
         #signInButton {
             display: flex;
             justify-content: center; /* Center the button horizontally */
@@ -52,6 +53,45 @@
             display: inline-block;
             width: 100%;
             max-width: 300px; 
+        }
+
+        .eula-container {
+            display: none; /* Hidden by default */
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 350px;
+            text-align: left;
+            overflow-y: auto; /* Enable vertical scrolling */
+            max-height: 150px; /* Adjust height based on your design */
+        }
+
+        .eula-container h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .eula-container p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .eula-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .eula-container label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .eula-container button {
+            margin-top: 10px;
         }
     </style>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -62,6 +102,22 @@
         <h1>Marko Login</h1>
         <div id="signInButtonContainer" class="button-container">
             <div id="signInButton"></div>
+        </div>
+        <!-- EULA Section -->
+        <div id="eulaContainer" class="eula-container">
+            <h2>End-User License Agreement (EULA)</h2>
+            <p>
+                This End-User License Agreement (EULA) is a legal agreement between you and our company. By using our software, you agree to the terms outlined in this agreement. Please read them carefully.
+            </p>
+            <!-- Add more content here as needed -->
+            <p>
+                You may not distribute, modify, or reverse engineer the software without permission. For more details, please refer to our full terms of use.
+            </p>
+            <p>
+                <input type="checkbox" id="eulaAgree" name="eulaAgree">
+                <label for="eulaAgree">I agree to the terms of the EULA</label>
+            </p>
+            <button id="eulaAcceptButton" disabled>Accept and Proceed</button>
         </div>
     </div>
 
@@ -102,6 +158,31 @@
                 return;
             }
 
+            // Check if EULA has been accepted
+            const eulaAccepted = localStorage.getItem('eulaAccepted');
+            if (eulaAccepted === 'true') {
+                // Initialize Google Sign-In if EULA was previously accepted
+                initializeGoogleSignIn();
+            } else {
+                // Show EULA
+                document.getElementById('eulaContainer').style.display = 'block';
+                document.getElementById('eulaAcceptButton').addEventListener('click', () => {
+                    const eulaCheckbox = document.getElementById('eulaAgree');
+                    if (eulaCheckbox.checked) {
+                        localStorage.setItem('eulaAccepted', 'true');
+                        initializeGoogleSignIn();
+                    } else {
+                        alert('You must agree to the terms of the EULA to proceed.');
+                    }
+                });
+
+                document.getElementById('eulaAgree').addEventListener('change', (e) => {
+                    document.getElementById('eulaAcceptButton').disabled = !e.target.checked;
+                });
+            }
+        }
+
+        function initializeGoogleSignIn() {
             // Initialize Google Sign-In
             google.accounts.id.initialize({
                 client_id: CLIENT_ID,
@@ -135,7 +216,6 @@
 
         function centerSignInButton() {
             const signInButton = document.getElementById('signInButton');
-            // Find the div with the iframe (Google Sign-In button)
             const buttonDiv = signInButton.querySelector('div');
             
             if (buttonDiv) {
@@ -146,7 +226,7 @@
                 buttonDiv.style.width = '100%'; // Ensure full width
             }
         }
-        
+
         function getAccessToken(credential) {
             return new Promise((resolve, reject) => {
                 const tokenClient = google.accounts.oauth2.initTokenClient({
