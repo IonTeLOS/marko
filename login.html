@@ -169,81 +169,111 @@
         }
 
         function getBrowserLanguage() {
-            return navigator.language || 'en';
+            return navigator.language.slice(0, 2) || 'en';
         }
 
-        function loadEULAText(language) {
-            // Placeholder for actual EULA content. Replace with actual EULA text in different languages.
-            const eulaTexts = {
-                en: "Terms and conditions... <a href='https://example.com/eula' target='_blank'>SHOW MORE</a>... More details here...",
-                es: "Términos y condiciones... <a href='https://example.com/eula' target='_blank'>MOSTRAR MÁS</a>... Más detalles aquí..."
-            };
-            const eulaContent = document.getElementById('eulaContent');
-            if (eulaContent) {
-                eulaContent.innerHTML = eulaTexts[language] || eulaTexts.en;
-            }
+// Function to load EULA text based on the selected language
+function loadEULAText(language) {
+    // Define EULA texts in different languages
+    const eulaTexts = {
+        en: `
+            1. **Free and Open Source**: This software is free to use and open source. Copyright is held by Ion.<br><br>
+            2. **Google Authentication**: We use anonymous Google authentication for login. You might notice third-party cookies from Google—these help us provide the service.<br><br>
+            3. **Client-Side Code**: Everything runs on your device. We don’t store your data on our servers.<br><br>
+            4. **No Liability**: We’re not responsible for any damage that might come from using this software. Use it at your own risk!<br><br>
+            5. **No Illegal Content**: Keep it clean! We’ll report and block anyone who tries to abuse the service or engage in illegal activities.<br><br>
+            6. **Data Storage**: Your data mostly goes into your own Google Drive. Files are world-readable but have random IDs. Be cautious about sharing your content.<br><br>
+            7. **Firebase and Notifications**: For notifications (like reminders or chats), we use Google’s Firebase service. If you choose to receive notifications via email, your address is temporarily stored by Google.<br><br>
+            8. **Privacy**: We don’t collect or store personal data. We don’t share your data with anyone.<br><br>
+            9. **Content and Notifications**: The app might show promoted or affiliated content and have unobtrusive notifications.<br><br>
+            <a href="https://example.com/full-eula" target="_blank">Read More</a>
+        `,
+        es: `
+            1. **Gratis y de Código Abierto**: Este software es gratuito y de código abierto. Los derechos de autor están en manos de Ion.<br><br>
+            2. **Autenticación de Google**: Utilizamos la autenticación anónima de Google para el inicio de sesión. Puedes notar cookies de terceros de Google; estas nos ayudan a proporcionar el servicio.<br><br>
+            3. **Código del Lado del Cliente**: Todo se ejecuta en tu dispositivo. No almacenamos tus datos en nuestros servidores.<br><br>
+            4. **Sin Responsabilidad**: No somos responsables de ningún daño que pueda surgir del uso de este software. ¡Úsalo bajo tu propio riesgo!<br><br>
+            5. **Contenido Ilegal Prohibido**: ¡Mantén todo limpio! Informaremos y bloquearemos a cualquier persona que intente abusar del servicio o participar en actividades ilegales.<br><br>
+            6. **Almacenamiento de Datos**: Tus datos se guardan principalmente en tu propio Google Drive. Los archivos son legibles por todos pero tienen ID aleatorios. Ten cuidado al compartir tu contenido.<br><br>
+            7. **Firebase y Notificaciones**: Para notificaciones (como recordatorios o chats), usamos el servicio Firebase de Google. Si eliges recibir notificaciones por correo electrónico, tu dirección se almacena temporalmente en Google.<br><br>
+            8. **Privacidad**: No recopilamos ni almacenamos datos personales. No compartimos tus datos con nadie.<br><br>
+            9. **Contenido y Notificaciones**: La aplicación puede mostrar contenido promocionado o afiliado y tener notificaciones discretas.<br><br>
+            <a href="https://example.com/full-eula" target="_blank">Leer Más</a>
+        `
+    };
+
+    // Get the EULA content element and set its HTML
+    const eulaContent = document.getElementById('eulaContent');
+    if (eulaContent) {
+        eulaContent.innerHTML = eulaTexts[language] || eulaTexts.en;
+    }
+}
+
+// Function to get translations for UI elements
+function getTranslations(language) {
+    // Translations for title, checkbox text, and button text
+    const translations = {
+        en: {
+            title: "Marko Login",
+            checkboxText: "I agree to the EULA",
+            buttonText: "Accept and Proceed"
+        },
+        es: {
+            title: "Inicio de sesión de Marko",
+            checkboxText: "Acepto el EULA",
+            buttonText: "Aceptar y proceder"
         }
+    };
+    return translations[language] || translations.en;
+}
 
-        function getTranslations(language) {
-            // Translations for title, checkbox text, and button text
-            const translations = {
-                en: {
-                    title: "Marko Login",
-                    checkboxText: "I agree to the EULA",
-                    buttonText: "Accept and Proceed"
-                },
-                es: {
-                    title: "Inicio de sesión de Marko",
-                    checkboxText: "Acepto el EULA",
-                    buttonText: "Aceptar y proceder"
-                }
-            };
-            return translations[language] || translations.en;
-        }
+// Function to initialize EULA handling
+function handleEULA() {
+    const language = getBrowserLanguage(); // Assume this function gets user's language preference
+    const translations = getTranslations(language);
 
-        function handleEULA() {
-            const language = getBrowserLanguage();
-            const translations = getTranslations(language);
+    // Update UI elements with the translations
+    const loginTitle = document.getElementById('loginTitle');
+    const eulaCheckboxText = document.getElementById('eulaCheckboxText');
+    const eulaAcceptButton = document.getElementById('eulaAcceptButton');
+    const eulaContainer = document.getElementById('eulaContainer');
+    const eulaTitle = document.getElementById('eulaTitle');
 
-            const loginTitle = document.getElementById('loginTitle');
-            const eulaCheckboxText = document.getElementById('eulaCheckboxText');
-            const eulaAcceptButton = document.getElementById('eulaAcceptButton');
-            const eulaContainer = document.getElementById('eulaContainer');
-            const eulaTitle = document.getElementById('eulaTitle');
+    if (loginTitle) loginTitle.textContent = translations.title;
+    if (eulaCheckboxText) eulaCheckboxText.textContent = translations.checkboxText;
+    if (eulaAcceptButton) eulaAcceptButton.textContent = translations.buttonText;
+    if (eulaTitle) eulaTitle.textContent = 'End-User License Agreement (EULA)'; // Modify as needed
+    
+    // Show EULA container if it hasn't been accepted
+    if (!localStorage.getItem('eulaAccepted')) {
+        if (eulaContainer) {
+            eulaContainer.style.display = 'block';
+            loadEULAText(language);
 
-            if (loginTitle) loginTitle.textContent = translations.title;
-            if (eulaCheckboxText) eulaCheckboxText.textContent = translations.checkboxText;
-            if (eulaAcceptButton) eulaAcceptButton.textContent = translations.buttonText;
-            if (eulaTitle) eulaTitle.textContent = 'End-User License Agreement (EULA)'; // Modify as needed
-            
-            if (!localStorage.getItem('eulaAccepted')) {
-                if (eulaContainer) {
-                    eulaContainer.style.display = 'block';
-                    loadEULAText(language);
-
-                    const eulaAgree = document.getElementById('eulaAgree');
-                    if (eulaAgree) {
-                        eulaAgree.addEventListener('change', (event) => {
-                            if (eulaAcceptButton) {
-                                eulaAcceptButton.disabled = !event.target.checked;
-                            }
-                        });
-                    }
-
+            const eulaAgree = document.getElementById('eulaAgree');
+            if (eulaAgree) {
+                eulaAgree.addEventListener('change', (event) => {
                     if (eulaAcceptButton) {
-                        eulaAcceptButton.addEventListener('click', () => {
-                            localStorage.setItem('eulaAccepted', 'true');
-                            if (eulaContainer) {
-                                eulaContainer.style.display = 'none';
-                            }
-                            initializeGoogleSignIn();
-                        });
+                        eulaAcceptButton.disabled = !event.target.checked;
                     }
-                }
-            } else {
-                initializeGoogleSignIn();
+                });
+            }
+
+            if (eulaAcceptButton) {
+                eulaAcceptButton.addEventListener('click', () => {
+                    localStorage.setItem('eulaAccepted', 'true');
+                    if (eulaContainer) {
+                        eulaContainer.style.display = 'none';
+                    }
+                    initializeGoogleSignIn(); // Assume this function initializes Google Sign-In
+                });
             }
         }
+    } else {
+        initializeGoogleSignIn(); // Skip EULA if already accepted
+    }
+}
+
 
         async function handleCredentialResponse(response) {
             if (response.credential) {
