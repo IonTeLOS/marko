@@ -34,10 +34,11 @@
             background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            max-width: 90%;
-            width: 350px;
+            width: 92vw;
+            max-width: 500px;
+            max-height: 80vh; 
             position: relative;
-            overflow: auto;
+            overflow-y: auto;
         }
 
         .logo {
@@ -654,10 +655,12 @@ function handleEULA() {
         initializeGoogleSignIn(); 
     }
 
-    // Sync scroll positions of EULA and loginContainer
+    // Sync scroll positions
     if (loginContainer && eulaContainer) {
         loginContainer.addEventListener('scroll', () => {
+            // Calculate the scroll ratio
             const scrollRatio = loginContainer.scrollTop / (loginContainer.scrollHeight - loginContainer.clientHeight);
+            // Apply the scroll ratio to eulaContainer
             eulaContainer.scrollTop = scrollRatio * (eulaContainer.scrollHeight - eulaContainer.clientHeight);
         });
     }
