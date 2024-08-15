@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marko Login</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg">
     <style>
         body, html {
             margin: 0;
@@ -92,6 +94,43 @@
 
         .eula-container button {
             margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ffa426; 
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .eula-container button:disabled {
+            background-color: #bdbdbd; /* Disabled color */
+            cursor: not-allowed;
+        }
+
+        .eula-container button .material-icons {
+            margin-right: 8px;
+        }
+
+        /* Custom scrollbar */
+        .eula-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .eula-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .eula-container::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+
+        .eula-container::-webkit-scrollbar-thumb:hover {
+            background: #555;
         }
     </style>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -117,7 +156,9 @@
                 <input type="checkbox" id="eulaAgree" name="eulaAgree">
                 <label for="eulaAgree">I agree to the terms of the EULA</label>
             </p>
-            <button id="eulaAcceptButton" disabled>Accept and Proceed</button>
+            <button id="eulaAcceptButton" disabled>
+                <span class="material-icons">check_circle</span> Accept and Proceed
+            </button>
         </div>
     </div>
 
@@ -170,6 +211,7 @@
                     const eulaCheckbox = document.getElementById('eulaAgree');
                     if (eulaCheckbox.checked) {
                         localStorage.setItem('eulaAccepted', 'true');
+                        document.getElementById('eulaContainer').style.display = 'none'; // Hide EULA after acceptance
                         initializeGoogleSignIn();
                     } else {
                         alert('You must agree to the terms of the EULA to proceed.');
@@ -216,6 +258,7 @@
 
         function centerSignInButton() {
             const signInButton = document.getElementById('signInButton');
+            // Find the div with the iframe (Google Sign-In button)
             const buttonDiv = signInButton.querySelector('div');
             
             if (buttonDiv) {
@@ -226,7 +269,7 @@
                 buttonDiv.style.width = '100%'; // Ensure full width
             }
         }
-
+        
         function getAccessToken(credential) {
             return new Promise((resolve, reject) => {
                 const tokenClient = google.accounts.oauth2.initTokenClient({
