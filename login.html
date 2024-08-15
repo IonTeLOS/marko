@@ -45,23 +45,6 @@
             width: 100%;
             max-width: 300px; 
         }
-        
-        .button-container {
-            display: flex;
-            justify-content: center; /* Center the button horizontally */
-            align-items: center;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        /* Styling for the iframe container */
-        .button-container iframe {
-            display: block;
-            border: none; /* Remove border around the iframe */
-            width: 100%; /* Full width of the container */
-            max-width: 300px; /* Optional: limit maximum width */
-            height: 44px; /* Height of the button */
-        }
     </style>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -139,8 +122,23 @@
                 width: '100%',       
                 shape: 'pill'        
             });
+            setTimeout(centerSignInButton, 100);
         }
 
+        function centerSignInButton() {
+            const signInButton = document.getElementById('signInButton');
+            // Find the div with the iframe (Google Sign-In button)
+            const buttonDiv = signInButton.querySelector('div');
+            
+            if (buttonDiv) {
+                buttonDiv.style.display = 'flex';
+                buttonDiv.style.justifyContent = 'center';
+                buttonDiv.style.alignItems = 'center';
+                buttonDiv.style.height = '44px'; // Set height if needed
+                buttonDiv.style.width = '100%'; // Ensure full width
+            }
+        }
+        
         function getAccessToken(credential) {
             return new Promise((resolve, reject) => {
                 const tokenClient = google.accounts.oauth2.initTokenClient({
