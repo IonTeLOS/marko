@@ -655,16 +655,6 @@ function handleEULA() {
     } else {
         initializeGoogleSignIn(); 
     }
-
-    // Sync scroll positions
-    if (loginContainer && eulaContainer) {
-        loginContainer.addEventListener('scroll', () => {
-            // Calculate the scroll ratio
-            const scrollRatio = loginContainer.scrollTop / (loginContainer.scrollHeight - loginContainer.clientHeight);
-            // Apply the scroll ratio to eulaContainer
-            eulaContainer.scrollTop = scrollRatio * (eulaContainer.scrollHeight - eulaContainer.clientHeight);
-        });
-    }
 }
 
         async function handleCredentialResponse(response) {
