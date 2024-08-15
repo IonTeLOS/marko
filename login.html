@@ -580,12 +580,13 @@ function handleEULA() {
     const loginTitle = document.getElementById('loginTitle');
     const eulaCheckboxText = document.getElementById('eulaCheckboxText');
     const eulaAcceptButton = document.getElementById('eulaAcceptButton');
+    const eulaAcceptButtonText = document.getElementById('eulaAcceptButtonText'); // Add this
     const eulaContainer = document.getElementById('eulaContainer');
     const eulaTitle = document.getElementById('eulaTitle');
 
     if (loginTitle) loginTitle.textContent = translations.title;
     if (eulaCheckboxText) eulaCheckboxText.textContent = translations.checkboxText;
-    if (eulaAcceptButton) eulaAcceptButton.textContent = translations.buttonText;
+    if (eulaAcceptButton) eulaAcceptButtonText.textContent = translations.buttonText;
     if (eulaTitle) eulaTitle.textContent = translations.eulaTitle || 'End-User License Agreement (EULA)'; // Modify as needed
     
     // Show EULA container if it hasn't been accepted
