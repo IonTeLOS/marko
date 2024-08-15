@@ -154,7 +154,11 @@
 </head>
 <body>
     <div class="login-container">
-        <img src="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg" alt="Marko Logo" class="logo">
+      <img 
+        src="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg" 
+        alt="Marko Logo" 
+        class="logo" 
+        onclick="navImageClick()">        
         <h1 id="loginTitle">Marko Login</h1>
         <div id="signInButtonContainer" class="button-container">
             <div id="signInButton"></div>
@@ -767,6 +771,10 @@ function handleEULA() {
             });
         }
 
+// Function to handle image click and open a link
+function handleImageClick() {
+    window.open('https://teloslinux.org/marko/newfile', '_blank'); // Replace with your desired URL
+}
         window.onload = handleEULA;
     </script>
 </body>
