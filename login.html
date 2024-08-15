@@ -6,14 +6,12 @@
     <title>Marko Login</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg">
-    <!-- Kanit Font -->
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
-    <!-- Roboto Font -->
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <!-- Open Sans Font -->
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;700&display=swap" rel="stylesheet">
 
     <style>
+        
         body, html {
             margin: 0;
             padding: 0;
@@ -46,7 +44,7 @@
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 28px;
             margin-bottom: 20px;
             color: #333;
         }
@@ -68,17 +66,17 @@
         }
 
         .eula-container {
-            display: none; /* Hidden by default */
+            display: none; 
             margin-top: 20px;
             padding: 10px;
-            background-color: #f7f7f7; /* Light grey background */
+            background-color: #f7f7f7; 
             border-radius: 5px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 350px;
             text-align: left;
-            overflow-y: auto; /* Enable vertical scrolling */
-            max-height: 150px; /* Adjust height based on your design */
+            overflow-y: auto; 
+            max-height: 150px; 
         }
 
         .eula-container h2 {
@@ -95,16 +93,16 @@
 
         #sign {
             display: flex;
-            align-items: center; /* Vertically align items */
-            justify-content: flex-end; /* Align the #sign element to the right */
-            padding: 10px 0; /* Add padding for spacing */
-            margin-right: 20px; /* Add margin to the right to create space between the edge */
+            align-items: center; 
+            justify-content: flex-end; 
+            padding: 10px 0;
+            margin-right: 20px; 
         }
 
         #sign input[type="checkbox"] {
-            margin-left: 10px; /* Add space between the label and the checkbox */
-            transform: scale(1.3); /* Optional: Make the checkbox slightly larger */
-            vertical-align: middle; /* Ensures the checkbox is aligned with the text */
+            margin-left: 10px; 
+            transform: scale(1.3);
+            vertical-align: middle; 
         }
 
         .eula-container label {
@@ -113,33 +111,33 @@
         }
 
         .eula-container button {
-    margin: 20px auto; /* Center the button horizontally */
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #0d47a1;
-    color: #ffffff;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: fit-content; /* Adjust button width to content */
-}
+            margin: 20px auto; 
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #0d47a1;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: fit-content; 
+        }
 
-.eula-container button:disabled {
-    background-color: #bdbdbd; /* Disabled color */
-    cursor: not-allowed;
-}
+        .eula-container button:disabled {
+            background-color: #bdbdbd; 
+            cursor: not-allowed;
+        }
 
-.material-icons {
-    font-family: 'Material Icons', sans-serif;
-    font-size: 24px; /* Adjust as needed */
-    display: inline-block;
-    margin-right: 8px;
-    vertical-align: middle;
-}
-        /* Custom scrollbar */
+        .material-icons {
+            font-family: 'Material Icons', sans-serif;
+            font-size: 24px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
         .eula-container::-webkit-scrollbar {
             width: 8px;
         }
@@ -156,8 +154,9 @@
         .eula-container::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        
     </style>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="login-container">
@@ -170,13 +169,11 @@
         <div id="signInButtonContainer" class="button-container">
             <div id="signInButton"></div>
         </div>
-        <!-- EULA Section -->
+
         <div id="eulaContainer" class="eula-container">
             <h2 id="eulaTitle">End-User License Agreement (EULA)</h2>
             <p id="eulaContent">
-                This End-User License Agreement (EULA) is a legal agreement between you and our company. By using our software, you agree to the terms outlined in this agreement. Please read them carefully.
             </p>
-            <!-- Add more content here as needed -->
             <p id="sign" >
                 <label id="eulaCheckboxText" for="eulaAgree">I agree to the terms of the EULA</label>
                 <input type="checkbox" id="eulaAgree" name="eulaAgree">
@@ -189,23 +186,26 @@
     </div>
 
     <script>
+        
         const CLIENT_ID = '7036670175-ll716p70k0qgfk0q61fmpb0in9k4n95h.apps.googleusercontent.com';
         const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid';
 
+        // read from url query parameters where to redirect to after successful signin
         function getRedirectUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const redirectPath = urlParams.get('redirect');
             return redirectPath ? `https://teloslinux.org/marko/${redirectPath}` : 'https://teloslinux.org/marko/profile2';
         }
 
+        // simplified language
         function getBrowserLanguage() {
             return navigator.language.slice(0, 2) || 'en';
         }
 
-// Function to load EULA text based on the selected language
-function loadEULAText(language) {
-    // Define EULA texts in different languages
-    const eulaTexts = {
+        // Function to load EULA text based on the selected language
+        function loadEULAText(language) {
+        // Define EULA texts in different languages
+        const eulaTexts = {
         en: `
             1. **Free and Open Source**: This software is free to use and open source. Copyright is held by Ion.<br><br>
             2. **Google Authentication**: We use anonymous Google authentication for login. You might notice third-party cookies from Google—these help us provide the service.<br><br>
@@ -457,125 +457,125 @@ function loadEULAText(language) {
 
 // Function to get translations for UI elements
 function getTranslations(language) {
-    // Translations for title, checkbox text, and button text
+// Translations for title, checkbox text, and button text
 const translations = {
     en: {
         title: "Marko Login",
-        checkboxText: "I agree to the EULA",
+        checkboxText: "I agree",
         buttonText: "Accept and Proceed",
         eulaTitle: "End-User License Agreement (EULA)"
     },
     es: {
         title: "Inicio de sesión de Marko",
-        checkboxText: "Acepto el EULA",
+        checkboxText: "Estoy de acuerdo",
         buttonText: "Aceptar y proceder",
         eulaTitle: "Acuerdo de Licencia de Usuario Final (EULA)"
     },
     zh: {
         title: "Marko 登录",
-        checkboxText: "我同意 EULA",
+        checkboxText: "我同意",
         buttonText: "接受并继续",
         eulaTitle: "最终用户许可协议 (EULA)"
     },
     ar: {
         title: "تسجيل دخول Marko",
-        checkboxText: "أوافق على اتفاقية الترخيص النهائي للمستخدم (EULA)",
+        checkboxText: "أوافق",
         buttonText: "قبول والمتابعة",
         eulaTitle: "اتفاقية ترخيص المستخدم النهائي (EULA)"
     },
     pt: {
         title: "Login do Marko",
-        checkboxText: "Aceito o EULA",
+        checkboxText: "Eu concordo",
         buttonText: "Aceitar e Prosseguir",
         eulaTitle: "Contrato de Licença de Usuário Final (EULA)"
     },
     ja: {
         title: "Marko ログイン",
-        checkboxText: "EULAに同意する",
+        checkboxText: "同意します",
         buttonText: "受け入れて進む",
         eulaTitle: "エンドユーザーライセンス契約 (EULA)"
     },
     ms: {
         title: "Log Masuk Marko",
-        checkboxText: "Saya bersetuju dengan EULA",
+        checkboxText: "Saya setuju",
         buttonText: "Terima dan Teruskan",
         eulaTitle: "Perjanjian Lesen Pengguna Akhir (EULA)"
     },
     ru: {
         title: "Вход в Marko",
-        checkboxText: "Я согласен с EULA",
+        checkboxText: "Я согласен",
         buttonText: "Принять и Продолжить",
         eulaTitle: "Лицензионное соглашение конечного пользователя (EULA)"
     },
     fr: {
         title: "Connexion Marko",
-        checkboxText: "J'accepte le EULA",
+        checkboxText: "Je suis d'accord",
         buttonText: "Accepter et Continuer",
         eulaTitle: "Contrat de Licence Utilisateur Final (EULA)"
     },
     de: {
         title: "Marko Anmeldung",
-        checkboxText: "Ich stimme der EULA zu",
+        checkboxText: "Ich stimme zu",
         buttonText: "Akzeptieren und Fortfahren",
         eulaTitle: "Endbenutzer-Lizenzvereinbarung (EULA)"
     },
     vi: {
         title: "Đăng Nhập Marko",
-        checkboxText: "Tôi đồng ý với EULA",
+        checkboxText: "Tôi đồng ý",
         buttonText: "Chấp nhận và Tiếp tục",
         eulaTitle: "Thỏa Thuận Cấp Phép Người Dùng Cuối (EULA)"
     },
     fa: {
         title: "ورود به Marko",
-        checkboxText: "من با EULA موافقم",
+        checkboxText: "موافقم",
         buttonText: "پذیرفتن و ادامه",
         eulaTitle: "قرارداد مجوز پایان‌کاربر (EULA)"
     },
     tr: {
         title: "Marko Girişi",
-        checkboxText: "EULA’yı kabul ediyorum",
+        checkboxText: "Katılıyorum",
         buttonText: "Kabul Et ve Devam Et",
         eulaTitle: "Son Kullanıcı Lisans Anlaşması (EULA)"
     },
     th: {
         title: "เข้าสู่ระบบ Marko",
-        checkboxText: "ฉันตกลงกับ EULA",
+        checkboxText: "ฉันเห็นด้วย",
         buttonText: "ยอมรับและดำเนินการต่อ",
         eulaTitle: "ข้อตกลงใบอนุญาตผู้ใช้สุดท้าย (EULA)"
     },
     id: {
         title: "Login Marko",
-        checkboxText: "Saya setuju dengan EULA",
+        checkboxText: "Saya setuju",
         buttonText: "Terima dan Lanjutkan",
         eulaTitle: "Perjanjian Lisensi Pengguna Akhir (EULA)"
     },
     ko: {
         title: "Marko 로그인",
-        checkboxText: "EULA에 동의합니다",
+        checkboxText: "에 동의합니다",
         buttonText: "수락하고 진행하기",
         eulaTitle: "최종 사용자 라이센스 계약 (EULA)"
     },
     it: {
         title: "Accesso Marko",
-        checkboxText: "Accetto il EULA",
+        checkboxText: "Sono d'accordo",
         buttonText: "Accetta e Procedi",
         eulaTitle: "Accordo di Licenza per l'Utente Finale (EULA)"
     },
     pl: {
         title: "Logowanie Marko",
-        checkboxText: "Zgadzam się z EULA",
+        checkboxText: "Zgadzam się",
         buttonText: "Akceptuj i Kontynuuj",
         eulaTitle: "Umowa Licencyjna Użytkownika Końcowego (EULA)"
     },
     nl: {
         title: "Marko Inloggen",
-        checkboxText: "Ik ga akkoord met de EULA",
+        checkboxText: "Ik ga akkoord",
         buttonText: "Accepteren en Doorgaan",
         eulaTitle: "Eindgebruikerslicentieovereenkomst (EULA)"
     },
     el: {
         title: "Σύνδεση Marko",
-        checkboxText: "Συμφωνώ με το EULA",
+        checkboxText: "Συμφωνώ",
         buttonText: "Αποδοχή και Συνέχεια",
         eulaTitle: "Συμφωνητικό Άδειας Χρήσης Τελικού Χρήστη (EULA)"
     }
@@ -585,21 +585,21 @@ const translations = {
 
 // Function to initialize EULA handling
 function handleEULA() {
-    const language = getBrowserLanguage(); // Assume this function gets user's language preference
+    const language = getBrowserLanguage(); 
     const translations = getTranslations(language);
 
     // Update UI elements with the translations
     const loginTitle = document.getElementById('loginTitle');
     const eulaCheckboxText = document.getElementById('eulaCheckboxText');
     const eulaAcceptButton = document.getElementById('eulaAcceptButton');
-    const eulaAcceptButtonText = document.getElementById('eulaAcceptButtonText'); // Add this
+    const eulaAcceptButtonText = document.getElementById('eulaAcceptButtonText'); 
     const eulaContainer = document.getElementById('eulaContainer');
     const eulaTitle = document.getElementById('eulaTitle');
 
     if (loginTitle) loginTitle.textContent = translations.title;
     if (eulaCheckboxText) eulaCheckboxText.textContent = translations.checkboxText;
     if (eulaAcceptButton) eulaAcceptButtonText.textContent = translations.buttonText;
-    if (eulaTitle) eulaTitle.textContent = translations.eulaTitle || 'End-User License Agreement (EULA)'; // Modify as needed
+    if (eulaTitle) eulaTitle.textContent = translations.eulaTitle || 'End-User License Agreement (EULA)'; 
     
     // Show EULA container if it hasn't been accepted
     if (!localStorage.getItem('eulaAccepted')) {
@@ -622,15 +622,14 @@ function handleEULA() {
                     if (eulaContainer) {
                         eulaContainer.style.display = 'none';
                     }
-                    initializeGoogleSignIn(); // Assume this function initializes Google Sign-In
+                    initializeGoogleSignIn(); 
                 });
             }
         }
     } else {
-        initializeGoogleSignIn(); // Skip EULA if already accepted
+        initializeGoogleSignIn(); 
     }
 }
-
 
         async function handleCredentialResponse(response) {
             if (response.credential) {
@@ -655,7 +654,7 @@ function handleEULA() {
 
             if (accessToken && userInfo) {
                 console.log('User is already logged in:', JSON.parse(userInfo));
-                window.location.href = getRedirectUrl();  // Redirect if already logged in
+                window.location.href = getRedirectUrl();  // Redirect to app if user is already logged in
                 return;
             }
 
@@ -718,15 +717,15 @@ function handleEULA() {
 
         function centerSignInButton() {
             const signInButton = document.getElementById('signInButton');
-            // Find the div with the iframe (Google Sign-In button)
+            // Find the div with the iframe (Google Sign-In button) to center it
             const buttonDiv = signInButton.querySelector('div');
             
             if (buttonDiv) {
                 buttonDiv.style.display = 'flex';
                 buttonDiv.style.justifyContent = 'center';
                 buttonDiv.style.alignItems = 'center';
-                buttonDiv.style.height = '44px'; // Set height if needed
-                buttonDiv.style.width = '100%'; // Ensure full width
+                buttonDiv.style.height = '50px'; 
+                buttonDiv.style.width = '100%'; 
             }
         }
         
@@ -780,9 +779,12 @@ function handleEULA() {
 
 // Function to handle image click and open a link
 function navImageClick() {
-    window.open('https://teloslinux.org/marko/newfile', '_blank'); // Replace with your desired URL
+    window.open('https://teloslinux.org/marko/newfile', '_blank'); 
 }
-        window.onload = handleEULA;
-    </script>
+
+// on load it starts by checking EULA acceptance        
+window.onload = handleEULA;
+        
+</script>
 </body>
 </html>
