@@ -154,14 +154,6 @@
         .eula-container::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
-        
-        .post-eula-placeholder {
-            font-size: 18px;
-            color: #0d47a1;
-            text-align: center; 
-            margin-top: 20px;
-            white-space: nowrap;
-        }
 
     </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -190,9 +182,6 @@
                 <span class="material-icons notranslate">check_circle</span>
                 <span id="eulaAcceptButtonText">Accept and Proceed</span>
             </button>
-                <div id="placeholder" class="post-eula-placeholder" style="display:none;">
-                <!-- Placeholder text will be inserted by JavaScript -->
-               </div>
         </div>
     </div>
 
@@ -606,24 +595,12 @@ function handleEULA() {
     const eulaAcceptButtonText = document.getElementById('eulaAcceptButtonText'); 
     const eulaContainer = document.getElementById('eulaContainer');
     const eulaTitle = document.getElementById('eulaTitle');
-    const postEulaPlaceholder = document.getElementById('placeholder');
 
     if (loginTitle) loginTitle.textContent = translations.title;
     if (eulaCheckboxText) eulaCheckboxText.textContent = translations.checkboxText;
     if (eulaAcceptButton) eulaAcceptButtonText.textContent = translations.buttonText;
     if (eulaTitle) eulaTitle.textContent = translations.eulaTitle || 'End-User License Agreement (EULA)'; 
     
-    // Function to start the ellipsis animation
-    function startEllipsisAnimation() {
-        let count = 0;
-        const ellipsis = ['.', '..', '...'];
-        setInterval(() => {
-            if (postEulaPlaceholder) {
-                postEulaPlaceholder.textContent = ellipsis[count % ellipsis.length];
-                count++;
-            }
-        }, 500); 
-    }
     // Show EULA container if it hasn't been accepted
     if (!localStorage.getItem('eulaAccepted')) {
         if (eulaContainer) {
@@ -644,10 +621,6 @@ function handleEULA() {
                     localStorage.setItem('eulaAccepted', 'true');
                     if (eulaContainer) {
                         eulaContainer.style.display = 'none';
-                        if (postEulaPlaceholder) {
-                            postEulaPlaceholder.style.display = 'block'; // Show the placeholder text
-                            startEllipsisAnimation(); // Start the ellipsis animation
-                        }
                     }
                     initializeGoogleSignIn(); 
                 });
@@ -655,10 +628,6 @@ function handleEULA() {
         }
     } else {
         initializeGoogleSignIn(); 
-        if (postEulaPlaceholder) {
-            postEulaPlaceholder.style.display = 'block';
-            startEllipsisAnimation();
-        }
     }
 }
 
