@@ -209,27 +209,44 @@
             const language = getBrowserLanguage();
             const translations = getTranslations(language);
 
-            document.getElementById('loginTitle').textContent = translations.title;
-            document.getElementById('eulaCheckboxText').textContent = translations.checkboxText;
-            document.getElementById('eulaAcceptButton').textContent = translations.buttonText;
+            const loginTitle = document.getElementById('loginTitle');
+            const eulaCheckboxText = document.getElementById('eulaCheckboxText');
+            const eulaAcceptButton = document.getElementById('eulaAcceptButton');
+            const eulaContainer = document.getElementById('eulaContainer');
 
+            if (loginTitle) loginTitle.textContent = translations.title;
+            if (eulaCheckboxText) eulaCheckboxText.textContent = translations.checkboxText;
+            if (eulaAcceptButton) eulaAcceptButton.textContent = translations.buttonText;
+            
             if (!localStorage.getItem('eulaAccepted')) {
-                document.getElementById('eulaContainer').style.display = 'block';
-                loadEULAText(language);
+                if (eulaContainer) {
+                    eulaContainer.style.display = 'block';
+                    loadEULAText(language);
 
-                document.getElementById('eulaAgree').addEventListener('change', (event) => {
-                    document.getElementById('eulaAcceptButton').disabled = !event.target.checked;
-                });
+                    const eulaAgree = document.getElementById('eulaAgree');
+                    if (eulaAgree) {
+                        eulaAgree.addEventListener('change', (event) => {
+                            if (eulaAcceptButton) {
+                                eulaAcceptButton.disabled = !event.target.checked;
+                            }
+                        });
+                    }
 
-                document.getElementById('eulaAcceptButton').addEventListener('click', () => {
-                    localStorage.setItem('eulaAccepted', 'true');
-                    document.getElementById('eulaContainer').style.display = 'none';
-                    initializeGoogleSignIn();
-                });
+                    if (eulaAcceptButton) {
+                        eulaAcceptButton.addEventListener('click', () => {
+                            localStorage.setItem('eulaAccepted', 'true');
+                            if (eulaContainer) {
+                                eulaContainer.style.display = 'none';
+                            }
+                            initializeGoogleSignIn();
+                        });
+                    }
+                }
             } else {
                 initializeGoogleSignIn();
             }
         }
+
         async function handleCredentialResponse(response) {
             if (response.credential) {
                 document.getElementById('signInButtonContainer').style.display = 'none';
