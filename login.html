@@ -157,7 +157,7 @@
         
         @keyframes blink {
             0% { opacity: 1; }
-            50% { opacity: 0; }
+            50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
 
@@ -640,7 +640,7 @@ function handleEULA() {
                                 if (loginTitle) {
                                     loginTitle.classList.remove('blinking');
                                 }
-                            }, 5000); // Duration of the blinking effect
+                            }, 10000); // Duration of the blinking effect
                         }                        
                     }
                     initializeGoogleSignIn(); 
