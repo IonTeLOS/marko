@@ -154,6 +154,16 @@
         .eula-container::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .blinking {
+            animation: blink 1s step-start infinite;
+        }
 
     </style>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -621,6 +631,17 @@ function handleEULA() {
                     localStorage.setItem('eulaAccepted', 'true');
                     if (eulaContainer) {
                         eulaContainer.style.display = 'none';
+                        const loginTitle = document.getElementById('loginTitle');
+                        if (loginTitle) {
+                            loginTitle.classList.add('blinking');
+
+                            // Remove blinking effect after a short delay
+                            setTimeout(() => {
+                                if (loginTitle) {
+                                    loginTitle.classList.remove('blinking');
+                                }
+                            }, 5000); // Duration of the blinking effect
+                        }                        
                     }
                     initializeGoogleSignIn(); 
                 });
