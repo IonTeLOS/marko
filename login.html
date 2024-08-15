@@ -819,6 +819,23 @@ function navImageClick() {
     window.open('https://teloslinux.org/marko/newfile', '_blank'); 
 }
 
+document.addEventListener('DOMContentLoaded', () => {
+    const loginContainer = document.querySelector('.login-container');
+    const eulaContent = document.querySelector('#eulaContent'); // Change this to your actual EULA section ID
+
+    if (loginContainer && eulaContent) {
+        loginContainer.addEventListener('scroll', () => {
+            // Sync scroll position of EULA with the login container
+            eulaContent.scrollTop = loginContainer.scrollTop;
+        });
+
+        // Optional: Sync login container scroll position with EULA, if needed
+        eulaContent.addEventListener('scroll', () => {
+            loginContainer.scrollTop = eulaContent.scrollTop;
+        });
+    }
+});
+        
 // on load it starts by checking EULA acceptance        
 window.onload = handleEULA;
         
