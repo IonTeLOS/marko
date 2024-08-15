@@ -563,6 +563,7 @@
                 if (response.ok) {
                     const data = await response.json();
                     console.log('Access Token is valid:', data);
+                    getUserInfo(accessToken);
                     // Proceed to load the main page content
                 } else {
                     console.warn('Invalid Access Token:', response.status);
