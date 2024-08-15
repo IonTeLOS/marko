@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marko Login</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="icon" type="image/svg+xml" href="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg">
     <style>
         body, html {
@@ -102,27 +102,29 @@
         }
 
         .eula-container button {
-            margin-top: 10px;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #ffa426; 
-            color: #ffffff;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    margin: 20px auto; /* Center the button horizontally */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ffa426; 
+    color: #ffffff;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content; /* Adjust button width to content */
+}
 
-        .eula-container button:disabled {
-            background-color: #bdbdbd; /* Disabled color */
-            cursor: not-allowed;
-        }
+.eula-container button:disabled {
+    background-color: #bdbdbd; /* Disabled color */
+    cursor: not-allowed;
+}
 
-        .eula-container button .material-icons {
-            margin-right: 8px;
-        }
+.eula-container button .material-icons {
+    margin-right: 8px;
+    font-size: 20px; /* Ensure the icon is visible and properly sized */
+}
 
         /* Custom scrollbar */
         .eula-container::-webkit-scrollbar {
