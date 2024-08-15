@@ -50,9 +50,8 @@
 
         #signInButton {
             display: flex;
-            justify-content: center; /* Center the button horizontally */
+            justify-content: center;
             align-items: center;
-            display: inline-block;
             width: 100%;
             max-width: 300px; 
         }
@@ -138,23 +137,20 @@
 <body>
     <div class="login-container">
         <img src="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg" alt="Marko Logo" class="logo">
-        <h1>Marko Login</h1>
+        <h1 id="loginTitle">Marko Login</h1>
         <div id="signInButtonContainer" class="button-container">
             <div id="signInButton"></div>
         </div>
         <!-- EULA Section -->
         <div id="eulaContainer" class="eula-container">
-            <h2>End-User License Agreement (EULA)</h2>
-            <p>
+            <h2 id="eulaTitle">End-User License Agreement (EULA)</h2>
+            <p id="eulaContent">
                 This End-User License Agreement (EULA) is a legal agreement between you and our company. By using our software, you agree to the terms outlined in this agreement. Please read them carefully.
             </p>
             <!-- Add more content here as needed -->
             <p>
-                You may not distribute, modify, or reverse engineer the software without permission. For more details, please refer to our full terms of use.
-            </p>
-            <p>
                 <input type="checkbox" id="eulaAgree" name="eulaAgree">
-                <label for="eulaAgree">I agree to the terms of the EULA</label>
+                <label id="eulaCheckboxText" for="eulaAgree">I agree to the terms of the EULA</label>
             </p>
             <button id="eulaAcceptButton" disabled>
                 <span class="material-icons">check_circle</span> Accept and Proceed
@@ -213,10 +209,12 @@
             const eulaCheckboxText = document.getElementById('eulaCheckboxText');
             const eulaAcceptButton = document.getElementById('eulaAcceptButton');
             const eulaContainer = document.getElementById('eulaContainer');
+            const eulaTitle = document.getElementById('eulaTitle');
 
             if (loginTitle) loginTitle.textContent = translations.title;
             if (eulaCheckboxText) eulaCheckboxText.textContent = translations.checkboxText;
             if (eulaAcceptButton) eulaAcceptButton.textContent = translations.buttonText;
+            if (eulaTitle) eulaTitle.textContent = 'End-User License Agreement (EULA)'; // Modify as needed
             
             if (!localStorage.getItem('eulaAccepted')) {
                 if (eulaContainer) {
@@ -394,7 +392,6 @@
         }
 
         window.onload = handleEULA;
-;
     </script>
 </body>
 </html>
