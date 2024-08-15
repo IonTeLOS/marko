@@ -428,18 +428,128 @@ function loadEULAText(language) {
 // Function to get translations for UI elements
 function getTranslations(language) {
     // Translations for title, checkbox text, and button text
-    const translations = {
-        en: {
-            title: "Marko Login",
-            checkboxText: "I agree to the EULA",
-            buttonText: "Accept and Proceed"
-        },
-        es: {
-            title: "Inicio de sesión de Marko",
-            checkboxText: "Acepto el EULA",
-            buttonText: "Aceptar y proceder"
-        }
-    };
+const translations = {
+    en: {
+        title: "Marko Login",
+        checkboxText: "I agree to the EULA",
+        buttonText: "Accept and Proceed",
+        eulaTitle: "End-User License Agreement (EULA)"
+    },
+    es: {
+        title: "Inicio de sesión de Marko",
+        checkboxText: "Acepto el EULA",
+        buttonText: "Aceptar y proceder",
+        eulaTitle: "Acuerdo de Licencia de Usuario Final (EULA)"
+    },
+    zh: {
+        title: "Marko 登录",
+        checkboxText: "我同意 EULA",
+        buttonText: "接受并继续",
+        eulaTitle: "最终用户许可协议 (EULA)"
+    },
+    ar: {
+        title: "تسجيل دخول Marko",
+        checkboxText: "أوافق على اتفاقية الترخيص النهائي للمستخدم (EULA)",
+        buttonText: "قبول والمتابعة",
+        eulaTitle: "اتفاقية ترخيص المستخدم النهائي (EULA)"
+    },
+    pt: {
+        title: "Login do Marko",
+        checkboxText: "Aceito o EULA",
+        buttonText: "Aceitar e Prosseguir",
+        eulaTitle: "Contrato de Licença de Usuário Final (EULA)"
+    },
+    ja: {
+        title: "Marko ログイン",
+        checkboxText: "EULAに同意する",
+        buttonText: "受け入れて進む",
+        eulaTitle: "エンドユーザーライセンス契約 (EULA)"
+    },
+    ms: {
+        title: "Log Masuk Marko",
+        checkboxText: "Saya bersetuju dengan EULA",
+        buttonText: "Terima dan Teruskan",
+        eulaTitle: "Perjanjian Lesen Pengguna Akhir (EULA)"
+    },
+    ru: {
+        title: "Вход в Marko",
+        checkboxText: "Я согласен с EULA",
+        buttonText: "Принять и Продолжить",
+        eulaTitle: "Лицензионное соглашение конечного пользователя (EULA)"
+    },
+    fr: {
+        title: "Connexion Marko",
+        checkboxText: "J'accepte le EULA",
+        buttonText: "Accepter et Continuer",
+        eulaTitle: "Contrat de Licence Utilisateur Final (EULA)"
+    },
+    de: {
+        title: "Marko Anmeldung",
+        checkboxText: "Ich stimme der EULA zu",
+        buttonText: "Akzeptieren und Fortfahren",
+        eulaTitle: "Endbenutzer-Lizenzvereinbarung (EULA)"
+    },
+    vi: {
+        title: "Đăng Nhập Marko",
+        checkboxText: "Tôi đồng ý với EULA",
+        buttonText: "Chấp nhận và Tiếp tục",
+        eulaTitle: "Thỏa Thuận Cấp Phép Người Dùng Cuối (EULA)"
+    },
+    fa: {
+        title: "ورود به Marko",
+        checkboxText: "من با EULA موافقم",
+        buttonText: "پذیرفتن و ادامه",
+        eulaTitle: "قرارداد مجوز پایان‌کاربر (EULA)"
+    },
+    tr: {
+        title: "Marko Girişi",
+        checkboxText: "EULA’yı kabul ediyorum",
+        buttonText: "Kabul Et ve Devam Et",
+        eulaTitle: "Son Kullanıcı Lisans Anlaşması (EULA)"
+    },
+    th: {
+        title: "เข้าสู่ระบบ Marko",
+        checkboxText: "ฉันตกลงกับ EULA",
+        buttonText: "ยอมรับและดำเนินการต่อ",
+        eulaTitle: "ข้อตกลงใบอนุญาตผู้ใช้สุดท้าย (EULA)"
+    },
+    id: {
+        title: "Login Marko",
+        checkboxText: "Saya setuju dengan EULA",
+        buttonText: "Terima dan Lanjutkan",
+        eulaTitle: "Perjanjian Lisensi Pengguna Akhir (EULA)"
+    },
+    ko: {
+        title: "Marko 로그인",
+        checkboxText: "EULA에 동의합니다",
+        buttonText: "수락하고 진행하기",
+        eulaTitle: "최종 사용자 라이센스 계약 (EULA)"
+    },
+    it: {
+        title: "Accesso Marko",
+        checkboxText: "Accetto il EULA",
+        buttonText: "Accetta e Procedi",
+        eulaTitle: "Accordo di Licenza per l'Utente Finale (EULA)"
+    },
+    pl: {
+        title: "Logowanie Marko",
+        checkboxText: "Zgadzam się z EULA",
+        buttonText: "Akceptuj i Kontynuuj",
+        eulaTitle: "Umowa Licencyjna Użytkownika Końcowego (EULA)"
+    },
+    nl: {
+        title: "Marko Inloggen",
+        checkboxText: "Ik ga akkoord met de EULA",
+        buttonText: "Accepteren en Doorgaan",
+        eulaTitle: "Eindgebruikerslicentieovereenkomst (EULA)"
+    },
+    el: {
+        title: "Σύνδεση Marko",
+        checkboxText: "Συμφωνώ με το EULA",
+        buttonText: "Αποδοχή και Συνέχεια",
+        eulaTitle: "Συμφωνητικό Άδειας Χρήσης Τελικού Χρήστη (EULA)"
+    }
+};
     return translations[language] || translations.en;
 }
 
@@ -458,7 +568,7 @@ function handleEULA() {
     if (loginTitle) loginTitle.textContent = translations.title;
     if (eulaCheckboxText) eulaCheckboxText.textContent = translations.checkboxText;
     if (eulaAcceptButton) eulaAcceptButton.textContent = translations.buttonText;
-    if (eulaTitle) eulaTitle.textContent = 'End-User License Agreement (EULA)'; // Modify as needed
+    if (eulaTitle) eulaTitle.textContent = translations.eulaTitle || 'End-User License Agreement (EULA)'; // Modify as needed
     
     // Show EULA container if it hasn't been accepted
     if (!localStorage.getItem('eulaAccepted')) {
