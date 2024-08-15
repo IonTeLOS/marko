@@ -810,17 +810,17 @@ function navImageClick() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const loginContainer = document.querySelector('.login-container');
-    const eulaContent = document.querySelector('.eula-container');
+    const eulaContainer = document.querySelector('#eulaContainer');
 
-    if (loginContainer && eulaContent) {
+    if (loginContainer && eulaContainer) {
+        // Sync EULA container scroll with login container scroll
         loginContainer.addEventListener('scroll', () => {
-            // Sync scroll position of EULA with the login container
-            eulaContent.scrollTop = loginContainer.scrollTop;
+            eulaContainer.scrollTop = loginContainer.scrollTop;
         });
 
-        // Optional: Sync login container scroll position with EULA, if needed
-        eulaContent.addEventListener('scroll', () => {
-            loginContainer.scrollTop = eulaContent.scrollTop;
+        // Optional: Sync login container scroll with EULA container scroll
+        eulaContainer.addEventListener('scroll', () => {
+            loginContainer.scrollTop = eulaContainer.scrollTop;
         });
     }
 });
