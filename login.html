@@ -21,6 +21,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow: hidden;
         }
 
         .notranslate {
@@ -36,6 +37,7 @@
             max-width: 90%;
             width: 350px;
             position: relative;
+            overflow: auto;
         }
 
         .logo {
@@ -169,7 +171,7 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-    <div class="login-container">
+    <div id="loginContainer" class="login-container">
       <img 
         src="https://raw.githubusercontent.com/IonTeLOS/marko/main/triskelion.svg" 
         alt="Marko Logo" 
@@ -605,6 +607,7 @@ function handleEULA() {
     const eulaAcceptButtonText = document.getElementById('eulaAcceptButtonText'); 
     const eulaContainer = document.getElementById('eulaContainer');
     const eulaTitle = document.getElementById('eulaTitle');
+    const loginContainer = document.getElementById('loginContainer');
 
     if (loginTitle) loginTitle.textContent = translations.title;
     if (eulaCheckboxText) eulaCheckboxText.textContent = translations.checkboxText;
@@ -649,6 +652,14 @@ function handleEULA() {
         }
     } else {
         initializeGoogleSignIn(); 
+    }
+
+    // Sync scroll positions of EULA and loginContainer
+    if (loginContainer && eulaContainer) {
+        loginContainer.addEventListener('scroll', () => {
+            const scrollRatio = loginContainer.scrollTop / (loginContainer.scrollHeight - loginContainer.clientHeight);
+            eulaContainer.scrollTop = scrollRatio * (eulaContainer.scrollHeight - eulaContainer.clientHeight);
+        });
     }
 }
 
