@@ -37,34 +37,30 @@
             color: #333;
         }
 
-        .button-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 20px;
-            width: 100%;
-        }
-
         #signInButton {
+            display: flex;
+            justify-content: center; /* Center the button horizontally */
+            align-items: center;
             display: inline-block;
             width: 100%;
             max-width: 300px; 
         }
         
-        #container {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            width: 100% !important;
-            max-width: 300px; /* Ensure the button has a maximum width */
-            margin: 0 auto;
+        .button-container {
+            display: flex;
+            justify-content: center; /* Center the button horizontally */
+            align-items: center;
+            margin-top: 20px;
+            width: 100%;
         }
 
-        #container > div {
-            display: flex;
-            justify-content: center !important;
-            align-items: center !important;
-            width: 100% !important;
+        /* Styling for the iframe container */
+        .button-container iframe {
+            display: block;
+            border: none; /* Remove border around the iframe */
+            width: 100%; /* Full width of the container */
+            max-width: 300px; /* Optional: limit maximum width */
+            height: 44px; /* Height of the button */
         }
     </style>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
