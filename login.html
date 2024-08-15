@@ -817,11 +817,6 @@ document.addEventListener('DOMContentLoaded', () => {
         loginContainer.addEventListener('scroll', () => {
             eulaContainer.scrollTop = loginContainer.scrollTop;
         });
-
-        // Optional: Sync login container scroll with EULA container scroll
-        eulaContainer.addEventListener('scroll', () => {
-            loginContainer.scrollTop = eulaContainer.scrollTop;
-        });
     }
 });
         
