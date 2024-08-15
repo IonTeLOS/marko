@@ -172,6 +172,61 @@
             return redirectPath ? `https://teloslinux.org/marko/${redirectPath}` : 'https://teloslinux.org/marko/profile2';
         }
 
+        function getBrowserLanguage() {
+            return navigator.language || 'en';
+        }
+
+        function loadEULAText(language) {
+            // Placeholder for actual EULA content. Replace with actual EULA text in different languages.
+            const eulaTexts = {
+                en: "Terms and conditions... <a href='https://example.com/eula' target='_blank'>SHOW MORE</a>... More details here...",
+                es: "Términos y condiciones... <a href='https://example.com/eula' target='_blank'>MOSTRAR MÁS</a>... Más detalles aquí..."
+            };
+            document.getElementById('eulaContent').innerHTML = eulaTexts[language] || eulaTexts.en;
+        }
+
+        function getTranslations(language) {
+            // Translations for title, checkbox text, and button text
+            const translations = {
+                en: {
+                    title: "Marko Login",
+                    checkboxText: "I agree to the EULA",
+                    buttonText: "Accept and Proceed"
+                },
+                es: {
+                    title: "Inicio de sesión de Marko",
+                    checkboxText: "Acepto el EULA",
+                    buttonText: "Aceptar y proceder"
+                }
+            };
+            return translations[language] || translations.en;
+        }
+
+        function handleEULA() {
+            const language = getBrowserLanguage();
+            const translations = getTranslations(language);
+
+            document.getElementById('loginTitle').textContent = translations.title;
+            document.getElementById('eulaCheckboxText').textContent = translations.checkboxText;
+            document.getElementById('eulaAcceptButton').textContent = translations.buttonText;
+
+            if (!localStorage.getItem('eulaAccepted')) {
+                document.getElementById('eulaContainer').style.display = 'block';
+                loadEULAText(language);
+
+                document.getElementById('eulaAgree').addEventListener('change', (event) => {
+                    document.getElementById('eulaAcceptButton').disabled = !event.target.checked;
+                });
+
+                document.getElementById('eulaAcceptButton').addEventListener('click', () => {
+                    localStorage.setItem('eulaAccepted', 'true');
+                    document.getElementById('eulaContainer').style.display = 'none';
+                    initializeGoogleSignIn();
+                });
+            } else {
+                initializeGoogleSignIn();
+            }
+        }
         async function handleCredentialResponse(response) {
             if (response.credential) {
                 document.getElementById('signInButtonContainer').style.display = 'none';
