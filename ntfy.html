@@ -108,6 +108,8 @@ async function subscribeToPush() {
       applicationServerKey: urlBase64ToUint8Array('BKavZlYkOUk1vg3Hg7DGsmjMh17kDpqZ2NoQ-L7vXdaUkYfbdvb1Ue3ix3t12FL5VivhtekrRVjBRGLXPqvdVgA')
     });
     console.log('Push subscription:', subscription);
+    console.log('Endpoint:', subscription.endpoint);
+
   } catch (error) {
     console.error('Push subscription error:', error);
   }
