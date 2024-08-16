@@ -19,7 +19,11 @@
     <input type="text" id="message" placeholder="Enter message" required>
     <button type="submit">Send</button>
   </form>
+  <div id="events"></div>
+
   <script>
+        const events = document.getElementById('events');
+
     // Register the service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/service-worker.js')
@@ -85,6 +89,10 @@ async function subscribeToTopic(topic) {
   const socket = new WebSocket(`wss://ntfy.sh/${topic}/ws`);
 socket.addEventListener('message', function (event) {
     console.log(event.data);
+      websocket.onmessage = (e) => {
+        let event = document.createElement('div');
+        event.innerHTML = e.data;
+        events.appendChild(event);
 });
 }
 async function subscribeToPush() {
