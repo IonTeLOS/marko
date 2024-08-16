@@ -22,7 +22,7 @@
   <script>
     // Register the service worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/service-worker.js')
+      navigator.serviceWorker.register('/marko/service-worker.js')
       .then(function(registration) {
         console.log('Service Worker registered with scope:', registration.scope);
       }).catch(function(error) {
@@ -86,7 +86,6 @@
       }
     }
 
-    // Helper function to convert VAPID key to Uint8Array
     function urlBase64ToUint8Array(base64String) {
       const padding = '='.repeat((4 - base64String.length % 4) % 4);
       const base64 = (base64String + padding)
