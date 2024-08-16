@@ -82,6 +82,10 @@ async function subscribeToTopic(topic) {
   } catch (error) {
     console.error('Subscription error:', error);
   }
+  const socket = new WebSocket(`wss://ntfy.sh/${topic}/ws`);
+socket.addEventListener('message', function (event) {
+    console.log(event.data);
+});
 }
 async function subscribeToPush() {
   try {
