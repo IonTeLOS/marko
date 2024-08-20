@@ -27,7 +27,7 @@
             
             try {
                 const encodedUrl = encodeURIComponent(urlInput);
-                const response = await axios.get(`https://corsproxy.io/?${encodedUrl}`);
+                const response = await axios.get(encodedUrl);
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(response.data, 'text/html');
                 
