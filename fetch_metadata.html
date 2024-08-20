@@ -37,7 +37,10 @@
                 
                 // Extract metadata
                 const title = doc.querySelector('title') ? doc.querySelector('title').innerText : 'No title found';
-                const description = doc.querySelector('meta[name="description"]') ? doc.querySelector('meta[name="description"]').getAttribute('content') : 'No description found';
+const description = doc.querySelector('meta[name="description"]') ? 
+    doc.querySelector('meta[name="description"]').getAttribute('content') :
+    (doc.querySelector('meta[property="og:description"]') ? 
+    doc.querySelector('meta[property="og:description"]').getAttribute('content') : 'No description found');
                 const image = doc.querySelector('meta[property="og:image"]') ? doc.querySelector('meta[property="og:image"]').getAttribute('content') : null;
 
                 // Update the DOM
