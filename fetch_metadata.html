@@ -18,10 +18,16 @@
 
     <script>
         async function fetchMetadata() {
-            const urlInput = document.getElementById('urlInput').value;
+            const urlInput = document.getElementById('urlInput').value.trim();
+
+            if (!urlInput) {
+                alert('Please enter a valid URL');
+                return;
+            }
             
             try {
-                const response = await axios.get(`https://corsproxy.io/?${urlInput}`);
+                const encodedUrl = encodeURIComponent(urlInput);
+                const response = await axios.get(`https://corsproxy.io/?${encodedUrl}`);
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(response.data, 'text/html');
                 
