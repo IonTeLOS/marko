@@ -21,7 +21,7 @@
             const urlInput = document.getElementById('urlInput').value;
             
             try {
-                const response = await axios.get(`https://corsproxy.io?${urlInput}`);
+                const response = await axios.get(`https://corsproxy.io/?${urlInput}`);
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(response.data, 'text/html');
                 
