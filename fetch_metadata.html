@@ -26,8 +26,12 @@
             }
             
             try {
-                const encodedUrl = encodeURIComponent(urlInput);
-                const response = await axios.get(encodedUrl);
+        // Encode the URL
+        const encodedUrl = encodeURIComponent(urlInput);
+        // Use the correct format for the CORS proxy
+        const proxyUrl = `https://corsproxy.io/?${encodedUrl}`;
+        // Fetch the data through the proxy
+        const response = await axios.get(proxyUrl);
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(response.data, 'text/html');
                 
