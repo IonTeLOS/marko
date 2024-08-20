@@ -1,65 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Metadata Fetcher</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/node-vibrant/3.2.0/vibrant.min.js"></script>
+
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+        }
+
+        .card {
+            padding: 20px;
+        }
+
+        #favicon {
+            width: 32px;
+            height: 32px;
+            display: block;
+            margin-top: 10px;
+        }
+
+        #defaultFavicon {
+            width: 32px;
+            height: 32px;
+            background: #ccc;
+            border-radius: 50%;
+            display: none;
+            margin-top: 10px;
+        }
+
+        #prominentColor {
+            width: 100px;
+            height: 100px;
+            display: inline-block;
+            border: 1px solid #000;
+            margin-top: 10px;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Website Metadata Fetcher</h1>
-    <input type="text" id="urlInput" placeholder="Enter website URL" style="width: 300px;">
-    <button onclick="fetchMetadata()">Get Metadata</button>
+    <div class="container">
+        <h1 class="center-align">Website Metadata Fetcher</h1>
+        <div class="input-field">
+            <input type="text" id="urlInput" placeholder="Enter website URL">
+            <label for="urlInput">Website URL</label>
+        </div>
+        <a class="btn waves-effect waves-light" onclick="fetchMetadata()">Get Metadata</a>
 
-    <h2>Metadata:</h2>
-    <p><strong>Title:</strong> <span id="title"></span></p>
-    <p><strong>Description:</strong> <span id="description"></span></p>
-    <p><strong>Image:</strong> <img id="image" style="max-width: 300px; display: none;" alt="Website Image"></p>
+        <div class="card">
+            <h2>Metadata:</h2>
+            <p><strong>Title:</strong> <span id="title">No title found</span></p>
+            <p><strong>Description:</strong> <span id="description">No description found</span></p>
+            <p><strong>Image:</strong> <img id="image" style="max-width: 100%; display: none;" alt="Website Image"></p>
+            <p><strong>Favicon:</strong> <img id="favicon" alt="Favicon"><span id="defaultFavicon"></span></p>
+            <p><strong>Category:</strong> <span id="category">No category found</span></p>
+            <p><strong>Language:</strong> <span id="language">No language found</span></p>
+            <p><strong>Prominent Color:</strong> <div id="prominentColor"></div></p>
+        </div>
+    </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script>
-        async function fetchMetadata() {
-            const urlInput = document.getElementById('urlInput').value.trim();
+        document.addEventListener('DOMContentLoaded', () => {
+            async function fetchMetadata() {
+                let urlInput = document.getElementById('urlInput').value.trim();
 
-            if (!urlInput) {
-                alert('Please enter a valid URL');
-                return;
-            }
-            
-            try {
-        // Encode the URL
-        const encodedUrl = encodeURIComponent(urlInput);
-        // Use the correct format for the CORS proxy
-        const proxyUrl = `https://api.allorigins.win/raw?url=${encodedUrl}`;
-        // Fetch the data through the proxy
-        const response = await axios.get(proxyUrl);
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(response.data, 'text/html');
-                
-                // Extract metadata
-                const title = doc.querySelector('title') ? doc.querySelector('title').innerText : 'No title found';
-const description = doc.querySelector('meta[name="description"]') ? 
-    doc.querySelector('meta[name="description"]').getAttribute('content') :
-    (doc.querySelector('meta[property="og:description"]') ? 
-    doc.querySelector('meta[property="og:description"]').getAttribute('content') : 'No description found');
-                const image = doc.querySelector('meta[property="og:image"]') ? doc.querySelector('meta[property="og:image"]').getAttribute('content') : null;
-
-                // Update the DOM
-                document.getElementById('title').innerText = title;
-                document.getElementById('description').innerText = description;
-
-                const imageElement = document.getElementById('image');
-                if (image) {
-                    imageElement.src = image;
-                    imageElement.style.display = 'block';
-                } else {
-                    imageElement.style.display = 'none';
+                if (!urlInput) {
+                    M.toast({ html: 'Please enter a valid URL' });
+                    return;
                 }
 
-            } catch (error) {
-                console.error('Error fetching metadata:', error);
-                alert('Failed to fetch metadata. Please ensure the URL is correct and try again.');
+                // Normalize URL
+                if (!urlInput.startsWith('http://') && !urlInput.startsWith('https://')) {
+                    urlInput = 'https://' + urlInput;
+                }
+
+                try {
+                    new URL(urlInput);
+                } catch (_) {
+                    M.toast({ html: 'Please enter a valid URL' });
+                    return;
+                }
+
+                try {
+                    const encodedUrl = encodeURIComponent(urlInput);
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodedUrl}`;
+                    const response = await axios.get(proxyUrl);
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(response.data, 'text/html');
+
+                    const title = doc.querySelector('title') ? doc.querySelector('title').innerText : 'No title found';
+                    const description = doc.querySelector('meta[name="description"]') ?
+                        doc.querySelector('meta[name="description"]').getAttribute('content') :
+                        (doc.querySelector('meta[property="og:description"]') ?
+                            doc.querySelector('meta[property="og:description"]').getAttribute('content') : 'No description found');
+                    const image = doc.querySelector('meta[property="og:image"]') ? doc.querySelector('meta[property="og:image"]').getAttribute('content') : null;
+
+                    let faviconUrl = null;
+                    const appleTouchIcon = doc.querySelector('link[rel="apple-touch-icon"]');
+                    if (appleTouchIcon) {
+                        faviconUrl = appleTouchIcon.getAttribute('href');
+                    } else {
+                        const icon = doc.querySelector('link[rel="icon"]') || doc.querySelector('link[rel="shortcut icon"]');
+                        if (icon) {
+                            faviconUrl = icon.getAttribute('href');
+                        } else {
+                            faviconUrl = 'favicon.ico';
+                        }
+                    }
+
+                    const faviconSrc = faviconUrl ?
+                        (faviconUrl.startsWith('http') ? faviconUrl : new URL(faviconUrl, urlInput).href) :
+                        'default-placeholder-icon.png';
+
+                    document.getElementById('title').innerText = title;
+                    document.getElementById('description').innerText = description;
+
+                    const imageElement = document.getElementById('image');
+                    if (image) {
+                        imageElement.src = image;
+                        imageElement.style.display = 'block';
+                    } else {
+                        imageElement.style.display = 'none';
+                    }
+
+                    const faviconElement = document.getElementById('favicon');
+                    const defaultFavicon = document.getElementById('defaultFavicon');
+                    if (faviconSrc && faviconSrc !== 'favicon.ico') {
+                        faviconElement.src = faviconSrc;
+                        faviconElement.style.display = 'block';
+                        defaultFavicon.style.display = 'none';
+                    } else {
+                        faviconElement.style.display = 'none';
+                        defaultFavicon.style.display = 'block';
+                    }
+
+                    const category = await extractCategory(doc, urlInput);
+                    document.getElementById('category').innerText = category;
+
+                    const language = doc.documentElement.getAttribute('lang') ||
+                        doc.querySelector('meta[name="language"]')?.getAttribute('content') ||
+                        'No language found';
+                    document.getElementById('language').innerText = language;
+
+                    const prominentColor = await extractProminentColor(faviconSrc);
+                    const prominentColorElement = document.getElementById('prominentColor');
+                    if (prominentColor) {
+                        prominentColorElement.style.backgroundColor = prominentColor;
+                    } else {
+                        prominentColorElement.style.backgroundColor = '#ccc';
+                    }
+
+                } catch (error) {
+                    console.error('Error fetching metadata:', error);
+                    M.toast({ html: 'Failed to fetch metadata. Please ensure the URL is correct and try again.' });
+                }
             }
-        }
+
+            async function extractCategory(doc, baseUrl) {
+                const categoryMeta = doc.querySelector('meta[name="category"]');
+                if (categoryMeta) {
+                    return categoryMeta.getAttribute('content');
+                }
+
+            // Check manifest.json for category information
+            let manifestLink = doc.querySelector('link[rel="manifest"]');
+            if (manifestLink) {
+                let manifestUrl = manifestLink.href;
+
+                // Resolve relative URLs
+                manifestUrl = new URL(manifestUrl, baseUrl).href;
+                console.log('Looking for manifest at:', manifestUrl);
+                    try {
+                        const manifestResponse = await axios.get(`https://api.allorigins.win/raw?url=${manifestUrl}`);
+                        const manifestData = manifestResponse.data;
+                        const categories = manifestData.categories || [];
+                        if (categories.length > 0) {
+                            return categories.join(', ');
+                        }
+                    } catch (error) {
+                        console.error('Error fetching manifest.json:', error);
+                    }
+                }
+                return 'No category found';
+            }
+
+            async function extractProminentColor(imageUrl) {
+                try {
+                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
+                    const response = await fetch(proxyUrl);
+                    const blob = await response.blob();
+
+                    const img = new Image();
+                    img.crossOrigin = 'Anonymous';
+
+                    const loadImage = new Promise((resolve, reject) => {
+                        img.onload = () => resolve(img);
+                        img.onerror = () => reject('Image failed to load');
+                        img.src = URL.createObjectURL(blob);
+                    });
+
+                    const loadedImg = await loadImage;
+
+                    const vibrant = new Vibrant(loadedImg);
+                    const palette = await vibrant.getPalette();
+                    const dominantColor = palette.Vibrant ? palette.Vibrant.getHex() : null;
+
+                    URL.revokeObjectURL(img.src);
+
+                    return dominantColor;
+
+                } catch (error) {
+                    console.error('Error extracting prominent color:', error);
+                    return null;
+                }
+            }
+
+            window.fetchMetadata = fetchMetadata;
+        });
     </script>
 </body>
+
 </html>
