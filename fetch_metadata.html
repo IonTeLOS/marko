@@ -195,36 +195,41 @@
                 return 'No category found';
             }
 
-            async function extractProminentColor(imageUrl) {
-                try {
-                    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
-                    const response = await fetch(proxyUrl);
-                    const blob = await response.blob();
+async function extractProminentColor(imageUrl) {
+            try {
+                // Use CORS proxy to fetch the image
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
+                const response = await fetch(proxyUrl);
+                const blob = await response.blob();
 
-                    const img = new Image();
-                    img.crossOrigin = 'Anonymous';
+                // Create an image element
+                const img = new Image();
+                img.crossOrigin = 'Anonymous'; // Handle CORS issues
 
-                    const loadImage = new Promise((resolve, reject) => {
-                        img.onload = () => resolve(img);
-                        img.onerror = () => reject('Image failed to load');
-                        img.src = URL.createObjectURL(blob);
-                    });
+                // Load the image from the blob
+                const loadImage = new Promise((resolve, reject) => {
+                    img.onload = () => resolve(img);
+                    img.onerror = () => reject('Image failed to load');
+                    img.src = URL.createObjectURL(blob);
+                });
 
-                    const loadedImg = await loadImage;
+                const loadedImg = await loadImage;
 
-                    const vibrant = new Vibrant(loadedImg);
-                    const palette = await vibrant.getPalette();
-                    const dominantColor = palette.Vibrant ? palette.Vibrant.getHex() : null;
+                // Extract the prominent color using Vibrant.js
+                const vibrant = new Vibrant(loadedImg);
+                const palette = await vibrant.getPalette();
+                const dominantColor = palette.Vibrant ? palette.Vibrant.getHex() : null;
 
-                    URL.revokeObjectURL(img.src);
+                // Cleanup the object URL
+                URL.revokeObjectURL(img.src);
 
-                    return dominantColor;
+                return dominantColor;
 
-                } catch (error) {
-                    console.error('Error extracting prominent color:', error);
-                    return null;
-                }
+            } catch (error) {
+                console.error('Error extracting prominent color:', error);
+                return null;
             }
+        }
 
             window.fetchMetadata = fetchMetadata;
         });
