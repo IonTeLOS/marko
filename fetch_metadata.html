@@ -29,7 +29,7 @@
         // Encode the URL
         const encodedUrl = encodeURIComponent(urlInput);
         // Use the correct format for the CORS proxy
-        const proxyUrl = `https://corsproxy.io/?${encodedUrl}`;
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodedUrl}`;
         // Fetch the data through the proxy
         const response = await axios.get(proxyUrl);
                 const parser = new DOMParser();
