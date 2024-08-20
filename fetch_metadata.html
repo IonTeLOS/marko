@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Metadata Fetcher</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Website Metadata Fetcher</h1>
+    <input type="text" id="urlInput" placeholder="Enter website URL" style="width: 300px;">
+    <button onclick="fetchMetadata()">Get Metadata</button>
+
+    <h2>Metadata:</h2>
+    <p><strong>Title:</strong> <span id="title"></span></p>
+    <p><strong>Description:</strong> <span id="description"></span></p>
+    <p><strong>Image:</strong> <img id="image" style="max-width: 300px; display: none;" alt="Website Image"></p>
+
+    <script>
+        async function fetchMetadata() {
+            const urlInput = document.getElementById('urlInput').value;
+            
+            try {
+                const response = await axios.get(`https://corsproxy.io?${urlInput}`);
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(response.data, 'text/html');
+                
+                // Extract metadata
+                const title = doc.querySelector('title') ? doc.querySelector('title').innerText : 'No title found';
+                const description = doc.querySelector('meta[name="description"]') ? doc.querySelector('meta[name="description"]').getAttribute('content') : 'No description found';
+                const image = doc.querySelector('meta[property="og:image"]') ? doc.querySelector('meta[property="og:image"]').getAttribute('content') : null;
+
+                // Update the DOM
+                document.getElementById('title').innerText = title;
+                document.getElementById('description').innerText = description;
+
+                const imageElement = document.getElementById('image');
+                if (image) {
+                    imageElement.src = image;
+                    imageElement.style.display = 'block';
+                } else {
+                    imageElement.style.display = 'none';
+                }
+
+            } catch (error) {
+                console.error('Error fetching metadata:', error);
+                alert('Failed to fetch metadata. Please ensure the URL is correct and try again.');
+            }
+        }
+    </script>
+</body>
+</html>
