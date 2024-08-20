@@ -5,8 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Metadata Fetcher</title>
+    <script src="https://cdn.jsdelivr.net/npm/tinycolor2@1.6.0/cjs/tinycolor.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/node-vibrant/3.2.0/vibrant.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+            
+
+
+
 
     <style>
         body {
@@ -68,8 +74,7 @@
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             async function fetchMetadata() {
@@ -195,41 +200,96 @@
                 return 'No category found';
             }
 
-        async function extractProminentColor(imageUrl) {
-            try {
-                // Use CORS proxy to fetch the image
-                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
-                const response = await fetch(proxyUrl);
-                const blob = await response.blob();
 
-                // Create an image element
-                const img = new Image();
-                img.crossOrigin = 'Anonymous'; // Handle CORS issues
+async function extractProminentColor(imageUrl) {
+    try {
+        // Use CORS proxy to fetch the image
+        const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
+        const response = await fetch(proxyUrl);
 
-                // Create a Promise for image loading
-                const loadImage = new Promise((resolve, reject) => {
-                    img.onload = () => resolve(img);
-                    img.onerror = () => reject('Image failed to load');
-                    img.src = URL.createObjectURL(blob);
-                });
+        // Check if the response is OK
+        if (!response.ok) {
+            throw new Error(`Failed to fetch image: ${response.statusText}`);
+        }
 
-                const loadedImg = await loadImage;
+        const blob = await response.blob();
 
-                // Extract the prominent color using Vibrant.js
-                const vibrant = Vibrant.from(loadedImg);
-                const palette = await vibrant.getPalette();
-                const dominantColor = palette.Vibrant ? palette.Vibrant.getHex() : '#ccc';
+        // Create an image element
+        const img = new Image();
+        img.crossOrigin = 'Anonymous'; // Handle CORS issues
 
-                // Cleanup the object URL
-                URL.revokeObjectURL(img.src);
+        // Create a promise to handle image load events
+        const loadImage = new Promise((resolve, reject) => {
+            img.onload = () => resolve(img);
+            img.onerror = () => reject(new Error('Image failed to load'));
+            img.src = URL.createObjectURL(blob);
+        });
 
-                return dominantColor;
+        const loadedImg = await loadImage;
 
-            } catch (error) {
-                console.error('Error extracting prominent color:', error);
-                return null;
+        // Use tinycolor to analyze the image colors
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = loadedImg.width;
+        canvas.height = loadedImg.height;
+        context.drawImage(loadedImg, 0, 0, canvas.width, canvas.height);
+
+        // Get pixel data
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        let colors = [];
+
+        // Define thresholds for near-black and near-white colors
+        const BLACK_THRESHOLD = 50; // R, G, and B values below this are considered near black
+        const WHITE_THRESHOLD = 200; // R, G, and B values above this are considered near white
+
+        function isNearBlack(r, g, b) {
+            return r < BLACK_THRESHOLD && g < BLACK_THRESHOLD && b < BLACK_THRESHOLD;
+        }
+
+        function isNearWhite(r, g, b) {
+            return r > WHITE_THRESHOLD && g > WHITE_THRESHOLD && b > WHITE_THRESHOLD;
+        }
+
+        // Analyze the colors
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            const a = data[i + 3];
+
+            if (a > 0) { // Only consider non-transparent pixels
+                // Skip near-black and near-white colors
+                if (!isNearBlack(r, g, b) && !isNearWhite(r, g, b)) {
+                    colors.push(tinycolor({ r, g, b }).toHexString());
+                }
             }
         }
+
+        // Check if we have filtered out all colors
+        if (colors.length === 0) {
+            console.warn('No colors found after filtering.');
+            return '#ccc'; // Default color if no valid colors are found
+        }
+
+        // Get the most common color (you may use a more sophisticated algorithm)
+        const colorCounts = {};
+        colors.forEach(color => {
+            colorCounts[color] = (colorCounts[color] || 0) + 1;
+        });
+
+        const prominentColor = Object.keys(colorCounts).reduce((a, b) => colorCounts[a] > colorCounts[b] ? a : b, '#ccc');
+
+        // Cleanup
+        URL.revokeObjectURL(img.src);
+
+        return prominentColor;
+    } catch (error) {
+        console.error('Error extracting prominent color:', error);
+        return '#ccc'; // Default color on error
+    }
+}
+
 
             window.fetchMetadata = fetchMetadata;
         });
