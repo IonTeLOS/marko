@@ -195,7 +195,7 @@
                 return 'No category found';
             }
 
-async function extractProminentColor(imageUrl) {
+        async function extractProminentColor(imageUrl) {
             try {
                 // Use CORS proxy to fetch the image
                 const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imageUrl)}`;
@@ -206,7 +206,7 @@ async function extractProminentColor(imageUrl) {
                 const img = new Image();
                 img.crossOrigin = 'Anonymous'; // Handle CORS issues
 
-                // Load the image from the blob
+                // Create a Promise for image loading
                 const loadImage = new Promise((resolve, reject) => {
                     img.onload = () => resolve(img);
                     img.onerror = () => reject('Image failed to load');
@@ -216,9 +216,9 @@ async function extractProminentColor(imageUrl) {
                 const loadedImg = await loadImage;
 
                 // Extract the prominent color using Vibrant.js
-                const vibrant = new Vibrant(loadedImg);
+                const vibrant = Vibrant.from(loadedImg);
                 const palette = await vibrant.getPalette();
-                const dominantColor = palette.Vibrant ? palette.Vibrant.getHex() : null;
+                const dominantColor = palette.Vibrant ? palette.Vibrant.getHex() : '#ccc';
 
                 // Cleanup the object URL
                 URL.revokeObjectURL(img.src);
