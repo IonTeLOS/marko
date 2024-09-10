@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capture Media with Video.js</title>
+    <!-- Video.js CSS -->
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+
+    <style>
+        #videoPreviewLive {
+            width: 100%;
+            max-width: 640px;
+            background: #000;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        video, audio {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 640px;
+        }
+
+        #audioIndicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: red;
+            animation: pulse 1s infinite;
+            visibility: hidden; /* Hidden by default */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        #photoPreview, #videoPreview {
+            margin-top: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Capture Pictures, Videos, and Audio</h1>
+
+    <!-- Live video stream preview -->
+    <video id="videoPreviewLive" autoplay playsinline></video>
+
+    <!-- Controls for capturing -->
+    <div class="controls">
+        <button id="startVideo">Start Video Recording</button>
+        <button id="stopVideo" disabled>Stop Video Recording</button>
+        <button id="takePhoto">Take Photo</button>
+        <button id="startAudio">Start Audio Recording</button>
+        <button id="stopAudio" disabled>Stop Audio Recording</button>
+        <div id="audioIndicator"></div>
+    </div>
+
+    <!-- Preview captured media -->
+    <h2>Captured Media</h2>
+    <img id="photoPreview" alt="Captured photo" />
+    <video id="videoPreview" controls></video>
+    <audio id="audioPreview" controls></audio>
+
+    <!-- Video.js JavaScript -->
+    <script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+
+    <script>
+        let mediaRecorder, recordedChunks = [];
+        let audioStream, audioContext, analyser, dataArray;
+        let videoStream;
+
+        // Elements for photo, video, and audio previews
+        const videoPreviewLive = document.getElementById('videoPreviewLive');
+        const photoPreview = document.getElementById('photoPreview');
+        const videoPreview = document.getElementById('videoPreview');
+        const audioPreview = document.getElementById('audioPreview');
+        const audioIndicator = document.getElementById('audioIndicator');
+
+        // Start capturing video + audio (real-time preview included)
+        document.getElementById('startVideo').addEventListener('click', async () => {
+            videoStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            videoPreviewLive.srcObject = videoStream;
+
+            // Enable video recording
+            document.getElementById('stopVideo').disabled = false;
+            startRecording(videoStream, 'video');
+        });
+
+        // Stop capturing video and save file
+        document.getElementById('stopVideo').addEventListener('click', () => {
+            stopRecording('video');
+            stopPreview();  // Stop the live preview after recording
+        });
+
+        // Capture photo (using real-time preview)
+        document.getElementById('takePhoto').addEventListener('click', async () => {
+            const videoTracks = videoStream.getVideoTracks();
+            const track = videoTracks[0];
+
+            let imageCapture = new ImageCapture(track);
+            let photoBlob = await imageCapture.takePhoto();
+
+            // Show photo preview
+            photoPreview.src = URL.createObjectURL(photoBlob);
+            photoPreview.style.display = 'block';
+        });
+
+        // Start capturing audio with visualization
+        document.getElementById('startAudio').addEventListener('click', async () => {
+            audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            document.getElementById('stopAudio').disabled = false;
+            startRecording(audioStream, 'audio');
+
+            // Setup audio visualization
+            setupAudioVisualizer(audioStream);
+        });
+
+        // Stop capturing audio and save file
+        document.getElementById('stopAudio').addEventListener('click', () => {
+            stopRecording('audio');
+            stopAudioVisualizer();
+        });
+
+        // Start recording video or audio
+        function startRecording(stream, type) {
+            recordedChunks = [];
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.ondataavailable = event => {
+                if (event.data.size > 0) recordedChunks.push(event.data);
+            };
+            mediaRecorder.start();
+
+            if (type === 'video') {
+                document.getElementById('stopVideo').disabled = false;
+            } else if (type === 'audio') {
+                document.getElementById('stopAudio').disabled = false;
+            }
+        }
+
+        // Stop recording video or audio and save the file
+        function stopRecording(type) {
+            mediaRecorder.stop();
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: type === 'video' ? 'video/mp4' : 'audio/wav' });
+                const url = URL.createObjectURL(blob);
+
+                if (type === 'video') {
+                    videoPreview.src = url;
+                    videoPreview.style.display = 'block';
+                    document.getElementById('stopVideo').disabled = true;
+                } else if (type === 'audio') {
+                    audioPreview.src = url;
+                    audioPreview.style.display = 'block';
+                    document.getElementById('stopAudio').disabled = true;
+                }
+            };
+        }
+
+        // Stop video preview after recording
+        function stopPreview() {
+            videoStream.getTracks().forEach(track => track.stop());
+            videoPreviewLive.srcObject = null;
+        }
+
+        // Setup the audio visualizer for audio recording
+        function setupAudioVisualizer(stream) {
+            audioContext = new AudioContext();
+            const source = audioContext.createMediaStreamSource(stream);
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 512;
+            source.connect(analyser);
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+            audioIndicator.style.visibility = 'visible';
+            requestAnimationFrame(updateAudioIndicator);
+        }
+
+        // Stop the audio visualizer
+        function stopAudioVisualizer() {
+            audioContext.close();
+            audioIndicator.style.visibility = 'hidden';
+        }
+
+        // Update the pulsating circle based on the audio level
+        function updateAudioIndicator() {
+            analyser.getByteFrequencyData(dataArray);
+            const avg = dataArray.reduce((a, b) => a + b, 0) / dataArray.length;
+
+            const scale = Math.max(1, avg / 100);
+            audioIndicator.style.transform = `scale(${scale})`;
+
+            requestAnimationFrame(updateAudioIndicator);
+        }
+    </script>
+</body>
+</html>
