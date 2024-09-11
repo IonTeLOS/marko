@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Location Request</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Location Request</h1>
+    <p>We need to access your location to provide you with a Google Maps link.</p>
+    <button id="getLocationButton">Get Location</button>
+    <div id="confirmation" class="hidden">
+        <p>Do you want to share your exact location or approximate location (same city/village)?</p>
+        <button id="exactLocationButton">Exact Location</button>
+        <button id="approximateLocationButton">Approximate Location</button>
+    </div>
+    <div id="result" class="hidden">
+        <p>Your location:</p>
+        <a id="mapsLink" href="" target="_blank">Google Maps Link</a>
+    </div>
+
+    <script>
+        document.getElementById('getLocationButton').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        document.getElementById('confirmation').classList.remove('hidden');
+                        document.getElementById('getLocationButton').classList.add('hidden');
+                        window.position = position; // Save position for use later
+                    },
+                    error => {
+                        alert('Error getting location. Please allow location access.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by this browser.');
+            }
+        });
+
+        document.getElementById('exactLocationButton').addEventListener('click', () => {
+            displayMapLink(window.position.coords.latitude, window.position.coords.longitude);
+        });
+
+        document.getElementById('approximateLocationButton').addEventListener('click', () => {
+            // Rough approximation: Just using the city/village coordinates. Replace with actual approximation logic.
+            const approxLat = window.position.coords.latitude;
+            const approxLon = window.position.coords.longitude;
+            displayMapLink(approxLat, approxLon);
+        });
+
+        function displayMapLink(lat, lon) {
+            const mapsLink = `https://www.google.com/maps/@${lat},${lon},15z`;
+            document.getElementById('mapsLink').href = mapsLink;
+            document.getElementById('result').classList.remove('hidden');
+            document.getElementById('confirmation').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
