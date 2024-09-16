@@ -3,72 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Location Request</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        button {
-            margin: 10px;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-        .hidden {
-            display: none;
-        }
-    </style>
+    <title>Geolocation with Nominatim and Google Maps Link</title>
 </head>
 <body>
-    <h1>Location Request</h1>
-    <p>We need to access your location to provide you with a Google Maps link.</p>
-    <button id="getLocationButton">Get Location</button>
-    <div id="confirmation" class="hidden">
-        <p>Do you want to share your exact location or approximate location (same city/village)?</p>
-        <button id="exactLocationButton">Exact Location</button>
-        <button id="approximateLocationButton">Approximate Location</button>
-    </div>
-    <div id="result" class="hidden">
-        <p>Your location:</p>
-        <a id="mapsLink" href="" target="_blank">Google Maps Link</a>
-    </div>
+    <h3>Your Nearest Address:</h3>
+    <p id="address">Fetching location...</p>
+    <p id="mapLink"></p> <!-- Link to Google Maps will appear here -->
 
     <script>
-        document.getElementById('getLocationButton').addEventListener('click', () => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    position => {
-                        document.getElementById('confirmation').classList.remove('hidden');
-                        document.getElementById('getLocationButton').classList.add('hidden');
-                        window.position = position; // Save position for use later
-                    },
-                    error => {
-                        alert('Error getting location. Please allow location access.');
-                    }
-                );
-            } else {
-                alert('Geolocation is not supported by this browser.');
-            }
-        });
+        // Check if Geolocation is supported
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+        } else {
+            document.getElementById('address').innerText = 'Geolocation is not supported by your browser.';
+        }
 
-        document.getElementById('exactLocationButton').addEventListener('click', () => {
-            displayMapLink(window.position.coords.latitude, window.position.coords.longitude);
-        });
+        function successCallback(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
 
-        document.getElementById('approximateLocationButton').addEventListener('click', () => {
-            // Rough approximation: Just using the city/village coordinates. Replace with actual approximation logic.
-            const approxLat = window.position.coords.latitude;
-            const approxLon = window.position.coords.longitude;
-            displayMapLink(approxLat, approxLon);
-        });
+            // Use Nominatim to reverse geocode the coordinates to an address
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`;
 
-        function displayMapLink(lat, lon) {
-            const mapsLink = `https://www.google.com/maps/@${lat},${lon},15z`;
-            document.getElementById('mapsLink').href = mapsLink;
-            document.getElementById('result').classList.remove('hidden');
-            document.getElementById('confirmation').classList.add('hidden');
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.display_name;
+                    document.getElementById('address').innerText = address;
+
+                    // Create a Google Maps search link
+                    const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+                    
+                    // Display the link
+                    const mapLinkElement = document.getElementById('mapLink');
+                    mapLinkElement.innerHTML = `<a href="${googleMapsUrl}" target="_blank">View in Google Maps</a>`;
+                })
+                .catch(error => {
+                    console.error('Error fetching address:', error);
+                    document.getElementById('address').innerText = 'Unable to retrieve address.';
+                });
+        }
+
+        function errorCallback(error) {
+            console.error('Error getting location: ' + error.message);
+            document.getElementById('address').innerText = 'Error fetching location.';
         }
     </script>
 </body>
