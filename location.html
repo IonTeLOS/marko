@@ -28,52 +28,60 @@
             return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
         }
 
-        function isMobile() {
-            return /Mobi|Android/i.test(navigator.userAgent);
-        }
-
-        function checkGeolocationSupport() {
-            return 'geolocation' in navigator;
-        }
-
-        function getLocation() {
-            if (checkGeolocationSupport()) {
-                const allowExactLocation = confirm('Do you allow exact location?');
-
-                if (allowExactLocation) {
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
-                            enableHighAccuracy: true
-                        });
-                    } else {
-                        alert('Geolocation is not supported by your browser.');
-                    }
+        function isGPSAvailable() {
+            return new Promise((resolve) => {
+                if ('geolocation' in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            // Check if the position has high accuracy
+                            if (position.coords.accuracy <= 100) { // Accuracy is in meters
+                                resolve(true);
+                            } else {
+                                resolve(false);
+                            }
+                        },
+                        () => resolve(false),
+                        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                    );
                 } else {
-                    fetch(IPWHOIS_API_URL)
-                        .then(response => response.json())
-                        .then(data => {
-                            const { city, region, country } = data;
-                            const closestLocation = `${city}, ${region}, ${country}`;
-                            document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(closestLocation)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Closest Location in Google Maps</a>`;
-                        })
-                        .catch(error => {
-                            console.error('Error fetching IP-based location:', error);
-                            alert('Unable to retrieve location.');
-                        });
+                    resolve(false);
+                }
+            });
+        }
+
+        async function getLocation() {
+            const gpsAvailable = await isGPSAvailable();
+            
+            if (gpsAvailable) {
+                const allowExactLocation = confirm('GPS is available. Do you allow exact location?');
+                
+                if (allowExactLocation) {
+                    navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    });
+                } else {
+                    fetchIPBasedLocation();
                 }
             } else {
-                fetch(IPWHOIS_API_URL)
-                    .then(response => response.json())
-                    .then(data => {
-                        const { city, region, country } = data;
-                        const closestLocation = `${city}, ${region}, ${country}`;
-                        document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(closestLocation)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Closest Location in Google Maps</a>`;
-                    })
-                    .catch(error => {
-                        console.error('Error fetching IP-based location:', error);
-                        alert('Unable to retrieve location.');
-                    });
+                console.log("GPS is not available or not accurate enough. Using IP-based location.");
+                fetchIPBasedLocation();
             }
+        }
+
+        function fetchIPBasedLocation() {
+            fetch(IPWHOIS_API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    const { city, region, country } = data;
+                    const closestLocation = `${city}, ${region}, ${country}`;
+                    document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(closestLocation)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Closest Location in Google Maps</a>`;
+                })
+                .catch(error => {
+                    console.error('Error fetching IP-based location:', error);
+                    alert('Unable to retrieve location.');
+                });
         }
 
         function successCallback(position) {
@@ -97,7 +105,7 @@
 
         function errorCallback(error) {
             console.error('Error getting location: ' + error.message);
-            alert('Error fetching location.');
+            fetchIPBasedLocation();
         }
 
         document.getElementById('getLocation').addEventListener('click', getLocation);
