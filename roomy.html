@@ -176,6 +176,11 @@
     font-size: 24px;
     color: #FF5722; /* Orange color for marker */
   }
+        @media (max-width: 767px) {
+        .desktop-only {
+          display: none;
+        }
+      }
   </style>
 </head>
 <body>
@@ -200,7 +205,7 @@
     </div>
     <div class="chat-input-wrapper">
       <div class="chat-input">
-        <span id="toggleEmojiPickerBtn" class="material-icons">emoji_emotions</span>
+        <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
         <input id="messageInput" type="text" placeholder="Type a message..." oninput="toggleClearButton()" onblur="hideClearButton()">
         <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
         <span class="material-icons" onclick="sendMessage()">send</span>
@@ -306,24 +311,41 @@
         document.getElementById('getLocation').addEventListener('click', getLocation);
    
 
+// Ensure EmojiMart is imported and available
+if (typeof EmojiMart === 'undefined') {
+  console.error('EmojiMart library is not loaded.');
+} else {
   // Create a div container for the picker (hidden by default)
   const pickerContainer = document.getElementById('pickerContainer');
-  pickerContainer.style.display = 'none'; // Hidden initially
-  document.body.appendChild(pickerContainer);
+  if (pickerContainer) {
+    pickerContainer.style.display = 'none'; // Hidden initially
+    document.body.appendChild(pickerContainer);
+  } else {
+    console.error('Picker container element not found.');
+  }
 
-  // Create the emoji picker and append it to the container
-    // Define the picker options
+  // Define the picker options
   const pickerOptions = {
     onEmojiSelect: (emoji) => {
       const messageInput = document.getElementById('messageInput');
-      
-      // Insert the selected emoji into the text input
-      messageInput.value += emoji.native; // 'emoji.native' contains the emoji character
+      if (messageInput) {
+        // Insert the selected emoji into the text input
+        messageInput.value += emoji.native; // 'emoji.native' contains the emoji character
+      } else {
+        console.error('Message input element not found.');
+      }
     },
   };
 
-  const picker = new EmojiMart.Picker(pickerOptions);
-  pickerContainer.appendChild(picker);
+  // Initialize the picker
+  try {
+    const picker = new EmojiMart.Picker(pickerOptions);
+    if (pickerContainer) {
+      pickerContainer.appendChild(picker);
+    }
+  } catch (error) {
+    console.error('Error initializing the emoji picker:', error);
+  }
 
   // Function to toggle the picker visibility
   function toggleEmojiPicker() {
@@ -334,8 +356,27 @@
     }
   }
 
+  // Function to hide the picker
+  function hideEmojiPicker() {
+    pickerContainer.style.display = 'none';
+  }
+
+  // Event listener to hide picker when clicking outside
+  document.addEventListener('click', (event) => {
+    if (pickerContainer && !pickerContainer.contains(event.target) && !event.target.matches('#toggleEmojiPickerBtn')) {
+      hideEmojiPicker();
+    }
+  });
+
   // Attach the toggle function to the button click event
-  document.getElementById('toggleEmojiPickerBtn').addEventListener('click', toggleEmojiPicker);
+  const toggleBtn = document.getElementById('toggleEmojiPickerBtn');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', toggleEmojiPicker);
+  } else {
+    console.error('Toggle button element not found.');
+  }
+}
+
 
     let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
 
