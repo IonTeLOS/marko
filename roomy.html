@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optimized Chat App</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    .dropdown {
+      width: 100%;
+    }
+
+    .dropdown-toggle {
+      width: 100%;
+      background-color: #2196F3;
+      color: white;
+      padding: 16px;
+      font-size: 18px;
+      text-align: center;
+      cursor: pointer;
+      border: none;
+    }
+
+    .dropdown-menu {
+      width: 100%;
+      max-height: 0;
+      overflow: hidden;
+      background-color: white;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+      opacity: 0;
+    }
+
+    .dropdown.show .dropdown-menu {
+      max-height: 50vh;
+      opacity: 1;
+    }
+
+    .room-chip {
+      display: flex;
+      align-items: center;
+      padding: 12px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .room-chip:hover {
+      background-color: #f1f1f1;
+    }
+
+    .room-chip .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      margin-right: 12px;
+    }
+
+    .room-chip .room-name {
+      flex-grow: 1;
+    }
+
+    .room-chip .delete-btn {
+      color: red;
+      cursor: pointer;
+    }
+
+    .room-chip.blue .dot { background-color: blue; }
+    .room-chip.green .dot { background-color: green; }
+    .room-chip.orange .dot { background-color: orange; }
+    .room-chip.red .dot { background-color: red; }
+
+    .chat-container {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+    }
+
+    .input-container {
+      background-color: white;
+      border-top: 1px solid #ddd;
+      padding: 10px;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background-color: #f8f8f8;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+    }
+
+    .top-row .material-icons {
+      font-size: 28px;
+      color: #2196F3;
+      cursor: pointer;
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      background-color: #f8f8f8;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: 1px solid #2196F3;
+      background-color: white;
+    }
+
+    .chat-input input {
+      flex-grow: 1;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      margin: 0 10px;
+    }
+
+    .chat-input .material-icons {
+      color: #2196F3;
+      cursor: pointer;
+      font-size: 28px;
+    }
+
+    .chat-input .clear-btn {
+      margin-right: 15px;
+    }
+
+    .bottom-menu {
+      display: flex;
+      justify-content: space-around;
+      padding: 15px;
+      background-color: #f8f8f8;
+      border-top: 1px solid #ddd;
+    }
+
+    .bottom-menu .material-icons {
+      font-size: 32px;
+      color: #2196F3;
+      cursor: pointer;
+    }
+      /* Style for the picker container to center it on the screen */
+  #pickerContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); /* Optional shadow for emphasis */
+  }
+  #mapsLink a {
+    display: inline-block;
+    padding: 10px;
+    text-decoration: none;
+  }
+  .map-marker {
+    font-size: 24px;
+    color: #FF5722; /* Orange color for marker */
+  }
+  </style>
+</head>
+<body>
+  <div class="dropdown">
+    <button class="dropdown-toggle" onclick="toggleDropdown()">Select Room</button>
+    <div class="dropdown-menu">
+      <!-- Room chips will be dynamically inserted here -->
+    </div>
+  </div>
+  <div id="pickerContainer"></div>
+
+  <div class="chat-container">
+    <!-- Chat messages would go here -->
+  </div>
+
+  <div class="input-container">
+    <div class="top-row">
+      <span class="material-icons" onclick="photoButtonClicked()">photo_camera</span>
+      <span class="material-icons" onclick="attachButtonClicked()">attach_file</span>
+      <span class="material-icons" onclick="micButtonClicked()">mic</span>
+      <span id="getLocation" class="material-icons" >location_on</span>
+    </div>
+    <div class="chat-input-wrapper">
+      <div class="chat-input">
+        <span id="toggleEmojiPickerBtn" class="material-icons">emoji_emotions</span>
+        <input id="messageInput" type="text" placeholder="Type a message..." oninput="toggleClearButton()" onblur="hideClearButton()">
+        <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
+        <span class="material-icons" onclick="sendMessage()">send</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-menu">
+    <span class="material-icons" onclick="newButtonClicked()">new_releases</span>
+    <span class="material-icons" onclick="chatButtonClicked()">chat</span>
+    <span class="material-icons" onclick="settingsButtonClicked()">settings</span>
+  </div>
+<p id="mapsLink"></p>
+  
+  <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
+  <script>
+        const IPWHOIS_API_URL = 'https://ipwho.is/';
+
+        function getMapsLink(query) {
+            return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+        }
+
+        function isGPSAvailable() {
+            return new Promise((resolve) => {
+                if ('geolocation' in navigator) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            // Check if the position has high accuracy
+                            if (position.coords.accuracy <= 100) { // Accuracy is in meters
+                                resolve(true);
+                            } else {
+                                resolve(false);
+                            }
+                        },
+                        () => resolve(false),
+                        { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+                    );
+                } else {
+                    resolve(false);
+                }
+            });
+        }
+
+        async function getLocation() {
+            const gpsAvailable = await isGPSAvailable();
+            
+            if (gpsAvailable) {
+                const allowExactLocation = confirm('GPS is available. Do you allow exact location?');
+                
+                if (allowExactLocation) {
+                    navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    });
+                } else {
+                    fetchIPBasedLocation();
+                }
+            } else {
+                console.log("GPS is not available or not accurate enough. Using IP-based location.");
+                fetchIPBasedLocation();
+            }
+        }
+
+        function fetchIPBasedLocation() {
+            fetch(IPWHOIS_API_URL)
+                .then(response => response.json())
+                .then(data => {
+                    const { city, region, country } = data;
+                    const closestLocation = `${city}, ${region}, ${country}`;
+                    document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(closestLocation)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Closest Location in Google Maps</a>`;
+                })
+                .catch(error => {
+                    console.error('Error fetching IP-based location:', error);
+                    alert('Unable to retrieve location.');
+                });
+        }
+
+        function successCallback(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Use Nominatim to reverse geocode the coordinates to an address
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const address = data.display_name;
+                    document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(address)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Your Location in Google Maps</a>`;
+                })
+                .catch(error => {
+                    console.error('Error fetching address:', error);
+                    alert('Unable to retrieve address.');
+                });
+        }
+
+        function errorCallback(error) {
+            console.error('Error getting location: ' + error.message);
+            fetchIPBasedLocation();
+        }
+
+        document.getElementById('getLocation').addEventListener('click', getLocation);
+   
+
+  // Create a div container for the picker (hidden by default)
+  const pickerContainer = document.getElementById('pickerContainer');
+  pickerContainer.style.display = 'none'; // Hidden initially
+  document.body.appendChild(pickerContainer);
+
+  // Create the emoji picker and append it to the container
+    // Define the picker options
+  const pickerOptions = {
+    onEmojiSelect: (emoji) => {
+      const messageInput = document.getElementById('messageInput');
+      
+      // Insert the selected emoji into the text input
+      messageInput.value += emoji.native; // 'emoji.native' contains the emoji character
+    },
+  };
+
+  const picker = new EmojiMart.Picker(pickerOptions);
+  pickerContainer.appendChild(picker);
+
+  // Function to toggle the picker visibility
+  function toggleEmojiPicker() {
+    if (pickerContainer.style.display === 'none') {
+      pickerContainer.style.display = 'block'; // Show picker
+    } else {
+      pickerContainer.style.display = 'none'; // Hide picker
+    }
+  }
+
+  // Attach the toggle function to the button click event
+  document.getElementById('toggleEmojiPickerBtn').addEventListener('click', toggleEmojiPicker);
+
+    let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
+
+    function toggleDropdown() {
+  const dropdown = document.querySelector('.dropdown');
+  dropdown.classList.toggle('show');
+  
+  if (dropdown.classList.contains('show')) {
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+    dropdownMenu.style.maxHeight = dropdownMenu.scrollHeight + "px";
+  }
+}
+
+	function closeDropdown(event) {
+      const dropdown = document.querySelector('.dropdown');
+      const dropdownToggle = document.querySelector('.dropdown-toggle');
+      
+      if (!dropdown.contains(event.target) && event.target !== dropdownToggle) {
+        dropdown.classList.remove('show');
+      }
+    }
+
+    // Add click event listener to the document
+    document.addEventListener('click', closeDropdown);
+    
+    function renderRooms() {
+      const dropdownMenu = document.querySelector('.dropdown-menu');
+      dropdownMenu.innerHTML = '';
+
+      rooms.sort((a, b) => {
+        if (a.color === 'green') return -1;
+        if (b.color === 'green') return 1;
+        return (b.messageCount || 0) - (a.messageCount || 0);
+      });
+
+      rooms.forEach((room, index) => {
+        const roomChip = document.createElement('div');
+        roomChip.classList.add('room-chip', room.color);
+        roomChip.innerHTML = `
+          <span class="dot"></span>
+          <span class="room-name">${room.name}</span>
+          <span class="material-icons delete-btn" onclick="event.stopPropagation(); deleteRoom(${index})">delete</span>
+        `;
+        roomChip.addEventListener('click', () => openRoom(room.id));
+        dropdownMenu.appendChild(roomChip);
+      });
+    }
+
+	if (document.querySelector('.dropdown').classList.contains('show')) {
+      dropdownMenu.style.maxHeight = dropdownMenu.scrollHeight + "px";
+    }
+    
+function openRoom(room) {
+  const topic = room.topic || 'No topic'; // Fallback if topic is undefined
+  alert(`Room "${room.name}" with topic "${topic}" opened`);
+  console.log('Open room:', room.id);
+  document.querySelector('.dropdown').classList.remove('show');
+}
+
+    function toggleClearButton() {
+      const clearBtn = document.querySelector('.chat-input .clear-btn');
+      const input = document.querySelector('.chat-input input');
+      clearBtn.style.display = input.value.length > 0 ? 'inline-block' : 'none';
+    }
+
+    function hideClearButton() {
+      setTimeout(() => {
+        document.querySelector('.chat-input .clear-btn').style.display = 'none';
+      }, 100);
+    }
+
+    function clearText() {
+      document.querySelector('.chat-input input').value = '';
+      toggleClearButton();
+    }
+    
+    function sendMessage() {
+      alert('Send button clicked');
+    }
+
+    function clearText() {
+      document.querySelector('.chat-input input').value = '';
+      toggleClearButton();
+    }
+
+    function sendMessage() {
+      alert('Send button clicked');
+    }
+
+    function emojiButtonClicked() {
+      alert('Emoji button clicked');
+    }
+
+    function settingsButtonClicked() {
+      alert('Settings button clicked');
+    }
+
+    function chatButtonClicked() {
+      alert('Chat button clicked');
+    }
+
+    function shareButtonClicked() {
+      alert('Share button clicked');
+    }
+
+    function videoCallButtonClicked() {
+      alert('Video call button clicked');
+    }
+
+    function fileButtonClicked() {
+      alert('File button clicked');
+    }
+
+    function navigationButtonClicked() {
+      alert('Navigation button clicked');
+    }
+
+    function newButtonClicked() {
+      alert('New button clicked');
+    }
+
+    function photoButtonClicked() {
+      alert('Photo button clicked');
+    }
+
+    function attachButtonClicked() {
+      alert('Attach button clicked');
+    }
+
+    function micButtonClicked() {
+      alert('Mic button clicked');
+    }
+
+    function locationButtonClicked() {
+      alert('Location button clicked');
+    }
+
+    function addRoomFromUrlParams() {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('addRoom') === 'true') {
+        const roomTopic = urlParams.get('roomTopic');
+        const roomName = urlParams.get('roomName');
+        const roomKey = urlParams.get('roomKey');
+        const roomExtras = urlParams.get('roomExtras');
+
+        if (roomTopic && roomKey) {
+          const newRoom = {
+            id: Date.now(),
+            topic: roomTopic,
+            name: roomName,
+            key: roomKey,
+            extras: roomExtras || '',
+            color: 'blue'
+          };
+
+          if (confirm(`Add room: ${roomName}?`)) {
+            rooms.push(newRoom);
+            localStorage.setItem('rooms', JSON.stringify(rooms));
+            renderRooms();
+          }
+        }
+      }
+    }
+
+    function deleteRoom(index) {
+      if (confirm('Are you sure you want to delete this room?')) {
+        rooms.splice(index, 1);
+        localStorage.setItem('rooms', JSON.stringify(rooms));
+        renderRooms();
+      }
+    }
+
+    addRoomFromUrlParams();
+    renderRooms();
+  </script>
+</body>
+</html>
