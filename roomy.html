@@ -473,11 +473,7 @@ function openRoom(room) {
   document.querySelector('.dropdown').classList.remove('show');
 }
 
-    function toggleClearButton() {
-      const clearBtn = document.querySelector('.chat-input .clear-btn');
-      const input = document.querySelector('.chat-input input');
-      clearBtn.style.display = input.value.length > 0 ? 'inline-block' : 'none';
-    }
+
 
     function hideClearButton() {
       setTimeout(() => {
@@ -485,10 +481,35 @@ function openRoom(room) {
       }, 100);
     }
 
-    function clearText() {
-      document.querySelector('.chat-input input').value = '';
-      toggleClearButton();
-    }
+function toggleClearButton() {
+  const clearBtn = document.querySelector('.chat-input .clear-btn');
+  const input = document.querySelector('.chat-input input');
+  const markdownRender = document.querySelector('.rendered-markdown');
+  
+  clearBtn.style.display = input.value.length > 0 ? 'inline-block' : 'none';
+
+  // Update the markdown render
+  updateMarkdownRender(input.value);
+}
+
+function clearText() {
+  const input = document.querySelector('.chat-input input');
+  input.value = '';
+  toggleClearButton(); // Ensure the clear button is hidden
+}
+
+function updateMarkdownRender(text) {
+  const markdownRender = document.querySelector('.rendered-markdown');
+
+  // Basic Markdown parsing for **bold** and *italic*
+  const renderedText = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
+    .replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italic
+
+  // Render the parsed text in the markdown div
+  markdownRender.innerHTML = renderedText;
+}
+
     
     function sendMessage() {
       alert('Send button clicked');
