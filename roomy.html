@@ -138,7 +138,7 @@ body {
   font-size: 16px;
   margin: 0 10px;
   background-color: transparent;
-  caret-color: black; /* Ensure the cursor is visible */
+  caret-color: transparent; /* Hide the actual caret (cursor) */
   color: transparent; /* Keep text invisible */
   line-height: 1.5; /* Match rendered text */
   height: 100%;
@@ -549,8 +549,9 @@ function renderMarkdown() {
   text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
 
   // Check if blinking cursor already exists and remove it
-  if (output.querySelector('.blinking-cursor')) {
-    output.querySelector('.blinking-cursor').remove();
+  const existingCursor = output.querySelector('.blinking-cursor');
+  if (existingCursor) {
+    existingCursor.remove();
   }
 
   // Append a blinking cursor to the rendered text
@@ -562,6 +563,7 @@ function renderMarkdown() {
   output.innerHTML = text;
   output.appendChild(blinkingCursor);
 }
+
 
 
 document.getElementById('messageInput').addEventListener('input', renderMarkdown);
