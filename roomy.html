@@ -200,6 +200,70 @@ body {
   text-decoration: line-through; /* Strikethrough text */
 }
 
+	  .rendered-markdown h1 {
+  font-size: 2em;
+  margin: 0.5em 0;
+}
+
+.rendered-markdown h2 {
+  font-size: 1.75em;
+  margin: 0.5em 0;
+}
+
+.rendered-markdown h3 {
+  font-size: 1.5em;
+  margin: 0.5em 0;
+}
+
+.rendered-markdown h4 {
+  font-size: 1.25em;
+  margin: 0.5em 0;
+}
+
+.rendered-markdown h5 {
+  font-size: 1em;
+  margin: 0.5em 0;
+}
+
+.rendered-markdown h6 {
+  font-size: 0.875em;
+  margin: 0.5em 0;
+}
+
+.rendered-markdown p {
+  margin: 0.5em 0;
+}
+
+.rendered-markdown br {
+  display: block;
+  content: "";
+  margin: 0.5em 0;
+}
+
+.rendered-markdown ul, .rendered-markdown ol {
+  margin: 0.5em 0;
+  padding-left: 1em;
+}
+
+.rendered-markdown li {
+  margin: 0.25em 0;
+}
+
+.rendered-markdown hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin: 1em 0;
+}
+
+.rendered-markdown a {
+  color: #2196F3; /* Link color */
+  text-decoration: underline; /* Underline links */
+}
+
+.rendered-markdown a:hover {
+  text-decoration: none; /* Remove underline on hover for better UX */
+}
+
 .clear-btn {
   z-index: 3;
 }
@@ -558,6 +622,30 @@ function renderMarkdown() {
   const input = document.getElementById('messageInput');
   const output = document.getElementById('renderedMarkdown');
   let text = input.value;
+
+  // Headings
+  text = text.replace(/^###### (.*?)$/gm, '<h6>$1</h6>');
+  text = text.replace(/^##### (.*?)$/gm, '<h5>$1</h5>');
+  text = text.replace(/^#### (.*?)$/gm, '<h4>$1</h4>');
+  text = text.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+  text = text.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+  text = text.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+
+  // Line breaks
+  text = text.replace(/ {2}\n/g, '<br>');
+
+  // Empty lines
+  text = text.replace(/\n\n/g, '<p></p>');
+
+  // Lists
+  text = text.replace(/^\* (.*)$/gm, '<ul><li>$1</li></ul>');
+  text = text.replace(/^\d+\. (.*)$/gm, '<ol><li>$1</li></ol>');
+
+  // Horizontal rules
+  text = text.replace(/^\*\*\*\*+$/gm, '<hr>');
+
+  // Links with angle brackets
+  text = text.replace(/<([^\s>]+)>/g, '<a href="$1" target="_blank">$1</a>');
 
   // Replace **text** with <b>text</b> for bold
   text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
