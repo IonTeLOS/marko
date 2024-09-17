@@ -150,15 +150,25 @@ body {
   color: #ccc;
 }
 
-.rendered-markdown {
-  position: absolute;
-  top: 50%;
-  left: 15px;
-  transform: translateY(-50%);
+.markdown-editor {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
   font-size: 16px;
   line-height: 1.5;
-  color: black;
-  pointer-events: none; /* Prevent interaction with rendered text */
+  background-color: white;
+  min-height: 100px; /* Minimum height for the editor */
+  overflow-y: auto; /* Scroll if content overflows */
+}
+
+.rendered-markdown {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  font-size: 16px;
+  line-height: 1.5;
+  margin-top: 10px;
   white-space: pre-wrap; /* Preserve line breaks and white space */
 }
 
@@ -184,7 +194,7 @@ body {
 }
 
 .rendered-markdown a:hover {
-  text-decoration: none; /* Remove underline on hover for better UX */
+  text-decoration: none; /* Remove underline on hover */
 }
 
 .rendered-markdown u {
@@ -200,8 +210,7 @@ body {
   width: 1px;
   background-color: black;
   animation: blink 1s steps(2, start) infinite;
-  vertical-align: baseline; /* Align cursor with text baseline */
-  font-weight: normal;
+  vertical-align: baseline;
   height: 1em;
   margin-left: 2px;
 }
@@ -217,6 +226,7 @@ body {
     opacity: 1;
   }
 }
+
 
 
 .clear-btn {
@@ -303,8 +313,8 @@ body {
     <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
     <!-- Wrapper for input and rendered text -->
     <div class="input-overlay-wrapper">
-      <div id="renderedMarkdown" class="rendered-markdown"></div>
-      <input id="messageInput" type="text" placeholder="Type a message..." oninput="renderMarkdown()" onblur="hideClearButton()">
+     <div id="markdownEditor" class="markdown-editor" contenteditable="true" oninput="renderMarkdown()"></div>
+<div id="renderedMarkdown" class="rendered-markdown"></div>
     </div>
     <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
     <span class="material-icons" onclick="sendMessage()">send</span>
@@ -572,11 +582,11 @@ function updateMarkdownRender(text) {
   // Render the parsed text in the markdown div
   markdownRender.innerHTML = renderedText;
 }
-	  
 function renderMarkdown() {
-  const input = document.getElementById('messageInput');
+  const input = document.getElementById('markdownEditor').innerText;
   const output = document.getElementById('renderedMarkdown');
-  let text = input.value;
+  
+  let text = input;
 
   // Line breaks (double newlines)
   text = text.replace(/\n\n/g, '<p></p>'); // Paragraph breaks
@@ -626,6 +636,7 @@ function renderMarkdown() {
   output.innerHTML = text;
   output.appendChild(blinkingCursor);
 }
+
 // Call renderMarkdown initially to show the cursor
 renderMarkdown();
 
