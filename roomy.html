@@ -192,7 +192,13 @@ body {
   }
 }
 
+.rendered-markdown u {
+  text-decoration: underline; /* Underline text */
+}
 
+.rendered-markdown del {
+  text-decoration: line-through; /* Strikethrough text */
+}
 
 .clear-btn {
   z-index: 3;
@@ -559,6 +565,12 @@ function renderMarkdown() {
   // Replace *text* with <i>text</i> for italic
   text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
 
+  // Replace __text__ with <u>text</u> for underlined
+  text = text.replace(/__(.*?)__/g, '<u>$1</u>');
+
+  // Replace ~~text~~ with <del>text</del> for strikethrough
+  text = text.replace(/~~(.*?)~~/g, '<del>$1</del>');
+
   // Replace [text](url) with <a href="url" target="_blank">text</a> for links
   text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
 
@@ -581,11 +593,11 @@ function renderMarkdown() {
   output.appendChild(blinkingCursor);
 }
 
+// Call renderMarkdown initially to show the cursor
+renderMarkdown();
 
-
-
+// Add an event listener to continuously update the rendered Markdown as user types
 document.getElementById('messageInput').addEventListener('input', renderMarkdown);
-
     
     function sendMessage() {
       alert('Send button clicked');
