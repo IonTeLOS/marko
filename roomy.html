@@ -150,14 +150,34 @@ body {
   color: #ccc;
 }
 
+.blinking-cursor {
+  display: inline-block;
+  width: 1px;
+  background-color: black;
+  animation: blink 1s steps(2, start) infinite;
+  vertical-align: bottom;
+  font-weight: normal;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
 .rendered-markdown {
   position: absolute;
   top: 50%; 
   left: 15px;
-  width: auto; /* Allow width to adjust to content */
   transform: translateY(-50%);
   font-size: 16px;
-  line-height: 1.5; /* Match input line-height */
+  line-height: 1.5;
   color: black;
   pointer-events: none;
   white-space: pre-wrap;
@@ -521,19 +541,19 @@ function renderMarkdown() {
   const output = document.getElementById('renderedMarkdown');
   let text = input.value;
 
-  // Replace **text** with <b>text</b>
+  // Replace **text** with <b>text</b> for bold
   text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
 
-  // Replace *text* with <i>text</i>
+  // Replace *text* with <i>text</i> for italic
   text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
 
-  // Output the rendered HTML in the overlay
-  output.innerHTML = text;
+  // Append a blinking cursor to the rendered text
+  const blinkingCursor = '<span class="blinking-cursor">|</span>';
 
-  // Adjust the padding-left of the input based on the width of the rendered text
-  const renderedTextWidth = output.offsetWidth;
-  input.style.paddingLeft = `${renderedTextWidth + 15}px`; // Add some padding for spacing
+  // Output the rendered HTML with the blinking cursor at the end
+  output.innerHTML = text + blinkingCursor;
 }
+
 document.getElementById('messageInput').addEventListener('input', renderMarkdown);
 
     
