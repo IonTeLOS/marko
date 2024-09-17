@@ -173,7 +173,7 @@ body {
 
 .rendered-markdown {
   position: absolute;
-  top: 50%; 
+  top: 50%;
   left: 15px;
   transform: translateY(-50%);
   font-size: 16px;
@@ -182,6 +182,7 @@ body {
   pointer-events: none;
   white-space: pre-wrap;
 }
+
 
 .clear-btn {
   z-index: 3;
@@ -547,12 +548,21 @@ function renderMarkdown() {
   // Replace *text* with <i>text</i> for italic
   text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
 
+  // Check if blinking cursor already exists and remove it
+  if (output.querySelector('.blinking-cursor')) {
+    output.querySelector('.blinking-cursor').remove();
+  }
+
   // Append a blinking cursor to the rendered text
-  const blinkingCursor = '<span class="blinking-cursor">|</span>';
+  const blinkingCursor = document.createElement('span');
+  blinkingCursor.className = 'blinking-cursor';
+  blinkingCursor.textContent = '|';
 
   // Output the rendered HTML with the blinking cursor at the end
-  output.innerHTML = text + blinkingCursor;
+  output.innerHTML = text;
+  output.appendChild(blinkingCursor);
 }
+
 
 document.getElementById('messageInput').addEventListener('input', renderMarkdown);
 
