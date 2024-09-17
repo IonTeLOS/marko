@@ -138,11 +138,12 @@ body {
   font-size: 16px;
   margin: 0 10px;
   background-color: transparent;
-  caret-color: black; /* Ensures the cursor is visible */
-  color: transparent; /* Keep text transparent */
-  line-height: 1.5; /* Set line-height to match rendered text */
-  height: 100%; /* Ensure input takes full height */
-  padding: 0; /* Remove any padding */
+  caret-color: black; /* Ensure the cursor is visible */
+  color: transparent; /* Keep text invisible */
+  line-height: 1.5; /* Match rendered text */
+  height: 100%;
+  padding: 0; /* No initial padding */
+  padding-left: 0; /* Will be dynamically adjusted */
 }
 
 .chat-input input::placeholder {
@@ -153,10 +154,10 @@ body {
   position: absolute;
   top: 50%; 
   left: 15px;
-  width: calc(100% - 30px);
+  width: auto; /* Allow width to adjust to content */
   transform: translateY(-50%);
   font-size: 16px;
-  line-height: 1.5; /* Match the line-height with input */
+  line-height: 1.5; /* Match input line-height */
   color: black;
   pointer-events: none;
   white-space: pre-wrap;
@@ -528,7 +529,13 @@ function renderMarkdown() {
 
   // Output the rendered HTML in the overlay
   output.innerHTML = text;
+
+  // Adjust the padding-left of the input based on the width of the rendered text
+  const renderedTextWidth = output.offsetWidth;
+  input.style.paddingLeft = `${renderedTextWidth + 15}px`; // Add some padding for spacing
 }
+document.getElementById('messageInput').addEventListener('input', renderMarkdown);
+
     
     function sendMessage() {
       alert('Send button clicked');
