@@ -160,8 +160,14 @@ body {
   color: black;
   pointer-events: none;
   white-space: pre-wrap;
+  color: #2196F3; /* Link color */
+  text-decoration: underline; /* Underline links */
 }
 
+.rendered-markdown a:hover {
+  text-decoration: none; /* Remove underline on hover for better UX */
+}
+	  
 .blinking-cursor {
   display: inline-block;
   width: 1px;
@@ -550,8 +556,8 @@ function renderMarkdown() {
   // Replace *text* with <i>text</i> for italic
   text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
 
-  // Replace [text](url) with <a href="url">text</a> for links
-  text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+  // Replace [text](url) with <a href="url" target="_blank">text</a> for links
+  text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" style="color: #2196F3; text-decoration: underline;">$1</a>');
 
   // Replace ![alt text](url) with <img src="url" alt="alt text"> for images
   text = text.replace(/!\[([^\]]*)\]\((https?:\/\/[^\)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">');
@@ -571,6 +577,7 @@ function renderMarkdown() {
   output.innerHTML = text;
   output.appendChild(blinkingCursor);
 }
+
 
 
 
