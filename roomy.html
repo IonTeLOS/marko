@@ -6,158 +6,190 @@
   <title>Optimized Chat App</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      background-color: #f4f4f4;
-    }
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #f4f4f4;
+}
 
-    .dropdown {
-      width: 100%;
-    }
+.dropdown {
+  width: 100%;
+}
 
-    .dropdown-toggle {
-      width: 100%;
-      background-color: #2196F3;
-      color: white;
-      padding: 16px;
-      font-size: 18px;
-      text-align: center;
-      cursor: pointer;
-      border: none;
-    }
+.dropdown-toggle {
+  width: 100%;
+  background-color: #2196F3;
+  color: white;
+  padding: 16px;
+  font-size: 18px;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+}
 
-    .dropdown-menu {
-      width: 100%;
-      max-height: 0;
-      overflow: hidden;
-      background-color: white;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-      transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
-      opacity: 0;
-    }
+.dropdown-menu {
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  background-color: white;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+  opacity: 0;
+}
 
-    .dropdown.show .dropdown-menu {
-      max-height: 50vh;
-      opacity: 1;
-    }
+.dropdown.show .dropdown-menu {
+  max-height: 50vh;
+  opacity: 1;
+}
 
-    .room-chip {
-      display: flex;
-      align-items: center;
-      padding: 12px;
-      border-bottom: 1px solid #eee;
-      cursor: pointer;
-    }
+.room-chip {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
 
-    .room-chip:hover {
-      background-color: #f1f1f1;
-    }
+.room-chip:hover {
+  background-color: #f1f1f1;
+}
 
-    .room-chip .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      margin-right: 12px;
-    }
+.room-chip .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
 
-    .room-chip .room-name {
-      flex-grow: 1;
-    }
+.room-chip .room-name {
+  flex-grow: 1;
+}
 
-    .room-chip .delete-btn {
-      color: red;
-      cursor: pointer;
-    }
+.room-chip .delete-btn {
+  color: red;
+  cursor: pointer;
+}
 
-    .room-chip.blue .dot { background-color: blue; }
-    .room-chip.green .dot { background-color: green; }
-    .room-chip.orange .dot { background-color: orange; }
-    .room-chip.red .dot { background-color: red; }
+.room-chip.blue .dot { background-color: blue; }
+.room-chip.green .dot { background-color: green; }
+.room-chip.orange .dot { background-color: orange; }
+.room-chip.red .dot { background-color: red; }
 
-    .chat-container {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 20px;
-    }
+.chat-container {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 20px;
+}
 
-    .input-container {
-      background-color: white;
-      border-top: 1px solid #ddd;
-      padding: 10px;
-    }
+.input-container {
+  background-color: white;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+}
 
-    .top-row {
-      display: flex;
-      justify-content: space-around;
-      padding: 10px;
-      background-color: #f8f8f8;
-      border-top-left-radius: 20px;
-      border-top-right-radius: 20px;
-    }
+.top-row {
+  display: flex;
+  justify-content: space-around;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
 
-    .top-row .material-icons {
-      font-size: 28px;
-      color: #2196F3;
-      cursor: pointer;
-    }
+.top-row .material-icons {
+  font-size: 28px;
+  color: #2196F3;
+  cursor: pointer;
+}
 
-    .chat-input-wrapper {
-      display: flex;
-      align-items: center;
-      padding: 10px;
-      background-color: #f8f8f8;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-    }
+.chat-input-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
 
-    .chat-input {
-      display: flex;
-      align-items: center;
-      flex-grow: 1;
-      padding: 10px;
-      border-radius: 20px;
-      border: 1px solid #2196F3;
-      background-color: white;
-    }
+.chat-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #2196F3;
+  background-color: white;
+  overflow: hidden;
+}
 
-    .chat-input input {
-      flex-grow: 1;
-      border: none;
-      outline: none;
-      font-size: 16px;
-      margin: 0 10px;
-    }
+/* Wrapper for input and markdown rendering */
+.input-overlay-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 
-    .chat-input .material-icons {
-      color: #2196F3;
-      cursor: pointer;
-      font-size: 28px;
-    }
+.chat-input input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: transparent;
+  caret-color: black; /* Show caret while typing */
+  font-size: 16px;
+  margin: 0 10px;
+  z-index: 2; /* Keep it above the rendered markdown */
+}
 
-    .chat-input .clear-btn {
-      margin-right: 15px;
-    }
+.rendered-markdown {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  white-space: pre-wrap; /* Preserve line breaks */
+  word-wrap: break-word;
+  z-index: 1; /* Rendered markdown stays behind the input */
+  pointer-events: none; /* Prevent interfering with input */
+  font-size: 16px; /* Match input font size */
+  color: black; /* Default font color for rendering */
+}
 
-    .bottom-menu {
-      display: flex;
-      justify-content: space-around;
-      padding: 15px;
-      background-color: #f8f8f8;
-      border-top: 1px solid #ddd;
-    }
+.chat-input .material-icons {
+  color: #2196F3;
+  cursor: pointer;
+  font-size: 28px;
+}
 
-    .bottom-menu .material-icons {
-      font-size: 32px;
-      color: #2196F3;
-      cursor: pointer;
-    }
+.chat-input .clear-btn {
+  margin-right: 15px;
+}
+
+.bottom-menu {
+  display: flex;
+  justify-content: space-around;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-top: 1px solid #ddd;
+}
+
+.bottom-menu .material-icons {
+  font-size: 32px;
+  color: #2196F3;
+  cursor: pointer;
+}
       /* Style for the picker container to center it on the screen */
   #pickerContainer {
     position: fixed;
@@ -203,14 +235,19 @@
       <span class="material-icons" onclick="micButtonClicked()">mic</span>
       <span id="getLocation" class="material-icons" >location_on</span>
     </div>
-    <div class="chat-input-wrapper">
-      <div class="chat-input">
-        <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
-        <input id="messageInput" type="text" placeholder="Type a message..." oninput="toggleClearButton()" onblur="hideClearButton()">
-        <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
-        <span class="material-icons" onclick="sendMessage()">send</span>
-      </div>
+<div class="chat-input-wrapper">
+  <div class="chat-input">
+    <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
+    <!-- Wrapper for input and rendered text -->
+    <div class="input-overlay-wrapper">
+      <div id="renderedMarkdown" class="rendered-markdown"></div>
+      <input id="messageInput" type="text" placeholder="Type a message..." oninput="renderMarkdown()" onblur="hideClearButton()">
     </div>
+    <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
+    <span class="material-icons" onclick="sendMessage()">send</span>
+  </div>
+</div>
+
   </div>
 
   <div class="bottom-menu">
