@@ -140,7 +140,9 @@ body {
   background-color: transparent;
   caret-color: black; /* Ensures the cursor is visible */
   color: transparent; /* Keep text transparent */
-  user-select: none; /* Disable selecting text */
+  line-height: 1.5; /* Set line-height to match rendered text */
+  height: 100%; /* Ensure input takes full height */
+  padding: 0; /* Remove any padding */
 }
 
 .chat-input input::placeholder {
@@ -154,6 +156,7 @@ body {
   width: calc(100% - 30px);
   transform: translateY(-50%);
   font-size: 16px;
+  line-height: 1.5; /* Match the line-height with input */
   color: black;
   pointer-events: none;
   white-space: pre-wrap;
@@ -162,6 +165,7 @@ body {
 .clear-btn {
   z-index: 3;
 }
+
 /* Wrapper for input and markdown rendering */
 .input-overlay-wrapper {
   position: relative;
