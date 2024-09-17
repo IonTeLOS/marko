@@ -537,6 +537,7 @@ function updateMarkdownRender(text) {
   // Render the parsed text in the markdown div
   markdownRender.innerHTML = renderedText;
 }
+	  
 function renderMarkdown() {
   const input = document.getElementById('messageInput');
   const output = document.getElementById('renderedMarkdown');
@@ -547,6 +548,12 @@ function renderMarkdown() {
 
   // Replace *text* with <i>text</i> for italic
   text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
+
+  // Replace [text](url) with <a href="url">text</a> for links
+  text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+
+  // Replace ![alt text](url) with <img src="url" alt="alt text"> for images
+  text = text.replace(/!\[([^\]]*)\]\((https?:\/\/[^\)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">');
 
   // Check if blinking cursor already exists and remove it
   const existingCursor = output.querySelector('.blinking-cursor');
@@ -563,6 +570,7 @@ function renderMarkdown() {
   output.innerHTML = text;
   output.appendChild(blinkingCursor);
 }
+
 
 
 
