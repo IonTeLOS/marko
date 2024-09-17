@@ -117,8 +117,9 @@ body {
   border-bottom-right-radius: 20px;
 }
 
+/* Ensure the input container and rendered-markdown are aligned */
 .chat-input {
-  position: relative;
+  position: relative; /* Make sure the container can have an overlay */
   display: flex;
   align-items: center;
   flex-grow: 1;
@@ -126,7 +127,39 @@ body {
   border-radius: 20px;
   border: 1px solid #2196F3;
   background-color: white;
-  overflow: hidden;
+  height: 50px; /* Set a fixed height */
+}
+
+.chat-input input {
+  position: relative;
+  z-index: 2; /* Ensure the input is above the placeholder */
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  margin: 0 10px;
+  background-color: transparent; /* Transparent so we see markdown */
+  color: transparent; /* Hide input text to focus on markdown */
+}
+
+.chat-input input::placeholder {
+  color: #ccc; /* Make the placeholder more visible */
+}
+
+.rendered-markdown {
+  position: absolute;
+  top: 50%; 
+  left: 15px;
+  width: calc(100% - 30px);
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: black; /* Make rendered text visible */
+  pointer-events: none; /* Ensure you can't click on the markdown text */
+  white-space: pre-wrap; /* Allow text to wrap if too long */
+}
+
+.clear-btn {
+  z-index: 3; /* Ensure clear button is above everything else */
 }
 
 /* Wrapper for input and markdown rendering */
@@ -134,37 +167,6 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-}
-
-.chat-input input {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  color: transparent;
-  caret-color: black; /* Show caret while typing */
-  font-size: 16px;
-  margin: 0 10px;
-  z-index: 2; /* Keep it above the rendered markdown */
-}
-
-.rendered-markdown {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  padding: 10px;
-  white-space: pre-wrap; /* Preserve line breaks */
-  word-wrap: break-word;
-  z-index: 1; /* Rendered markdown stays behind the input */
-  pointer-events: none; /* Prevent interfering with input */
-  font-size: 16px; /* Match input font size */
-  color: black; /* Default font color for rendering */
 }
 
 .chat-input .material-icons {
