@@ -162,50 +162,6 @@ body {
   white-space: pre-wrap; /* Preserve line breaks and white space */
 }
 
-.rendered-markdown h1 {
-  font-size: 2em;
-  margin: 0.5em 0;
-  font-weight: bold;
-}
-
-.rendered-markdown h2 {
-  font-size: 1.75em;
-  margin: 0.5em 0;
-  font-weight: bold;
-}
-
-.rendered-markdown h3 {
-  font-size: 1.5em;
-  margin: 0.5em 0;
-  font-weight: bold;
-}
-
-.rendered-markdown h4 {
-  font-size: 1.25em;
-  margin: 0.5em 0;
-  font-weight: bold;
-}
-
-.rendered-markdown h5 {
-  font-size: 1em;
-  margin: 0.5em 0;
-  font-weight: bold;
-}
-
-.rendered-markdown h6 {
-  font-size: 0.875em;
-  margin: 0.5em 0;
-  font-weight: bold;
-}
-
-.rendered-markdown p {
-  margin: 0.5em 0;
-}
-
-.rendered-markdown br {
-  content: "\A"; /* Use Unicode line break */
-}
-
 .rendered-markdown ul,
 .rendered-markdown ol {
   margin: 0.5em 0;
@@ -244,7 +200,7 @@ body {
   width: 1px;
   background-color: black;
   animation: blink 1s steps(2, start) infinite;
-  vertical-align: bottom;
+  vertical-align: baseline; /* Align cursor with text baseline */
   font-weight: normal;
   height: 1em;
   margin-left: 2px;
@@ -261,6 +217,7 @@ body {
     opacity: 1;
   }
 }
+
 
 .clear-btn {
   z-index: 3;
@@ -621,14 +578,6 @@ function renderMarkdown() {
   const output = document.getElementById('renderedMarkdown');
   let text = input.value;
 
-  // Headings
-  text = text.replace(/^###### (.*?)$/gm, '<h6>$1</h6>');
-  text = text.replace(/^##### (.*?)$/gm, '<h5>$1</h5>');
-  text = text.replace(/^#### (.*?)$/gm, '<h4>$1</h4>');
-  text = text.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
-  text = text.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
-  text = text.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
-
   // Line breaks (double newlines)
   text = text.replace(/\n\n/g, '<p></p>'); // Paragraph breaks
 
@@ -677,9 +626,6 @@ function renderMarkdown() {
   output.innerHTML = text;
   output.appendChild(blinkingCursor);
 }
-
-
-
 // Call renderMarkdown initially to show the cursor
 renderMarkdown();
 
