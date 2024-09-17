@@ -117,9 +117,8 @@ body {
   border-bottom-right-radius: 20px;
 }
 
-/* Ensure the input container and rendered-markdown are aligned */
 .chat-input {
-  position: relative; /* Make sure the container can have an overlay */
+  position: relative;
   display: flex;
   align-items: center;
   flex-grow: 1;
@@ -127,23 +126,25 @@ body {
   border-radius: 20px;
   border: 1px solid #2196F3;
   background-color: white;
-  height: 50px; /* Set a fixed height */
+  height: 50px;
 }
 
 .chat-input input {
   position: relative;
-  z-index: 2; /* Ensure the input is above the placeholder */
+  z-index: 2;
   flex-grow: 1;
   border: none;
   outline: none;
   font-size: 16px;
   margin: 0 10px;
-  background-color: transparent; /* Transparent so we see markdown */
-  color: transparent; /* Hide input text to focus on markdown */
+  background-color: transparent;
+  caret-color: black; /* Ensures the cursor is visible */
+  color: transparent; /* Keep text transparent */
+  user-select: none; /* Disable selecting text */
 }
 
 .chat-input input::placeholder {
-  color: #ccc; /* Make the placeholder more visible */
+  color: #ccc;
 }
 
 .rendered-markdown {
@@ -153,15 +154,14 @@ body {
   width: calc(100% - 30px);
   transform: translateY(-50%);
   font-size: 16px;
-  color: black; /* Make rendered text visible */
-  pointer-events: none; /* Ensure you can't click on the markdown text */
-  white-space: pre-wrap; /* Allow text to wrap if too long */
+  color: black;
+  pointer-events: none;
+  white-space: pre-wrap;
 }
 
 .clear-btn {
-  z-index: 3; /* Ensure clear button is above everything else */
+  z-index: 3;
 }
-
 /* Wrapper for input and markdown rendering */
 .input-overlay-wrapper {
   position: relative;
