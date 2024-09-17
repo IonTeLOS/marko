@@ -158,76 +158,44 @@ body {
   font-size: 16px;
   line-height: 1.5;
   color: black;
-  pointer-events: none;
-  white-space: pre-wrap;
+  pointer-events: none; /* Prevent interaction with rendered text */
+  white-space: pre-wrap; /* Preserve line breaks and white space */
 }
 
-.rendered-markdown a {
-  color: #2196F3; /* Link color */
-  text-decoration: underline; /* Underline links */
-}
-
-.rendered-markdown a:hover {
-  text-decoration: none; /* Remove underline on hover for better UX */
-}
-
-.blinking-cursor {
-  display: inline-block;
-  width: 1px;
-  background-color: black;
-  animation: blink 1s steps(2, start) infinite;
-  vertical-align: bottom;
-  font-weight: normal;
-}
-
-@keyframes blink {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-.rendered-markdown u {
-  text-decoration: underline; /* Underline text */
-}
-
-.rendered-markdown del {
-  text-decoration: line-through; /* Strikethrough text */
-}
-
-	  .rendered-markdown h1 {
+.rendered-markdown h1 {
   font-size: 2em;
   margin: 0.5em 0;
+  font-weight: bold;
 }
 
 .rendered-markdown h2 {
   font-size: 1.75em;
   margin: 0.5em 0;
+  font-weight: bold;
 }
 
 .rendered-markdown h3 {
   font-size: 1.5em;
   margin: 0.5em 0;
+  font-weight: bold;
 }
 
 .rendered-markdown h4 {
   font-size: 1.25em;
   margin: 0.5em 0;
+  font-weight: bold;
 }
 
 .rendered-markdown h5 {
   font-size: 1em;
   margin: 0.5em 0;
+  font-weight: bold;
 }
 
 .rendered-markdown h6 {
   font-size: 0.875em;
   margin: 0.5em 0;
+  font-weight: bold;
 }
 
 .rendered-markdown p {
@@ -235,14 +203,13 @@ body {
 }
 
 .rendered-markdown br {
-  display: block;
-  content: "";
-  margin: 0.5em 0;
+  content: "\A"; /* Use Unicode line break */
 }
 
-.rendered-markdown ul, .rendered-markdown ol {
+.rendered-markdown ul,
+.rendered-markdown ol {
   margin: 0.5em 0;
-  padding-left: 1em;
+  padding-left: 1.5em;
 }
 
 .rendered-markdown li {
@@ -262,6 +229,37 @@ body {
 
 .rendered-markdown a:hover {
   text-decoration: none; /* Remove underline on hover for better UX */
+}
+
+.rendered-markdown u {
+  text-decoration: underline; /* Underline text */
+}
+
+.rendered-markdown del {
+  text-decoration: line-through; /* Strikethrough text */
+}
+
+.blinking-cursor {
+  display: inline-block;
+  width: 1px;
+  background-color: black;
+  animation: blink 1s steps(2, start) infinite;
+  vertical-align: bottom;
+  font-weight: normal;
+  height: 1em;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .clear-btn {
@@ -631,14 +629,13 @@ function renderMarkdown() {
   text = text.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
   text = text.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
 
-  // Line breaks
-  text = text.replace(/ {2}\n/g, '<br>');
+  // Line breaks (double newlines)
+  text = text.replace(/\n\n/g, '<p></p>'); // Paragraph breaks
 
-  // Empty lines
-  text = text.replace(/\n\n/g, '<p></p>');
-
-  // Lists
+  // Unordered lists
   text = text.replace(/^\* (.*)$/gm, '<ul><li>$1</li></ul>');
+  
+  // Ordered lists (adding support for nested lists)
   text = text.replace(/^\d+\. (.*)$/gm, '<ol><li>$1</li></ol>');
 
   // Horizontal rules
@@ -665,7 +662,7 @@ function renderMarkdown() {
   // Replace ![alt text](url) with <img src="url" alt="alt text"> for images
   text = text.replace(/!\[([^\]]*)\]\((https?:\/\/[^\)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">');
 
-  // Ensure existing cursor is removed
+  // Remove any existing cursor
   const existingCursor = output.querySelector('.blinking-cursor');
   if (existingCursor) {
     existingCursor.remove();
@@ -680,6 +677,8 @@ function renderMarkdown() {
   output.innerHTML = text;
   output.appendChild(blinkingCursor);
 }
+
+
 
 // Call renderMarkdown initially to show the cursor
 renderMarkdown();
