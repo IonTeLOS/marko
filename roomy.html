@@ -509,7 +509,20 @@ function updateMarkdownRender(text) {
   // Render the parsed text in the markdown div
   markdownRender.innerHTML = renderedText;
 }
+function renderMarkdown() {
+  const input = document.getElementById('messageInput');
+  const output = document.getElementById('renderedMarkdown');
+  let text = input.value;
 
+  // Replace **text** with <b>text</b>
+  text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+
+  // Replace *text* with <i>text</i>
+  text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
+
+  // Output the rendered HTML in the overlay
+  output.innerHTML = text;
+}
     
     function sendMessage() {
       alert('Send button clicked');
