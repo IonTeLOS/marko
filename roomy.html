@@ -150,90 +150,10 @@ body {
   color: #ccc;
 }
 
-.markdown-editor {
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 5px;
-  font-size: 16px;
-  line-height: 1.5;
-  background-color: white;
-  min-height: 100px; /* Minimum height for the editor */
-  overflow-y: auto; /* Scroll if content overflows */
-}
-
-.rendered-markdown {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: white;
-  font-size: 16px;
-  line-height: 1.5;
-  margin-top: 10px;
-  white-space: pre-wrap; /* Preserve line breaks and white space */
-}
-
-.rendered-markdown ul,
-.rendered-markdown ol {
-  margin: 0.5em 0;
-  padding-left: 1.5em;
-}
-
-.rendered-markdown li {
-  margin: 0.25em 0;
-}
-
-.rendered-markdown hr {
-  border: 0;
-  border-top: 1px solid #ddd;
-  margin: 1em 0;
-}
-
-.rendered-markdown a {
-  color: #2196F3; /* Link color */
-  text-decoration: underline; /* Underline links */
-}
-
-.rendered-markdown a:hover {
-  text-decoration: none; /* Remove underline on hover */
-}
-
-.rendered-markdown u {
-  text-decoration: underline; /* Underline text */
-}
-
-.rendered-markdown del {
-  text-decoration: line-through; /* Strikethrough text */
-}
-
-.blinking-cursor {
-  display: inline-block;
-  width: 1px;
-  background-color: black;
-  animation: blink 1s steps(2, start) infinite;
-  vertical-align: baseline;
-  height: 1em;
-  margin-left: 2px;
-}
-
-@keyframes blink {
-  0% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-
-
-
 .clear-btn {
   z-index: 3;
 }
 
-/* Wrapper for input and markdown rendering */
 .input-overlay-wrapper {
   position: relative;
   width: 100%;
@@ -308,19 +228,14 @@ body {
       <span class="material-icons" onclick="micButtonClicked()">mic</span>
       <span id="getLocation" class="material-icons" >location_on</span>
     </div>
-<div class="chat-input-wrapper">
-  <div class="chat-input">
-    <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
-    <!-- Wrapper for input and rendered text -->
-    <div class="input-overlay-wrapper">
-     <div id="markdownEditor" class="markdown-editor" contenteditable="true" oninput="renderMarkdown()"></div>
-<div id="renderedMarkdown" class="rendered-markdown"></div>
+    <div class="chat-input-wrapper">
+      <div class="chat-input">
+        <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
+        <input id="messageInput" type="text" placeholder="Type a message..." oninput="toggleClearButton()" onblur="hideClearButton()">
+        <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
+        <span class="material-icons" onclick="sendMessage()">send</span>
+      </div>
     </div>
-    <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
-    <span class="material-icons" onclick="sendMessage()">send</span>
-  </div>
-</div>
-
   </div>
 
   <div class="bottom-menu">
@@ -557,12 +472,8 @@ function openRoom(room) {
 function toggleClearButton() {
   const clearBtn = document.querySelector('.chat-input .clear-btn');
   const input = document.querySelector('.chat-input input');
-  const markdownRender = document.querySelector('.rendered-markdown');
   
   clearBtn.style.display = input.value.length > 0 ? 'inline-block' : 'none';
-
-  // Update the markdown render
-  updateMarkdownRender(input.value);
 }
 
 function clearText() {
@@ -570,78 +481,6 @@ function clearText() {
   input.value = '';
   toggleClearButton(); // Ensure the clear button is hidden
 }
-
-function updateMarkdownRender(text) {
-  const markdownRender = document.querySelector('.rendered-markdown');
-
-  // Basic Markdown parsing for **bold** and *italic*
-  const renderedText = text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold
-    .replace(/\*(.*?)\*/g, '<em>$1</em>'); // Italic
-
-  // Render the parsed text in the markdown div
-  markdownRender.innerHTML = renderedText;
-}
-function renderMarkdown() {
-  const input = document.getElementById('markdownEditor').innerText;
-  const output = document.getElementById('renderedMarkdown');
-  
-  let text = input;
-
-  // Line breaks (double newlines)
-  text = text.replace(/\n\n/g, '<p></p>'); // Paragraph breaks
-
-  // Unordered lists
-  text = text.replace(/^\* (.*)$/gm, '<ul><li>$1</li></ul>');
-  
-  // Ordered lists (adding support for nested lists)
-  text = text.replace(/^\d+\. (.*)$/gm, '<ol><li>$1</li></ol>');
-
-  // Horizontal rules
-  text = text.replace(/^\*\*\*\*+$/gm, '<hr>');
-
-  // Links with angle brackets
-  text = text.replace(/<([^\s>]+)>/g, '<a href="$1" target="_blank">$1</a>');
-
-  // Replace **text** with <b>text</b> for bold
-  text = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-
-  // Replace *text* with <i>text</i> for italic
-  text = text.replace(/\*(.*?)\*/g, '<i>$1</i>');
-
-  // Replace __text__ with <u>text</u> for underlined
-  text = text.replace(/__(.*?)__/g, '<u>$1</u>');
-
-  // Replace ~~text~~ with <del>text</del> for strikethrough
-  text = text.replace(/~~(.*?)~~/g, '<del>$1</del>');
-
-  // Replace [text](url) with <a href="url" target="_blank">text</a> for links
-  text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
-
-  // Replace ![alt text](url) with <img src="url" alt="alt text"> for images
-  text = text.replace(/!\[([^\]]*)\]\((https?:\/\/[^\)]+)\)/g, '<img src="$2" alt="$1" style="max-width: 100%; height: auto;">');
-
-  // Remove any existing cursor
-  const existingCursor = output.querySelector('.blinking-cursor');
-  if (existingCursor) {
-    existingCursor.remove();
-  }
-
-  // Append a blinking cursor to the rendered text
-  const blinkingCursor = document.createElement('span');
-  blinkingCursor.className = 'blinking-cursor';
-  blinkingCursor.textContent = '|';
-
-  // Output the rendered HTML with the blinking cursor at the end
-  output.innerHTML = text;
-  output.appendChild(blinkingCursor);
-}
-
-// Call renderMarkdown initially to show the cursor
-renderMarkdown();
-
-// Add an event listener to continuously update the rendered Markdown as user types
-document.getElementById('messageInput').addEventListener('input', renderMarkdown);
     
     function sendMessage() {
       alert('Send button clicked');
