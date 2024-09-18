@@ -201,11 +201,30 @@ body {
     font-size: 24px;
     color: #FF5722; /* Orange color for marker */
   }
-        @media (max-width: 767px) {
-        .desktop-only {
-          display: none;
-        }
-      }
+@media (max-width: 767px) {
+  .top-row {
+    display: none; /* Initially hidden on mobile */
+  }
+  .mobile-only {
+    display: inline-block; /* Show the toggle button on mobile */
+  }
+}
+
+/* For horizontal scrolling and styling */
+.top-row {
+  overflow-x: auto;
+  white-space: nowrap; /* Prevent buttons from wrapping */
+}
+
+@media (max-width: 767px) {
+  .top-row.open {
+    display: flex; /* Flex only when opened */
+  }
+}
+.top-row {
+  transition: max-height 0.3s ease-in-out;
+}
+
   </style>
 </head>
 <body>
@@ -230,6 +249,7 @@ body {
     </div>
     <div class="chat-input-wrapper">
       <div class="chat-input">
+	<span id="toggleTopRow" class="material-icons mobile-only">add_circle</span>
         <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
         <input id="messageInput" type="text" placeholder="Type a message..." oninput="toggleClearButton()" onblur="hideClearButton()">
         <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
@@ -577,6 +597,26 @@ function clearText() {
         renderRooms();
       }
     }
+document.getElementById('toggleTopRow').addEventListener('click', function() {
+  const topRow = document.querySelector('.top-row');
+  
+  if (!topRow.classList.contains('open')) {
+    topRow.style.maxHeight = topRow.scrollHeight + "px"; // Set max-height for animation
+    topRow.classList.add('open');
+  } else {
+    topRow.style.maxHeight = null;
+    topRow.classList.remove('open');
+  }
+});
+document.addEventListener('click', function(event) {
+  const topRow = document.querySelector('.top-row');
+  const chatInput = document.querySelector('.chat-input-wrapper');
+  
+  if (!chatInput.contains(event.target) && !topRow.contains(event.target) && topRow.classList.contains('open')) {
+    topRow.style.maxHeight = null; // Reset max-height to close
+    topRow.classList.remove('open');
+  }
+});
 
     addRoomFromUrlParams();
     renderRooms();
