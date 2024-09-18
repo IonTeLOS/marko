@@ -457,18 +457,19 @@ if (typeof EmojiMart === 'undefined') {
 	  
 let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
 
-// Open/close the dropdown
 function openDropdown() {
   const dropdown = document.querySelector('.dropdown');
+  const dropdownMenu = dropdown.querySelector('.dropdown-menu'); // Define dropdownMenu here
+  
   dropdown.classList.toggle('show');
   
   if (dropdown.classList.contains('show')) {
-    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-    dropdownMenu.style.maxHeight = dropdownMenu.scrollHeight + "px";
+    dropdownMenu.style.maxHeight = dropdownMenu.scrollHeight + "px"; // Open the dropdown
   } else {
-    dropdownMenu.style.maxHeight = null;
+    dropdownMenu.style.maxHeight = null; // Close the dropdown
   }
 }
+
 
 // Close dropdown when clicking outside
 function closeDropdown(event) {
