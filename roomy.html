@@ -20,16 +20,35 @@ body {
   width: 100%;
 }
 
+.dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .dropdown-toggle {
-  width: 100%;
   background-color: #2196F3;
   color: white;
   padding: 16px;
   font-size: 18px;
-  text-align: center;
   cursor: pointer;
   border: none;
+  flex-grow: 1;
+  text-align: center;
 }
+
+.top-menu {
+  display: flex;
+  justify-content: space-around;
+  width: 150px; /* Adjust based on the number of buttons */
+}
+
+.top-menu .material-icons {
+  font-size: 32px;
+  color: #2196F3;
+  cursor: pointer;
+}
+
 
 .dropdown-menu {
   width: 100%;
@@ -243,12 +262,22 @@ body {
   </style>
 </head>
 <body>
-  <div class="dropdown">
+<div class="dropdown">
+  <div class="dropdown-header">
     <button class="dropdown-toggle" onclick="toggleDropdown()">Select Room</button>
-    <div class="dropdown-menu">
-      <!-- Room chips will be dynamically inserted here -->
+    <!-- Move bottom-menu to the top next to the dropdown-toggle -->
+    <div class="top-menu">
+      <span class="material-icons" onclick="newButtonClicked()">new_releases</span>
+      <span class="material-icons" onclick="chatButtonClicked()">chat</span>
+      <span class="material-icons" onclick="openDropdown()">arrow_drop_down</span> <!-- This button opens the dropdown -->
+      <span class="material-icons" onclick="settingsButtonClicked()">settings</span>
     </div>
   </div>
+  <div class="dropdown-menu">
+    <!-- Room chips will be dynamically inserted here -->
+  </div>
+</div>
+	
   <div id="pickerContainer"></div>
 
   <div class="chat-container">
@@ -436,9 +465,21 @@ if (typeof EmojiMart === 'undefined') {
     console.error('Toggle button element not found.');
   }
 }
+	  
+let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
 
+function openDropdown() {
+  const dropdown = document.querySelector('.dropdown');
+  dropdown.classList.toggle('show');
+  
+  if (dropdown.classList.contains('show')) {
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+    dropdownMenu.style.maxHeight = dropdownMenu.scrollHeight + "px"; // Open the dropdown
+  } else {
+    dropdownMenu.style.maxHeight = null; // Close the dropdown
+  }
+}
 
-    let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
 
     function toggleDropdown() {
   const dropdown = document.querySelector('.dropdown');
