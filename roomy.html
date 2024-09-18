@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Optimized Chat App</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
   <style>
 body {
   font-family: Arial, sans-serif;
@@ -273,7 +274,7 @@ body {
 	
   <div id="pickerContainer"></div>
 
-  <div class="chat-container">
+  <div id="chatContainer" class="chat-container">
     <!-- Chat messages would go here -->
   </div>
 
@@ -302,7 +303,10 @@ body {
   <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
   <script>
         const IPWHOIS_API_URL = 'https://ipwho.is/';
+        const canvas = document.getElementById('chatContainer')
 
+        const jsConfetti = new JSConfetti({ canvas })
+	  
         function getMapsLink(query) {
             return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
         }
@@ -602,6 +606,15 @@ function clearText() {
 
     function locationButtonClicked() {
       alert('Location button clicked');
+    }
+
+    function videoButtonClicked() {
+
+jsConfetti.addConfetti({
+  emojis: ['🦄'],
+  emojiSize: 100,
+  confettiNumber: 30,
+})  
     }
 
     function addRoomFromUrlParams() {
