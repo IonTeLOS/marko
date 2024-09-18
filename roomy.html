@@ -26,30 +26,26 @@ body {
   align-items: center;
 }
 
-.dropdown-toggle {
-  background-color: #2196F3;
-  color: white;
-  padding: 16px;
-  font-size: 18px;
-  cursor: pointer;
-  border: none;
-  flex-grow: 1;
-  text-align: center;
-}
-
+/* The top-menu will now replace the dropdown toggle */
 .top-menu {
   display: flex;
   justify-content: space-around;
-  width: 150px; /* Adjust based on the number of buttons */
+  padding: 16px;
+  background-color: #2196F3; /* Same background as the old dropdown-toggle */
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  border: none;
+  width: 100%;
 }
 
 .top-menu .material-icons {
-  font-size: 32px;
-  color: #2196F3;
+  font-size: 32px; /* Same size as the old bottom-menu icons */
+  color: white;
   cursor: pointer;
 }
 
-
+/* Dropdown styles remain unchanged */
 .dropdown-menu {
   width: 100%;
   max-height: 0;
@@ -64,6 +60,7 @@ body {
   max-height: 50vh;
   opacity: 1;
 }
+
 
 .room-chip {
   display: flex;
@@ -263,15 +260,12 @@ body {
 </head>
 <body>
 <div class="dropdown">
-  <div class="dropdown-header">
-    <button class="dropdown-toggle" onclick="toggleDropdown()">Select Room</button>
-    <!-- Move bottom-menu to the top next to the dropdown-toggle -->
-    <div class="top-menu">
-      <span class="material-icons" onclick="newButtonClicked()">new_releases</span>
-      <span class="material-icons" onclick="chatButtonClicked()">chat</span>
-      <span class="material-icons" onclick="openDropdown()">arrow_drop_down</span> <!-- This button opens the dropdown -->
-      <span class="material-icons" onclick="settingsButtonClicked()">settings</span>
-    </div>
+  <!-- The top-menu replaces the dropdown-toggle -->
+  <div class="top-menu">
+    <span class="material-icons" onclick="newButtonClicked()">new_releases</span>
+    <span class="material-icons" onclick="chatButtonClicked()">chat</span>
+    <span class="material-icons" onclick="openDropdown()">arrow_drop_down</span> <!-- This button opens the dropdown -->
+    <span class="material-icons" onclick="settingsButtonClicked()">settings</span>
   </div>
   <div class="dropdown-menu">
     <!-- Room chips will be dynamically inserted here -->
@@ -302,11 +296,6 @@ body {
     </div>
   </div>
 
-  <div class="bottom-menu">
-    <span class="material-icons" onclick="newButtonClicked()">new_releases</span>
-    <span class="material-icons" onclick="chatButtonClicked()">chat</span>
-    <span class="material-icons" onclick="settingsButtonClicked()">settings</span>
-  </div>
 <p id="mapsLink"></p>
   
   <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
@@ -468,74 +457,72 @@ if (typeof EmojiMart === 'undefined') {
 	  
 let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
 
+// Open/close the dropdown
 function openDropdown() {
   const dropdown = document.querySelector('.dropdown');
   dropdown.classList.toggle('show');
   
   if (dropdown.classList.contains('show')) {
     const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-    dropdownMenu.style.maxHeight = dropdownMenu.scrollHeight + "px"; // Open the dropdown
-  } else {
-    dropdownMenu.style.maxHeight = null; // Close the dropdown
-  }
-}
-
-
-    function toggleDropdown() {
-  const dropdown = document.querySelector('.dropdown');
-  dropdown.classList.toggle('show');
-  
-  if (dropdown.classList.contains('show')) {
-    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
     dropdownMenu.style.maxHeight = dropdownMenu.scrollHeight + "px";
+  } else {
+    dropdownMenu.style.maxHeight = null;
   }
 }
 
-	function closeDropdown(event) {
-      const dropdown = document.querySelector('.dropdown');
-      const dropdownToggle = document.querySelector('.dropdown-toggle');
-      
-      if (!dropdown.contains(event.target) && event.target !== dropdownToggle) {
-        dropdown.classList.remove('show');
-      }
-    }
-
-    // Add click event listener to the document
-    document.addEventListener('click', closeDropdown);
-    
-    function renderRooms() {
-      const dropdownMenu = document.querySelector('.dropdown-menu');
-      dropdownMenu.innerHTML = '';
-
-      rooms.sort((a, b) => {
-        if (a.color === 'green') return -1;
-        if (b.color === 'green') return 1;
-        return (b.messageCount || 0) - (a.messageCount || 0);
-      });
-
-      rooms.forEach((room, index) => {
-        const roomChip = document.createElement('div');
-        roomChip.classList.add('room-chip', room.color);
-        roomChip.innerHTML = `
-          <span class="dot"></span>
-          <span class="room-name">${room.name}</span>
-          <span class="material-icons delete-btn" onclick="event.stopPropagation(); deleteRoom(${index})">delete</span>
-        `;
-        roomChip.addEventListener('click', () => openRoom(room.id));
-        dropdownMenu.appendChild(roomChip);
-      });
-    }
-
-	if (document.querySelector('.dropdown').classList.contains('show')) {
-      dropdownMenu.style.maxHeight = dropdownMenu.scrollHeight + "px";
-    }
-    
-function openRoom(room) {
-  const topic = room.topic || 'No topic'; // Fallback if topic is undefined
-  alert(`Room "${room.name}" with topic "${topic}" opened`);
-  console.log('Open room:', room.id);
-  document.querySelector('.dropdown').classList.remove('show');
+// Close dropdown when clicking outside
+function closeDropdown(event) {
+  const dropdown = document.querySelector('.dropdown');
+  const topMenuButton = document.querySelector('.material-icons[onclick="openDropdown()"]'); // Dropdown opener button
+  
+  if (!dropdown.contains(event.target) && event.target !== topMenuButton) {
+    dropdown.classList.remove('show');
+    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+    dropdownMenu.style.maxHeight = null;
+  }
 }
+
+// Add click event listener for closing dropdown
+document.addEventListener('click', closeDropdown);
+
+// Render rooms in dropdown
+function renderRooms() {
+  const dropdownMenu = document.querySelector('.dropdown-menu');
+  dropdownMenu.innerHTML = '';
+
+  rooms.sort((a, b) => {
+    if (a.color === 'green') return -1;
+    if (b.color === 'green') return 1;
+    return (b.messageCount || 0) - (a.messageCount || 0);
+  });
+
+  rooms.forEach((room, index) => {
+    const roomChip = document.createElement('div');
+    roomChip.classList.add('room-chip', room.color);
+    roomChip.innerHTML = `
+      <span class="dot"></span>
+      <span class="room-name">${room.name}</span>
+      <span class="material-icons delete-btn" onclick="event.stopPropagation(); deleteRoom(${index})">delete</span>
+    `;
+    roomChip.addEventListener('click', () => openRoom(room.id));
+    dropdownMenu.appendChild(roomChip);
+  });
+}
+
+// Open a room
+function openRoom(roomId) {
+  const room = rooms.find(r => r.id === roomId);
+  const topic = room ? room.topic : 'No topic';
+  alert(`Room "${room.name}" with topic "${topic}" opened`);
+  console.log('Open room:', roomId);
+
+  // Close dropdown
+  const dropdown = document.querySelector('.dropdown');
+  dropdown.classList.remove('show');
+  const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+  dropdownMenu.style.maxHeight = null;
+}
+
 
 
 
