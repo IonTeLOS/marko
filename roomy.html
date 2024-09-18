@@ -93,15 +93,6 @@ body {
   padding: 10px;
 }
 
-.top-row {
-  display: flex;
-  justify-content: space-around;
-  padding: 10px;
-  background-color: #f8f8f8;
-  border-top-left-radius: 20px;
-  border-top-right-radius: 20px;
-}
-
 .top-row .material-icons {
   font-size: 28px;
   color: #2196F3;
@@ -201,30 +192,50 @@ body {
     font-size: 24px;
     color: #FF5722; /* Orange color for marker */
   }
+/* Consistent styling for both desktop and mobile */
+.top-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Align items to the start to allow scrolling */
+  padding: 10px;
+  background-color: #f8f8f8;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  height: 50px; /* Fixed height for consistency */
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Prevent buttons from wrapping */
+  transition: max-height 0.3s ease-in-out; /* Smooth transition for showing/hiding */
+}
+
+/* Hide top-row on mobile initially */
 @media (max-width: 767px) {
   .top-row {
-    display: none; /* Initially hidden on mobile */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    white-space: nowrap; /* Prevent buttons from wrapping */
+    display: none; /* Hidden by default on mobile */
   }
+  
   .mobile-only {
     display: inline-block; /* Show the add_circle button on mobile */
   }
+  
   .desktop-only {
     display: none; /* Hide emoji button on mobile */
   }
 }
 
+/* When top-row is open on mobile */
+.top-row.open {
+  display: flex; /* Show the row */
+  max-height: 50px; /* Set a fixed height when opened */
+  overflow-x: auto; /* Horizontal scrolling */
+}
+
+/* To hide add_circle button on desktop */
 @media (min-width: 768px) {
   .mobile-only {
     display: none; /* Hide the add_circle button on desktop */
   }
 }
 
-/* For smoother transitions */
-.top-row {
-  transition: max-height 0.3s ease-in-out;
-}
 
 
   </style>
@@ -601,29 +612,24 @@ function clearText() {
     }
 document.getElementById('toggleTopRow').addEventListener('click', function() {
   const topRow = document.querySelector('.top-row');
-  
+
   if (!topRow.classList.contains('open')) {
-    topRow.style.maxHeight = topRow.scrollHeight + "px"; // Expand height
     topRow.classList.add('open');
-    topRow.style.display = 'flex'; // Show the row
   } else {
-    topRow.style.maxHeight = null; 
     topRow.classList.remove('open');
-    topRow.style.display = 'none'; // Hide the row when closed
   }
 });
 
-// Close top-row when clicking outside of top-row or chat input
+// Close top-row when clicking outside
 document.addEventListener('click', function(event) {
   const topRow = document.querySelector('.top-row');
   const chatInput = document.querySelector('.chat-input-wrapper');
   
   if (!chatInput.contains(event.target) && !topRow.contains(event.target) && topRow.classList.contains('open')) {
-    topRow.style.maxHeight = null;
     topRow.classList.remove('open');
-    topRow.style.display = 'none';
   }
 });
+
 
 
     addRoomFromUrlParams();
