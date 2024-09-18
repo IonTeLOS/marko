@@ -97,6 +97,8 @@ body {
   font-size: 28px;
   color: #2196F3;
   cursor: pointer;
+  flex-grow: 1; /* Allow each button to grow equally */
+  text-align: center; /* Center the icon in each flex item */
 }
 
 .chat-input-wrapper {
@@ -196,7 +198,7 @@ body {
 .top-row {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* Align items to the start to allow scrolling */
+  justify-content: space-between; /* Evenly distribute buttons across available space */
   padding: 10px;
   background-color: #f8f8f8;
   border-top-left-radius: 20px;
