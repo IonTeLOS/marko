@@ -620,6 +620,15 @@ function clearText() {
     }
 
     function videoButtonClicked() {
+      function resizeCanvasForConfetti() {
+   	 const chatContainer = document.getElementById('chatContainer');
+    	const confettiCanvas = document.getElementById('confettiCanvas');
+
+   	 // Resize canvas to match chat-container dimensions
+    	confettiCanvas.width = chatContainer.offsetWidth;
+    	confettiCanvas.height = chatContainer.offsetHeight;
+ 	 }
+resizeCanvasForConfetti();
 
 jsConfetti.addConfetti({
   emojis: ['♥️'],
