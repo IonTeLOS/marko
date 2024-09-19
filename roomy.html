@@ -7,16 +7,20 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
   <style>
-body {
+html, body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
   background-color: #f4f4f4;
+  height: 100%; /* Set body and html to take full viewport height */
+  overflow: hidden; /* Disable scrolling for the whole page */
 }
 
+body {
+  display: flex;
+  flex-direction: column;
+}	  
+	  
 .dropdown {
   width: 100%;
 }
@@ -50,7 +54,7 @@ body {
 .dropdown-menu {
   width: 100%;
   max-height: 0;
-  overflow: hidden;
+  overflow-y: auto;
   background-color: white;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
@@ -61,7 +65,6 @@ body {
   max-height: 50vh;
   opacity: 1;
 }
-
 
 .room-chip {
   display: flex;
@@ -97,17 +100,24 @@ body {
 .room-chip.red .dot { background-color: red; }
 
 .chat-container {
-  flex-grow: 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   padding: 20px;
+  flex-grow: 1;
+  overflow-y: auto; /* Make chat container scrollable */
+  background-color: #f4f4f4;	
 }
 
 .input-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background-color: white;
   border-top: 1px solid #ddd;
   padding: 10px;
+  z-index: 10; /* Ensure it's above other elements */	
 }
 
 .top-row .material-icons {
@@ -148,12 +158,11 @@ body {
   font-size: 16px;
   margin: 0 10px;
   background-color: transparent;
-  caret-color: black; /* Hide the actual caret (cursor) */
-  color: black; /* Keep text invisible */
-  line-height: 1.5; /* Match rendered text */
+  caret-color: black; 
+  color: black; 
+  line-height: 1.5; 
   height: 100%;
-  padding: 0; /* No initial padding */
-  padding-left: 0; /* Will be dynamically adjusted */
+  padding: 0; 
 }
 
 .chat-input input::placeholder {
