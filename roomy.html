@@ -401,7 +401,9 @@ input#messageInput {
                 .then(data => {
                     const { city, region, country } = data;
                     const closestLocation = `${city}, ${region}, ${country}`;
-                    document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(closestLocation)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Closest Location in Google Maps</a>`;
+		    showMessageTypeIcon('location_on');	
+		    sessionStorage.setItem('current-location', getMapsLink(closestLocation));
+                    //document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(closestLocation)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Closest Location in Google Maps</a>`;
                 })
                 .catch(error => {
                     console.error('Error fetching IP-based location:', error);
@@ -420,8 +422,9 @@ input#messageInput {
                 .then(response => response.json())
                 .then(data => {
                     const address = data.display_name;
-		    
                     //document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(address)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Your Location in Google Maps</a>`;
+		    showMessageTypeIcon('location_on');	
+		    sessionStorage.setItem('current-location', getMapsLink(address));
                 })
                 .catch(error => {
                     console.error('Error fetching address:', error);
