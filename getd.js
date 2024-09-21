@@ -57,18 +57,27 @@ function resolveRelativeUrl(baseUrl, relativeUrl) {
 }
 
 function getFaviconsAndOgImage(doc, baseUrl) {
-  const faviconTags = [...doc.querySelectorAll('link[rel~="icon"], link[rel="apple-touch-icon"]')];
+  const faviconTags = [...doc.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]')];
   const ogImageTag = doc.querySelector('meta[property="og:image"]');
 
-  const favicons = faviconTags.map(tag => ({
-    href: resolveRelativeUrl(baseUrl, tag.getAttribute('href')),
-    size: tag.getAttribute('sizes') || ''
-  })).sort((a, b) => b.size - a.size);
+  const resolveWithProxy = (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
 
-  return {
-    fav: favicons[0]?.href || '',
-    'og:image': ogImageTag ? resolveRelativeUrl(baseUrl, ogImageTag.content) : ''
+  if (faviconTags.length === 0) return { fav: '', 'fav-': '', 'og:image': '' };
+
+  const faviconsWithSize = faviconTags.map(tag => {
+    const size = tag.getAttribute('sizes');
+    const width = size ? parseInt(size.split('x')[0], 10) : null;
+    const href = resolveWithProxy(resolveRelativeUrl(baseUrl, tag.getAttribute('href')));
+    return { href, size: width || 0 };
+  }).sort((a, b) => b.size - a.size);
+
+  const result = {
+    fav: faviconsWithSize[0]?.href || '',
+    'fav-': faviconsWithSize.length > 1 ? faviconsWithSize[faviconsWithSize.length - 1]?.href : '',
+    'og:image': ogImageTag && !ogImageTag.content.includes('$') ? resolveWithProxy(resolveRelativeUrl(baseUrl, ogImageTag.content)) : ''
   };
+
+  return result;
 }
 
 async function extractColorsFromImage(imgSrc) {
