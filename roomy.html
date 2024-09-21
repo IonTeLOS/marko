@@ -335,15 +335,26 @@ input#messageInput {
 
         const jsConfetti = new JSConfetti({ canvas })
 
-	function showMessageTypeIcon(iconName) {
-          const iconElement = document.getElementById('messageTypeIcon');
+function showMessageTypeIcon(iconName, url) {
+  const iconElement = document.getElementById('messageTypeIcon');
   
-          // Remove the 'hidden' class to make the icon visible
-          iconElement.classList.remove('hidden');
+  // Remove the 'hidden' class to make the icon visible
+  iconElement.classList.remove('hidden');
   
-          // Update the icon's content to match the provided icon name
-          iconElement.textContent = iconName;
-	}
+  // Update the icon's content to match the provided icon name
+  iconElement.textContent = iconName;
+
+  // If a URL is provided, add a click event to open the URL
+  if (url) {
+    iconElement.style.cursor = 'pointer'; // Change cursor to indicate it's clickable
+    iconElement.onclick = function() {
+      window.open(url, '_blank'); // Open URL in a new tab
+    };
+  } else {
+    iconElement.style.cursor = ''; // Reset cursor if no URL is provided
+    iconElement.onclick = null; // Remove any previous click handler
+  }
+}
         
 	function hideMessageTypeIcon() {
           document.getElementById('messageTypeIcon').classList.add('hidden');
@@ -401,8 +412,9 @@ input#messageInput {
                 .then(data => {
                     const { city, region, country } = data;
                     const closestLocation = `${city}, ${region}, ${country}`;
-		    showMessageTypeIcon('location_on');	
-		    sessionStorage.setItem('current-location', getMapsLink(closestLocation));
+		    const mapLink = getMapsLink(closestLocation);
+		    showMessageTypeIcon('location_on', mapLink);	
+		    sessionStorage.setItem('current-location', mapLink);
                     //document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(closestLocation)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Closest Location in Google Maps</a>`;
                 })
                 .catch(error => {
@@ -423,8 +435,9 @@ input#messageInput {
                 .then(data => {
                     const address = data.display_name;
                     //document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(address)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Your Location in Google Maps</a>`;
-		    showMessageTypeIcon('location_on');	
-		    sessionStorage.setItem('current-location', getMapsLink(address));
+		    const mapLink = getMapsLink(address);
+		    showMessageTypeIcon('location_on', mapLink);	
+		    sessionStorage.setItem('current-location', mapLink);
                 })
                 .catch(error => {
                     console.error('Error fetching address:', error);
