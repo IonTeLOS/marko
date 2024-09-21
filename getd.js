@@ -1,5 +1,29 @@
 // gd.js
-const fetchSiteMetadata = (() => {
+(function() {
+  let dependenciesLoaded = false;
+  let loadingPromise = null;
+
+  const loadScript = (url) => new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = url;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+
+  const loadDependencies = async () => {
+    if (dependenciesLoaded) return;
+    if (loadingPromise) return loadingPromise;
+
+    loadingPromise = Promise.all([
+      loadScript('https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js'),
+      loadScript('https://cdn.jsdelivr.net/npm/colorthief/dist/color-thief.min.js')
+    ]);
+
+    await loadingPromise;
+    dependenciesLoaded = true;
+  };
+
   const resolveRelativeUrl = (baseUrl, relativeUrl) => new URL(relativeUrl, baseUrl).href;
 
   const getMetadata = (doc, siteUrl) => {
@@ -47,21 +71,22 @@ const fetchSiteMetadata = (() => {
     return { color, 'c-color': complementary };
   };
 
-  return async (siteUrl, requestedFieldsParam = '') => {
+  const fetchSiteMetadata = async (siteUrl, requestedFieldsParam = '') => {
     if (!siteUrl) return { error: 'No URL parameter provided.' };
 
     const requestedFields = requestedFieldsParam ? requestedFieldsParam.split(',') : null;
 
     try {
-      const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(siteUrl)}`);
-      const contentType = response.headers.get('Content-Type') || '';
+      await loadDependencies();
+
+      const response = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(siteUrl)}`);
+      const contentType = response.headers['content-type'] || '';
       
       if (contentType.includes('text/html')) {
         return { error: 'Received HTML content. There may be an issue with the proxy or URL.' };
       }
 
-      const text = await response.text();
-      const doc = new DOMParser().parseFromString(text, 'text/html');
+      const doc = new DOMParser().parseFromString(response.data.contents, 'text/html');
 
       const metadata = getMetadata(doc, siteUrl);
 
@@ -84,7 +109,7 @@ const fetchSiteMetadata = (() => {
       return { error: error.message };
     }
   };
-})();
 
-// Expose function globally
-window.fetchSiteMetadata = fetchSiteMetadata;
+  // Expose function globally
+  window.fetchSiteMetadata = fetchSiteMetadata;
+})();
