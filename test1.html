@@ -19,8 +19,9 @@
   <script>
     document.getElementById('fetch-metadata-btn').addEventListener('click', async () => {
       try {
-        const metadata = await fetchSiteMetadata('https://in.gr');
+        const metadata = await fetchSiteMetadata('https://in.gr')
         console.log(metadata);
+        console.log(metadata.title);
       } catch (error) {
         console.error('Error:', error);
       }
