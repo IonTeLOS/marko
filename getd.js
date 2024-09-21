@@ -84,7 +84,7 @@ async function extractColorsFromImage(imgSrc) {
   const loadImage = (src) => {
     return new Promise((resolveImg, rejectImg) => {
       const img = new Image();
-      img.crossOrigin = 'Anonymous'; // Enable cross-origin for external images
+      img.crossOrigin = 'Anonymous'; // Attempt cross-origin load for external images
       img.onload = () => resolveImg(img);
       img.onerror = (e) => rejectImg(e);
       img.src = src;
@@ -96,7 +96,6 @@ async function extractColorsFromImage(imgSrc) {
     let dominantColor = colorThief.getColor(img);
     let hexColor = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + dominantColor[2]).toString(16).slice(1).toUpperCase()}`;
 
-    // If the color is black/white, get another from the palette
     if (hexColor === '#FFFFFF' || hexColor === '#000000') {
       const palette = colorThief.getPalette(img, 5);
       dominantColor = palette.find(
@@ -110,24 +109,16 @@ async function extractColorsFromImage(imgSrc) {
     return { color: finalHex, 'c-color': complementaryColor };
   };
 
-  // First, attempt to load via proxy
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgSrc)}`;
   try {
-    const img = await loadImage(proxyUrl);
+    // Try loading the image directly
+    const img = await loadImage(imgSrc);
     return extractColors(img);
-  } catch (proxyError) {
-    console.warn('Failed to load image through proxy. Trying direct load...', proxyError);
-
-    // Fallback to direct load if proxy fails
-    try {
-      const img = await loadImage(imgSrc);
-      return extractColors(img);
-    } catch (directError) {
-      console.error('Failed to load image directly:', directError);
-      return { color: '', 'c-color': '' }; // Return empty colors on failure
-    }
+  } catch (directError) {
+    console.error('Failed to load image:', directError);
+    return { color: '', 'c-color': '' }; // Return empty colors on failure
   }
 }
+
 
 function rgbToHex([r, g, b]) {
   return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
