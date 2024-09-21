@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Metadata Fetcher</title>
+    <!-- Include Axios from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  
+  <!-- Include ColorThief from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/colorthief/dist/color-thief.min.js"></script>
+
+</head>
+<body>
+  <button id="fetch-metadata-btn">Fetch Metadata</button>
+  
+  <!-- Link to your script file -->
+  <script src="https://teloslinux.org/marko/getd.js"></script>
+  <script>
+    document.getElementById('fetch-metadata-btn').addEventListener('click', async () => {
+      try {
+        const metadata = await fetchSiteMetadata('https://in.gr');
+        console.log(metadata);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>
