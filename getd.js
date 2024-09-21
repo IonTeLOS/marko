@@ -7,7 +7,7 @@ async function fetchSiteMetadata(siteUrl, requestedFieldsParam) {
   const requestedFields = requestedFieldsParam ? requestedFieldsParam.split(',') : null;
 
   try {
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(siteUrl)}`;
+    const proxyUrl = `${encodeURIComponent(siteUrl)}`;
     const response = await fetch(proxyUrl);
 
     // Check if the response is HTML
