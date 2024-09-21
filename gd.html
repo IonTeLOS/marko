@@ -114,7 +114,7 @@
       return result;
     }
 
-async function fetchSiteData(siteUrl) {
+async function fetchSiteData(siteUrl, requestedFields) {
   const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(siteUrl)}`;
   try {
     const response = await axios.get(proxyUrl);
@@ -145,21 +145,37 @@ async function fetchSiteData(siteUrl) {
       }
     }
 
-    // Log metadata or show it on the webpage
-    console.log(metadata);  // Log the metadata for debugging
-    document.getElementById('site-url').innerText = siteUrl;
-    document.getElementById('metadata').innerText = JSON.stringify(metadata, null, 2);
+    // Filter metadata based on the requested fields
+    if (requestedFields) {
+      const filteredMetadata = {};
+      requestedFields.forEach(field => {
+        if (metadata[field] !== undefined) {
+          filteredMetadata[field] = metadata[field];
+        }
+      });
+      return filteredMetadata;
+    }
+
+    return metadata;
 
   } catch (error) {
     console.error('Error fetching site data:', error);
-    document.body.innerText = JSON.stringify({ error: error.message }, null, 2);
+    return { error: error.message };
   }
 }
 
 function run() {
   const siteUrl = getQueryParam('url');
+  const requestedFieldsParam = getQueryParam('get');
+  
+  // Parse the requested fields from the 'get' parameter
+  const requestedFields = requestedFieldsParam ? requestedFieldsParam.split(',') : null;
+
   if (siteUrl) {
-    fetchSiteData(siteUrl);
+    fetchSiteData(siteUrl, requestedFields).then(metadata => {
+      document.getElementById('site-url').innerText = siteUrl;
+      document.getElementById('metadata').innerText = JSON.stringify(metadata, null, 2);
+    });
   } else {
     document.body.innerText = JSON.stringify({ error: 'No URL parameter provided.' }, null, 2);
   }
