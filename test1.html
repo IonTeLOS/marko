@@ -17,15 +17,15 @@
   <!-- Link to your script file -->
   <script src="https://teloslinux.org/marko/getd.js"></script>
   <script>
-    document.getElementById('fetch-metadata-btn').addEventListener('click', async () => {
-      try {
+function getMetadata(url, params) {
+try {
         const metadata = await fetchSiteMetadata(url, params);
         console.log(metadata);
         console.log(metadata.title);
       } catch (error) {
         console.error('Error:', error);
       }
-    });
+    }
   </script>
 </body>
 </html>
