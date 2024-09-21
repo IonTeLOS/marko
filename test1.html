@@ -98,6 +98,8 @@ function getFaviconsAndOgImage(doc, baseUrl) {
 }
 
 async function extractColorsFromImage(imgSrc) {
+  const proxyUrl = (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+
   const loadImage = (src) => {
     return new Promise((resolveImg, rejectImg) => {
       const img = new Image();
@@ -127,13 +129,23 @@ async function extractColorsFromImage(imgSrc) {
   };
 
   try {
+    // Attempt to load the image directly
     const img = await loadImage(imgSrc);
     return extractColors(img);
   } catch (directError) {
-    console.error('Failed to load image:', directError);
-    return { color: '', 'c-color': '' }; // Return empty colors on failure
+    console.warn('Direct image loading failed, trying proxy:', directError);
+
+    // Try using a proxy for CORS issues
+    try {
+      const img = await loadImage(proxyUrl(imgSrc));
+      return extractColors(img);
+    } catch (proxyError) {
+      console.error('Failed to load image even with proxy:', proxyError);
+      return { color: '', 'c-color': '' }; // Return empty colors on failure
+    }
   }
 }
+
 
 function getComplementaryColor(hex) {
   const r = parseInt(hex.slice(1, 3), 16);
