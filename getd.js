@@ -1,29 +1,5 @@
 // gd.js
 (function() {
-  let dependenciesLoaded = false;
-  let loadingPromise = null;
-
-  const loadScript = (url) => new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = url;
-    script.onload = resolve;
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-
-  const loadDependencies = async () => {
-    if (dependenciesLoaded) return;
-    if (loadingPromise) return loadingPromise;
-
-    loadingPromise = Promise.all([
-      loadScript('https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js'),
-      loadScript('https://cdn.jsdelivr.net/npm/colorthief/dist/color-thief.min.js')
-    ]);
-
-    await loadingPromise;
-    dependenciesLoaded = true;
-  };
-
   const resolveRelativeUrl = (baseUrl, relativeUrl) => new URL(relativeUrl, baseUrl).href;
 
   const getMetadata = (doc, siteUrl) => {
@@ -50,25 +26,30 @@
   };
 
   const extractColors = async (imgSrc) => {
-    const img = await new Promise((resolve, reject) => {
-      const img = new Image();
-      img.crossOrigin = 'Anonymous';
-      img.onload = () => resolve(img);
-      img.onerror = reject;
-      img.src = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgSrc)}`;
-    });
+    try {
+      const img = await new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgSrc)}`;
+      });
 
-    const colorThief = new ColorThief();
-    let [r, g, b] = colorThief.getColor(img);
-    if (r === 255 && g === 255 && b === 255 || r === 0 && g === 0 && b === 0) {
-      [r, g, b] = colorThief.getPalette(img, 5).find(([r, g, b]) => r !== 255 && g !== 255 && b !== 255 && r !== 0 && g !== 0 && b !== 0) || [r, g, b];
+      const colorThief = new ColorThief();
+      let [r, g, b] = colorThief.getColor(img);
+      if (r === 255 && g === 255 && b === 255 || r === 0 && g === 0 && b === 0) {
+        [r, g, b] = colorThief.getPalette(img, 5).find(([r, g, b]) => r !== 255 && g !== 255 && b !== 255 && r !== 0 && g !== 0 && b !== 0) || [r, g, b];
+      }
+
+      const toHex = (r, g, b) => `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
+      const color = toHex(r, g, b);
+      const complementary = toHex(255 - r, 255 - g, 255 - b);
+
+      return { color, 'c-color': complementary };
+    } catch (error) {
+      console.error('Error extracting colors:', error);
+      return { color: "", 'c-color': "" };
     }
-
-    const toHex = (r, g, b) => `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
-    const color = toHex(r, g, b);
-    const complementary = toHex(255 - r, 255 - g, 255 - b);
-
-    return { color, 'c-color': complementary };
   };
 
   const fetchSiteMetadata = async (siteUrl, requestedFieldsParam = '') => {
@@ -77,13 +58,10 @@
     const requestedFields = requestedFieldsParam ? requestedFieldsParam.split(',') : null;
 
     try {
-      await loadDependencies();
-
       const response = await axios.get(`https://api.allorigins.win/get?url=${encodeURIComponent(siteUrl)}`);
-      const contentType = response.headers['content-type'] || '';
       
-      if (contentType.includes('text/html')) {
-        return { error: 'Received HTML content. There may be an issue with the proxy or URL.' };
+      if (typeof response.data.contents !== 'string') {
+        throw new Error('Invalid response from proxy');
       }
 
       const doc = new DOMParser().parseFromString(response.data.contents, 'text/html');
@@ -91,13 +69,7 @@
       const metadata = getMetadata(doc, siteUrl);
 
       if (metadata.fav) {
-        try {
-          Object.assign(metadata, await extractColors(metadata.fav));
-        } catch (error) {
-          console.error('Error extracting colors:', error);
-          metadata.color = "";
-          metadata['c-color'] = "";
-        }
+        Object.assign(metadata, await extractColors(metadata.fav));
       }
 
       return requestedFields
