@@ -81,28 +81,51 @@ function getFaviconsAndOgImage(doc, baseUrl) {
 }
 
 async function extractColorsFromImage(imgSrc) {
-  const loadImage = (src) => new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = 'Anonymous';
-    img.onload = () => resolve(img);
-    img.onerror = (e) => reject(e);
-    img.src = src;
-  });
-
-  const extractColors = (img) => {
-    const colorThief = new ColorThief();
-    const dominantColor = colorThief.getColor(img);
-    const hexColor = rgbToHex(dominantColor);
-    const complementaryColor = getComplementaryColor(hexColor);
-    return { color: hexColor, 'c-color': complementaryColor };
+  const loadImage = (src) => {
+    return new Promise((resolveImg, rejectImg) => {
+      const img = new Image();
+      img.crossOrigin = 'Anonymous'; // Enable cross-origin for external images
+      img.onload = () => resolveImg(img);
+      img.onerror = (e) => rejectImg(e);
+      img.src = src;
+    });
   };
 
+  const extractColors = (img) => {
+    const colorThief = new ColorThief(); // Ensure ColorThief is included in your script
+    let dominantColor = colorThief.getColor(img);
+
+    let hexColor = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + (dominantColor[2])).toString(16).slice(1).toUpperCase()}`;
+
+    if (hexColor === '#FFFFFF' || hexColor === '#000000') {
+      const palette = colorThief.getPalette(img, 5);
+      dominantColor = palette.find(
+        ([r, g, b]) => r !== 255 && g !== 255 && b !== 255 && r !== 0 && g !== 0 && b !== 0
+      ) || dominantColor;
+    }
+
+    const finalHex = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + (dominantColor[2])).toString(16).slice(1).toUpperCase()}`;
+    const complementaryColor = getComplementaryColor(finalHex);
+
+    return { color: finalHex, 'c-color': complementaryColor };
+  };
+
+  // Try loading the image directly first
   try {
     const img = await loadImage(imgSrc);
     return extractColors(img);
-  } catch (error) {
-    console.error('Error loading image:', error);
-    return { color: '', 'c-color': '' };
+  } catch (directError) {
+    console.warn('Direct image load failed, attempting via proxy...');
+
+    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgSrc)}`;
+
+    try {
+      const img = await loadImage(proxyUrl);
+      return extractColors(img);
+    } catch (proxyError) {
+      console.error('Failed to load image via proxy:', proxyError);
+      return { color: '', 'c-color': '' };
+    }
   }
 }
 
