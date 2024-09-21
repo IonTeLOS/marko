@@ -23,7 +23,6 @@ async function fetchSiteMetadata(siteUrl, requestedFieldsParam) {
     const doc = parser.parseFromString(text, 'text/html');
 
     const metadata = {};
-
     metadata.title = doc.querySelector('title')?.innerText || "";
     metadata.shortname = siteUrl.replace(/https?:\/\//, '').split('/')[0] || "";
     metadata.description = doc.querySelector('meta[name="description"]')?.content || "";
@@ -64,6 +63,11 @@ async function fetchSiteMetadata(siteUrl, requestedFieldsParam) {
   }
 }
 
+function resolveRelativeUrl(baseUrl, relativeUrl) {
+  const urlObj = new URL(relativeUrl, baseUrl);
+  return urlObj.href;
+}
+
 function getFaviconsAndOgImage(doc, baseUrl) {
   const faviconTags = [...doc.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]')];
   const ogImageTag = doc.querySelector('meta[property="og:image"]');
@@ -84,11 +88,6 @@ function getFaviconsAndOgImage(doc, baseUrl) {
   };
 
   return result;
-}
-
-function resolveRelativeUrl(baseUrl, relativeUrl) {
-  const urlObj = new URL(relativeUrl, baseUrl);
-  return urlObj.href;
 }
 
 async function extractColorsFromImage(imgSrc) {
@@ -139,19 +138,16 @@ async function extractColorsFromImage(imgSrc) {
 }
 
 function getComplementaryColor(hex) {
-  // Convert hex to RGB
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
 
-  // Calculate complementary color
   const compR = 255 - r;
   const compG = 255 - g;
   const compB = 255 - b;
 
-  // Convert RGB back to hex
   return `#${((1 << 24) + (compR << 16) + (compG << 8) + compB).toString(16).slice(1).toUpperCase()}`;
 }
 
-// Expose the function globally for use in the browser
+// Expose function globally
 window.fetchSiteMetadata = fetchSiteMetadata;
