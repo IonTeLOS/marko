@@ -122,3 +122,5 @@ function getComplementaryColor(hex) {
   const compB = 255 - b;
   return `#${((1 << 24) + (compR << 16) + (compG << 8) + compB).toString(16).slice(1).toUpperCase()}`;
 }
+
+window.fetchSiteMetadata = fetchSiteMetadata;
