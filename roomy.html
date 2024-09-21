@@ -270,8 +270,17 @@ body {
     display: none; /* Hide the add_circle button on desktop */
   }
 }
+.hidden {
+  display: none; /* Icon is initially hidden */
+}
 
+#messageTypeIcon {
+  margin-left: 8px; /* Add some space between the icon and the toggles */
+}
 
+input#messageInput {
+  flex: 1; /* This makes the input field take up the remaining space */
+}
 
   </style>
 </head>
@@ -305,16 +314,17 @@ body {
       <span class="material-icons" onclick="micButtonClicked()">mic</span>
       <span id="getLocation" class="material-icons" >location_on</span>
     </div>
-    <div class="chat-input-wrapper">
-      <div class="chat-input">
-	<span id="toggleTopRow" class="material-icons mobile-only">add_circle</span>
-        <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
-        <input id="messageInput" type="text" placeholder="Type a message..." oninput="toggleClearButton()" onblur="hideClearButton()">
-        <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
-        <span class="material-icons" onclick="sendMessage()">send</span>
-      </div>
-    </div>
+   <div class="chat-input-wrapper">
+  <div class="chat-input">
+    <span id="toggleTopRow" class="material-icons mobile-only">add_circle</span>
+    <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
+    <span id="messageTypeIcon" class="material-icons hidden">warning</span> <!-- This is the new icon -->
+    <input id="messageInput" type="text" placeholder="Message or link..." oninput="toggleClearButton()" onblur="hideClearButton()">
+    <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
+    <span class="material-icons" onclick="sendMessage()">send</span>
   </div>
+</div>
+</div>
 
 <p id="mapsLink"></p>
   
@@ -324,6 +334,20 @@ body {
         const canvas = document.getElementById('confettiCanvas')
 
         const jsConfetti = new JSConfetti({ canvas })
+
+	function showMessageTypeIcon(iconName) {
+          const iconElement = document.getElementById('messageTypeIcon');
+  
+          // Remove the 'hidden' class to make the icon visible
+          iconElement.classList.remove('hidden');
+  
+          // Update the icon's content to match the provided icon name
+          iconElement.textContent = iconName;
+	}
+        
+	function hideMessageTypeIcon() {
+          document.getElementById('messageTypeIcon').classList.add('hidden');
+	}
 	  
         function getMapsLink(query) {
             return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
@@ -396,7 +420,8 @@ body {
                 .then(response => response.json())
                 .then(data => {
                     const address = data.display_name;
-                    document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(address)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Your Location in Google Maps</a>`;
+		    
+                    //document.getElementById('mapsLink').innerHTML = `<a href="${getMapsLink(address)}" target="_blank" class="map-marker"><i class="material-icons">place</i> View Your Location in Google Maps</a>`;
                 })
                 .catch(error => {
                     console.error('Error fetching address:', error);
@@ -579,6 +604,7 @@ function clearText() {
     }
 
     function sendMessage() {
+      hideMessageTypeIcon();
       alert('Send button clicked');
     }
 
