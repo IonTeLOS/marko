@@ -92,39 +92,40 @@ async function extractColorsFromImage(imgSrc) {
   };
 
   const extractColors = (img) => {
-    const colorThief = new ColorThief(); // Ensure ColorThief is included in your script
+    const colorThief = new ColorThief();
     let dominantColor = colorThief.getColor(img);
 
-    let hexColor = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + (dominantColor[2])).toString(16).slice(1).toUpperCase()}`;
+    let hexColor = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + dominantColor[2]).toString(16).slice(1).toUpperCase()}`;
 
+    // Check if the color is black or white, and try to get another color from the palette
     if (hexColor === '#FFFFFF' || hexColor === '#000000') {
       const palette = colorThief.getPalette(img, 5);
       dominantColor = palette.find(
         ([r, g, b]) => r !== 255 && g !== 255 && b !== 255 && r !== 0 && g !== 0 && b !== 0
-      ) || dominantColor;
+      ) || dominantColor; // Default to original if no suitable color found
     }
 
-    const finalHex = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + (dominantColor[2])).toString(16).slice(1).toUpperCase()}`;
+    const finalHex = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + dominantColor[2]).toString(16).slice(1).toUpperCase()}`;
     const complementaryColor = getComplementaryColor(finalHex);
 
     return { color: finalHex, 'c-color': complementaryColor };
   };
 
-  // Try loading the image directly first
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgSrc)}`;
+
   try {
-    const img = await loadImage(imgSrc);
+    // First, try loading through the proxy
+    const img = await loadImage(proxyUrl);
     return extractColors(img);
-  } catch (directError) {
-    console.warn('Direct image load failed, attempting via proxy...');
-
-    const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgSrc)}`;
-
+  } catch (proxyError) {
+    console.warn('Failed to load image through proxy. Attempting direct load...');
     try {
-      const img = await loadImage(proxyUrl);
+      // If proxy fails, try loading directly
+      const img = await loadImage(imgSrc);
       return extractColors(img);
-    } catch (proxyError) {
-      console.error('Failed to load image via proxy:', proxyError);
-      return { color: '', 'c-color': '' };
+    } catch (directError) {
+      console.error('Error loading image:', directError);
+      return { color: "", 'c-color': "" }; // Return empty colors on failure
     }
   }
 }
