@@ -110,7 +110,6 @@ async function extractColorsFromImage(imgSrc) {
   };
 
   try {
-    // Try loading the image directly
     const img = await loadImage(imgSrc);
     return extractColors(img);
   } catch (directError) {
@@ -119,17 +118,14 @@ async function extractColorsFromImage(imgSrc) {
   }
 }
 
-
-function rgbToHex([r, g, b]) {
-  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
-}
-
 function getComplementaryColor(hex) {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
-  const compR = 255 - r, compG = 255 - g, compB = 255 - b;
-  return rgbToHex([compR, compG, compB]);
+  const compR = 255 - r;
+  const compG = 255 - g;
+  const compB = 255 - b;
+  return `#${((1 << 24) + (compR << 16) + (compG << 8) + compB).toString(16).slice(1).toUpperCase()}`;
 }
 
 // Make the function globally accessible
