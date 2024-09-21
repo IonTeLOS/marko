@@ -17,7 +17,7 @@
   <!-- Link to your script file -->
   <script src="https://teloslinux.org/marko/getd.js"></script>
   <script>
-function getMetadata(url, params) {
+async function getMetadata(url, params) {
 try {
         const metadata = await fetchSiteMetadata(url, params);
         console.log(metadata);
