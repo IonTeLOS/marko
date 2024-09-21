@@ -158,6 +158,12 @@ try {
         console.error('Error:', error);
       }
     }
+document.getElementById('fetch-metadata-btn').addEventListener('click', () => {
+  const url = new URLSearchParams(window.location.search).get('url'); // Get URL from query param
+  const params = new URLSearchParams(window.location.search).get('get'); // Get fields from query param
+  getMetadata(url, params); // Call metadata fetch
+});
+
   </script>
 </body>
 </html>
