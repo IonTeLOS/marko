@@ -3,115 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fetch Website Metadata and Favicon Colors</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    pre { background: #f4f4f4; padding: 10px; border-radius: 5px; }
-  </style>
-</head>
-<body>
-  <!-- This content is for debugging or direct access; it won't be shown when using as an API -->
-  <h1>Website Metadata Fetcher</h1>
-  <p>Fetching data for the site: <span id="site-url"></span></p>
-  <div id="results">
-    <h3>Results:</h3>
-    <pre id="metadata"></pre>
-  </div>
-
-  <!-- Load ColorThief library for extracting prominent colors -->
+  <title>Fetch Website Metadata</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.2/color-thief.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    // Helper function to get URL parameters
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
-
-    function getComplementaryColor(hex) {
-      const r = parseInt(hex.slice(1, 3), 16);
-      const g = parseInt(hex.slice(3, 5), 16);
-      const b = parseInt(hex.slice(5, 7), 16);
-
-      const compR = 255 - r;
-      const compG = 255 - g;
-      const compB = 255 - b;
-
-      return `#${((1 << 24) + (compR << 16) + (compG << 8) + compB).toString(16).slice(1).toUpperCase()}`;
-    }
-
     async function extractColorsFromImage(imgSrc) {
       const loadImage = (src) => {
-        return new Promise((resolveImg, rejectImg) => {
+        return new Promise((resolve, reject) => {
           const img = new Image();
           img.crossOrigin = 'Anonymous';
-          img.onload = () => resolveImg(img);
-          img.onerror = (e) => rejectImg(e);
+          img.onload = () => resolve(img);
+          img.onerror = reject;
           img.src = src;
         });
       };
 
       const extractColors = (img) => {
         const colorThief = new ColorThief();
-        let dominantColor = colorThief.getColor(img);
-
-        let hexColor = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + dominantColor[2]).toString(16).slice(1).toUpperCase()}`;
-
-        if (hexColor === '#FFFFFF' || hexColor === '#000000') {
-          const palette = colorThief.getPalette(img, 5);
-          dominantColor = palette.find(
-            ([r, g, b]) => r !== 255 && g !== 255 && b !== 255 && r !== 0 && g !== 0 && b !== 0
-          ) || dominantColor;
-        }
-
-        const finalHex = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + dominantColor[2]).toString(16).slice(1).toUpperCase()}`;
-        const complementaryColor = getComplementaryColor(finalHex);
-
-        return { color: finalHex, 'c-color': complementaryColor };
+        const dominantColor = colorThief.getColor(img);
+        const hexColor = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + dominantColor[2]).toString(16).slice(1).toUpperCase()}`;
+        return { color: hexColor, 'c-color': getComplementaryColor(hexColor) };
       };
 
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgSrc)}`;
-      
       try {
-        const img = await loadImage(proxyUrl);
+        const img = await loadImage(imgSrc);
         return extractColors(img);
-      } catch (proxyError) {
-        console.warn('Failed to load image through proxy. Attempting direct load...');
-        try {
-          const img = await loadImage(imgSrc);
-          return extractColors(img);
-        } catch (directError) {
-          console.error('Error loading image:', directError);
-          return { color: "", 'c-color': "" };
-        }
+      } catch (error) {
+        console.error('Image loading failed:', error);
+        return { color: "", 'c-color': "" };
       }
     }
 
-    function resolveRelativeUrl(baseUrl, relativeUrl) {
-      const urlObj = new URL(relativeUrl, baseUrl);
-      return urlObj.href;
+    function getComplementaryColor(hex) {
+      const r = 255 - parseInt(hex.slice(1, 3), 16);
+      const g = 255 - parseInt(hex.slice(3, 5), 16);
+      const b = 255 - parseInt(hex.slice(5, 7), 16);
+      return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase()}`;
     }
 
     function getFaviconsAndOgImage(doc, baseUrl) {
       const faviconTags = [...doc.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]')];
       const ogImageTag = doc.querySelector('meta[property="og:image"]');
-      
-      if (faviconTags.length === 0) return { fav: "", 'fav-': "", 'og:image': "" };
 
-      const faviconsWithSize = faviconTags.map(tag => {
-        const size = tag.getAttribute('sizes');
-        const width = size ? parseInt(size.split('x')[0], 10) : null;
-        const href = resolveRelativeUrl(baseUrl, tag.getAttribute('href'));
-        return { href, size: width || 0 };
-      }).sort((a, b) => b.size - a.size);
+      const favicons = faviconTags.map(tag => resolveRelativeUrl(baseUrl, tag.href));
+      const ogImage = ogImageTag ? resolveRelativeUrl(baseUrl, ogImageTag.content) : "";
+      return { favicons, ogImage };
+    }
 
-      const result = {
-        fav: faviconsWithSize[0]?.href || "",
-        'fav-': faviconsWithSize.length > 1 ? faviconsWithSize[faviconsWithSize.length - 1]?.href : "",
-        'og:image': ogImageTag && !ogImageTag.content.includes('$') ? resolveRelativeUrl(baseUrl, ogImageTag.content) : ""
-      };
-
-      return result;
+    function resolveRelativeUrl(baseUrl, relativeUrl) {
+      return new URL(relativeUrl, baseUrl).href;
     }
 
     async function fetchSiteData(siteUrl) {
@@ -121,40 +61,32 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(response.data, "text/html");
 
-        const metadata = {};
+        const metadata = {
+          title: doc.querySelector('title')?.innerText || "",
+          description: doc.querySelector('meta[name="description"]')?.content || "",
+          keywords: doc.querySelector('meta[name="keywords"]')?.content || "",
+          language: doc.documentElement.lang || "",
+        };
 
-        metadata.title = doc.querySelector('title')?.innerText || "";
-        metadata.shortname = siteUrl.replace(/https?:\/\//, '').split('/')[0] || "";
-        metadata.description = doc.querySelector('meta[name="description"]')?.content || "";
-        metadata.keywords = doc.querySelector('meta[name="keywords"]')?.content || "";
-        metadata.language = doc.documentElement.lang || "";
+        const { favicons, ogImage } = getFaviconsAndOgImage(doc, siteUrl);
+        metadata.favicons = favicons;
+        metadata['og:image'] = ogImage;
 
-        const results = getFaviconsAndOgImage(doc, siteUrl);
-        metadata.fav = results.fav;
-        metadata['fav-'] = results['fav-'];
-        metadata['og:image'] = results['og:image'];
-
-        if (results.fav) {
-          try {
-            const colors = await extractColorsFromImage(results.fav);
-            Object.assign(metadata, colors);
-          } catch (error) {
-            console.error('Error extracting colors:', error);
-            metadata.color = "";
-            metadata['c-color'] = "";
-          }
+        if (favicons.length > 0) {
+          const colors = await extractColorsFromImage(favicons[0]);
+          Object.assign(metadata, colors);
         }
 
-        // Output JSON directly
+        // Replace body content with JSON data
         document.body.innerText = JSON.stringify(metadata, null, 2);
       } catch (error) {
-        console.error('Error fetching site data:', error);
         document.body.innerText = JSON.stringify({ error: error.message }, null, 2);
       }
     }
 
     function run() {
-      const siteUrl = getQueryParam('url');
+      const urlParams = new URLSearchParams(window.location.search);
+      const siteUrl = urlParams.get('url');
       if (siteUrl) {
         fetchSiteData(siteUrl);
       } else {
@@ -164,5 +96,7 @@
 
     window.onload = run;
   </script>
+</head>
+<body>
 </body>
 </html>
