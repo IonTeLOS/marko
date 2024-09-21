@@ -94,15 +94,14 @@ async function extractColorsFromImage(imgSrc) {
   const extractColors = (img) => {
     const colorThief = new ColorThief();
     let dominantColor = colorThief.getColor(img);
-
     let hexColor = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + dominantColor[2]).toString(16).slice(1).toUpperCase()}`;
 
-    // Check if the color is black or white, and try to get another color from the palette
+    // If the color is black/white, get another from the palette
     if (hexColor === '#FFFFFF' || hexColor === '#000000') {
       const palette = colorThief.getPalette(img, 5);
       dominantColor = palette.find(
         ([r, g, b]) => r !== 255 && g !== 255 && b !== 255 && r !== 0 && g !== 0 && b !== 0
-      ) || dominantColor; // Default to original if no suitable color found
+      ) || dominantColor;
     }
 
     const finalHex = `#${((1 << 24) + (dominantColor[0] << 16) + (dominantColor[1] << 8) + dominantColor[2]).toString(16).slice(1).toUpperCase()}`;
@@ -111,21 +110,21 @@ async function extractColorsFromImage(imgSrc) {
     return { color: finalHex, 'c-color': complementaryColor };
   };
 
-  const proxyUrl = `${encodeURIComponent(imgSrc)}`;
-
+  // First, attempt to load via proxy
+  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgSrc)}`;
   try {
-    // First, try loading through the proxy
     const img = await loadImage(proxyUrl);
     return extractColors(img);
   } catch (proxyError) {
-    console.warn('Failed to load image through proxy. Attempting direct load...');
+    console.warn('Failed to load image through proxy. Trying direct load...', proxyError);
+
+    // Fallback to direct load if proxy fails
     try {
-      // If proxy fails, try loading directly
       const img = await loadImage(imgSrc);
       return extractColors(img);
     } catch (directError) {
-      console.error('Error loading image:', directError);
-      return { color: "", 'c-color': "" }; // Return empty colors on failure
+      console.error('Failed to load image directly:', directError);
+      return { color: '', 'c-color': '' }; // Return empty colors on failure
     }
   }
 }
