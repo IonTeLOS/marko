@@ -77,21 +77,21 @@ function getFaviconsAndOgImage(doc, baseUrl) {
   const faviconTags = [...doc.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]')];
   const ogImageTag = doc.querySelector('meta[property="og:image"]');
 
-  const resolveWithProxy = (url) => `${encodeURIComponent(url)}`;
+  const resolveWithProxy = (url) => decodeURIComponent(new URL(url, baseUrl).href);
 
   if (faviconTags.length === 0) return { fav: '', 'fav-': '', 'og:image': '' };
 
   const faviconsWithSize = faviconTags.map(tag => {
     const size = tag.getAttribute('sizes');
     const width = size ? parseInt(size.split('x')[0], 10) : null;
-    const href = resolveWithProxy(resolveRelativeUrl(baseUrl, tag.getAttribute('href')));
+    const href = resolveWithProxy(tag.getAttribute('href'));
     return { href, size: width || 0 };
   }).sort((a, b) => b.size - a.size);
 
   const result = {
     fav: faviconsWithSize[0]?.href || '',
     'fav-': faviconsWithSize.length > 1 ? faviconsWithSize[faviconsWithSize.length - 1]?.href : '',
-    'og:image': ogImageTag && !ogImageTag.content.includes('$') ? resolveWithProxy(resolveRelativeUrl(baseUrl, ogImageTag.content)) : ''
+    'og:image': ogImageTag && !ogImageTag.content.includes('$') ? resolveWithProxy(ogImageTag.content) : ''
   };
 
   return result;
@@ -150,14 +150,21 @@ window.fetchSiteMetadata = fetchSiteMetadata;
   </script>
   <script>
 async function getMetadata(url, params) {
-try {
-        const metadata = await fetchSiteMetadata(url, params);
-        console.log(metadata);
-        console.log(metadata.title);
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    }
+  try {
+    const metadata = await fetchSiteMetadata(url, params);
+    console.log('Metadata:', metadata);
+    console.log('Title:', metadata.title);
+    console.log('Shortname:', metadata.shortname);
+    console.log('Favicon:', metadata.fav);
+    console.log('ogImage:', metadata.og:image);
+    console.log('Description:', metadata.description);
+    console.log('Keywords:', metadata.keywords);
+    console.log('Extracted Colors:', metadata.color, metadata['c-color']);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
 document.getElementById('fetch-metadata-btn').addEventListener('click', () => {
   const url = new URLSearchParams(window.location.search).get('url'); // Get URL from query param
   const params = new URLSearchParams(window.location.search).get('get'); // Get fields from query param
