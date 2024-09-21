@@ -60,7 +60,7 @@ function getFaviconsAndOgImage(doc, baseUrl) {
   const faviconTags = [...doc.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"], link[rel="apple-touch-icon"]')];
   const ogImageTag = doc.querySelector('meta[property="og:image"]');
 
-  const resolveWithProxy = (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+  const resolveWithProxy = (url) => `${encodeURIComponent(url)}`;
 
   if (faviconTags.length === 0) return { fav: '', 'fav-': '', 'og:image': '' };
 
@@ -111,7 +111,7 @@ async function extractColorsFromImage(imgSrc) {
     return { color: finalHex, 'c-color': complementaryColor };
   };
 
-  const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(imgSrc)}`;
+  const proxyUrl = `${encodeURIComponent(imgSrc)}`;
 
   try {
     // First, try loading through the proxy
