@@ -116,7 +116,7 @@
     }
 
     // Function to fetch and parse site metadata using AllOrigins proxy
-    async function fetchSiteData(siteUrl) {
+    window.fetchSiteData = async function(siteUrl) {
       const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(siteUrl)}`;
       try {
         const response = await axios.get(proxyUrl);
@@ -150,19 +150,21 @@
           }
         }
 
-        // Output metadata as JSON
-        console.log(JSON.stringify(metadata, null, 2));
+        // Return metadata as JSON
+        return metadata;
       } catch (error) {
         console.error('Error fetching site data:', error);
-        console.error(`Error: ${error.message}`);
+        return { error: error.message }; // Return error in JSON format
       }
-    }
+    };
 
-    // Main function to run the script
+    // Function to run the script and expose functionality
     function run() {
       const siteUrl = getQueryParam('url');
       if (siteUrl) {
-        fetchSiteData(siteUrl);
+        fetchSiteData(siteUrl).then(metadata => {
+          console.log('Fetched Metadata:', metadata);
+        });
       } else {
         console.error('Error: No URL parameter provided.');
       }
