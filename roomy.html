@@ -59,7 +59,14 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
   opacity: 0;
+  overflow-y: scroll; /* Ensures vertical scroll is allowed */
+  scrollbar-width: none; /* Firefox - hides scrollbar */
 }
+
+.dropdown-menu::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and newer Edge - hides scrollbar */
+}	
+
 
 .dropdown.show .dropdown-menu {
   max-height: 50vh;
