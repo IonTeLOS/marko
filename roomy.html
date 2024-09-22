@@ -182,6 +182,7 @@ body {
    cursor: pointer;
    margin-left: 10px;
    z-index: 3;
+   user-select: none;
 }
 
 .clear-btn[style*="display: none"] {
@@ -349,7 +350,7 @@ input#messageInput {
     <span id="messageTypeIcon" class="material-icons hidden"></span> <!-- This is the new icon -->
         <input id="messageInput" type="text" placeholder="Message or link...">
         <span id="clearButton" class="material-icons clear-btn" style="display:none;">clear</span>
-    <span class="material-icons" onclick="sendMessage()">send</span>
+        <span class="material-icons" id="sendMessageButton">send</span>
   </div>
 </div>
 </div>
@@ -725,33 +726,8 @@ function openRoom(roomId) {
   dropdownMenu.style.maxHeight = null;
 }
 
-    // Function to clear the input field and hide the clear button
-    function clearText() {
-        const inputText = document.getElementById('messageInput');
-        if (inputText) {
-            inputText.value = ''; // Clear the input field
-            //toggleClearButton(); // Ensure the clear button is hidden
-        }
-    }
 
-    // Function to show or hide the clear button based on the input field's content
-    function toggleClearButton() {
-        const inputText = document.getElementById('messageInput');
-        const clearButton = document.getElementById('clearButton'); // Select the clear button
 
-        // Show or hide the clear button based on whether the input field has text
-        if (clearButton) {
-            clearButton.style.display = inputText && inputText.value.trim() ? 'inline-block' : 'none';
-        }
-    }
-
-    // Function to hide the clear button when the input field loses focus
-    function hideClearButton() {
-        const clearButton = document.getElementById('clearButton'); // Select the clear button
-        if (clearButton) {
-            clearButton.style.display = 'none';
-        }
-    }
 
     function sendMessage() {
       hideMessageTypeIcon();
@@ -864,7 +840,33 @@ document.getElementById('toggleTopRow').addEventListener('click', function() {
     topRow.classList.remove('open');
   }
 });
+   // Function to clear the input field and hide the clear button
+    function clearText() {
+        const inputText = document.getElementById('messageInput');
+        if (inputText) {
+            inputText.value = ''; // Clear the input field
+            toggleClearButton(); // Ensure the clear button is hidden
+        }
+    }
 
+    // Function to show or hide the clear button based on the input field's content
+    function toggleClearButton() {
+        const inputText = document.getElementById('messageInput');
+        const clearButton = document.getElementById('clearButton'); // Select the clear button
+
+        // Show or hide the clear button based on whether the input field has text
+        if (clearButton) {
+            clearButton.style.display = inputText && inputText.value.trim() ? 'inline-block' : 'none';
+        }
+    }
+
+    // Function to hide the clear button when the input field loses focus
+    function hideClearButton() {
+        const clearButton = document.getElementById('clearButton'); // Select the clear button
+        if (clearButton) {
+            clearButton.style.display = 'none';
+        }
+    }
 // Close top-row when clicking outside
 document.addEventListener('click', function(event) {
   const topRow = document.querySelector('.top-row');
@@ -882,6 +884,7 @@ document.addEventListener('click', function(event) {
     document.addEventListener('DOMContentLoaded', () => {
         const inputField = document.getElementById('messageInput');
         const clearButton = document.getElementById('clearButton');
+        const sendMessageButton = document.getElementById('sendMessageButton');
 
         if (inputField) {
             inputField.addEventListener('input', toggleClearButton);
@@ -889,7 +892,11 @@ document.addEventListener('click', function(event) {
         }
 
         if (clearButton) {
-            clearButton.addEventListener('click', clearText);
+            clearButton.addEventListener('click', clearText); // Add click event listener
+        }
+
+        if (sendMessageButton) {
+            sendMessageButton.addEventListener('click', sendMessage);
         }
 
         // Initial state of the clear button when the page loads
