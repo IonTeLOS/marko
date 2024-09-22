@@ -840,7 +840,7 @@ document.getElementById('toggleTopRow').addEventListener('click', function() {
         const iconButton = document.getElementById('multiButton');
 
         if (inputText === '') {
-            iconButton.textContent = 'paste'; // Show paste icon
+            iconButton.textContent = 'content_paste'; // Show paste icon
             iconButton.onclick = pasteFromClipboard; // Set click handler to paste text
         } else {
             iconButton.textContent = 'clear'; // Show clear icon
