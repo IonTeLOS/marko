@@ -529,7 +529,8 @@ function addLink() {
 
     // Function to check if the URL is a photo
     function isPhotoUrl(url) {
-        return /\.(jpg|jpeg|png|gif|bmp)$/i.test(url);
+        // Match URL extensions with optional query strings
+        return /\.(jpg|jpeg|png|gif|bmp)(\?[^\s]*)?$/i.test(url);
     }
 
     // Check for existing links in the input field
@@ -572,6 +573,7 @@ function addLink() {
         }
     }
 }
+
 
 	  
 let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
