@@ -218,32 +218,7 @@ body {
   overflow-x: auto; /* Horizontal scrolling */
 }
 
-/* To hide add_circle button on desktop */
-@media (min-width: 768px) {
-   .mobile-only {
-       display: none; /* Hide the add_circle button on desktop */
-    }
-    .top-row.open::-webkit-scrollbar {
-        height: 6px; /* Adjust the height of the scrollbar */
-    }
 
-    .top-row.open::-webkit-scrollbar-track {
-        background: #f1f1f1; /* Track color */
-    }
-
-    .top-row.open::-webkit-scrollbar-thumb {
-        background: #888; /* Scrollbar thumb color */
-        border-radius: 5px; /* Round the corners */
-    }
-
-    .top-row.open::-webkit-scrollbar-thumb:hover {
-        background: #555; /* Color on hover */
-    }
-}
-	  
-.hidden {
-  display: none; /* Icon is initially hidden */
-}
 
 #messageTypeIcon {
   margin-left: 8px; /* Add some space between the icon and the toggles */
@@ -309,7 +284,6 @@ input#messageInput {
 }
 
 .chat-input .material-icons {
-  flex-shrink: 0; /* Prevent icons from shrinking */
   color: #2196F3;
   cursor: pointer;
   font-size: 28px;
@@ -322,7 +296,32 @@ input#messageInput {
   flex-shrink: 0; /* Prevent shrinking */
 }
 
+/* To hide add_circle button on desktop */
+@media (min-width: 768px) {
+   .mobile-only {
+       display: none; /* Hide the add_circle button on desktop */
+    }
+    .top-row.open::-webkit-scrollbar {
+        height: 6px; /* Adjust the height of the scrollbar */
+    }
+
+    .top-row.open::-webkit-scrollbar-track {
+        background: #f1f1f1; /* Track color */
+    }
+
+    .top-row.open::-webkit-scrollbar-thumb {
+        background: #888; /* Scrollbar thumb color */
+        border-radius: 5px; /* Round the corners */
+    }
+
+    .top-row.open::-webkit-scrollbar-thumb:hover {
+        background: #555; /* Color on hover */
+    }
+}
 	  
+.hidden {
+  display: none; /* Icon is initially hidden */
+}	  
   </style>
 </head>
 <body>
