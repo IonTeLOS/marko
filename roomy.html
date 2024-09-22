@@ -571,7 +571,7 @@ function addLink(providedLink) {
             showMessageTypeIcon('link', mainLink);
             sessionStorage.setItem('main-link', mainLink);
             // Check if the link is a photo
-            if (isPhotoUrl(nainLink)) {
+            if (isPhotoUrl(mainLink)) {
                 showMessageTypeIcon('photo', mainLink);
                 sessionStorage.setItem('main-photo', foundLink);
             }
