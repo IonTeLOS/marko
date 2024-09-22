@@ -154,6 +154,7 @@ body {
   display: flex;
   align-items: center;
   flex-grow: 1;
+  width: 100%; /* Ensure chat input takes available space */
   padding: 10px;
   border-radius: 20px;
   border: 1px solid #2196F3;
@@ -175,6 +176,8 @@ body {
   line-height: 1.5; 
   height: 100%;
   padding: 0; 
+  flex: 1; /* Input takes up remaining space */
+  min-width: 0; /* Prevents the input from growing too wide */
 }
 
 .chat-input input::placeholder {
@@ -200,7 +203,6 @@ body {
   color: #2196F3;
   cursor: pointer;
   font-size: 28px;
-  flex-shrink: 0; /* Prevents shrinking */
 }
 
 .bottom-menu {
