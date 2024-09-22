@@ -472,9 +472,7 @@ function showMessageTypeIcon(iconName, url) {
             fetchIPBasedLocation();
         }
 
-        document.getElementById('getLocation').addEventListener('click', getLocation);
-        document.getElementById('linkify').addEventListener('click', addLink);
-	document.getElementById('addEffect').addEventListener('click', addEffect);
+
 
 
 // Ensure EmojiMart is imported and available
@@ -528,7 +526,7 @@ if (typeof EmojiMart === 'undefined') {
     }
   }
 
-  function addEffect() {
+  function addEmojiEffect() {
       sessionStorage.addItem('effect-adding', 'true');
       toggleEmojiPicker();
   }
@@ -865,7 +863,9 @@ document.addEventListener('click', function(event) {
   }
 });
 
-
+        document.getElementById('getLocation').addEventListener('click', getLocation);
+        document.getElementById('linkify').addEventListener('click', addLink);
+	document.getElementById('addEffect').addEventListener('click', addEmojiEffect);
 
     addRoomFromUrlParams();
     renderRooms();
