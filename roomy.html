@@ -313,6 +313,7 @@ input#messageInput {
       <span class="material-icons" onclick="attachButtonClicked()">attach_file</span>
       <span class="material-icons" onclick="micButtonClicked()">mic</span>
       <span id="getLocation" class="material-icons" >location_on</span>
+      <span id="linkify" class="material-icons" >link</span>
     </div>
    <div class="chat-input-wrapper">
   <div class="chat-input">
@@ -451,7 +452,7 @@ function showMessageTypeIcon(iconName, url) {
         }
 
         document.getElementById('getLocation').addEventListener('click', getLocation);
-   
+        document.getElementById('linkify').addEventListener('click', addLink);
 
 // Ensure EmojiMart is imported and available
 if (typeof EmojiMart === 'undefined') {
@@ -517,6 +518,48 @@ if (typeof EmojiMart === 'undefined') {
   } else {
     console.error('Toggle button element not found.');
   }
+}
+	  
+function addLink() {
+    const messageInput = document.getElementById('messageInput');
+    let inputValue = messageInput.value.trim();
+    const urlPattern = /([a-zA-Z]+:\/\/[^\s]+)/gi;  // Regular expression to detect any protocol link
+
+    let mainLink = '';
+
+    // Function to display the link as blue and underlined
+    function displayLink(link) {
+        messageInput.value = ''; // Clear the input field
+        const linkElement = document.createElement('a');
+        linkElement.href = link;
+        linkElement.textContent = link;
+        linkElement.style.color = 'blue';
+        linkElement.style.textDecoration = 'underline';
+        messageInput.parentElement.appendChild(linkElement);
+    }
+
+    if (urlPattern.test(inputValue)) {
+        const foundLink = inputValue.match(urlPattern)[0];  // Extract the first URL found
+        const confirmLinkification = confirm(`Do you want to turn "${foundLink}" into a link?`);
+        
+        if (confirmLinkification) {
+            mainLink = foundLink;
+            showMessageTypeIcon('link', mainLink);
+            sessionStorage.setItem('main-link', mainLink);
+            displayLink(mainLink);
+        }
+    } else {
+        const enteredLink = prompt("No link found. Please enter a link:");
+        
+        if (enteredLink && urlPattern.test(enteredLink)) {
+            mainLink = enteredLink.trim();
+            showMessageTypeIcon('link', mainLink);
+            sessionStorage.setItem('main-link', mainLink);
+            displayLink(mainLink);
+        } else {
+            alert('Invalid link entered.');
+        }
+    }
 }
 	  
 let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
