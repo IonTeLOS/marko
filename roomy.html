@@ -183,10 +183,11 @@ body {
    margin-left: 10px;
    z-index: 3;
    user-select: none;
+   display: none; /* Initially hidden */
 }
 
-.clear-btn[style*="display: none"] {
-   display: none;
+.clear-btn.show {
+   display: inline-block; /* Visible when needed */
 }
 
 .input-overlay-wrapper {
@@ -349,7 +350,7 @@ input#messageInput {
     <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
     <span id="messageTypeIcon" class="material-icons hidden"></span> <!-- This is the new icon -->
         <input id="messageInput" type="text" placeholder="Message or link...">
-        <span id="clearButton" class="material-icons clear-btn" style="display:none">clear</span>
+        <span id="clearButton" class="material-icons clear-btn" style="display:none;" onclick="clearText()">clear</span>
         <span class="material-icons" id="sendMessageButton">send</span>
   </div>
 </div>
@@ -852,21 +853,22 @@ document.getElementById('toggleTopRow').addEventListener('click', function() {
     // Function to show or hide the clear button based on the input field's content
     function toggleClearButton() {
         const inputText = document.getElementById('messageInput');
-        const clearButton = document.getElementById('clearButton'); // Select the clear button
+        const clearButton = document.getElementById('clearButton');
 
-        // Show or hide the clear button based on whether the input field has text
         if (clearButton) {
-            clearButton.style.display = inputText && inputText.value.trim() ? 'inline-block' : 'none';
+            clearButton.classList.toggle('show', inputText && inputText.value.trim() !== '');
         }
     }
 
     // Function to hide the clear button when the input field loses focus
     function hideClearButton() {
-        const clearButton = document.getElementById('clearButton'); // Select the clear button
+        const clearButton = document.getElementById('clearButton');
         if (clearButton) {
-            clearButton.style.display = 'none';
+            clearButton.classList.remove('show');
         }
     }
+
+
 // Close top-row when clicking outside
 document.addEventListener('click', function(event) {
   const topRow = document.querySelector('.top-row');
@@ -880,7 +882,8 @@ document.addEventListener('click', function(event) {
         document.getElementById('getLocation').addEventListener('click', getLocation);
         document.getElementById('linkify').addEventListener('click', addLink);
 	document.getElementById('addEffect').addEventListener('click', addEmojiEffect);
-// Add event listeners for input changes and button clicks
+    // Add event listeners for input changes and button clicks
+    document.addEventListener('DOMContentLoaded', () => {
         const inputField = document.getElementById('messageInput');
         const clearButton = document.getElementById('clearButton');
         const sendMessageButton = document.getElementById('sendMessageButton');
@@ -890,13 +893,13 @@ document.addEventListener('click', function(event) {
             inputField.addEventListener('blur', hideClearButton);
         }
 
-        if (clearButton) {
-            clearButton.addEventListener('click', clearText); // Add click event listener
-        }
-
         if (sendMessageButton) {
             sendMessageButton.addEventListener('click', sendMessage);
         }
+
+        // Initial state of the clear button when the page loads
+        toggleClearButton();
+    });
 
 
     addRoomFromUrlParams();
