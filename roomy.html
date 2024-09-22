@@ -544,15 +544,14 @@ function addLink(providedLink) {
     // Check if providedLink is not blank, null, or undefined
     if (typeof providedLink === 'string' && providedLink.trim() !== '') {
         mainLink = providedLink.trim();
+	// Use the provided link
+       	showMessageTypeIcon('link', mainLink);
+        sessionStorage.setItem('main-link', mainLink);
         // Check if the link is a photo
         if (isPhotoUrl(mainLink)) {
             showMessageTypeIcon('photo', mainLink);
             sessionStorage.setItem('main-photo', mainLink);
-        } else { 
-            // Use the provided link
-       	    showMessageTypeIcon('link', mainLink);
-            sessionStorage.setItem('main-link', mainLink);
-	}
+        } 
         return;  // Exit the function after processing the provided link
     }
 
@@ -566,28 +565,26 @@ function addLink(providedLink) {
         const confirmLinkification = confirm(`Do you want to turn "${foundLink}" into a link?`);
         
         if (confirmLinkification) {
+	    mainLink = foundLink;
+            showMessageTypeIcon('link', mainLink);
+            sessionStorage.setItem('main-link', mainLink);
             // Check if the link is a photo
-            if (isPhotoUrl(foundLink)) {
-                showMessageTypeIcon('photo', foundLink);
+            if (isPhotoUrl(nainLink)) {
+                showMessageTypeIcon('photo', mainLink);
                 sessionStorage.setItem('main-photo', foundLink);
-            } else {
-	   	 mainLink = foundLink;
-           	 showMessageTypeIcon('link', mainLink);
-            	 sessionStorage.setItem('main-link', mainLink);
-	    }
+            }
         }
     } else {
         const enteredLink = prompt("No link found. Please enter a link:");
         
         if (enteredLink && urlPattern.test(enteredLink)) {
             mainLink = enteredLink.trim();
+	    showMessageTypeIcon('link', mainLink);
+            sessionStorage.setItem('main-link', mainLink);
             // Check if the link is a photo
             if (isPhotoUrl(mainLink)) {
                 showMessageTypeIcon('photo', mainLink);
                 sessionStorage.setItem('main-photo', mainLink);
-            } else {
-	    	showMessageTypeIcon('link', mainLink);
-            	sessionStorage.setItem('main-link', mainLink);
 	    }
         } else {
             alert('Invalid link entered.');
@@ -611,7 +608,7 @@ function addConference() {
     mainLink = conferenceLink;
 
     // Use the updated addLink function to handle the link
-    addLink();
+    addLink(mainLink);
 
     // Show the Material icon for video chat
     showMessageTypeIcon('video_chat', conferenceLink);
