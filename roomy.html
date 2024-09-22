@@ -719,7 +719,6 @@ function openRoom(roomId) {
   dropdownMenu.style.maxHeight = null;
 }
 
-
     // Function to clear the input field and hide the clear button
     function clearText() {
         const inputText = document.getElementById('messageInput');
@@ -728,24 +727,25 @@ function openRoom(roomId) {
             toggleClearButton(); // Ensure the clear button is hidden
         }
     }
-    
+
     // Function to show or hide the clear button based on the input field's content
     function toggleClearButton() {
         const inputText = document.getElementById('messageInput');
-        const clearButton = document.querySelector('.chat-input .clear-btn'); // Select the clear button
+        const clearButton = document.getElementById('clearButton'); // Select the clear button
 
         // Show or hide the clear button based on whether the input field has text
-        clearButton.style.display = inputText.value.trim() ? 'inline-block' : 'none';
+        if (clearButton) {
+            clearButton.style.display = inputText && inputText.value.trim() ? 'inline-block' : 'none';
+        }
     }
 
     // Function to hide the clear button when the input field loses focus
     function hideClearButton() {
-        const clearButton = document.querySelector('.chat-input .clear-btn'); // Select the clear button
-        clearButton.style.display = 'none';
+        const clearButton = document.getElementById('clearButton'); // Select the clear button
+        if (clearButton) {
+            clearButton.style.display = 'none';
+        }
     }
-
-
-    
 
     function sendMessage() {
       hideMessageTypeIcon();
@@ -876,7 +876,6 @@ document.addEventListener('click', function(event) {
     document.addEventListener('DOMContentLoaded', () => {
         const inputField = document.getElementById('messageInput');
         const clearButton = document.getElementById('clearButton');
-        const sendMessageButton = document.getElementById('sendMessageButton');
 
         if (inputField) {
             inputField.addEventListener('input', toggleClearButton);
