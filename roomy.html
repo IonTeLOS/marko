@@ -526,10 +526,12 @@ function clearLink() {
         sessionStorage.removeItem('main-photo');
 
         // Hide the element with ID messageTypeIcon
-        const messageTypeIcon = document.getElementById('messageTypeIcon');
-        if (messageTypeIcon) {
-            messageTypeIcon.style.display = 'none';
-        }
+        const iconElement = document.getElementById('messageTypeIcon');
+        if (iconElement) {
+  
+        	// Add the 'hidden' class to make the icon invisible
+        	iconElement.classList.add('hidden');        
+	}
 }
 	  
 let mainLink = '';  // Global variable to store the main link
