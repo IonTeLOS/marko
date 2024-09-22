@@ -341,8 +341,8 @@ input#messageInput {
     <span id="toggleTopRow" class="material-icons mobile-only">add_circle</span>
     <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
     <span id="messageTypeIcon" class="material-icons hidden"></span> <!-- This is the new icon -->
-    <input id="messageInput" type="text" placeholder="Message or link..." oninput="toggleClearButton()" onblur="hideClearButton()">
-    <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
+        <input id="messageInput" type="text" placeholder="Message or link...">
+        <span class="material-icons clear-btn" onclick="clearText()">clear</span>
     <span class="material-icons" onclick="sendMessage()">send</span>
   </div>
 </div>
@@ -720,26 +720,37 @@ function openRoom(roomId) {
 }
 
 
-
-
-    function hideClearButton() {
-      setTimeout(() => {
-        document.querySelector('.chat-input .clear-btn').style.display = 'none';
-      }, 100);
+    // Function to clear the input field and hide the clear button
+    function clearText() {
+        const inputText = document.getElementById('messageInput');
+        inputText.value = '';
+        toggleClearButton(); // Ensure the clear button is hidden
     }
 
-function toggleClearButton() {
-  const clearBtn = document.querySelector('.chat-input .clear-btn');
-  const input = document.querySelector('.chat-input input');
-  
-  clearBtn.style.display = input.value.length > 0 ? 'inline-block' : 'none';
-}
+    // Function to show or hide the clear button based on the input field's content
+    function toggleClearButton() {
+        const inputText = document.getElementById('messageInput');
+        const clearButton = document.querySelector('.chat-input .clear-btn'); // Select the clear button
 
-function clearText() {
-  const inputText = document.querySelector('.chat-input input');
-  inputText.value = '';
-  toggleClearButton(); // Ensure the clear button is hidden
-}
+        // Show or hide the clear button based on whether the input field has text
+        clearButton.style.display = inputText.value.trim() ? 'inline-block' : 'none';
+    }
+
+    // Function to hide the clear button when the input field loses focus
+    function hideClearButton() {
+        const clearButton = document.querySelector('.chat-input .clear-btn'); // Select the clear button
+        clearButton.style.display = 'none';
+    }
+
+    // Add event listener for input changes to dynamically show/hide the clear button
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputField = document.getElementById('messageInput');
+        inputField.addEventListener('input', toggleClearButton);
+        inputField.addEventListener('blur', hideClearButton);
+
+        // Initial state of the clear button when the page loads
+        toggleClearButton();
+    });
     
 
     function sendMessage() {
