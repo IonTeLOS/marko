@@ -179,7 +179,13 @@ body {
 }
 
 .clear-btn {
-  z-index: 3;
+   cursor: pointer;
+   margin-left: 10px;
+   z-index: 3;
+}
+
+.clear-btn[style*="display: none"] {
+   display: none;
 }
 
 .input-overlay-wrapper {
