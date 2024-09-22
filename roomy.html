@@ -535,7 +535,7 @@ let mainLink = '';  // Global variable to store the main link
 
 function addLink(providedLink) {
     // Check if providedLink is not blank, null, or undefined
-    if (providedLink && providedLink.trim() !== '') {
+    if (typeof providedLink === 'string' && providedLink.trim() !== '') {
         clearLink();
 
         // Use the provided link
