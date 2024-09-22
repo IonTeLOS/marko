@@ -418,11 +418,7 @@ function showMessageTypeIcon(iconName, url) {
 
   // If a URL is provided, add a click event to open the URL
     // Check if the URL is a YouTube link and initialize the YouTube player if needed
-  if (url.includes('youtube.com') || url.includes('youtu.be')) {
-    iconElement.style.cursor = 'pointer'; // Change cursor to indicate it's clickable
-    iconElement.title = url; // Set the title to show the URL on hover	  
-    initializeYouTubePlayer(url);
-  } else if (url) {
+  if (url) {
     iconElement.style.cursor = 'pointer'; // Change cursor to indicate it's clickable
     iconElement.onclick = function() {
     window.open(url, '_blank'); // Open URL in a new tab
@@ -432,6 +428,9 @@ function showMessageTypeIcon(iconName, url) {
     iconElement.style.cursor = ''; // Reset cursor if no URL is provided
     iconElement.onclick = null; // Remove any previous click handler
   }
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {  
+    initializeYouTubePlayer(url);
+  } 
 }
         
 	function hideMessageTypeIcon() {
@@ -633,9 +632,6 @@ function addLink(providedLink) {
         mainLink = providedLink.trim();
 	// Use the provided link
        	showMessageTypeIcon('link', mainLink);
-	if (mainLink.includes('youtube.com') || mainLink.includes('youtu.be')) {
-       	  showMessageTypeIcon('play_arrow', mainLink);
-	}
         sessionStorage.setItem('main-link', mainLink);
         // Check if the link is a photo
         if (isPhotoUrl(mainLink)) {
@@ -663,6 +659,9 @@ function addLink(providedLink) {
                 showMessageTypeIcon('photo', mainLink);
                 sessionStorage.setItem('main-photo', foundLink);
             }
+	    if (foundLink.includes('youtube.com') || foundLink.includes('youtu.be')) {
+       	    showMessageTypeIcon('play_arrow', foundLink);
+	    }
         }
     } else {
         const enteredLink = prompt("No link found. Please enter a link:");
