@@ -415,9 +415,11 @@ function showMessageTypeIcon(iconName, url) {
   
   // Update the icon's content to match the provided icon name
   iconElement.textContent = iconName;
-
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {  
+    initializeYouTubePlayer(url);
+    return;
+  } 
   // If a URL is provided, add a click event to open the URL
-    // Check if the URL is a YouTube link and initialize the YouTube player if needed
   if (url) {
     iconElement.style.cursor = 'pointer'; // Change cursor to indicate it's clickable
     iconElement.onclick = function() {
@@ -428,9 +430,6 @@ function showMessageTypeIcon(iconName, url) {
     iconElement.style.cursor = ''; // Reset cursor if no URL is provided
     iconElement.onclick = null; // Remove any previous click handler
   }
-  if (url.includes('youtube.com') || url.includes('youtu.be')) {  
-    initializeYouTubePlayer(url);
-  } 
 }
         
 	function hideMessageTypeIcon() {
