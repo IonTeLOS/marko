@@ -144,7 +144,14 @@ async function subscribeToPush() {
       }
       return outputArray;
     }
-    subscribeToPush();
-  </script>
+ if (subscription) {
+      subscription.unsubscribe().then(() => {
+        console.log('Unsubscribed from push notifications successfully');
+        // After unsubscribing, resubscribe with the new applicationServerKey
+        subscribeToPush();
+      }).catch((error) => {
+        console.error('Failed to unsubscribe from push notifications', error);
+      });
+   </script>
 </body>
 </html>
