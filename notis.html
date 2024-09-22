@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ntfy.sh Notifications</title>
+  <title>notify.pchat.xyz Notifications</title>
 </head>
 <body>
-  <h1>ntfy.sh Notifications</h1>
+  <h1>notify.pchat.xyz Notifications</h1>
 
   <div>
     <label for="topic">Topic:</label>
@@ -42,7 +42,7 @@
         }
       });
 
-      const url = `https://corsproxy.io?https://ntfy.sh/${topic}`;
+      const url = `https://corsproxy.io?https://notify.pchat.xyz/${topic}`;
       eventSource = new EventSource(url);
 
       eventSource.addEventListener("message", event => {
@@ -52,7 +52,7 @@
       });
 
       eventSource.addEventListener("error", () => {
-        console.log("Connection to ntfy.sh topic lost.");
+        console.log("Connection to notify.pchat.xyz topic lost.");
         eventSource.close();
       });
     }
@@ -62,13 +62,13 @@ function sendNotification(title, body, topic) {
     // Send the notification locally (only to the current client)
     const options = {
       body: body,
-      icon: "https://ntfy.sh/favicon.ico",
+      icon: "https://notify.pchat.xyz/favicon.ico",
       tag: topic
     };
     new Notification(title, options);
 
-    // Publish the notification to the ntfy.sh topic for other subscribers
-    const url = `https://ntfy.sh/${topic}`;
+    // Publish the notification to the notify.pchat.xyz topic for other subscribers
+    const url = `https://notify.pchat.xyz/${topic}`;
     fetch(url, {
       method: "POST",
       body: body,
