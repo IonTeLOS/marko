@@ -896,7 +896,6 @@ document.getElementById('toggleTopRow').addEventListener('click', function() {
 });
 	  
 function initializeYouTubePlayer(url) {
-    document.addEventListener('DOMContentLoaded', () => {
         const playButton = document.getElementById('messageTypeIcon');
         const iframe = document.getElementById('youtube-player');
         let player;
@@ -908,6 +907,7 @@ function initializeYouTubePlayer(url) {
         // Set the iframe src with the extracted video ID
         if (videoId) {
             iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+	    console.log(iframe.src);
         } else {
             console.error("Invalid YouTube URL");
             return;
@@ -960,7 +960,6 @@ function initializeYouTubePlayer(url) {
                 isPlaying = false;
             }
         }
-    });
 }
 
 // Helper function to extract the YouTube video ID from a URL
