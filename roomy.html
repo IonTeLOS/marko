@@ -536,6 +536,7 @@ if (typeof EmojiMart === 'undefined') {
 	if (sessionStorage.getItem('effect-adding') === 'true') {
             sessionStorage.setItem('effect-adding', emoji.native);
 	    showMessageTypeIcon('add_reaction', `https://emojipedia.org/${emoji.native}`);
+	    showEmotion(emoji.native);
 	} else {
 
         // Insert the selected emoji into the text input
@@ -808,24 +809,28 @@ function openRoom(roomId) {
     }
 
     function videoButtonClicked() {
+      alert('Video button clicked');
+    }
+	  
+    function showEmotion(emoji) {
       function resizeCanvasForConfetti() {
    	 const chatContainer = document.getElementById('chatContainer');
-    	const confettiCanvas = document.getElementById('confettiCanvas');
+    	 const confettiCanvas = document.getElementById('confettiCanvas');
 
    	 // Resize canvas to match chat-container dimensions
-    	confettiCanvas.width = chatContainer.offsetWidth;
-    	confettiCanvas.height = chatContainer.offsetHeight;
- 	 }
-resizeCanvasForConfetti();
+    	 confettiCanvas.width = chatContainer.offsetWidth;
+    	 confettiCanvas.height = chatContainer.offsetHeight;
+       }
+       resizeCanvasForConfetti();
 
-jsConfetti.addConfetti({
-  emojis: ['♥️'],
-  emojiSize: 64,
-  confettiNumber: 36,
-  confettiRadius: 3,
-})  
+       jsConfetti.addConfetti({
+         emojis: [emoji],
+         emojiSize: 64,
+         confettiNumber: 48,
+         confettiRadius: 2,
+       })  
     }
-
+    
     function addRoomFromUrlParams() {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('addRoom') === 'true') {
