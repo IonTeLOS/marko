@@ -723,10 +723,12 @@ function openRoom(roomId) {
     // Function to clear the input field and hide the clear button
     function clearText() {
         const inputText = document.getElementById('messageInput');
-        inputText.value = '';
-        toggleClearButton(); // Ensure the clear button is hidden
+        if (inputText) {
+            inputText.value = ''; // Clear the input field
+            toggleClearButton(); // Ensure the clear button is hidden
+        }
     }
-
+    
     // Function to show or hide the clear button based on the input field's content
     function toggleClearButton() {
         const inputText = document.getElementById('messageInput');
