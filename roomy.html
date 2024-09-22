@@ -590,14 +590,9 @@ if (typeof EmojiMart === 'undefined') {
 function clearLink() {
         sessionStorage.removeItem('main-link');
         sessionStorage.removeItem('main-photo');
-
-        // Hide the element with ID messageTypeIcon
-        const iconElement = document.getElementById('messageTypeIcon');
-        if (iconElement) {
-  
-        	// Add the 'hidden' class to make the icon invisible
-        	iconElement.classList.add('hidden');        
-	}
+	sessionStorage.removeItem('effect-adding');
+        sessionStorage.removeItem('current-location');
+        hideMessageTypeIcon();
 }
 	  
 let mainLink = '';  // Global variable to store the main link
