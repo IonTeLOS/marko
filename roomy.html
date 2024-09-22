@@ -307,7 +307,7 @@ input#messageInput {
 
   <div class="input-container">
     <div class="top-row">
-      <span class="material-icons" onclick="conferenceButtonClicked()">video_chat</span>
+      <span class="material-icons" onclick="addConference()">video_chat</span>
       <span class="material-icons" onclick="videoButtonClicked()">videocam</span>
       <span class="material-icons" onclick="photoButtonClicked()">photo_camera</span>
       <span class="material-icons" onclick="attachButtonClicked()">attach_file</span>
@@ -519,60 +519,110 @@ if (typeof EmojiMart === 'undefined') {
     console.error('Toggle button element not found.');
   }
 }
-	  
-function addLink() {
+
+let mainLink = '';  // Global variable to store the main link
+
+function addLink(providedLink) {
     const messageInput = document.getElementById('messageInput');
     let inputValue = messageInput.value.trim();
     const urlPattern = /([a-zA-Z]+:\/\/[^\s]+)/gi;  // Regular expression to detect any protocol link
 
-    let mainLink = '';
-
     // Function to check if the URL is a photo
     function isPhotoUrl(url) {
-        // Match URL extensions with optional query strings
         return /\.(jpg|jpeg|png|gif|bmp)(\?[^\s]*)?$/i.test(url);
     }
 
-    // Check for existing links in the input field
-    const existingLink = messageInput.parentElement.querySelector('a');
+    // Check if a link already exists in sessionStorage
+    const existingLink = sessionStorage.getItem('main-link') || sessionStorage.getItem('main-photo');
     if (existingLink) {
-        alert('A link already exists. Please remove it before adding another.');
-        return;
-    }
+        const confirmRemoval = confirm('A link already exists. Do you want to remove it before adding another?');
+        if (confirmRemoval) {
+            // Clear the existing link from sessionStorage
+            sessionStorage.removeItem('main-link');
+            sessionStorage.removeItem('main-photo');
 
-    if (urlPattern.test(inputValue)) {
-        const foundLink = inputValue.match(urlPattern)[0];  // Extract the first URL found
-        const confirmLinkification = confirm(`Do you want to turn "${foundLink}" into a link?`);
-        
-        if (confirmLinkification) {
-            mainLink = foundLink;
-            showMessageTypeIcon('link', mainLink);
-            sessionStorage.setItem('main-link', mainLink);
-
-            // Check if the link is a photo
-            if (isPhotoUrl(mainLink)) {
-                showMessageTypeIcon('photo', mainLink);
-                sessionStorage.setItem('main-photo', mainLink);
-            }
-        }
-    } else {
-        const enteredLink = prompt("No link found. Please enter a link:");
-        
-        if (enteredLink && urlPattern.test(enteredLink)) {
-            mainLink = enteredLink.trim();
-            showMessageTypeIcon('link', mainLink);
-            sessionStorage.setItem('main-link', mainLink);
-
-            // Check if the link is a photo
-            if (isPhotoUrl(mainLink)) {
-                showMessageTypeIcon('photo', mainLink);
-                sessionStorage.setItem('main-photo', mainLink);
+            // Hide the element with ID messageTypeIcon
+            const messageTypeIcon = document.getElementById('messageTypeIcon');
+            if (messageTypeIcon) {
+                messageTypeIcon.style.display = 'none';
             }
         } else {
-            alert('Invalid link entered.');
+            return;  // Exit the function if removal is not confirmed
+        }
+    }
+
+    // Use the provided link if available
+    if (providedLink) {
+        mainLink = providedLink;
+        showMessageTypeIcon('link', mainLink);
+        sessionStorage.setItem('main-link', mainLink);
+
+        // Check if the link is a photo
+        if (isPhotoUrl(mainLink)) {
+            showMessageTypeIcon('photo', mainLink);
+            sessionStorage.setItem('main-photo', mainLink);
+        }
+    } else {
+        if (urlPattern.test(inputValue)) {
+            const foundLink = inputValue.match(urlPattern)[0];  // Extract the first URL found
+            const confirmLinkification = confirm(`Do you want to turn "${foundLink}" into a link?`);
+            
+            if (confirmLinkification) {
+                mainLink = foundLink;
+                showMessageTypeIcon('link', mainLink);
+                sessionStorage.setItem('main-link', mainLink);
+
+                // Check if the link is a photo
+                if (isPhotoUrl(mainLink)) {
+                    showMessageTypeIcon('photo', mainLink);
+                    sessionStorage.setItem('main-photo', mainLink);
+                }
+            }
+        } else {
+            const enteredLink = prompt("No link found. Please enter a link:");
+            
+            if (enteredLink && urlPattern.test(enteredLink)) {
+                mainLink = enteredLink.trim();
+                showMessageTypeIcon('link', mainLink);
+                sessionStorage.setItem('main-link', mainLink);
+
+                // Check if the link is a photo
+                if (isPhotoUrl(mainLink)) {
+                    showMessageTypeIcon('photo', mainLink);
+                    sessionStorage.setItem('main-photo', mainLink);
+                }
+            } else {
+                alert('Invalid link entered.');
+            }
         }
     }
 }
+
+
+
+	  // Function to generate a UUID (version 4)
+function generateUUID() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+    });
+}
+
+// Function to create a conference link and add it
+function addConference() {
+    const uuid = generateUUID();
+    const conferenceLink = `https://pchat.xyz/public/${uuid}`;
+    
+    mainLink = conferenceLink;
+
+    // Use the updated addLink function to handle the link
+    addLink();
+
+    // Show the Material icon for video chat
+    showMessageTypeIcon('video_chat', conferenceLink);
+    sessionStorage.setItem('main-link', conferenceLink);
+}
+
 
 
 	  
