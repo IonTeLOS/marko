@@ -332,6 +332,7 @@ input#messageInput {
       <span class="material-icons" onclick="photoButtonClicked()">photo_camera</span>
       <span class="material-icons" onclick="attachButtonClicked()">attach_file</span>
       <span class="material-icons" onclick="micButtonClicked()">mic</span>
+      <span id="addEffect" class="material-icons" >celebration</span>
       <span id="getLocation" class="material-icons" >location_on</span>
       <span id="linkify" class="material-icons" >link</span>
     </div>
@@ -473,6 +474,8 @@ function showMessageTypeIcon(iconName, url) {
 
         document.getElementById('getLocation').addEventListener('click', getLocation);
         document.getElementById('linkify').addEventListener('click', addLink);
+	document.getElementById('addEffect').addEventListener('click', addEffect);
+
 
 // Ensure EmojiMart is imported and available
 if (typeof EmojiMart === 'undefined') {
@@ -492,8 +495,14 @@ if (typeof EmojiMart === 'undefined') {
     onEmojiSelect: (emoji) => {
       const messageInput = document.getElementById('messageInput');
       if (messageInput) {
+	if (sessionStorage.getItem('effect-adding') === 'true') {
+            sessionStorage.setItem('effect-adding', emoji.native);
+	    showMessageTypeIcon('emoji', `https://emojipedia.org/${emoji.native}`);
+	} else {
+
         // Insert the selected emoji into the text input
         messageInput.value += emoji.native; // 'emoji.native' contains the emoji character
+	}
       } else {
         console.error('Message input element not found.');
       }
@@ -517,6 +526,11 @@ if (typeof EmojiMart === 'undefined') {
     } else {
       pickerContainer.style.display = 'none'; // Hide picker
     }
+  }
+
+  function addEffect() {
+      sessionStorage.addItem('effect-adding', 'true');
+      toggleEmojiPicker();
   }
 
   // Function to hide the picker
