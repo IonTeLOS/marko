@@ -7,30 +7,26 @@ self.addEventListener('activate', event => {
 });
 
 self.addEventListener('push', function(event) {
-  // Default options for the notification
-  let options = {
-    body: 'This is a default message.',
-    icon: 'https://raw.githubusercontent.com/IonTeLOS/marko-app/main/triskelion.svg', // Path to your notification icon
-    badge: 'https://raw.githubusercontent.com/IonTeLOS/marko-app/main/triskelion.svg', // Path to your notification badge icon
-    data: {
-      url: '/', // Default URL to open when the notification is clicked
-    },
-  };
-
-  // Parse and handle the incoming notification payload
+  console.log('Push event received:', event);
+  
+  let data = {};
+  
   if (event.data) {
-    const data = event.data.json(); // Assumes payload is JSON formatted
-
-    options.body = data.body || options.body;
-    options.icon = data.icon || options.icon;
-    options.badge = data.badge || options.badge;
-    options.data.url = data.url || options.data.url; // Use a custom URL if provided
-    options.actions = data.actions || []; // Custom actions (buttons) for the notification
+    data = event.data.json();
+    console.log('Push data:', data);
   }
 
-  // Show the notification
+  const options = {
+    body: data.body || 'Notification',
+    icon: data.icon || 'https://raw.githubusercontent.com/IonTeLOS/marko-app/main/triskelion.svg',
+    badge: data.badge || 'https://raw.githubusercontent.com/IonTeLOS/marko-app/main/triskelion.svg',
+    data: {
+      url: data.url || '/'
+    }
+  };
+
   event.waitUntil(
-    self.registration.showNotification('Notification Title', options)
+    self.registration.showNotification(data.title || 'Title', options)
   );
 });
 
