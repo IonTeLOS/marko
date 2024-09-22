@@ -536,6 +536,7 @@ if (typeof EmojiMart === 'undefined') {
 	if (sessionStorage.getItem('effect-adding') === 'true') {
             sessionStorage.setItem('effect-adding', emoji.native);
 	    showMessageTypeIcon('add_reaction', `https://emojipedia.org/${emoji.native}`);
+	    pickerContainer.style.display = 'none'; 
 	    showEmotion(emoji.native);
 	} else {
 
