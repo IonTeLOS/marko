@@ -527,15 +527,16 @@ function addLink() {
 
     let mainLink = '';
 
-    // Function to display the link as blue and underlined
-    function displayLink(link) {
-        messageInput.value = ''; // Clear the input field
-        const linkElement = document.createElement('a');
-        linkElement.href = link;
-        linkElement.textContent = link;
-        linkElement.style.color = 'blue';
-        linkElement.style.textDecoration = 'underline';
-        messageInput.parentElement.appendChild(linkElement);
+    // Function to check if the URL is a photo
+    function isPhotoUrl(url) {
+        return /\.(jpg|jpeg|png|gif|bmp)$/i.test(url);
+    }
+
+    // Check for existing links in the input field
+    const existingLink = messageInput.parentElement.querySelector('a');
+    if (existingLink) {
+        alert('A link already exists. Please remove it before adding another.');
+        return;
     }
 
     if (urlPattern.test(inputValue)) {
@@ -546,7 +547,12 @@ function addLink() {
             mainLink = foundLink;
             showMessageTypeIcon('link', mainLink);
             sessionStorage.setItem('main-link', mainLink);
-            displayLink(mainLink);
+
+            // Check if the link is a photo
+            if (isPhotoUrl(mainLink)) {
+                showMessageTypeIcon('photo', mainLink);
+                sessionStorage.setItem('main-photo', mainLink);
+            }
         }
     } else {
         const enteredLink = prompt("No link found. Please enter a link:");
@@ -555,12 +561,18 @@ function addLink() {
             mainLink = enteredLink.trim();
             showMessageTypeIcon('link', mainLink);
             sessionStorage.setItem('main-link', mainLink);
-            displayLink(mainLink);
+
+            // Check if the link is a photo
+            if (isPhotoUrl(mainLink)) {
+                showMessageTypeIcon('photo', mainLink);
+                sessionStorage.setItem('main-photo', mainLink);
+            }
         } else {
             alert('Invalid link entered.');
         }
     }
 }
+
 	  
 let rooms = JSON.parse(localStorage.getItem('rooms')) || [];
 
