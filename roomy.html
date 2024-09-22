@@ -706,8 +706,7 @@ function toggleClearButton() {
 }
 
 function clearText() {
-  const input = document.querySelector('.chat-input input');
-  input.value = '';
+  document.getElementById('messageInput').value = '';
   toggleClearButton(); // Ensure the clear button is hidden
 }
     
