@@ -144,7 +144,8 @@ async function subscribeToPush() {
       }
       return outputArray;
     }
- navigator.serviceWorker.ready.then((registration) => {
+/*    
+navigator.serviceWorker.ready.then((registration) => {
   registration.pushManager.getSubscription().then((subscription) => {
     if (subscription) {
       subscription.unsubscribe().then(() => {
@@ -160,7 +161,8 @@ async function subscribeToPush() {
     }
   });
 });
-
+*/
+subscribeToPush();  
    </script>
 </body>
 </html>
