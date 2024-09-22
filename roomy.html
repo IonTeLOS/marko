@@ -141,6 +141,9 @@ body {
   display: flex;
   align-items: center;
   padding: 10px;
+  max-width: 100%; /* Prevents the wrapper from growing */
+  overflow: hidden; /* Ensures extra elements are hidden if they overflow */
+  box-sizing: border-box;
   background-color: #f8f8f8;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
@@ -185,9 +188,7 @@ body {
    z-index: 3;
    user-select: none;
 }
-.multi-btn.show {
-   display: inline-block; /* Visible when needed */
-}
+
 .input-overlay-wrapper {
   position: relative;
   width: 100%;
@@ -195,9 +196,11 @@ body {
 }
 
 .chat-input .material-icons {
+  display: flex;
   color: #2196F3;
   cursor: pointer;
   font-size: 28px;
+  flex-shrink: 0; /* Prevents shrinking */
 }
 
 .bottom-menu {
