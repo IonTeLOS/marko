@@ -136,62 +136,7 @@ body {
   flex-grow: 1; /* Allow each button to grow equally */
   text-align: center; /* Center the icon in each flex item */
 }
-
-.chat-input-wrapper {
-  display: flex;
-  align-items: center;
-  padding: 10px;
-  max-width: 100%; /* Prevents the wrapper from growing */
-  overflow: hidden; /* Ensures extra elements are hidden if they overflow */
-  box-sizing: border-box;
-  background-color: #f8f8f8;
-  border-bottom-left-radius: 20px;
-  border-bottom-right-radius: 20px;
-}
-
-.chat-input {
-  position: relative;
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-  width: 100%; /* Ensure chat input takes available space */
-  padding: 10px;
-  border-radius: 20px;
-  border: 1px solid #2196F3;
-  background-color: white;
-  height: 50px;
-}
-
-.chat-input input {
-  position: relative;
-  z-index: 2;
-  flex-grow: 1;
-  border: none;
-  outline: none;
-  font-size: 16px;
-  margin: 0 10px;
-  background-color: transparent;
-  caret-color: black; 
-  color: black; 
-  line-height: 1.5; 
-  height: 100%;
-  padding: 0; 
-  flex: 1; /* Input takes up remaining space */
-  min-width: 0; /* Prevents the input from growing too wide */
-}
-
-.chat-input input::placeholder {
-  color: #ccc;
-}
-
-.multi-btn {
-   cursor: pointer;
-   margin-left: 10px;
-   margin-right: 15px;
-   z-index: 3;
-   user-select: none;
-}
-
+	  
 .input-overlay-wrapper {
   position: relative;
   width: 100%;
@@ -308,6 +253,85 @@ input#messageInput {
   flex: 1; /* This makes the input field take up the remaining space */
 }
 
+
+
+
+
+
+
+
+
+.chat-input-wrapper {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  max-width: 100%; /* Ensure the wrapper doesn't expand beyond the screen width */
+  overflow: hidden; /* Hide any overflowed icons/content */
+  box-sizing: border-box;
+  background-color: #f8f8f8;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+.chat-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  width: 100%;
+  padding: 10px;
+  border-radius: 20px;
+  border: 1px solid #2196F3;
+  background-color: white;
+  height: 50px;
+  box-sizing: border-box;
+  overflow: hidden; /* Prevent icons or text from expanding beyond their container */
+}
+
+.chat-input input {
+  position: relative;
+  z-index: 2;
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  font-size: 16px;
+  margin: 0 10px;
+  background-color: transparent;
+  caret-color: black; 
+  color: black; 
+  line-height: 1.5; 
+  height: 100%;
+  min-width: 0; /* Prevents the input from growing too wide */
+}
+
+.chat-input input::placeholder {
+  color: #ccc;
+}
+
+.chat-input .material-icons {
+  flex-shrink: 0; /* Prevent icons from shrinking */
+  color: #2196F3;
+  cursor: pointer;
+  font-size: 28px;
+}
+
+#messageTypeIcon {
+  margin-left: 8px; /* Add space between the icon and the rest of the elements */
+  visibility: hidden; /* Keeps the icon's space reserved even when hidden */
+}
+
+#messageTypeIcon.hidden {
+  visibility: hidden; /* Keep this hidden without collapsing the space */
+}
+
+.multi-btn {
+  margin-left: 10px;
+  margin-right: 15px;
+  cursor: pointer;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+	  
   </style>
 </head>
 <body>
@@ -355,8 +379,6 @@ input#messageInput {
   </div>
 </div>
 </div>
-
-<p id="mapsLink"></p>
   
   <script src="https://cdn.jsdelivr.net/npm/emoji-mart@latest/dist/browser.js"></script>
   <script>
