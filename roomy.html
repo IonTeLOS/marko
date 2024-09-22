@@ -344,6 +344,8 @@ input#messageInput {
   </style>
 </head>
 <body>
+<iframe id="youtube-player" src="" frameborder="0" allow="autoplay; encrypted-media"></iframe>
+
 <div class="dropdown">
   <!-- The top-menu replaces the dropdown-toggle -->
   <div class="top-menu">
@@ -406,11 +408,17 @@ function showMessageTypeIcon(iconName, url) {
   iconElement.textContent = iconName;
 
   // If a URL is provided, add a click event to open the URL
-  if (url) {
+    // Check if the URL is a YouTube link and initialize the YouTube player if needed
+  if (url.includes('youtube.com') || url.includes('youtu.be')) {
+    iconElement.style.cursor = 'pointer'; // Change cursor to indicate it's clickable
+    iconElement.title = url; // Set the title to show the URL on hover	  
+    initializeYouTubePlayer(url);
+  } else if (url) {
     iconElement.style.cursor = 'pointer'; // Change cursor to indicate it's clickable
     iconElement.onclick = function() {
     window.open(url, '_blank'); // Open URL in a new tab
     };
+    iconElement.title = url; // Set the title to show the URL on hover	  
   } else {
     iconElement.style.cursor = ''; // Reset cursor if no URL is provided
     iconElement.onclick = null; // Remove any previous click handler
@@ -866,6 +874,7 @@ function openRoom(roomId) {
         renderRooms();
       }
     }
+	  
 document.getElementById('toggleTopRow').addEventListener('click', function() {
   const topRow = document.querySelector('.top-row');
 
@@ -875,6 +884,83 @@ document.getElementById('toggleTopRow').addEventListener('click', function() {
     topRow.classList.remove('open');
   }
 });
+	  
+function initializeYouTubePlayer(url) {
+    document.addEventListener('DOMContentLoaded', () => {
+        const playButton = document.getElementById('messageTypeIcon');
+	showMessageTypeIcon('play_arrow', url);
+        const iframe = document.getElementById('youtube-player');
+        let player;
+        let isPlaying = false; // State of the video
+
+        // Extract the video ID from the YouTube URL
+        const videoId = extractYouTubeId(url);
+
+        // Set the iframe src with the extracted video ID
+        if (videoId) {
+            iframe.src = `https://www.youtube.com/embed/${videoId}?enablejsapi=1`;
+        } else {
+            console.error("Invalid YouTube URL");
+            return;
+        }
+
+        // Load the IFrame API
+        const script = document.createElement('script');
+        script.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(script);
+
+        // Create YouTube player once the API is ready
+        window.onYouTubeIframeAPIReady = function() {
+            player = new YT.Player('youtube-player', {
+                height: '0',
+                width: '0',
+                videoId: videoId,
+                playerVars: {
+                    'controls': 1,
+                    'autoplay': 0,
+                    'modestbranding': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        };
+
+        // Handle player ready event
+        function onPlayerReady(event) {
+            console.log("YouTube player is ready.");
+
+            playButton.addEventListener('click', () => {
+                if (isPlaying) {
+                    player.pauseVideo();
+                    playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
+                } else {
+                    player.playVideo();
+                    playButton.innerHTML = '<i class="material-icons">pause</i>';
+                }
+                isPlaying = !isPlaying;
+            });
+        }
+
+        // Handle player state change event
+        function onPlayerStateChange(event) {
+            console.log(`Player state changed: ${event.data}`);
+            if (event.data === YT.PlayerState.ENDED) {
+                playButton.innerHTML = '<i class="material-icons">play_arrow</i>';
+                isPlaying = false;
+            }
+        }
+    });
+}
+
+// Helper function to extract the YouTube video ID from a URL
+function extractYouTubeId(url) {
+    const youtubeRegex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    const match = url.match(youtubeRegex);
+    return match ? match[1] : null;
+}
+
    // Function to update the icon based on the input field's content
     function updateMultiButton() {
         const inputText = document.getElementById('messageInput').value.trim();
