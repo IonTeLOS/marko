@@ -872,7 +872,24 @@ document.addEventListener('click', function(event) {
         document.getElementById('getLocation').addEventListener('click', getLocation);
         document.getElementById('linkify').addEventListener('click', addLink);
 	document.getElementById('addEffect').addEventListener('click', addEmojiEffect);
-	document.getElementById('clearButton').addEventListener('click', clearText);
+// Add event listeners for input changes and button clicks
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputField = document.getElementById('messageInput');
+        const clearButton = document.getElementById('clearButton');
+        const sendMessageButton = document.getElementById('sendMessageButton');
+
+        if (inputField) {
+            inputField.addEventListener('input', toggleClearButton);
+            inputField.addEventListener('blur', hideClearButton);
+        }
+
+        if (clearButton) {
+            clearButton.addEventListener('click', clearText);
+        }
+
+        // Initial state of the clear button when the page loads
+        toggleClearButton();
+    });
 
     addRoomFromUrlParams();
     renderRooms();
