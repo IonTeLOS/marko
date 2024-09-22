@@ -540,7 +540,7 @@ if (typeof EmojiMart === 'undefined') {
 
   // Event listener to hide picker when clicking outside
   document.addEventListener('click', (event) => {
-    if (pickerContainer && !pickerContainer.contains(event.target) && !event.target.matches('#toggleEmojiPickerBtn')) {
+    if (pickerContainer && !pickerContainer.contains(event.target) && !event.target.matches('#toggleEmojiPickerBtn') && !event.target.matches('#addEffect')) {
       hideEmojiPicker();
     }
   });
@@ -742,14 +742,6 @@ function clearText() {
   toggleClearButton(); // Ensure the clear button is hidden
 }
     
-    function sendMessage() {
-      alert('Send button clicked');
-    }
-
-    function clearText() {
-      document.querySelector('.chat-input input').value = '';
-      toggleClearButton();
-    }
 
     function sendMessage() {
       hideMessageTypeIcon();
