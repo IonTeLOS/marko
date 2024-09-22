@@ -283,7 +283,7 @@ input#messageInput {
   border-radius: 20px;
   border: 1px solid #2196F3;
   background-color: white;
-  height: 50px;
+  height: 60px;
   box-sizing: border-box;
   overflow: hidden; /* Prevent icons or text from expanding beyond their container */
 }
@@ -294,7 +294,7 @@ input#messageInput {
   flex-grow: 1;
   border: none;
   outline: none;
-  font-size: 16px;
+  font-size: 18px;
   margin: 0 10px;
   background-color: transparent;
   caret-color: black; 
@@ -313,15 +313,6 @@ input#messageInput {
   color: #2196F3;
   cursor: pointer;
   font-size: 28px;
-}
-
-#messageTypeIcon {
-  margin-left: 8px; /* Add space between the icon and the rest of the elements */
-  visibility: hidden; /* Keeps the icon's space reserved even when hidden */
-}
-
-#messageTypeIcon.hidden {
-  visibility: hidden; /* Keep this hidden without collapsing the space */
 }
 
 .multi-btn {
@@ -371,7 +362,7 @@ input#messageInput {
   <div class="chat-input">
     <span id="toggleTopRow" class="material-icons mobile-only">add_circle</span>
     <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
-    <span id="messageTypeIcon" class="material-icons hidden"></span> <!-- This is the new icon -->
+    <span id="messageTypeIcon" class="material-icons hidden"></span> 
         <input id="messageInput" type="text" placeholder="Message or link..."
                oninput="updateMultiButton()" onblur="updateMultiButton()">
 	  <span id="multiButton" class="material-icons multi-btn">content_paste</span>
