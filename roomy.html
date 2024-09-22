@@ -633,6 +633,9 @@ function addLink(providedLink) {
         mainLink = providedLink.trim();
 	// Use the provided link
        	showMessageTypeIcon('link', mainLink);
+	if (mainLink.includes('youtube.com') || mainLink.includes('youtu.be')) {
+       	  showMessageTypeIcon('play_arrow', mainLink);
+	}
         sessionStorage.setItem('main-link', mainLink);
         // Check if the link is a photo
         if (isPhotoUrl(mainLink)) {
@@ -897,7 +900,6 @@ document.getElementById('toggleTopRow').addEventListener('click', function() {
 function initializeYouTubePlayer(url) {
     document.addEventListener('DOMContentLoaded', () => {
         const playButton = document.getElementById('messageTypeIcon');
-	showMessageTypeIcon('play_arrow', url);
         const iframe = document.getElementById('youtube-player');
         let player;
         let isPlaying = false; // State of the video
