@@ -351,7 +351,7 @@ function showMessageTypeIcon(iconName, url) {
   if (url) {
     iconElement.style.cursor = 'pointer'; // Change cursor to indicate it's clickable
     iconElement.onclick = function() {
-      window.open(url, '_blank'); // Open URL in a new tab
+    window.open(url, '_blank'); // Open URL in a new tab
     };
   } else {
     iconElement.style.cursor = ''; // Reset cursor if no URL is provided
@@ -549,9 +549,9 @@ function addLink(providedLink) {
             showMessageTypeIcon('photo', mainLink);
             sessionStorage.setItem('main-photo', mainLink);
         } else { 
-        // Use the provided link
-        showMessageTypeIcon('link', mainLink);
-        sessionStorage.setItem('main-link', mainLink);
+            // Use the provided link
+       	    showMessageTypeIcon('link', mainLink);
+            sessionStorage.setItem('main-link', mainLink);
 	}
         return;  // Exit the function after processing the provided link
     }
@@ -567,9 +567,9 @@ function addLink(providedLink) {
         
         if (confirmLinkification) {
             // Check if the link is a photo
-            if (isPhotoUrl(mainLink)) {
-                showMessageTypeIcon('photo', mainLink);
-                sessionStorage.setItem('main-photo', mainLink);
+            if (isPhotoUrl(foundLink)) {
+                showMessageTypeIcon('photo', foundLink);
+                sessionStorage.setItem('main-photo', foundLink);
             } else {
 	   	 mainLink = foundLink;
            	 showMessageTypeIcon('link', mainLink);
