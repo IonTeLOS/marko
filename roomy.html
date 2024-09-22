@@ -897,6 +897,7 @@ document.getElementById('toggleTopRow').addEventListener('click', function() {
 });
 	  
 function initializeYouTubePlayer(url) {
+    document.addEventListener('DOMContentLoaded', () => {
         const playButton = document.getElementById('messageTypeIcon');
         const iframe = document.getElementById('youtube-player');
         let player;
@@ -956,6 +957,7 @@ function initializeYouTubePlayer(url) {
                 isPlaying = false;
             }
         }
+    });
 }
 
 // Helper function to extract the YouTube video ID from a URL
