@@ -287,12 +287,13 @@ body {
     .top-row.open::-webkit-scrollbar-thumb:hover {
         background: #555; /* Color on hover */
     }
-}
+
     .top-row.open {
         scrollbar-width: thin; /* Make scrollbar thinner */
         scrollbar-color: #888 #f1f1f1; /* Thumb color and track color */
     }
 }
+	  
 .hidden {
   display: none; /* Icon is initially hidden */
 }
@@ -343,7 +344,7 @@ input#messageInput {
   <div class="chat-input">
     <span id="toggleTopRow" class="material-icons mobile-only">add_circle</span>
     <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
-    <span id="messageTypeIcon" class="material-icons hidden">warning</span> <!-- This is the new icon -->
+    <span id="messageTypeIcon" class="material-icons hidden"></span> <!-- This is the new icon -->
     <input id="messageInput" type="text" placeholder="Message or link..." oninput="toggleClearButton()" onblur="hideClearButton()">
     <span class="material-icons clear-btn" onclick="clearText()" style="display:none;">clear</span>
     <span class="material-icons" onclick="sendMessage()">send</span>
