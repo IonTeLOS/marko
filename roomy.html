@@ -415,7 +415,8 @@ function showMessageTypeIcon(iconName, url) {
 }
         
 	function hideMessageTypeIcon() {
-          document.getElementById('messageTypeIcon').classList.add('hidden');
+	  const iconElement = document.getElementById('messageTypeIcon');
+          iconElement.classList.add('hidden');
 	}
 	  
         function getMapsLink(query) {
@@ -587,12 +588,13 @@ if (typeof EmojiMart === 'undefined') {
     console.error('Toggle button element not found.');
   }
 }
+	  
 function clearLink() {
+	hideMessageTypeIcon();
         sessionStorage.removeItem('main-link');
         sessionStorage.removeItem('main-photo');
 	sessionStorage.removeItem('effect-adding');
         sessionStorage.removeItem('current-location');
-        hideMessageTypeIcon();
 }
 	  
 let mainLink = '';  // Global variable to store the main link
