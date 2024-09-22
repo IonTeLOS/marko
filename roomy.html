@@ -291,7 +291,9 @@ input#messageInput {
     .top-row.open::-webkit-scrollbar {
         height: 6px; /* Adjust the height of the scrollbar */
     }
-
+    .chat-input .mobile-only {
+        display: none;
+    }
     .top-row.open::-webkit-scrollbar-track {
         background: #f1f1f1; /* Track color */
     }
@@ -314,7 +316,9 @@ input#messageInput {
   .top-row {
     display: none; /* Hidden by default on mobile */
   }
-  
+  .chat-input .desktop-only {
+    display: none;
+  }
   .mobile-only {
     display: inline-block; /* Show the add_circle button on mobile */
   }
