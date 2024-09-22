@@ -342,7 +342,7 @@ input#messageInput {
     <span id="toggleEmojiPickerBtn" class="material-icons desktop-only">emoji_emotions</span>
     <span id="messageTypeIcon" class="material-icons hidden"></span> <!-- This is the new icon -->
         <input id="messageInput" type="text" placeholder="Message or link...">
-        <span class="material-icons clear-btn" onclick="clearText()">clear</span>
+        <span id="clearButton" class="material-icons clear-btn" style="display:none;">clear</span>
     <span class="material-icons" onclick="sendMessage()">send</span>
   </div>
 </div>
@@ -744,15 +744,7 @@ function openRoom(roomId) {
         clearButton.style.display = 'none';
     }
 
-    // Add event listener for input changes to dynamically show/hide the clear button
-    document.addEventListener('DOMContentLoaded', () => {
-        const inputField = document.getElementById('messageInput');
-        inputField.addEventListener('input', toggleClearButton);
-        inputField.addEventListener('blur', hideClearButton);
 
-        // Initial state of the clear button when the page loads
-        toggleClearButton();
-    });
     
 
     function sendMessage() {
@@ -880,6 +872,7 @@ document.addEventListener('click', function(event) {
         document.getElementById('getLocation').addEventListener('click', getLocation);
         document.getElementById('linkify').addEventListener('click', addLink);
 	document.getElementById('addEffect').addEventListener('click', addEmojiEffect);
+	document.getElementById('clearButton').addEventListener('click', clearText);
 
     addRoomFromUrlParams();
     renderRooms();
