@@ -144,7 +144,9 @@ async function subscribeToPush() {
       }
       return outputArray;
     }
- if (subscription) {
+ navigator.serviceWorker.ready.then((registration) => {
+  registration.pushManager.getSubscription().then((subscription) => {
+    if (subscription) {
       subscription.unsubscribe().then(() => {
         console.log('Unsubscribed from push notifications successfully');
         // After unsubscribing, resubscribe with the new applicationServerKey
@@ -152,7 +154,13 @@ async function subscribeToPush() {
       }).catch((error) => {
         console.error('Failed to unsubscribe from push notifications', error);
       });
- }
+    } else {
+      // No existing subscription, just proceed to subscribe
+      subscribeToPush();
+    }
+  });
+});
+
    </script>
 </body>
 </html>
