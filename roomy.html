@@ -6,6 +6,7 @@
   <title>Optimized Chat App</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 <script src="https://cdn.jsdelivr.net/npm/js-confetti@latest/dist/js-confetti.browser.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
   <style>
 html, body {
   font-family: Arial, sans-serif;
@@ -912,11 +913,6 @@ function initializeYouTubePlayer(url) {
             console.error("Invalid YouTube URL");
             return;
         }
-
-        // Load the IFrame API
-        const script = document.createElement('script');
-        script.src = 'https://www.youtube.com/iframe_api';
-        document.head.appendChild(script);
 
         // Create YouTube player once the API is ready
         window.onYouTubeIframeAPIReady = function() {
