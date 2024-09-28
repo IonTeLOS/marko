@@ -3,148 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFC Link Sharing with QR Code Fallback</title>
-    <!-- Google Material Icons -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- Material Design Lite -->
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
-    <!-- QRCode.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>Bluetooth Link Sharing</title>
     <style>
         body {
-            font-family: "Roboto", sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 10px;
-            background-color: #f5f5f5;
-        }
-
-        .container {
-            max-width: 600px;
-            width: 100%;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-family: Arial, sans-serif;
             padding: 20px;
         }
-
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            color: #333;
-        }
-
-        .mdl-textfield {
+        input[type="text"] {
             width: 100%;
+            padding: 10px;
+            margin: 10px 0;
         }
-
-        .mdl-button {
-            width: 100%;
-            margin-top: 20px;
-            background-color: #3f51b5;
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
             color: white;
+            border: none;
+            cursor: pointer;
         }
-
-        .mdl-button:hover {
-            background-color: #303f9f;
+        button:disabled {
+            background-color: #ccc;
         }
-
-        #statusMessage {
+        #deviceList {
             margin-top: 20px;
-            text-align: center;
-            font-size: 16px;
-            color: #007bff;
-        }
-
-        #qrCodeContainer {
-            margin-top: 20px;
-            display: none;
-            justify-content: center;
-        }
-
-        #qrcode {
-            margin-top: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .container {
-                max-width: 500px;
-            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Share Link via NFC or QR Code</h1>
-        <form id="shareForm">
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                <input class="mdl-textfield__input" type="url" id="linkInput" required>
-                <label class="mdl-textfield__label" for="linkInput">Enter or paste link here...</label>
-            </div>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect" type="submit">
-                <i class="material-icons">nfc</i> Share via NFC
-            </button>
-        </form>
+    <h1>Bluetooth Link Sharing</h1>
+    <input type="text" id="urlInput" placeholder="Enter URL" />
+    <button id="shareButton" disabled>Share via Bluetooth</button>
 
-        <div id="statusMessage"></div>
-
-        <!-- QR Code Container -->
-        <div id="qrCodeContainer">
-            <p>NFC is not available, share using QR code:</p>
-            <div id="qrcode"></div>
-        </div>
-    </div>
+    <div id="deviceList"></div>
 
     <script>
-        // Function to handle NFC sharing
-        async function shareLinkNFC(link) {
-            const statusMessage = document.getElementById('statusMessage');
-            try {
-                const ndef = new NDEFReader();
-                await ndef.write({ records: [{ recordType: "url", data: link }] });
-                
-                // Provide feedback: transmitting
-                statusMessage.textContent = "Transmitting link via NFC...";
-                
-                ndef.onreading = (event) => {
-                    statusMessage.textContent = "Listening for devices...";
-                };
+        const urlInput = document.getElementById('urlInput');
+        const shareButton = document.getElementById('shareButton');
+        const deviceListDiv = document.getElementById('deviceList');
 
-                // Success feedback
-                setTimeout(() => {
-                    statusMessage.textContent = "Link shared successfully via NFC!";
-                }, 2000);
+        let selectedDevice;
+
+        urlInput.addEventListener('input', () => {
+            shareButton.disabled = urlInput.value.trim() === '' || !selectedDevice;
+        });
+
+        shareButton.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            try {
+                const server = await selectedDevice.gatt.connect();
+                const service = await server.getPrimaryService('battery_service');
+                const characteristic = await service.getCharacteristic('battery_level');
+
+                const encoder = new TextEncoder('utf-8');
+                const data = encoder.encode(url);
+
+                // Assume you have a custom characteristic to send the URL
+                await characteristic.writeValue(data);
+                
+                alert('URL shared via Bluetooth!');
             } catch (error) {
-                // If NFC fails, fallback to QR code generation
-                statusMessage.textContent = "NFC unavailable, generating QR code...";
-                generateQRCode(link);
+                console.error('Error sharing URL:', error);
+                alert('Failed to share URL. Make sure Bluetooth is enabled on both devices.');
+            }
+        });
+
+        async function listAvailableDevices() {
+            try {
+                const devices = await navigator.bluetooth.getDevices();
+                deviceListDiv.innerHTML = '';
+
+                devices.forEach(device => {
+                    const deviceButton = document.createElement('button');
+                    deviceButton.textContent = device.name || 'Unnamed Device';
+                    deviceButton.onclick = () => {
+                        selectedDevice = device;
+                        deviceListDiv.innerHTML = `<p>Selected Device: ${device.name}</p>`;
+                        shareButton.disabled = urlInput.value.trim() === '';
+                    };
+                    deviceListDiv.appendChild(deviceButton);
+                });
+                
+                if (devices.length === 0) {
+                    deviceListDiv.innerHTML = '<p>No devices found.</p>';
+                }
+            } catch (error) {
+                console.error('Error listing devices:', error);
+                deviceListDiv.innerHTML = '<p>Failed to list devices. Make sure Bluetooth is enabled.</p>';
             }
         }
 
-        // Function to generate a QR code
-        function generateQRCode(link) {
-            const qrContainer = document.getElementById('qrCodeContainer');
-            qrContainer.style.display = 'flex';
-            new QRCode(document.getElementById('qrcode'), {
-                text: link,
-                width: 180,
-                height: 180
-            });
-        }
-
-        // Handling form submission
-        const form = document.getElementById('shareForm');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const link = document.getElementById('linkInput').value;
-            document.getElementById('statusMessage').textContent = "Attempting to share link via NFC...";
-            shareLinkNFC(link);
-        });
+        // Call the function to list available devices
+        listAvailableDevices();
     </script>
 </body>
 </html>
